@@ -6,10 +6,11 @@ import '../styles/global.css' // adjust the relative path if needed
 
 const page = {
   title: 'Ariane — Wenzel Arifiandi',
-  description: 'Automotive design portfolio — concepts, surfacing, visualization.',
-  url: 'https://ariane.vercel.app/',
+  description: 'Hi there!',
+  url: 'https://wenzelarifiandi.com/',
   image: '/og.jpg',
 }
+const email = 'hello@wenzelarifiandi.com'
 ---
 
 <Base title={page.title} description={page.description} ogImage={page.image} pathname="/">
@@ -19,19 +20,19 @@ const page = {
   {/* Work anchor */}
   <section id="work" class="wrap">
     <h2>Work</h2>
-    <p class="muted">Your featured projects will show here.</p>
+    <p class="muted">Selected projects will appear here soon.</p>
   </section>
 
   {/* About anchor */}
   <section id="about" class="wrap">
     <h2>About</h2>
-    <p class="muted">Short bio and CV link.</p>
+    <p class="muted">More details coming shortly.</p>
   </section>
 
   {/* Contact anchor */}
   <section id="contact" class="wrap">
     <h2>Contact</h2>
-    <p class="muted">Email / social links.</p>
+    <p class="muted">Email me at <a href={`mailto:${email}`} class="accent">{email}</a>.</p>
   </section>
 </Base>
 
