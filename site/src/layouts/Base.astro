@@ -1,6 +1,7 @@
 ---
 import '../styles/global.css'
 import '../styles/gloss.css'
+import Analytics from '@vercel/analytics/astro'
 
 interface Props {
   title?: string
@@ -12,7 +13,7 @@ interface Props {
 const { title, description, ogImage, pathname } = Astro.props as Props
 
 // Site defaults
-const siteTitle = 'Ariane'
+const siteTitle = 'Wenzel Arifiandi'
 const siteDescription = 'A personal website by Wenzel Arifiandi'
 const siteUrl = 'https://wenzelarifiandi.com'
 const siteImage = '/og.png'
@@ -83,6 +84,7 @@ const pageUrl = pathname ? new URL(pathname, siteUrl).toString() : siteUrl
         background: var(--lilac); color:#4b3ea6; font-weight:500;
       }
     </style>
+  <Analytics />
   </head>
   <body>
     <slot />
