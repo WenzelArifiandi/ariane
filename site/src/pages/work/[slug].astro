@@ -1,63 +1,47 @@
 ---
 import '../../styles/global.css'
 import { client } from '../../lib/sanity'
-import { projectBySlug, allProjects } from '../../lib/queries'
+import { allProjects } from '../../lib/queries'
 import { urlFor } from '../../lib/sanity'
 
-// Build-time prerender of all project pages
-export async function getStaticPaths() {
-  const projects = await client.fetch(allProjects)
-  return projects
-    .filter((p: any) => p?.slug)
-    .map((p: any) => ({ params: { slug: p.slug } }))
-}
-
-const { slug } = Astro.params
-const project = await client.fetch(projectBySlug, { slug })
-if (!project) throw new Error('Project not found')
+const projects: any[] = await client.fetch(allProjects)
 ---
 
 <html lang="en">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>{project.title} — Ariane</title>
+    <title>Work — Ariane</title>
   </head>
   <body class="min-h-dvh bg-white text-neutral-900 antialiased">
-    <main class="mx-auto max-w-3xl px-6 py-10">
-      <a href="/work" class="text-sm text-neutral-500 hover:underline">← Back to Work</a>
-      <h1 class="mt-4 text-4xl font-semibold">{project.title}</h1>
-      {project.year && <p class="mt-1 text-neutral-500">{project.year}</p>}
+    <main class="mx-auto max-w-6xl px-6 py-16">
+      <h1 class="text-4xl font-semibold">Work</h1>
 
-      {project.hero?.asset?._ref && (
-        <img
-          src={urlFor(project.hero).width(1600).fit('max').auto('format').url()}
-          alt={project.hero.alt}
-          class="mt-8 rounded-xl"
-          loading="eager"
-        />
+      {(projects?.length ?? 0) === 0 && (
+        <p class="mt-6 text-neutral-600">No projects yet. Publish one in Studio to see it here.</p>
       )}
 
-      {project.summary && <p class="mt-6 text-lg text-neutral-700">{project.summary}</p>}
-
-      {(project.gallery?.filter((g: any) => g?.asset?._ref) || []).length > 0 && (
-        <section class="mt-10 grid gap-6 sm:grid-cols-2">
-          {project.gallery
-            .filter((img: any) => img?.asset?._ref)
-            .map((img: any) => (
-              <figure>
-                <img
-                  src={urlFor(img).width(1200).fit('max').auto('format').url()}
-                  alt={img.alt ?? project.title}
-                  loading="lazy"
-                  class="rounded-lg"
-                />
-                {img.caption && (
-                  <figcaption class="mt-2 text-sm text-neutral-500">{img.caption}</figcaption>
+      {(projects?.length ?? 0) > 0 && (
+        <ul class="mt-8 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+          {projects.map((p: any) => (
+            <li class="group">
+              <a href={`/work/${p.slug}`} class="block">
+                {p?.hero?.asset?._ref && (
+                  <img
+                    src={urlFor(p.hero).width(800).height(600).fit('crop').auto('format').url()}
+                    alt={p.hero.alt}
+                    loading="lazy"
+                    class="aspect-[4/3] w-full object-cover rounded-lg"
+                  />
                 )}
-              </figure>
-            ))}
-        </section>
+                <div class="mt-3">
+                  <h2 class="text-xl font-medium group-hover:underline">{p.title}</h2>
+                  {p.year && <p class="text-sm text-neutral-500">{p.year}</p>}
+                </div>
+              </a>
+            </li>
+          ))}
+        </ul>
       )}
     </main>
   </body>
