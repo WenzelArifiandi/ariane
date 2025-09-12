@@ -1,20 +1,56 @@
 ---
 const links = [
-  { href: '/', label: 'Home' },
-  { href: '/work', label: 'Work' },
-  { href: '/about', label: 'About' },
-  { href: '/links', label: 'Links' },
+  { href: "#work", label: "Work" },
+  { href: "#about", label: "About" },
+  { href: "#contact", label: "Contact" },
 ]
 ---
-<nav class="sticky top-0 z-40 bg-white/80 backdrop-blur border-b border-neutral-200">
-  <div class="mx-auto max-w-6xl px-6 h-14 flex items-center justify-between">
-    <a href="/" class="font-semibold tracking-tight">Ariane</a>
-    <ul class="flex gap-6 text-sm">
-      {links.map(l => (
+<header class="sticky top-0 z-50 bg-white/80 backdrop-blur border-b border-neutral-200">
+  <nav class="mx-auto max-w-6xl px-6 h-14 flex items-center justify-between">
+    <a href="#top" class="font-semibold tracking-tight">Ariane</a>
+    <ul class="flex items-center gap-6 text-sm">
+      {links.map((l) => (
         <li>
-          <a class="hover:underline" href={l.href}>{l.label}</a>
+          <a data-nav href={l.href} class="text-neutral-500 hover:text-neutral-900 transition-colors">
+            {l.label}
+          </a>
         </li>
       ))}
     </ul>
-  </div>
-</nav>
+  </nav>
+</header>
+
+<script>
+// @ts-nocheck  ← tell VS Code to chill on this script
+
+document.addEventListener('DOMContentLoaded', () => {
+  const navLinks = Array.from(document.querySelectorAll('a[data-nav]'))
+  const sections = Array.from(document.querySelectorAll('section[data-section]'))
+
+  const setActive = (hash) => {
+    navLinks.forEach((a) => {
+      const active = a.getAttribute('href') === hash
+      a.classList.toggle('text-neutral-900', active)
+      a.classList.toggle('text-neutral-500', !active)
+    })
+  }
+
+  const io = new IntersectionObserver(
+    (entries) => {
+      const seen = entries
+        .filter((e) => e.isIntersecting)
+        .sort((a, b) => b.intersectionRatio - a.intersectionRatio)
+      if (seen[0]) {
+        const id = seen[0].target && seen[0].target.id
+        if (id) setActive('#' + id)
+      }
+    },
+    { rootMargin: '-45% 0% -45% 0%', threshold: [0.1, 0.25, 0.5, 0.75] },
+  )
+
+  sections.forEach((s) => io.observe(s))
+  navLinks.forEach((a) =>
+    a.addEventListener('click', () => setActive(a.getAttribute('href') || '')),
+  )
+})
+</script>

@@ -1,3 +1,8 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+html {
+  scroll-behavior: smooth;
+  /* offset so anchors aren't hidden beneath the sticky header */
+  scroll-padding-top: 3.5rem; /* matches ~h-14 header */
+}
