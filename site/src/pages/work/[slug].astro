@@ -3,7 +3,6 @@ import '../../styles/global.css'
 import { client } from '../../lib/sanity'
 import { projectBySlug, allProjects } from '../../lib/queries'
 import { urlFor } from '../../lib/sanity'
-import type { APIContext } from 'astro'
 
 // Build-time prerender of all project pages
 export async function getStaticPaths() {
@@ -13,17 +12,21 @@ export async function getStaticPaths() {
 
 const { slug } = Astro.params
 const project = await client.fetch(projectBySlug, { slug })
-if (!project) throw new Error('Project not found')
+if (!project) {
+  throw new Error(`Project not found for slug: ${slug}`)
+}
 ---
 
 <html lang="en">
   <head>
-    <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{project.title} — Ariane</title>
   </head>
   <body class="min-h-dvh bg-white text-neutral-900 antialiased">
     <main class="mx-auto max-w-3xl px-6 py-10">
       <a href="/work" class="text-sm text-neutral-500 hover:underline">← Back to Work</a>
+
       <h1 class="mt-4 text-4xl font-semibold">{project.title}</h1>
       {project.year && <p class="mt-1 text-neutral-500">{project.year}</p>}
 
@@ -48,11 +51,15 @@ if (!project) throw new Error('Project not found')
                 loading="lazy"
                 class="rounded-lg"
               />
-              {img.caption && <figcaption class="mt-2 text-sm text-neutral-500">{img.caption}</figcaption>}
+              {img.caption && (
+                <figcaption class="mt-2 text-sm text-neutral-500">{img.caption}</figcaption>
+              )}
             </figure>
           ))}
         </section>
       )}
+
+      {/* TODO: render rich text `project.body` with your preferred renderer later */}
     </main>
   </body>
 </html>
