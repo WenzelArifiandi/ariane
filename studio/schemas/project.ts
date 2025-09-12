@@ -20,26 +20,34 @@ export default defineType({
     defineField({ name: 'featured', type: 'boolean' }),
 
     defineField({
-      name: 'hero',
-      type: 'image',
-      options: { hotspot: true },
-      fields: [{ name: 'alt', type: 'string' }],
-      components: { input: HeicImageInput },
-    }),
+  name: 'hero',
+  type: 'image',
+  options: { hotspot: true },
+  fields: [{ name: 'alt', type: 'string' }],
+  // ⬇️ validation: require asset on publish
+  validation: (Rule) =>
+    Rule.custom((val) => (val?.asset?._ref ? true : 'Hero image is required')),
+}),
 
     defineField({
-      name: 'gallery',
-      title: 'Gallery',
-      type: 'array',
-      of: [
-        {
-          type: 'image',
-          options: { hotspot: true },
-          fields: [{ name: 'caption', type: 'string' }],
-          components: { input: HeicImageInput },
-        },
-      ],
-    }),
+  name: 'gallery',
+  title: 'Gallery',
+  type: 'array',
+  of: [
+    {
+      type: 'image',
+      options: { hotspot: true },
+      fields: [{ name: 'caption', type: 'string' }],
+    },
+  ],
+  // ⬇️ validation: every item must have an asset
+  validation: (Rule) =>
+    Rule.custom((items) =>
+      (items || []).every((i) => i?.asset?._ref)
+        ? true
+        : 'All gallery images must be uploaded (no empty items).'
+    ),
+}),
 
     defineField({
       name: 'body',
