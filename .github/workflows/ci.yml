@@ -40,3 +40,7 @@ jobs:
 
       - name: Build
         run: npm run build
+
+      - name: Run Lighthouse CI performance audit
+        continue-on-error: true
+        run: npx lhci autorun --staticDistDir=dist
