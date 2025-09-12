@@ -1,33 +1,53 @@
 ---
-import Base from '../../layouts/Base.astro'
-import { client } from '../../lib/sanity'
-import { allProjects } from '../../lib/queries'
-import { urlFor } from '../../lib/sanity'
+/**
+ * Base layout
+ * Accepts either:
+ *  - title / description props, or
+ *  - a `page` object: { title, description, url, image }
+ */
+import '../../styles/global.css' // adjust the relative path if needed
 
-type Project = {
-  slug: string
-  title: string
-  year?: number
-  hero?: any
+interface PageMeta {
+  title?: string
+  description?: string
+  url?: string
+  image?: string
 }
 
-const projects = await client.fetch<Project[]>(allProjects)
+interface Props {
+  title?: string
+  description?: string
+  page?: PageMeta
+}
+
+const { title, description, page } = Astro.props as Props
+
+const meta: PageMeta = {
+  title: page?.title ?? title ?? 'Ariane',
+  description: page?.description ?? description ?? 'Portfolio of Wenzel Arifiandi',
+  url: page?.url,
+  image: page?.image,
+}
 ---
-<Base title="Work — Ariane" description="Selected projects and case studies.">
-  <h1 class="text-4xl font-semibold">Work</h1>
-  <ul class="mt-8 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-    {projects.map((p: Project) => (
-      <li class="group">
-        <a href={`/work/${p.slug}`} class="block">
-          {p.hero && <img
-            src={urlFor(p.hero).width(800).height(600).fit('crop').auto('format').url()}
-            alt={p.hero.alt} loading="lazy" class="aspect-[4/3] w-full object-cover rounded-lg" />}
-          <div class="mt-3">
-            <h2 class="text-xl font-medium group-hover:underline">{p.title}</h2>
-            {p.year && <p class="text-sm text-neutral-500">{p.year}</p>}
-          </div>
-        </a>
-      </li>
-    ))}
-  </ul>
-</Base>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{meta.title}</title>
+    {meta.description && <meta name="description" content={meta.description} />}
+
+    {/* OpenGraph / Twitter minimal set */}
+    <meta property="og:title" content={meta.title} />
+    {meta.description && <meta property="og:description" content={meta.description} />}
+    {meta.url && <meta property="og:url" content={meta.url} />}
+    {meta.image && <meta property="og:image" content={meta.image} />}
+    <meta name="twitter:card" content={meta.image ? 'summary_large_image' : 'summary'} />
+
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  </head>
+  <body class="min-h-dvh bg-white text-neutral-900 antialiased font-sans">
+    <main class="mx-auto max-w-6xl px-6 py-16">
+      <slot />
+    </main>
+  </body>
+</html>

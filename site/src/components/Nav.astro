@@ -1,56 +1,45 @@
 ---
 const links = [
-  { href: "#work", label: "Work" },
-  { href: "#about", label: "About" },
-  { href: "#contact", label: "Contact" },
+  { label: 'Work', href: '#work' },
+  { label: 'About', href: '#about' },
+  { label: 'Contact', href: '#contact' },
 ]
 ---
-<header class="sticky top-0 z-50 bg-white/80 backdrop-blur border-b border-neutral-200">
-  <nav class="mx-auto max-w-6xl px-6 h-14 flex items-center justify-between">
-    <a href="#top" class="font-semibold tracking-tight">Ariane</a>
-    <ul class="flex items-center gap-6 text-sm">
-      {links.map((l) => (
-        <li>
-          <a data-nav href={l.href} class="text-neutral-500 hover:text-neutral-900 transition-colors">
-            {l.label}
-          </a>
-        </li>
-      ))}
-    </ul>
-  </nav>
-</header>
 
-<script>
-// @ts-nocheck  ← tell VS Code to chill on this script
+<nav class="nav glass">
+  <a href="/" class="brand">Ariane</a>
+  <ul class="links">
+    {links.map((l) => (
+      <li><a href={l.href}>{l.label}</a></li>
+    ))}
+  </ul>
+</nav>
 
-document.addEventListener('DOMContentLoaded', () => {
-  const navLinks = Array.from(document.querySelectorAll('a[data-nav]'))
-  const sections = Array.from(document.querySelectorAll('section[data-section]'))
-
-  const setActive = (hash) => {
-    navLinks.forEach((a) => {
-      const active = a.getAttribute('href') === hash
-      a.classList.toggle('text-neutral-900', active)
-      a.classList.toggle('text-neutral-500', !active)
-    })
+<style>
+  .nav {
+    position: sticky; top: 0; z-index: 50;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: .75rem 1rem; border-radius: 999px;
+    margin: .75rem auto; max-width: 1100px;
   }
-
-  const io = new IntersectionObserver(
-    (entries) => {
-      const seen = entries
-        .filter((e) => e.isIntersecting)
-        .sort((a, b) => b.intersectionRatio - a.intersectionRatio)
-      if (seen[0]) {
-        const id = seen[0].target && seen[0].target.id
-        if (id) setActive('#' + id)
-      }
-    },
-    { rootMargin: '-45% 0% -45% 0%', threshold: [0.1, 0.25, 0.5, 0.75] },
-  )
-
-  sections.forEach((s) => io.observe(s))
-  navLinks.forEach((a) =>
-    a.addEventListener('click', () => setActive(a.getAttribute('href') || '')),
-  )
-})
-</script>
+  .glass {
+    background: linear-gradient(to bottom, rgba(255,255,255,.7), rgba(255,255,255,.5));
+    backdrop-filter: saturate(140%) blur(10px);
+    -webkit-backdrop-filter: saturate(140%) blur(10px);
+    border: 1px solid rgba(255,255,255,.35);
+    box-shadow: 0 8px 24px rgba(0,0,0,.06);
+  }
+  .brand {
+    font-weight: 700;
+    letter-spacing: .2px;
+    color: var(--ink);
+  }
+  .links { display: flex; gap: 1rem; align-items: center; }
+  .links a {
+    color: var(--ink);
+    opacity: .8;
+    text-decoration: none;
+    font-weight: 600;
+  }
+  .links a:hover { opacity: 1; }
+</style>

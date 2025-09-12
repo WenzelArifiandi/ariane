@@ -1,0 +1,92 @@
+---
+import Base from '../../src/layouts/Base.astro'
+---
+
+<Base title="Design Playground — Ariane">
+  <section class="mx-auto max-w-6xl px-6 py-10 space-y-12">
+    <header>
+      <h1 style="font-size: var(--h1); line-height:1.1; font-weight:700">Design Playground</h1>
+      <p class="mt-3" style="font-size: var(--body); color:#555">
+        Tweak tokens in <code>:root</code> (Base.astro) and watch this page update instantly.
+      </p>
+    </header>
+
+    <!-- Colors -->
+    <div>
+      <h2 class="font-semibold" style="font-size: var(--h2);">Palette</h2>
+      <div class="mt-4 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
+        {[
+          ['Ink','--ink'],
+          ['Ivory','--ivory'],
+          ['Wisteria','--wisteria'],
+          ['Soft Lilac','--lilac'],
+          ['Silver','--silver'],
+        ].map(([label,varName]) => (
+          <div class="border border-neutral-200 rounded-xl overflow-hidden">
+            <div style={`height:80px;background:var(${varName});`} />
+            <div class="px-3 py-2 text-sm">
+              <div class="font-medium">{label}</div>
+              <div class="text-neutral-500">{varName}</div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+
+    <!-- Typography -->
+    <div>
+      <h2 class="font-semibold" style="font-size: var(--h2);">Type Scale</h2>
+      <div class="mt-4 space-y-6">
+        <div>
+          <div class="chip">H1</div>
+          <h1 class="mt-2" style="font-size: var(--h1); line-height:1.1; font-weight:700">
+            Ariane — editorial, calm, confident
+          </h1>
+        </div>
+        <div>
+          <div class="chip">H2</div>
+          <h2 class="mt-2" style="font-size: var(--h2); line-height:1.2; font-weight:600">
+            Subheading looks like this
+          </h2>
+        </div>
+        <div>
+          <div class="chip">Body</div>
+          <p class="mt-2 max-w-prose" style="font-size: var(--body); line-height:1.75">
+            Change <code>--body</code> in <code>Base.astro</code> to see body text update in real time.
+            This mirrors the feel you liked from Flutter’s hot reload: no deploys, no builds — just save.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Components -->
+    <div>
+      <h2 class="font-semibold" style="font-size: var(--h2);">Components</h2>
+      <div class="mt-4 grid gap-6 sm:grid-cols-2">
+        <div class="p-5 border border-neutral-200 rounded-xl">
+          <div class="text-sm text-neutral-500">Button</div>
+          <div class="mt-3">
+            <a href="#" class="btn">Primary Action</a>
+          </div>
+        </div>
+
+        <div class="p-5 border border-neutral-200 rounded-xl">
+          <div class="text-sm text-neutral-500">Card</div>
+          <div class="mt-3 card overflow-hidden">
+            <div style="background:var(--ivory);height:120px;"></div>
+            <div class="p-4">
+              <div class="chip">Tag</div>
+              <h3 class="mt-2 font-semibold">Project title</h3>
+              <p class="mt-1 text-neutral-600">Small supporting copy to preview the vibe.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Links -->
+    <footer class="pt-2 border-t border-neutral-200">
+      <a href="/" class="accent underline">← Back to Home</a>
+    </footer>
+  </section>
+</Base>

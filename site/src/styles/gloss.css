@@ -1,0 +1,80 @@
+/* site/src/styles/gloss.css */
+
+/* ——— Glossy Cards ——— */
+.card--gloss {
+  position: relative;
+  overflow: hidden;
+  background: color-mix(in oklab, var(--page), black 2%);
+  backdrop-filter: saturate(1.05);
+  isolation: isolate;
+}
+.card--gloss::before {
+  /* soft radial “sheen” */
+  content: "";
+  position: absolute; inset: -20% -10% auto -10%; height: 65%;
+  background:
+    radial-gradient(120% 70% at 50% 0%,
+      color-mix(in oklab, var(--sakura), white 45%) 0%,
+      transparent 55%);
+  opacity: .38;
+  pointer-events: none;
+  filter: blur(8px);
+}
+.card--gloss::after {
+  /* faint diagonal glare that nudges on hover */
+  content: "";
+  position: absolute; inset: -20% -40% auto -40%; height: 50%;
+  transform: rotate(-10deg);
+  background:
+    linear-gradient( to bottom,
+      rgba(255,255,255,.55) 0%,
+      rgba(255,255,255,.25) 25%,
+      rgba(255,255,255,0) 60% );
+  opacity: .18;
+  transition: transform .35s cubic-bezier(.2,.7,.2,1), opacity .25s ease;
+  pointer-events: none;
+}
+.card--gloss:hover::after {
+  transform: rotate(-8deg) translateY(-6px);
+  opacity: .24;
+}
+
+/* ——— Specular CTA ——— */
+.btn--specular {
+  position: relative;
+  overflow: hidden;
+}
+.btn--specular::before {
+  /* animated 1px specular line sweeping on hover */
+  content: "";
+  position: absolute; inset: 2px; border-radius: 999px;
+  background:
+    linear-gradient(180deg,
+      rgba(255,255,255,.65) 0%,
+      rgba(255,255,255,.25) 42%,
+      rgba(255,255,255,0) 100%);
+  mix-blend-mode: screen;
+  opacity: .0;
+  transition: opacity .18s ease;
+  pointer-events: none;
+}
+.btn--specular::after {
+  /* moving glint */
+  content: "";
+  position: absolute; top: -30%; bottom: -30%; width: 14%;
+  left: -20%;
+  background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,.85) 50%, transparent 100%);
+  filter: blur(4px);
+  transform: skewX(-18deg);
+  opacity: 0;
+  transition: transform .6s cubic-bezier(.2,.7,.2,1), opacity .2s ease;
+  pointer-events: none;
+}
+.btn--specular:hover::before { opacity: .9; }
+.btn--specular:hover::after { transform: translateX(320%) skewX(-18deg); opacity: .85; }
+
+/* accessibility: respect reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .card--gloss::after,
+  .btn--specular::after { transition: none; }
+}

@@ -1,8 +1,43 @@
+/* Design tokens */
+:root {
+  /* Core neutrals */
+  --ink: #101114;
+  --page: #ffffff;
+
+  /* Palette */
+  --wisteria: #8b7cf0;
+  --lilac: #eee9ff;
+  --salmon: #ff8e7a;
+  --sakura: #ffd5dc;
+  /* Gentle mauve (not dead, not neon) */
+  --mauve: #b99ad9;
+
+  /* Type scale */
+  --h1: clamp(2.5rem, 3vw + 1rem, 4rem);
+  --h2: clamp(1.5rem, 1.5vw + 1rem, 2rem);
+  --body: clamp(1rem, 0.2vw + 0.9rem, 1.125rem);
+
+  /* Radii / shadow */
+  --radius: 12px;
+  --shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+}
+/* --- Global system font fallback (instant everywhere) --- */
+html {
+  font-family:
+    ui-sans-serif, system-ui, -apple-system, "SF Pro Text", "SF Pro Display",
+    "Segoe UI", Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+}
+/* src/styles/global.css */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-html {
-  scroll-behavior: smooth;
-  /* offset so anchors aren't hidden beneath the sticky header */
-  scroll-padding-top: 3.5rem; /* matches ~h-14 header */
+
+@layer base {
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    font-feature-settings: "kern","liga","clig","calt";
+  }
 }

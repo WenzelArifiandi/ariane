@@ -1,36 +1,90 @@
 ---
 import '../styles/global.css'
-import Nav from '../components/Nav.astro'
-import { seoMeta } from '../lib/seo'
+import '../styles/gloss.css'
 
-const {
-  title = 'Ariane',
-  description = 'Design portfolio — built with Astro + Sanity + Vercel.',
-  ogImage = '/og-default.jpg',
-  pathname = '',
-} = Astro.props
+interface Props {
+  title?: string
+  description?: string
+  ogImage?: string
+  pathname?: string
+}
 
-const siteUrl = Astro.site ? String(Astro.site) : 'https://ariane.vercel.app'
-const url = new URL(pathname || Astro.url?.pathname || '/', siteUrl).toString()
+const { title, description, ogImage, pathname } = Astro.props as Props
+
+// Site defaults
+const siteTitle = 'Ariane'
+const siteDescription = 'A personal website by Wenzel Arifiandi'
+const siteUrl = 'https://ariane.wenzelarifiandi.com'
+const siteImage = '/og.png'
+
+// Computed per-page values
+const pageTitle = title ? `${title} — ${siteTitle}` : siteTitle
+const pageDescription = description ?? siteDescription
+const pageImage = ogImage ? new URL(ogImage, siteUrl).toString() : new URL(siteImage, siteUrl).toString()
+const pageUrl = pathname ? new URL(pathname, siteUrl).toString() : siteUrl
 ---
-<html lang="en" class="bg-white text-neutral-900 antialiased">
+
+<!DOCTYPE html>
+<html lang="en" class="antialiased">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>{title}</title>
-    <!-- SEO -->
-    <Fragment set:html={seoMeta({ title, description, url, image: ogImage })} />
+
+    <title>{pageTitle}</title>
+    <meta name="description" content={pageDescription} />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={pageDescription} />
+    <meta property="og:image" content={pageImage} />
+    <meta property="og:url" content={pageUrl} />
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={pageTitle} />
+    <meta name="twitter:description" content={pageDescription} />
+    <meta name="twitter:image" content={pageImage} />
+
+    <link rel="canonical" href={pageUrl} />
     <link rel="icon" href="/favicon.ico" />
+
+    <!-- Base styles -->
+    <style>
+      html { scroll-behavior: smooth; }
+      body { background: var(--page); color: var(--ink); }
+
+      .card {
+        border-radius: var(--radius);
+        box-shadow: var(--shadow);
+      }
+      .accent { color: var(--wisteria); }
+
+      .btn {
+        display:inline-flex; align-items:center; gap:.5rem;
+        padding:.7rem 1rem; border-radius:999px;
+        background: linear-gradient(135deg,
+          color-mix(in oklab, var(--wisteria), white 6%),
+          color-mix(in oklab, var(--wisteria), black 6%)
+        );
+        color:white; font-weight:650; text-decoration:none;
+        transition: transform .18s ease-out, filter .18s ease-out;
+        position: relative;
+      }
+      .btn::after {
+        content:""; position:absolute; inset:0; border-radius:inherit;
+        background: linear-gradient(to bottom, rgba(255,255,255,.35), transparent 40%);
+        mix-blend-mode: soft-light; pointer-events:none;
+      }
+      .btn:hover { transform: translateY(-1px); filter: brightness(1.04); }
+
+      .chip {
+        display:inline-block; padding:.25rem .6rem; border-radius:999px;
+        background: var(--lilac); color:#4b3ea6; font-weight:500;
+      }
+    </style>
   </head>
   <body>
-    <Nav />
-    <main class="mx-auto max-w-6xl px-6 py-10">
-      <slot />
-    </main>
-    <footer class="border-t border-neutral-200 mt-20">
-      <div class="mx-auto max-w-6xl px-6 py-10 text-sm text-neutral-500">
-        © {new Date().getFullYear()} Ariane. Built with Astro + Sanity + Vercel.
-      </div>
-    </footer>
+    <slot />
   </body>
 </html>
