@@ -2,9 +2,11 @@
 import Base from '../layouts/Base.astro'
 import { client } from '../lib/sanity'
 import groq from 'groq'
+import { toHTML } from '@portabletext/to-html'
 
 const aboutQuery = groq`*[_type == "about"][0]{ bio, headshot, skills, "headshotUrl": headshot.asset->url }`
-const about = await client.fetch(aboutQuery)
+const about: any = await client.fetch(aboutQuery)
+const html = about?.bio ? toHTML(about.bio as any) : ''
 ---
 <Base title="About — Ariane" description="About the designer.">
   <h1 class="text-4xl font-semibold">About</h1>
@@ -12,22 +14,30 @@ const about = await client.fetch(aboutQuery)
   {about ? (
     <>
       {about.headshotUrl && (
-        <img src={about.headshotUrl + '?w=800&auto=format'} alt="Headshot" class="mt-6 w-40 h-40 rounded-full object-cover" />
+        <img
+          src={about.headshotUrl + '?w=800&auto=format'}
+          alt="Headshot"
+          class="mt-6 w-40 h-40 rounded-full object-cover"
+        />
       )}
-      {about.bio && (
-        <div class="prose prose-neutral mt-6">
-          {about.bio.map((block: any) => (
-            <p set:html={block.children?.map((c: any) => c.text).join(' ') ?? ''}></p>
-          ))}
-        </div>
+
+      {about.bio ? (
+        <div class="prose prose-neutral mt-6" set:html={html}></div>
+      ) : (
+        <p class="mt-6 text-neutral-500">Add your bio in the <code>About</code> document.</p>
       )}
+
       {about.skills?.length > 0 && (
         <ul class="mt-6 flex flex-wrap gap-2 text-sm text-neutral-600">
-          {about.skills.map((s: string) => <li class="rounded-full border px-3 py-1">{s}</li>)}
+          {about.skills.map((s: string) => (
+            <li class="rounded-full border px-3 py-1">{s}</li>
+          ))}
         </ul>
       )}
     </>
   ) : (
-    <p class="mt-6 text-neutral-500">Fill the <code>About</code> document in Studio to populate this page.</p>
+    <p class="mt-6 text-neutral-500">
+      Fill the <code>About</code> document in Studio to populate this page.
+    </p>
   )}
 </Base>
