@@ -1,4 +1,5 @@
 import { defineField, defineType } from 'sanity'
+import { HeicImageInput } from '../components/HeicImageInput'
 
 export default defineType({
   name: 'project',
@@ -6,13 +7,26 @@ export default defineType({
   title: 'Project',
   fields: [
     defineField({ name: 'title', type: 'string', validation: r => r.required() }),
-    defineField({ name: 'slug', type: 'slug', options: { source: 'title', maxLength: 96 }, validation: r => r.required() }),
+    defineField({
+      name: 'slug',
+      type: 'slug',
+      options: { source: 'title', maxLength: 96 },
+      validation: r => r.required(),
+    }),
     defineField({ name: 'year', type: 'number' }),
     defineField({ name: 'role', type: 'string' }),
     defineField({ name: 'summary', type: 'text' }),
     defineField({ name: 'tags', type: 'array', of: [{ type: 'string' }] }),
     defineField({ name: 'featured', type: 'boolean' }),
-    defineField({ name: 'hero', type: 'image', options: { hotspot: true }, fields: [{ name: 'alt', type: 'string' }] }),
+
+    defineField({
+      name: 'hero',
+      type: 'image',
+      options: { hotspot: true },
+      fields: [{ name: 'alt', type: 'string' }],
+      components: { input: HeicImageInput },
+    }),
+
     defineField({
       name: 'gallery',
       title: 'Gallery',
@@ -21,18 +35,24 @@ export default defineType({
         {
           type: 'image',
           options: { hotspot: true },
-          fields: [{ name: 'caption', type: 'string' }]
-        }
-      ]
+          fields: [{ name: 'caption', type: 'string' }],
+          components: { input: HeicImageInput },
+        },
+      ],
     }),
+
     defineField({
       name: 'body',
       title: 'Case Study',
       type: 'array',
       of: [
         { type: 'block' },
-        { type: 'image', options: { hotspot: true }, fields: [{ name: 'caption', type: 'string' }] }
-      ]
-    })
-  ]
+        {
+          type: 'image',
+          options: { hotspot: true },
+          fields: [{ name: 'caption', type: 'string' }],
+        },
+      ],
+    }),
+  ],
 })

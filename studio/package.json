@@ -15,10 +15,15 @@
     "sanity"
   ],
   "dependencies": {
+    "@sanity/client": "^7.11.1",
     "@sanity/vision": "^4.8.1",
+    "busboy": "^1.6.0",
+    "formidable": "^3.5.4",
+    "heic2any": "^0.0.4",
     "react": "^19.1",
     "react-dom": "^19.1",
     "sanity": "^4.8.1",
+    "sharp": "^0.34.3",
     "styled-components": "^6.1.18"
   },
   "devDependencies": {
