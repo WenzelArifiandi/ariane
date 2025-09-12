@@ -17,6 +17,7 @@
     "groq": "^4.8.1"
   },
   "devDependencies": {
+    "@tailwindcss/postcss": "^4.1.13",
     "@typescript-eslint/eslint-plugin": "^8.43.0",
     "@typescript-eslint/parser": "^8.43.0",
     "autoprefixer": "^10.4.21",
