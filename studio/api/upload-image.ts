@@ -7,22 +7,16 @@ const projectId = process.env.SANITY_PROJECT_ID
 const dataset = process.env.SANITY_DATASET
 const token = process.env.SANITY_API_TOKEN
 
-if (!projectId || !dataset || !token) {
-  console.warn('[upload-image] Missing SANITY_* env vars')
-}
-
 const client = createClient({
-  projectId,
-  dataset,
-  token,            // server-side only
+  projectId: projectId!,
+  dataset: dataset!,
+  token: token!,            // server-side only
   apiVersion: '2023-10-01',
   useCdn: false,
 })
 
 function cors(req: VercelRequest, res: VercelResponse) {
-  // Since this API runs on the Studio domain (same origin), this is mostly a noop.
-  // Keeping permissive headers for safety if you open it cross-origin later.
-  const origin = req.headers.origin || '*'
+  const origin = (req.headers.origin as string) || '*'
   res.setHeader('Access-Control-Allow-Origin', origin)
   res.setHeader('Vary', 'Origin')
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS')
@@ -36,13 +30,13 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   try {
     const file: { buffer: Buffer; filename: string; mime: string } = await new Promise((resolve, reject) => {
-      const bb = Busboy({ headers: req.headers })
-      let chunks: Buffer[] = []
+      const bb = Busboy({ headers: req.headers as Record<string, string> })
+      const chunks: Buffer[] = []
       let filename = 'upload'
       let mime = 'application/octet-stream'
       let gotFile = false
 
-      bb.on('file', (_name, stream, info) => {
+      bb.on('file', (_name: string, stream: NodeJS.ReadableStream, info: { filename: string; mimeType: string; encoding: string }) => {
         gotFile = true
         filename = info.filename || filename
         mime = info.mimeType || mime
@@ -60,34 +54,32 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       req.pipe(bb)
     })
 
-    const isHeic =
-      /image\/hei[cf]/i.test(file.mime) ||
-      /\.hei[cf]$/i.test(file.filename)
+    if (!projectId || !dataset || !token) {
+      return res.status(500).json({ error: 'Missing SANITY_* environment variables' })
+    }
+
+    const isHeic = /image\\/hei[cf]/i.test(file.mime) || /\\.hei[cf]$/i.test(file.filename)
 
     let outBuffer = file.buffer
     let outName = file.filename
     let outMime = file.mime
 
     if (isHeic) {
-      // Convert HEIC/HEIF to WebP (or JPEG as fallback if needed)
       try {
         outBuffer = await sharp(file.buffer, { unlimited: true }).toFormat('webp', { quality: 92 }).toBuffer()
-        outName = file.filename.replace(/\.(heic|heif)$/i, '') + '.webp'
+        outName = file.filename.replace(/\\.(heic|heif)$/i, '') + '.webp'
         outMime = 'image/webp'
       } catch {
-        // Fallback to JPEG if libvips can’t webp-encode this variant
         outBuffer = await sharp(file.buffer, { unlimited: true }).jpeg({ quality: 92 }).toBuffer()
-        outName = file.filename.replace(/\.(heic|heif)$/i, '') + '.jpg'
+        outName = file.filename.replace(/\\.(heic|heif)$/i, '') + '.jpg'
         outMime = 'image/jpeg'
       }
     }
 
-    // Upload to Sanity as an image asset
     const asset = await client.assets.upload('image', outBuffer, { filename: outName, contentType: outMime })
-
-    return res.status(200).json({ assetId: asset._id, url: asset.url })
+    return res.status(200).json({ assetId: asset._id, url: (asset as any).url })
   } catch (err: any) {
     console.error('[upload-image] error:', err)
-    return res.status(400).json({ error: err?.message || 'Upload failed' })
+    return res.status(500).json({ error: err?.message || 'Upload failed' })
   }
 }

@@ -28,7 +28,9 @@
   },
   "devDependencies": {
     "@sanity/eslint-config-studio": "^5.0.2",
+    "@types/busboy": "^1.5.4",
     "@types/react": "^19.1",
+    "@vercel/node": "^5.3.22",
     "eslint": "^9.28",
     "prettier": "^3.5",
     "typescript": "^5.8"
