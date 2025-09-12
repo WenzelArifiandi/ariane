@@ -1,0 +1,14 @@
+cd /Users/wenzelarifiandi/ariane/ariane
+cat > .stylelintignore << 'EOF'
+**/*.js
+**/*.cjs
+**/*.mjs
+**/*.ts
+**/*.tsx
+**/*.jsx
+**/*.json
+**/*.md
+**/*.yml
+**/*.yaml
+**/*.astro
+EOF
