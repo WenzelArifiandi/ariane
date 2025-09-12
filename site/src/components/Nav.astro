@@ -34,7 +34,12 @@ const links = [
     letter-spacing: .2px;
     color: var(--ink);
   }
-  .links { display: flex; gap: 1rem; align-items: center; }
+  .links {
+    display: flex; gap: 1rem; align-items: center;
+    list-style: none; /* remove bullets */
+    margin: 0; padding: 0; /* remove default UL indent */
+  }
+  .links li { list-style: none; }
   .links a {
     color: var(--ink);
     opacity: .8;
@@ -42,4 +47,15 @@ const links = [
     font-weight: 600;
   }
   .links a:hover { opacity: 1; }
+  /* — minimal fixes only — */
+
+/* 1) Kill underline on the brand link (e.g., “Ariane”) */
+.brand {
+  text-decoration: none !important;
+}
+.brand:hover,
+.brand:focus,
+.brand:focus-visible {
+  text-decoration: none !important;
+}
 </style>
