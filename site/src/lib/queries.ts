@@ -8,7 +8,6 @@ export const allProjects = groq`*[_type == "project"] | order(featured desc, yea
 export const projectBySlug = groq`*[_type == "project" && slug.current == $slug][0]{
   _id, title, "slug": slug.current, year, role, summary, tags, featured,
   hero{..., "alt": coalesce(alt, title)},
-  // ⬇️ only items that actually have an asset
   gallery[defined(asset)]{..., "alt": coalesce(alt, ^.^.title)},
   body
 }`
