@@ -58,7 +58,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       return res.status(500).json({ error: 'Missing SANITY_* environment variables' })
     }
 
-    const isHeic = /image\\/hei[cf]/i.test(file.mime) || /\\.hei[cf]$/i.test(file.filename)
+    const isHeic = /image\/hei[cf]/i.test(file.mime) || /\.hei[cf]$/i.test(file.filename)
 
     let outBuffer = file.buffer
     let outName = file.filename
