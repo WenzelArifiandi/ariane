@@ -1,64 +1,47 @@
 ---
-import '../../styles/global.css'
+import Base from '../../layouts/Base.astro'
 import { client } from '../../lib/sanity'
 import { projectBySlug, allProjects } from '../../lib/queries'
 import { urlFor } from '../../lib/sanity'
 
-// Build-time prerender of all project pages
 export async function getStaticPaths() {
   const projects = await client.fetch(allProjects)
-  return projects
-    .filter((p: any) => p?.slug)
-    .map((p: any) => ({ params: { slug: p.slug } }))
+  return projects.map((p: any) => ({ params: { slug: p.slug } }))
 }
 
 const { slug } = Astro.params
 const project = await client.fetch(projectBySlug, { slug })
 if (!project) throw new Error('Project not found')
 ---
+<Base title={`${project.title} — Ariane`} description={project.summary ?? ''} ogImage={project.hero ? urlFor(project.hero).width(1600).fit('max').auto('format').url() : undefined} pathname={`/work/${project.slug}`}>
+  <a href="/work" class="text-sm text-neutral-500 hover:underline">← Back to Work</a>
+  <h1 class="mt-4 text-4xl font-semibold">{project.title}</h1>
+  {project.year && <p class="mt-1 text-neutral-500">{project.year}</p>}
 
-<html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>{project.title} — Ariane</title>
-  </head>
-  <body class="min-h-dvh bg-white text-neutral-900 antialiased">
-    <main class="mx-auto max-w-3xl px-6 py-10">
-      <a href="/work" class="text-sm text-neutral-500 hover:underline">← Back to Work</a>
-      <h1 class="mt-4 text-4xl font-semibold">{project.title}</h1>
-      {project.year && <p class="mt-1 text-neutral-500">{project.year}</p>}
+  {project.hero && (
+    <img
+      src={urlFor(project.hero).width(1600).fit('max').auto('format').url()}
+      alt={project.hero.alt}
+      class="mt-8 rounded-xl"
+      loading="eager"
+    />
+  )}
 
-      {project.hero?.asset?._ref && (
-        <img
-          src={urlFor(project.hero).width(1600).fit('max').auto('format').url()}
-          alt={project.hero.alt}
-          class="mt-8 rounded-xl"
-          loading="eager"
-        />
-      )}
+  {project.summary && <p class="mt-6 text-lg text-neutral-700">{project.summary}</p>}
 
-      {project.summary && <p class="mt-6 text-lg text-neutral-700">{project.summary}</p>}
-
-      {(project.gallery?.filter((g: any) => g?.asset?._ref) || []).length > 0 && (
-        <section class="mt-10 grid gap-6 sm:grid-cols-2">
-          {project.gallery
-            .filter((img: any) => img?.asset?._ref)
-            .map((img: any) => (
-              <figure>
-                <img
-                  src={urlFor(img).width(1200).fit('max').auto('format').url()}
-                  alt={img.alt ?? project.title}
-                  loading="lazy"
-                  class="rounded-lg"
-                />
-                {img.caption && (
-                  <figcaption class="mt-2 text-sm text-neutral-500">{img.caption}</figcaption>
-                )}
-              </figure>
-            ))}
-        </section>
-      )}
-    </main>
-  </body>
-</html>
+  {project.gallery?.length > 0 && (
+    <section class="mt-10 grid gap-6 sm:grid-cols-2">
+      {project.gallery.map((img: any) => (
+        <figure>
+          <img
+            src={urlFor(img).width(1200).fit('max').auto('format').url()}
+            alt={img.alt ?? project.title}
+            loading="lazy"
+            class="rounded-lg"
+          />
+          {img.caption && <figcaption class="mt-2 text-sm text-neutral-500">{img.caption}</figcaption>}
+        </figure>
+      ))}
+    </section>
+  )}
+</Base>

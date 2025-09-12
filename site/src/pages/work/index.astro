@@ -1,48 +1,33 @@
 ---
-import '../../styles/global.css'
+import Base from '../../layouts/Base.astro'
 import { client } from '../../lib/sanity'
 import { allProjects } from '../../lib/queries'
 import { urlFor } from '../../lib/sanity'
 
-const projects: any[] = await client.fetch(allProjects)
+type Project = {
+  slug: string
+  title: string
+  year?: number
+  hero?: any
+}
+
+const projects = await client.fetch<Project[]>(allProjects)
 ---
-
-<html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Work — Ariane</title>
-  </head>
-  <body class="min-h-dvh bg-white text-neutral-900 antialiased">
-    <main class="mx-auto max-w-6xl px-6 py-16">
-      <h1 class="text-4xl font-semibold">Work</h1>
-
-      {(projects?.length ?? 0) === 0 && (
-        <p class="mt-6 text-neutral-600">No projects yet. Publish one in Studio to see it here.</p>
-      )}
-
-      {(projects?.length ?? 0) > 0 && (
-        <ul class="mt-8 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-          {projects.map((p: any) => (
-            <li class="group">
-              <a href={`/work/${p.slug}`} class="block">
-                {p?.hero?.asset?._ref && (
-                  <img
-                    src={urlFor(p.hero).width(800).height(600).fit('crop').auto('format').url()}
-                    alt={p.hero.alt}
-                    loading="lazy"
-                    class="aspect-[4/3] w-full object-cover rounded-lg"
-                  />
-                )}
-                <div class="mt-3">
-                  <h2 class="text-xl font-medium group-hover:underline">{p.title}</h2>
-                  {p.year && <p class="text-sm text-neutral-500">{p.year}</p>}
-                </div>
-              </a>
-            </li>
-          ))}
-        </ul>
-      )}
-    </main>
-  </body>
-</html>
+<Base title="Work — Ariane" description="Selected projects and case studies.">
+  <h1 class="text-4xl font-semibold">Work</h1>
+  <ul class="mt-8 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+    {projects.map((p: Project) => (
+      <li class="group">
+        <a href={`/work/${p.slug}`} class="block">
+          {p.hero && <img
+            src={urlFor(p.hero).width(800).height(600).fit('crop').auto('format').url()}
+            alt={p.hero.alt} loading="lazy" class="aspect-[4/3] w-full object-cover rounded-lg" />}
+          <div class="mt-3">
+            <h2 class="text-xl font-medium group-hover:underline">{p.title}</h2>
+            {p.year && <p class="text-sm text-neutral-500">{p.year}</p>}
+          </div>
+        </a>
+      </li>
+    ))}
+  </ul>
+</Base>

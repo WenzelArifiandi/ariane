@@ -1,15 +1,36 @@
 ---
-const { title = 'Ariane' } = Astro.props
+import '../styles/global.css'
+import Nav from '../components/Nav.astro'
+import { seoMeta } from '../lib/seo'
+
+const {
+  title = 'Ariane',
+  description = 'Design portfolio — built with Astro + Sanity + Vercel.',
+  ogImage = '/og-default.jpg',
+  pathname = '',
+} = Astro.props
+
+const siteUrl = Astro.site ? String(Astro.site) : 'https://ariane.vercel.app'
+const url = new URL(pathname || Astro.url?.pathname || '/', siteUrl).toString()
 ---
-<html lang="en">
+<html lang="en" class="bg-white text-neutral-900 antialiased">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{title}</title>
+    <!-- SEO -->
+    <Fragment set:html={seoMeta({ title, description, url, image: ogImage })} />
+    <link rel="icon" href="/favicon.ico" />
   </head>
-  <body class="min-h-dvh bg-white text-neutral-900 antialiased">
-    <main class="mx-auto max-w-6xl px-6 py-16">
+  <body>
+    <Nav />
+    <main class="mx-auto max-w-6xl px-6 py-10">
       <slot />
     </main>
+    <footer class="border-t border-neutral-200 mt-20">
+      <div class="mx-auto max-w-6xl px-6 py-10 text-sm text-neutral-500">
+        © {new Date().getFullYear()} Ariane. Built with Astro + Sanity + Vercel.
+      </div>
+    </footer>
   </body>
 </html>
