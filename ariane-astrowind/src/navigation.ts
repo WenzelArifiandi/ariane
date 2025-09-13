@@ -120,13 +120,11 @@ export const headerData = {
 
 export const footerData = {
   links: [],
-  secondaryLinks: [
-    { text: 'Terms', href: getPermalink('/terms') },
-    { text: 'Privacy Policy', href: getPermalink('/privacy') },
-  ],
+  // Hide Terms/Privacy links in the footer bar while keeping pages accessible
+  secondaryLinks: [],
   socialLinks: [
     { ariaLabel: 'Instagram', icon: 'tabler:brand-instagram', href: 'https://www.instagram.com/wenzelarifiandi/' },
-    { ariaLabel: 'LinkedIn', icon: 'tabler:brand-linkedin', href: 'https://www.linkedin.com/wenzelarifiandi/' },
+    { ariaLabel: 'LinkedIn', icon: 'tabler:brand-linkedin', href: 'https://www.linkedin.com/in/wenzelarifiandi/' },
     { ariaLabel: 'Github', icon: 'tabler:brand-github', href: 'https://github.com/WenzelArifiandi/ariane' },
   ],
   footNote: `
