@@ -1,11 +1,11 @@
 ---
-title: 'Terms and Conditions'
+title: 'Terms of Service'
 layout: '~/layouts/MarkdownLayout.astro'
 ---
 
-_Last updated_: January 06, 2023
+_Last updated_: September 2025
 
-Please read these terms and conditions carefully before using Our Service.
+Welcome to wenzelarifiandi.com (the "Website"). These Terms govern your use of the Website operated by Wenzel Arifiandi ("we", "us"). By using the Website, you agree to these Terms.
 
 ## Interpretation and Definitions
 
@@ -39,13 +39,9 @@ For the purposes of these Terms and Conditions:
 
 These are the Terms and Conditions governing the use of this Service and the agreement that operates between You and the Company. These Terms and Conditions set out the rights and obligations of all users regarding the use of the Service.
 
-Your access to and use of the Service is conditioned on Your acceptance of and compliance with these Terms and Conditions. These Terms and Conditions apply to all visitors, users and others who access or use the Service.
+Your access to and use of the Website is conditioned on your acceptance of and compliance with these Terms. If you disagree with any part, please do not use the Website.
 
-By accessing or using the Service You agree to be bound by these Terms and Conditions. If You disagree with any part of these Terms and Conditions then You may not access the Service.
-
-You represent that you are over the age of 18\. The Company does not permit those under 18 to use the Service.
-
-Your access to and use of the Service is also conditioned on Your acceptance of and compliance with the Privacy Policy of the Company. Our Privacy Policy describes Our policies and procedures on the collection, use and disclosure of Your personal information when You use the Application or the Website and tells You about Your privacy rights and how the law protects You. Please read Our Privacy Policy carefully before using Our Service.
+You represent that you are over the age of 18. Your use is also subject to our Privacy Policy, which explains what data we process and why.
 
 ## Links to Other Websites
 
@@ -57,15 +53,11 @@ We strongly advise You to read the terms and conditions and privacy policies of 
 
 ## Termination
 
-We may terminate or suspend Your access immediately, without prior notice or liability, for any reason whatsoever, including without limitation if You breach these Terms and Conditions.
-
-Upon termination, Your right to use the Service will cease immediately.
+We may terminate or suspend access immediately, without prior notice or liability, for any reason, including breach of these Terms. Upon termination, your right to use the Website ceases immediately.
 
 ## Limitation of Liability
 
-Notwithstanding any damages that You might incur, the entire liability of the Company and any of its suppliers under any provision of this Terms and Your exclusive remedy for all of the foregoing shall be limited to the amount actually paid by You through the Service or 100 USD if You haven't purchased anything through the Service.
-
-To the maximum extent permitted by applicable law, in no event shall the Company or its suppliers be liable for any special, incidental, indirect, or consequential damages whatsoever (including, but not limited to, damages for loss of profits, loss of data or other information, for business interruption, for personal injury, loss of privacy arising out of or in any way related to the use of or inability to use the Service, third-party software and/or third-party hardware used with the Service, or otherwise in connection with any provision of this Terms), even if the Company or any supplier has been advised of the possibility of such damages and even if the remedy fails of its essential purpose.
+To the maximum extent permitted by law, Wenzel Arifiandi shall not be liable for any indirect, incidental, special, consequential or punitive damages, or any loss of data or profits arising from your use of the Website.
 
 Some states do not allow the exclusion of implied warranties or limitation of liability for incidental or consequential damages, which means that some of the above limitations may not apply. In these states, each party's liability will be limited to the greatest extent permitted by law.
 
@@ -79,11 +71,11 @@ Some jurisdictions do not allow the exclusion of certain types of warranties or 
 
 ## Governing Law
 
-The laws of the Country, excluding its conflicts of law rules, shall govern this Terms and Your use of the Service. Your use of the Application may also be subject to other local, state, national, or international laws.
+These Terms are governed by applicable laws of your country of residence, without regard to conflict‑of‑law rules.
 
 ## Disputes Resolution
 
-If You have any concern or dispute about the Service, You agree to first try to resolve the dispute informally by contacting the Company.
+If you have any concern or dispute about the Website, please contact us first at hello@wenzelarifiandi.com and we will try to resolve it informally.
 
 ## For European Union (EU) Users
 
@@ -91,7 +83,7 @@ If You are a European Union consumer, you will benefit from any mandatory provis
 
 ## United States Legal Compliance
 
-You represent and warrant that (i) You are not located in a country that is subject to the United States government embargo, or that has been designated by the United States government as a "terrorist supporting" country, and (ii) You are not listed on any United States government list of prohibited or restricted parties.
+Nothing in these Terms restricts any rights you may have under applicable law.
 
 ## Severability and Waiver
 
@@ -105,16 +97,12 @@ Except as provided herein, the failure to exercise a right or to require perform
 
 ## Translation Interpretation
 
-These Terms and Conditions may have been translated if We have made them available to You on our Service. You agree that the original English text shall prevail in the case of a dispute.
+If these Terms are translated, the English version prevails in case of any inconsistency.
 
 ## Changes to These Terms and Conditions
 
-We reserve the right, at Our sole discretion, to modify or replace these Terms at any time. If a revision is material We will make reasonable efforts to provide at least 30 days' notice prior to any new terms taking effect. What constitutes a material change will be determined at Our sole discretion.
-
-By continuing to access or use Our Service after those revisions become effective, You agree to be bound by the revised terms. If You do not agree to the new terms, in whole or in part, please stop using the website and the Service.
+We may update these Terms from time to time. If changes are material, we will update the date above and may provide additional notice. Continued use of the Website after changes means you accept the revised Terms.
 
 ## Contact Us
 
-If you have any questions about these Terms and Conditions, You can contact us:
-
-- By email: somecoolemail@domain.com
+Questions about these Terms: hello@wenzelarifiandi.com
