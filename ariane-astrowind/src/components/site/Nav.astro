@@ -54,10 +54,9 @@ const studioHref = import.meta.env.DEV ? 'http://localhost:3333/' : 'https://stu
 
   async function refreshAuth() {
     try {
-      const res = await fetch('/api/auth/session');
-      const data = await res.json();
-      const authed = !!data?.authenticated;
-      if (studio) studio.style.display = authed ? '' : 'none';
+      // Auth endpoints are not enabled on the live site; keep Studio hidden.
+      if (studio) studio.style.display = 'none';
+      return;
     } catch {}
   }
 
@@ -69,5 +68,5 @@ const studioHref = import.meta.env.DEV ? 'http://localhost:3333/' : 'https://stu
     window.dispatchEvent(new CustomEvent('toggle-creator', { detail: { open: !open } }));
   });
 
-  (async () => { await refreshAuth(); })();
+  // (async () => { await refreshAuth(); })();
 </script>
