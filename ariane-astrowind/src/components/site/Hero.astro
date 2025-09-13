@@ -70,6 +70,13 @@ const ctaLabel = "See Work";
 
   /* Keep focus ring visible and un-clipped in the creator bar */
   .creator-bar .btn.m3:focus-visible { outline: none; box-shadow: 0 0 0 3px color-mix(in oklab, var(--md-sys-color-primary, #7150D9), white 35%); }
+
+  /* Fallback: if JS spring doesn't run, honor the HTML attribute toggle */
+  html[data-creator="open"] .creator-bar {
+    --p: 1;
+    max-height: 72px;
+    opacity: 1;
+  }
 </style>
 
 <script type="module">
