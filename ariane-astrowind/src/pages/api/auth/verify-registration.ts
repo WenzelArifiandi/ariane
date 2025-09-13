@@ -1,6 +1,6 @@
 import type { APIRoute } from 'astro';
 import { verifyRegistrationResponse } from '@simplewebauthn/server';
-import { getOriginFromRequest, getRpIdFromOrigin, isProd, getEnv } from '../../../lib/auth/config';
+import { getOriginFromRequest, getRpIdFromOrigin, isProd, getEnv, getAllowedOrigins } from '../../../lib/auth/config';
 import { verify as verifySig, makeCookie, sign } from '../../../lib/auth/signer';
 import { store } from '../../../lib/auth/store';
 
@@ -22,7 +22,7 @@ export const POST: APIRoute = async ({ request }) => {
   const { verified, registrationInfo } = await verifyRegistrationResponse({
     response: body,
     expectedChallenge,
-    expectedOrigin: origin,
+    expectedOrigin: getAllowedOrigins(request),
     expectedRPID: rpID,
     requireUserVerification: true,
   });

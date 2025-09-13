@@ -25,3 +25,19 @@ export function getOriginFromRequest(req: Request): string {
 export function isProd(): boolean {
   return process.env.NODE_ENV === 'production';
 }
+
+/**
+ * Build a list of allowed origins for WebAuthn verification.
+ * Reads `PUBLIC_ALLOWED_ORIGINS` as a comma-separated list, plus
+ * `PUBLIC_ORIGIN` and the computed request origin.
+ */
+export function getAllowedOrigins(req: Request): string[] {
+  const set = new Set<string>();
+  const current = getOriginFromRequest(req);
+  if (current) set.add(current);
+  const one = process.env.PUBLIC_ORIGIN?.trim();
+  if (one) set.add(one);
+  const many = process.env.PUBLIC_ALLOWED_ORIGINS?.split(',').map((s) => s.trim()).filter(Boolean) ?? [];
+  for (const o of many) set.add(o);
+  return Array.from(set);
+}
