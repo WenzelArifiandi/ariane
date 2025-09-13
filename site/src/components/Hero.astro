@@ -9,7 +9,7 @@ const ctaLabel = "See Work";
   <div class="hero__inner">
     <h1 class="hero__title">{title}</h1>
     <p class="hero__subtitle">{subtitle}</p>
-    <a class="btn" href={ctaHref}>{ctaLabel}</a>
+    <a class="btn m3" href={ctaHref}>{ctaLabel}</a>
   </div>
 </section>
 
@@ -86,4 +86,20 @@ const ctaLabel = "See Work";
     mix-blend-mode: soft-light; opacity:.9;
   }
   .btn:hover { transform: translateY(-1px); filter: brightness(1.04); }
+
+  /* Material 3 overrides (scoped in this component so they beat global) */
+  .btn.m3 {
+    background: var(--md-sys-color-primary, var(--wisteria));
+    color: var(--md-sys-color-on-primary, #fff);
+    border-radius: var(--md-sys-shape-corner-medium, 12px);
+    box-shadow: var(--md-sys-elevation-1, 0 6px 20px rgba(0,0,0,.06));
+  }
+  .btn.m3:hover {
+    transform: translateY(-1px);
+    box-shadow: var(--md-sys-elevation-2, 0 12px 28px rgba(0,0,0,.08));
+  }
+  .btn.m3:focus-visible {
+    outline: 2px solid color-mix(in oklab, var(--md-sys-color-primary, var(--wisteria)), white 20%);
+    outline-offset: 3px;
+  }
 </style>

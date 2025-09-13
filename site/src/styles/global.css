@@ -1,3 +1,4 @@
+@import './m3-tokens.css';
 /* Design tokens */
 :root {
   /* Core neutrals */
@@ -40,4 +41,24 @@ html {
     -moz-osx-font-smoothing: grayscale;
     font-feature-settings: "kern","liga","clig","calt";
   }
+}
+/* Material 3-inspired buttons and cards */
+.btn.m3 {
+  background: var(--md-sys-color-primary);
+  color: var(--md-sys-color-on-primary);
+  border-radius: var(--md-sys-shape-corner-medium);
+  box-shadow: var(--md-sys-elevation-1);
+  transition: transform var(--md-sys-motion-duration-short) var(--md-sys-motion-ease-standard),
+              box-shadow var(--md-sys-motion-duration-short) var(--md-sys-motion-ease-standard);
+  font-weight: 600; padding: .7rem 1rem;
+}
+.btn.m3:hover { transform: translateY(-1px); box-shadow: var(--md-sys-elevation-2); }
+.btn.m3:focus-visible { outline: 2px solid color-mix(in oklab, var(--md-sys-color-primary), white 20%); outline-offset: 3px; }
+
+.card.m3 {
+  background: var(--md-sys-color-surface);
+  color: var(--md-sys-color-on-surface);
+  border-radius: var(--md-sys-shape-corner-large);
+  box-shadow: var(--md-sys-elevation-1);
+  padding: 1.25rem;
 }

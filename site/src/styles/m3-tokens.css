@@ -1,0 +1,23 @@
+/* Light theme */
+:root[data-theme="light"]{
+  --md-sys-color-primary: var(--wisteria);
+  --md-sys-color-on-primary: #fff;
+  --md-sys-color-surface: var(--page);
+  --md-sys-color-on-surface: var(--ink);
+  --md-sys-shape-corner-small: 8px;
+  --md-sys-shape-corner-medium: 12px;
+  --md-sys-shape-corner-large: 20px;
+  --md-sys-elevation-1: 0 6px 20px rgba(0,0,0,.06);
+  --md-sys-elevation-2: 0 12px 28px rgba(0,0,0,.08);
+  --md-sys-motion-duration-short: 140ms;
+  --md-sys-motion-ease-standard: cubic-bezier(.2, 0, 0, 1);
+}
+
+/* Dark theme */
+:root[data-theme="dark"]{
+  --md-sys-color-primary: color-mix(in oklab, var(--wisteria), white 10%);
+  --md-sys-color-on-primary: #111;
+  --md-sys-color-surface: #0f0f12;
+  --md-sys-color-on-surface: #e8e8ee;
+  /* keep shape/elevation/motion same or adjust subtly */
+}
