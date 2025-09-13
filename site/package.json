@@ -13,6 +13,8 @@
     "@portabletext/to-html": "^3.0.0",
     "@sanity/client": "^7.11.1",
     "@sanity/image-url": "^1.2.0",
+    "@simplewebauthn/browser": "^10.0.0",
+    "@simplewebauthn/server": "^10.0.1",
     "@tailwindcss/vite": "^4.1.13",
     "@vercel/analytics": "^1.5.0",
     "astro": "^5.13.7",

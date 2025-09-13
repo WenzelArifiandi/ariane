@@ -26,7 +26,7 @@ const pageUrl = pathname ? new URL(pathname, siteUrl).toString() : siteUrl
 ---
 
 <!DOCTYPE html>
-<html lang="en" class="antialiased">
+<html lang="en" class="antialiased" data-theme="light">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -48,12 +48,17 @@ const pageUrl = pathname ? new URL(pathname, siteUrl).toString() : siteUrl
     <meta name="twitter:image" content={pageImage} />
 
     <link rel="canonical" href={pageUrl} />
-    <link rel="icon" href="/favicon.ico" />
+    <link rel="icon" href="/favicon.svg" />
+    <!-- Material Symbols for M3 icons -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,500,0,0" />
+    <script type="module" src="/src/scripts/maker-client.ts"></script>
 
     <!-- Base styles -->
     <style>
+      :root { --pad-x: clamp(1.25rem, 5vw, 2.25rem); --align-shift: 36px; }
+      *,*::before,*::after{ box-sizing: border-box; }
       html { scroll-behavior: smooth; }
-      body { background: var(--page); color: var(--ink); }
+      body { background: var(--page); color: var(--ink); min-width: 360px; }
 
       .card {
         border-radius: var(--radius);
@@ -64,25 +69,28 @@ const pageUrl = pathname ? new URL(pathname, siteUrl).toString() : siteUrl
       .btn {
         display:inline-flex; align-items:center; gap:.5rem;
         padding:.7rem 1rem; border-radius:999px;
-        background: linear-gradient(135deg,
-          color-mix(in oklab, var(--wisteria), white 6%),
-          color-mix(in oklab, var(--wisteria), black 6%)
-        );
-        color:white; font-weight:650; text-decoration:none;
-        transition: transform .18s ease-out, filter .18s ease-out;
-        position: relative;
+        background: var(--md-sys-color-primary, #7150D9);
+        color: var(--md-sys-color-on-primary, #fff);
+        font-weight:650; text-decoration:none;
+        transition: transform var(--md-sys-motion-duration-short, .14s) var(--md-sys-motion-ease-standard, cubic-bezier(.2,0,0,1)),
+                    box-shadow var(--md-sys-motion-duration-short, .14s) var(--md-sys-motion-ease-standard, cubic-bezier(.2,0,0,1));
+        box-shadow: var(--md-sys-elevation-1, 0 6px 20px rgba(0,0,0,.06));
+        -webkit-appearance: none; appearance: none; border: 0;
       }
-      .btn::after {
-        content:""; position:absolute; inset:0; border-radius:inherit;
-        background: linear-gradient(to bottom, rgba(255,255,255,.35), transparent 40%);
-        mix-blend-mode: soft-light; pointer-events:none;
-      }
-      .btn:hover { transform: translateY(-1px); filter: brightness(1.04); }
+      .btn::after { content: none; }
+      .btn:hover { transform: translateY(-1px); box-shadow: var(--md-sys-elevation-2, 0 12px 28px rgba(0,0,0,.08)); }
 
-      .chip {
-        display:inline-block; padding:.25rem .6rem; border-radius:999px;
-        background: var(--lilac); color:#4b3ea6; font-weight:500;
-      }
+      .chip { display:inline-block; padding:.25rem .6rem; border-radius:999px; font-weight:600; }
+
+      /* Shared container */
+      .wrap, .page-wrap { max-width: 1100px; margin-left: auto; margin-right: auto; padding-left: var(--pad-x); padding-right: var(--pad-x); }
+      /* One true container for alignment */
+      .container { max-width: 1100px; margin-inline: auto; padding-inline: var(--pad-x); }
+      .container-xl { max-width: 1200px; margin-inline: auto; padding-inline: var(--pad-x); }
+      .stack { display: grid; gap: 1rem; }
+      /* Align nav + sections to hero title at your screen */
+      .align-hero { padding-left: calc(var(--pad-x) + 18px); }
+      a.btn, a.btn:hover, a.btn:visited, a.btn:active { text-decoration: none !important; }
     </style>
   <Analytics />
   </head>

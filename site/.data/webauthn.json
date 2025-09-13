@@ -1,0 +1,16 @@
+{
+  "credentials": [
+    {
+      "id": "cXhhS3VpUWZLeWlxQVJPc0xMVG1UYjBPNGcw",
+      "publicKey": "pQECAyYgASFYIHuwK7ICy_zk7qmejDs4tWUf85feufpjTmYV6gzYvE1uIlggl4eKvBXgLh2kyx50z_Pnq6Ae43N3VzSg45Dl8UyqUcM",
+      "counter": 0,
+      "userId": "admin"
+    },
+    {
+      "id": "OGRFSDdSZUpMdnNWN1JUUWJsZmg4QQ",
+      "publicKey": "pQECAyYgASFYIEDjDC4XvjePEMV8b1xszojMW3frEkRvJwyjBUw0fhCdIlggyf_AYRz0iuB4qhfcuE9jyWsj7amFEKDE0WdhJEW9OEA",
+      "counter": 0,
+      "userId": "admin"
+    }
+  ]
+}

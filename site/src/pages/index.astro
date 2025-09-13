@@ -18,26 +18,26 @@ const email = 'hello@wenzelarifiandi.com'
   <Hero />
 
   {/* Work anchor */}
-  <section id="work" class="wrap">
+  <section id="work" class="container align-hero">
     <h2>Work</h2>
     <p class="muted">Selected projects will appear here soon.</p>
   </section>
 
   {/* About anchor */}
-  <section id="about" class="wrap">
+  <section id="about" class="container align-hero">
     <h2>About</h2>
     <p class="muted">More details coming shortly.</p>
   </section>
 
   {/* Contact anchor */}
-  <section id="contact" class="wrap">
+  <section id="contact" class="container align-hero">
     <h2>Contact</h2>
     <p class="muted">Email me at <a href={`mailto:${email}`} class="accent">{email}</a>.</p>
   </section>
 </Base>
 
 <style>
-  .wrap { max-width: 1100px; margin: 3rem auto; padding: 0 1rem; }
+  .wrap { max-width: 1100px; margin: 3rem auto; padding: 0 var(--pad-x); }
   h2 { font-size: var(--h2); letter-spacing: -0.01em; margin-bottom: .5rem; }
   .muted { color: color-mix(in oklab, var(--ink), black 25%); }
 </style>
