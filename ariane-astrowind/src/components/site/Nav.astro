@@ -54,9 +54,6 @@ const studioHref = import.meta.env.DEV ? 'http://localhost:3333/' : 'https://stu
 
   async function refreshAuth() {
     try {
-      // Disabled by default to avoid 404s during AstroWind-only dev.
-      // Re-enable when auth endpoints are wired in this app.
-      return;
       const res = await fetch('/api/auth/session');
       const data = await res.json();
       const authed = !!data?.authenticated;
@@ -72,5 +69,5 @@ const studioHref = import.meta.env.DEV ? 'http://localhost:3333/' : 'https://stu
     window.dispatchEvent(new CustomEvent('toggle-creator', { detail: { open: !open } }));
   });
 
-  // (async () => { await refreshAuth(); })();
+  (async () => { await refreshAuth(); })();
 </script>

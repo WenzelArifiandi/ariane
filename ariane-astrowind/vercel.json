@@ -11,5 +11,12 @@
         }
       ]
     }
+  ],
+  "rewrites": [
+    { "source": "/about", "destination": "https://wenzelarifiandi.com/about" },
+    { "source": "/links", "destination": "https://wenzelarifiandi.com/links" },
+    { "source": "/work", "destination": "https://wenzelarifiandi.com/work" },
+    { "source": "/work/:slug", "destination": "https://wenzelarifiandi.com/work/:slug" },
+    { "source": "/api/auth/:path*", "destination": "https://wenzelarifiandi.com/api/auth/:path*" }
   ]
 }
