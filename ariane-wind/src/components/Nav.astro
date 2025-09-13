@@ -1,0 +1,17 @@
+---
+const links = [
+  { label: 'Work', href: '#work' },
+  { label: 'About', href: '#about' },
+  { label: 'Contact', href: '#contact' },
+]
+---
+
+<nav class="my-3">
+  <div class="container rounded-full border border-white/30 bg-white/60 backdrop-blur-xl shadow-[var(--elevation-1)] flex items-center justify-between py-3 px-[var(--pad-x)]">
+    <a href="/" class="font-bold text-[color:var(--ink)]">Wenzel Arifiandi</a>
+    <ul class="flex items-center gap-4">
+      {links.map(l => (<li><a href={l.href} class="text-[color:var(--ink)] no-underline hover:opacity-100 opacity-80 font-semibold">{l.label}</a></li>))}
+    </ul>
+  </div>
+</nav>
+

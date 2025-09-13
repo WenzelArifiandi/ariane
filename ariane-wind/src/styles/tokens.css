@@ -1,0 +1,9 @@
+:root {
+  --ink: #101114;
+  --page: #FEFBFF;
+  --primary: #7150D9;
+  --on-primary: #fff;
+  --radius: 28px;
+  --elevation-1: 0 8px 24px rgba(0,0,0,.06);
+}
+
