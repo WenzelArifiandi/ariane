@@ -134,8 +134,11 @@ const pageUrl = pathname ? new URL(pathname, siteUrl).toString() : siteUrl
           // 1) If we don't have an email yet, render inline access request UI (no prompt)
           let email = (localStorage.getItem('maker_email') || '').trim();
           if (!email) {
-            const inner = qs('.creator-bar .creator-bar__inner');
-            if (inner && !qs('#req-access')) {
+            const actions = qs('.creator-bar .creator-bar__actions');
+            const bar = qs('.creator-bar');
+            const mount = actions || qs('.creator-bar .creator-bar__inner');
+            if (bar) bar.classList.add('access-open');
+            if (mount && !qs('#req-access')) {
               const wrap = document.createElement('div');
               wrap.className = 'access-ui';
               wrap.innerHTML = `
@@ -153,7 +156,7 @@ const pageUrl = pathname ? new URL(pathname, siteUrl).toString() : siteUrl
                     <button class="btn m3 small" type="submit">Request access</button>
                   </form>
                 </div>`;
-              inner.appendChild(wrap);
+              mount.appendChild(wrap);
               const form = wrap.querySelector('#req-access');
               form?.addEventListener('submit', async (e) => {
                 e.preventDefault();
@@ -164,14 +167,20 @@ const pageUrl = pathname ? new URL(pathname, siteUrl).toString() : siteUrl
                 await fetch('/api/auth/request-access', { method: 'POST', credentials: 'same-origin', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email: e2 }) });
                 wrap.innerHTML = "<span class='msg'>Thanks — I'll review and email you soon.</span>";
               });
+              // focus input, ensure visible
+              wrap.querySelector('#email')?.focus?.();
+              document.documentElement.setAttribute('data-creator','open');
             }
             throw new Error('awaiting-email');
           }
           // 2) We have an email. Check approval before attempting registration
           const status = await fetch(`/api/auth/approval-status?email=${encodeURIComponent(email)}`, { credentials: 'same-origin' }).then(r => r.json()).catch(() => ({ approved: false }));
           if (!status?.approved && (String(import.meta.env?.ALLOW_REGISTRATION) !== 'true')) {
-            const inner = qs('.creator-bar .creator-bar__inner');
-            if (inner && !qs('#req-access')) {
+            const actions = qs('.creator-bar .creator-bar__actions');
+            const bar = qs('.creator-bar');
+            const mount = actions || qs('.creator-bar .creator-bar__inner');
+            if (bar) bar.classList.add('access-open');
+            if (mount && !qs('#req-access')) {
               const wrap = document.createElement('div');
               wrap.className = 'access-ui';
               wrap.innerHTML = `
@@ -189,7 +198,7 @@ const pageUrl = pathname ? new URL(pathname, siteUrl).toString() : siteUrl
                     <button class="btn m3 small" type="submit">Request access</button>
                   </form>
                 </div>`;
-              inner.appendChild(wrap);
+              mount.appendChild(wrap);
               const form = wrap.querySelector('#req-access');
               form?.addEventListener('submit', async (e) => {
                 e.preventDefault();
@@ -200,6 +209,8 @@ const pageUrl = pathname ? new URL(pathname, siteUrl).toString() : siteUrl
                 await fetch('/api/auth/request-access', { method: 'POST', credentials: 'same-origin', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email: e2 }) });
                 wrap.innerHTML = "<span class='msg'>Thanks — I'll review and email you soon.</span>";
               });
+              wrap.querySelector('#email')?.focus?.();
+              document.documentElement.setAttribute('data-creator','open');
             }
             throw new Error('not-approved');
           }
