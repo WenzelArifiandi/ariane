@@ -28,5 +28,7 @@
   ,
   "rewrites": [
     { "source": "/favicon.ico", "destination": "/favicon.svg" }
+    ,
+    { "source": "/scripts/maker-client.ts", "destination": "/scripts/maker-client" }
   ]
 }
