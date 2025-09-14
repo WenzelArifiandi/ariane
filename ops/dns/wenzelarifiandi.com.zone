@@ -1,0 +1,75 @@
+;; Domain:     wenzelarifiandi.com.
+;; Exported:   2025-09-14 15:31:08
+wenzelarifiandi.com	3600	IN	SOA	braden.ns.cloudflare.com. dns.cloudflare.com. 2050953046 10000 2400 604800 3600
+
+;; NS Records
+wenzelarifiandi.com.	86400	IN	NS	braden.ns.cloudflare.com.
+wenzelarifiandi.com.	86400	IN	NS	connie.ns.cloudflare.com.
+
+;; A Records
+dev.wenzelarifiandi.com.	1	IN	A	151.101.1.195
+dev.wenzelarifiandi.com.	1	IN	A	151.101.65.195
+drive.wenzelarifiandi.com.	1	IN	A	151.101.65.195
+drive.wenzelarifiandi.com.	1	IN	A	151.101.1.195
+go.wenzelarifiandi.com.	1	IN	A	151.101.65.195
+go.wenzelarifiandi.com.	1	IN	A	151.101.1.195
+link.wenzelarifiandi.com.	1	IN	A	52.72.49.79
+localhost.wenzelarifiandi.com.	1	IN	A	35.233.129.235
+meet.wenzelarifiandi.com.	1	IN	A	151.101.1.195
+meet.wenzelarifiandi.com.	1	IN	A	151.101.65.195
+onedrive.wenzelarifiandi.com.	1	IN	A	151.101.1.195
+onedrive.wenzelarifiandi.com.	1	IN	A	151.101.65.195
+wenzelarifiandi.com.	1	IN	A	216.198.79.1
+
+;; CAA Records
+dev.wenzelarifiandi.com.	1	IN	CAA	0 issue "Letsencrypt.org"
+dev.wenzelarifiandi.com.	1	IN	CAA	0 issue "pki.goog"
+drive.wenzelarifiandi.com.	1	IN	CAA	0 issue "Letsencrypt.org"
+drive.wenzelarifiandi.com.	1	IN	CAA	0 issue "pki.goog"
+go.wenzelarifiandi.com.	1	IN	CAA	0 issue "Letsencrypt.org"
+go.wenzelarifiandi.com.	1	IN	CAA	0 issue "pki.goog"
+meet.wenzelarifiandi.com.	1	IN	CAA	0 issue "Letsencrypt.org"
+meet.wenzelarifiandi.com.	1	IN	CAA	0 issue "pki.goog"
+onedrive.wenzelarifiandi.com.	1	IN	CAA	0 issue "Letsencrypt.org"
+onedrive.wenzelarifiandi.com.	1	IN	CAA	0 issue "pki.goog"
+wenzelarifiandi.com.	1	IN	CAA	0 issue "Letsencrypt.org"
+wenzelarifiandi.com.	1	IN	CAA	0 issue "pki.goog"
+
+;; CNAME Records
+_domainconnect.wenzelarifiandi.com.	1	IN	CNAME	connect.domains.google.com.
+studio.wenzelarifiandi.com.	1	IN	CNAME	5130f3a2c2de3730.vercel-dns-017.com.
+verify.mail.wenzelarifiandi.com.	1	IN	CNAME	mailgun.org.
+www.wenzelarifiandi.com.	1	IN	CNAME	e9df63dbe8b1f471.vercel-dns-017.com.
+
+;; MX Records
+cloudflare.wenzelarifiandi.com.	1	IN	MX	22 route3.mx.cloudflare.net.
+cloudflare.wenzelarifiandi.com.	1	IN	MX	6 route2.mx.cloudflare.net.
+cloudflare.wenzelarifiandi.com.	1	IN	MX	23 route1.mx.cloudflare.net.
+mail.wenzelarifiandi.com.	1	IN	MX	10 mxa.mailgun.org.
+mail.wenzelarifiandi.com.	1	IN	MX	10 mxb.mailgun.org.
+send.notify.wenzelarifiandi.com.	3600	IN	MX	10 feedback-smtp.ap-northeast-1.amazonses.com.
+wenzelarifiandi.com.	1	IN	MX	22 route3.mx.cloudflare.net.
+wenzelarifiandi.com.	1	IN	MX	6 route2.mx.cloudflare.net.
+wenzelarifiandi.com.	1	IN	MX	23 route1.mx.cloudflare.net.
+
+;; TXT Records
+_acme-challenge.drive.wenzelarifiandi.com.	1	IN	TXT	"0YMsYrGF-WZKUFXG-lkJTScuCBOpO7Lv3VZPk0_Fexc"
+_acme-challenge.go.wenzelarifiandi.com.	1	IN	TXT	"RudPhwviU0xRMt4dvt_h18t8qbgvYOucAaLJfREQYz4"
+_acme-challenge.meet.wenzelarifiandi.com.	1	IN	TXT	"WZUe5zj6ci2bOvDrvqbtsFNXnlov8Hs7IOxtgdMUq8w"
+_atproto.wenzelarifiandi.com.	1	IN	TXT	"did=did:plc:zawtwf34qmenjqhv54fv7pre"
+cf2024-1._domainkey.wenzelarifiandi.com.	1	IN	TXT	"v=DKIM1; h=sha256; k=rsa; p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAiweykoi+o48IOGuP7GR3X0MOExCUDY/BCRHoWBnh3rChl7WhdyCxW3jgq1daEjPPqoi7sJvdg5hEQVsgVRQP4DcnQDVjGMbASQtrY4WmB1VebF+RPJB2ECPsEDTpeiI5ZyUAwJaVX7r6bznU67g7LvFq35yIo4sdlmtZGV+i0H4cpYH9+3JJ78k" "m4KXwaf9xUJCWF6nxeD+qG6Fyruw1Qlbds2r85U9dkNDVAS3gioCvELryh1TxKGiVTkg4wqHTyHfWsp7KD3WQHYJn0RyfJJu6YEmL77zonn7p2SRMvTMP3ZEXibnC9gz3nnhR6wcYL8Q7zXypKTMD58bTixDSJwIDAQAB"
+cloudflare.wenzelarifiandi.com.	1	IN	TXT	"v=spf1 include:_spf.mx.cloudflare.net ~all"
+default._bimi.wenzelarifiandi.com.	1	IN	TXT	"v=BIMI1; l=https://firebasestorage.googleapis.com/v0/b/ravenlink8.appspot.com/o/SVG%20Pic.svg?alt=media&token=140f8293-ce61-4e36-b59c-9ae2bdd68a82"
+_dmarc.wenzelarifiandi.com.	1	IN	TXT	"v=DMARC1; p=quarantine; rua=mailto:a92f465ce3dc4d2ebb0f29986a6be63a@dmarc-reports.cloudflare.net,mailto:hello@wenzelarifiandi.com"
+mailjet._ce05e59d.wenzelarifiandi.com.	1	IN	TXT	"ce05e59d7e00ea966b4988cf7799fc23"
+mailjet._domainkey.wenzelarifiandi.com.	1	IN	TXT	"k=rsa; p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQC3elkNi95NMo3sh02tCPbIcMAX/PkpDBjfiS+Uo1I5RdcTeSy1+KwZcTp5Wo7BI1eLstuxcNVpoNzHe7bMRLYwrYMEGKPkm2L/XY2XOhk+psVSLj5EY07qj2J48uQR1wPUtVKKAHG56/Ntrxxl29kbQiCcGHk0VO9o05iZ9ApvDQIDAQAB"
+mailo._domainkey.mail.wenzelarifiandi.com.	1	IN	TXT	"k=rsa; p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAujdahCs2N7aHiByGvMFrzQy9XaFQBurypnVLjGhX0wK6KwyEJOAIlgMtcxbLaYMSQhvTz3E+O1+aIC35zL2VmVb1VgjIyfK7CrWl0ZGej/ARLCuvuhc3o7WbwfvvRv3ZEImxNiTpHOIXAJ8sddomTcKLs2e6xSUlgYl7ompYAQvsXyL2ckIFeocv1MzyygCfm8Ig99kclk" "95mSXaIiTdRLsVt8DZMrM97oThGidVYCoassdmcOkUn/2fpgMbNpQPUKnKa3MJZK5pnKqYIVItdOQfz4qUhuJ+HehLUiACJqDjgkJsz1j9+5pPsnWscu/Ph+S/n7RCum2qHF7qq7S/9QIDAQAB"
+mail.wenzelarifiandi.com.	1	IN	TXT	"v=spf1 include:mailgun.org ~all"
+resend._domainkey.notify.wenzelarifiandi.com.	3600	IN	TXT	"p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDNeGw4NgHqBe2+cSP6UeVNjvBvuBJgxxdMp/B1VYME1NZaI/bxwdEQYB9Is0SiVBUKD9E+83jEzf2sWdtn/CbFgjXOB1MfYfoKjwWOROwleqbAzCNPVRtMMUlD0bIf679jJfhLT8nTZbvW2NcYOFa40eGQRAZ2o2EKojlV+oRjnwIDAQAB"
+send.notify.wenzelarifiandi.com.	3600	IN	TXT	"v=spf1 include:amazonses.com -all"
+smtp._domainkey.wenzelarifiandi.com.	1	IN	TXT	"k=rsa; p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDwvqw9WO/LOQE8XELA0NTyeCDSH7RFBMNlrE/NJr5zYepw9VpxxNQd96O2PA/ma2JzTlAn/kHCjVYUMLUDder+5Ey7RoOMyYEzPb6pKpgJm77ZhjmLffJVzj21j+NFsjIFbJs90pujpenHZBUrbk4Bq02Og01pru2CRjr5c7+IrQIDAQAB"
+wenzelarifiandi.com.	1	IN	TXT	"v=spf1 include:_spf.mx.cloudflare.net include:mailgun.org include:spf.mailjet.com ~all"
+wenzelarifiandi.com.	3600	IN	TXT	"google-site-verification=GIgVmEiCl3k3KD1GCE6hUb18YKzy3x6A-uLhSwJHkDU"
+wenzelarifiandi.com.	1	IN	TXT	"MS=7056D5AE9BC263C60DD89DE220038D44DEEDD2AA"
+wenzelarifiandi.com.	1	IN	TXT	"google-site-verification=xicTxzIdVTAR9xrO4rNZ2eZE5QlHMcu_GGxNwrfI2o8"
+
