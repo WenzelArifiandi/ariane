@@ -142,18 +142,18 @@ const pageUrl = pathname ? new URL(pathname, siteUrl).toString() : siteUrl
               const wrap = document.createElement('div');
               wrap.className = 'access-ui';
               wrap.innerHTML = `
-                <div class="access-card">
-                  <div class="access-copy">
+                <div class="access-card m3-card">
+                  <div class="head">
                     <span class="material-symbols-rounded" aria-hidden="true">mail</span>
-                    <div>
+                    <div class="titles">
                       <div class="title">Request access</div>
-                      <div class="muted">Enter your email to request access. I’ll review in Studio and notify you.</div>
+                      <div class="support">Enter your email to request access. I’ll review in Studio and notify you.</div>
                     </div>
                   </div>
-                  <form id="req-access" class="inline">
-                    <label for="email" class="sr-only">Email</label>
-                    <input id="email" name="email" type="email" required placeholder="you@example.com" />
-                    <button class="btn m3 small" type="submit">Request access</button>
+                  <form id="req-access" class="form">
+                    <label for="email" class="label">Email</label>
+                    <input id="email" name="email" class="field" type="email" required placeholder="you@example.com" />
+                    <button class="btn m3" type="submit">Request access</button>
                   </form>
                 </div>`;
               mount.appendChild(wrap);
@@ -165,7 +165,7 @@ const pageUrl = pathname ? new URL(pathname, siteUrl).toString() : siteUrl
                 if (!e2 || !e2.includes('@')) return;
                 localStorage.setItem('maker_email', e2);
                 await fetch('/api/auth/request-access', { method: 'POST', credentials: 'same-origin', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email: e2 }) });
-                wrap.innerHTML = "<span class='msg'>Thanks — I'll review and email you soon.</span>";
+                wrap.innerHTML = "<div class='access-card m3-card'><div class='head'><span class='material-symbols-rounded' aria-hidden='true'>check_circle</span><div class='titles'><div class='title'>Request sent</div><div class='support'>Thanks — I'll review and email you soon.</div></div></div></div>";
               });
               // focus input, ensure visible
               wrap.querySelector('#email')?.focus?.();
@@ -184,18 +184,18 @@ const pageUrl = pathname ? new URL(pathname, siteUrl).toString() : siteUrl
               const wrap = document.createElement('div');
               wrap.className = 'access-ui';
               wrap.innerHTML = `
-                <div class="access-card">
-                  <div class="access-copy">
+                <div class="access-card m3-card">
+                  <div class="head">
                     <span class="material-symbols-rounded" aria-hidden="true">mail</span>
-                    <div>
+                    <div class="titles">
                       <div class="title">Request access</div>
-                      <div class="muted">You're not approved yet. Enter your email and I’ll notify you when ready.</div>
+                      <div class="support">You're not approved yet. Enter your email and I’ll notify you when ready.</div>
                     </div>
                   </div>
-                  <form id="req-access" class="inline">
-                    <label for="email" class="sr-only">Email</label>
-                    <input id="email" name="email" type="email" required placeholder="you@example.com" value="${email}" />
-                    <button class="btn m3 small" type="submit">Request access</button>
+                  <form id="req-access" class="form">
+                    <label for="email" class="label">Email</label>
+                    <input id="email" name="email" class="field" type="email" required placeholder="you@example.com" value="${email}" />
+                    <button class="btn m3" type="submit">Request access</button>
                   </form>
                 </div>`;
               mount.appendChild(wrap);
@@ -207,7 +207,7 @@ const pageUrl = pathname ? new URL(pathname, siteUrl).toString() : siteUrl
                 if (!e2 || !e2.includes('@')) return;
                 localStorage.setItem('maker_email', e2);
                 await fetch('/api/auth/request-access', { method: 'POST', credentials: 'same-origin', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email: e2 }) });
-                wrap.innerHTML = "<span class='msg'>Thanks — I'll review and email you soon.</span>";
+                wrap.innerHTML = "<div class='access-card m3-card'><div class='head'><span class='material-symbols-rounded' aria-hidden='true'>check_circle</span><div class='titles'><div class='title'>Request sent</div><div class='support'>Thanks — I'll review and email you soon.</div></div></div></div>";
               });
               wrap.querySelector('#email')?.focus?.();
               document.documentElement.setAttribute('data-creator','open');
