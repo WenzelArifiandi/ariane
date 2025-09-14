@@ -51,7 +51,7 @@
 }
 .liquid-glass::after {
   content: ""; position: absolute; inset: 0;
-  background-image: url('/noise.png'); opacity: .06; pointer-events: none;
+  background-image: url('/noise.svg'); opacity: .06; pointer-events: none;
 }
 
 /* Access card layout helpers (shared) */
@@ -61,4 +61,3 @@
 .access-card .support { color: color-mix(in oklab, var(--brand-ink), black 35%); font-size: .95rem; }
 .access-card .form { display: grid; gap: var(--space-3); grid-template-columns: 1fr auto; align-items: end; }
 @media (max-width: 640px) { .access-card .form { grid-template-columns: 1fr; } }
-

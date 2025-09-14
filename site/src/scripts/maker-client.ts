@@ -68,13 +68,13 @@ function mountAccessUI(prefill?: string) {
       <div class="head">
         <span class="material-symbols-rounded" aria-hidden="true">mail</span>
         <div class="titles">
-          <div class="title">Request access</div>
-          <div class="support">Enter your email to request access. I’ll review in Studio and notify you.</div>
+          <div class="title">Join the maker space</div>
+          <div class="support">Share your email to request access. I’ll review and let you know when it’s ready.</div>
         </div>
       </div>
       <form id="req-access" class="form">
         <md-outlined-text-field id="email" name="email" label="Email" type="email" required placeholder="you@example.com" ${prefill ? `value="${prefill}"` : ''}></md-outlined-text-field>
-        <md-filled-button type="submit">Request access</md-filled-button>
+        <md-filled-button type="submit">Send request</md-filled-button>
       </form>
     </div>`;
   mount.appendChild(wrap);
@@ -86,7 +86,7 @@ function mountAccessUI(prefill?: string) {
     if (!email || !email.includes('@')) return;
     localStorage.setItem('maker_email', email);
     await fetch('/api/auth/request-access', { method: 'POST', credentials: 'same-origin', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email }) });
-    wrap.innerHTML = "<div class='liquid-glass access-card m3-card'><div class='head'><span class='material-symbols-rounded' aria-hidden='true'>check_circle</span><div class='titles'><div class='title'>Request sent</div><div class='support'>Thanks — I'll review and email you soon.</div></div></div></div>";
+    wrap.innerHTML = "<div class='liquid-glass access-card m3-card'><div class='head'><span class='material-symbols-rounded' aria-hidden='true'>check_circle</span><div class='titles'><div class='title'>Request sent</div><div class='support'>Thanks — I’ll review and let you know soon.</div></div></div></div>";
   });
   // focus
   (wrap.querySelector('#email') as HTMLElement | null)?.focus?.();
