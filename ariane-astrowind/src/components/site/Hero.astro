@@ -1,0 +1,106 @@
+---
+const title = "Hi there!";
+const subtitle = "This site is being refreshed!";
+const ctaHref = "#work";
+const ctaLabel = "See Work";
+---
+
+  <div class="creator-bar">
+  <div class="creator-bar__inner container align-hero">
+      <div class="creator-bar__text"><span class="material-symbols-rounded text-icon" aria-hidden="true">auto_awesome</span><span class="text-label">Entering Wenzel's maker space</span></div>
+      <div class="creator-bar__actions">
+        <button id="creator-passkey" class="btn m3 small" data-mode="signin">
+          <span class="material-symbols-rounded icon" aria-hidden="true">fingerprint</span>
+          <span class="label">Sign in with passkey</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+<section class="container align-hero">
+  <div class="hero">
+    <div class="hero__inner">
+      <h1 class="hero__title">{title}</h1>
+      <p class="hero__subtitle">{subtitle}</p>
+    </div>
+  </div>
+</section>
+
+<!-- Enable passkey client events -->
+<script type="module" src="/src/scripts/maker-client.ts"></script>
+
+<style>
+  :root { --mauve: #b99ad9; }
+  @supports (color: oklch(0.7 0.1 0)) {
+    :root { --mauve: oklch(0.80 0.07 315); }
+  }
+
+  /* Card-like hero box with real side padding provided by the outer container */
+  .hero {
+    position: relative;
+    isolation: isolate;
+    border-radius: 28px;
+    overflow: hidden;
+    margin: 1rem 0 2rem;
+    min-height: clamp(360px, 60svh, 680px);
+    background: linear-gradient(135deg, var(--sakura) 0%, var(--mauve) 100%);
+  }
+
+  .creator-bar { --p: 0; max-height: calc(72px * var(--p)); overflow: hidden; background: var(--page); opacity: var(--p); }
+  .creator-bar:focus-within { overflow: visible; }
+  .creator-bar__inner { display: flex; align-items: center; justify-content: space-between; gap: .75rem; padding-block: .5rem; }
+  .creator-bar__text { font-weight: 650; opacity: .9; font-size: var(--body); }
+  .creator-bar__actions { display: inline-flex; gap: .5rem; align-items: center; margin-left: auto; padding-right: 1px; }
+  .btn.small { padding: .5rem .8rem; border-radius: 999px; font-size: var(--body); line-height: 1.2; border: 0; }
+  .material-symbols-rounded { font-variation-settings: 'FILL' 0, 'wght' 500, 'GRAD' 0, 'opsz' 24; font-size: 20px; display: inline-flex; align-items: center; }
+  @media (max-width: 480px) { #creator-passkey .label { display: none; } #creator-passkey { padding-left: .6rem; padding-right: .6rem; } }
+
+  .hero::after {
+    content: "";
+    position: absolute; inset: -30% -20% auto -20%;
+    height: 80%;
+    background: radial-gradient(60% 60% at 50% 0%, rgba(255,255,255,.55) 0%, rgba(255,255,255,.15) 40%, transparent 70%);
+    pointer-events: none;
+    mix-blend-mode: soft-light;
+  }
+
+  .hero__inner { position: relative; z-index: 1; padding-block: 56px; display: grid; gap: 1rem; padding-inline: var(--pad-x); }
+  .creator-bar__text { display: inline-flex; align-items: center; gap: .4rem; }
+  .hero__title { font-size: var(--h1-fixed, 2.75rem); line-height: 1.05; letter-spacing: -0.02em; color: color-mix(in oklab, var(--ink), black 10%); }
+  .hero__subtitle { font-size: clamp(1.05rem, .6vw + 1rem, 1.25rem); color: color-mix(in oklab, var(--ink), black 20%); max-width: 38ch; }
+
+  /* no CTA in hero */
+
+  /* Keep focus ring visible and un-clipped in the creator bar */
+  .creator-bar .btn.m3:focus-visible { outline: none; box-shadow: 0 0 0 3px color-mix(in oklab, var(--md-sys-color-primary, #7150D9), white 35%); }
+
+  /* Fallback: if JS spring doesn't run, honor the HTML attribute toggle */
+  html[data-creator="open"] .creator-bar {
+    --p: 1;
+    max-height: 72px;
+    opacity: 1;
+  }
+</style>
+
+<script type="module">
+  const qs = (s) => document.querySelector(s);
+  // Expressive spring for the bar (fast spatial)
+  let raf = 0; let current = 0; let target = 0; let lastTs = 0;
+  const SPRING = { stiffness: 540, damping: 32 };
+  function tick(ts){
+    if(!lastTs) lastTs = ts; const dt = Math.min(32, ts - lastTs); lastTs = ts;
+    const delta = target - current;
+    const accel = delta * SPRING.stiffness - current * SPRING.damping;
+    current += accel * (dt / 1000);
+    current = Math.max(0, Math.min(1, current));
+    document.querySelector('.creator-bar')?.style.setProperty('--p', String(current));
+    if (Math.abs(delta) > 0.002) { raf = requestAnimationFrame(tick); } else { current = target; document.querySelector('.creator-bar')?.style.setProperty('--p', String(target)); raf = 0; lastTs = 0; }
+  }
+  // Support toggling via Creator chip in nav
+  window.addEventListener('toggle-creator', (ev) => {
+    const open = ev.detail?.open;
+    target = open ? 1 : 0;
+    if (!raf) raf = requestAnimationFrame(tick);
+    if (open) document.querySelector('#creator-passkey')?.focus?.();
+  });
+</script>

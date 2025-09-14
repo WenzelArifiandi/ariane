@@ -4,24 +4,33 @@ const links = [
   { label: 'About', href: '#about' },
   { label: 'Contact', href: '#contact' },
 ]
+const studioHref = import.meta.env.DEV ? 'http://localhost:3333/' : 'https://studio.wenzelarifiandi.com';
 ---
 
-<nav class="nav glass">
-  <a href="/" class="brand">Wenzel Arifiandi</a>
-  <ul class="links">
-    {links.map((l) => (
-      <li><a href={l.href}>{l.label}</a></li>
-    ))}
-  </ul>
+<nav class="nav">
+  <div class="container align-hero">
+    <div class="nav-inner glass">
+      <a href="/" class="brand">Wenzel Arifiandi</a>
+      <ul class="links">
+        {links.map((l) => (
+          <li><a href={l.href}>{l.label}</a></li>
+        ))}
+        <li id="studio-link" style="display:none"><a href={studioHref}>Studio</a></li>
+        <li class="creator-wrap">
+          <button id="creator-toggle" class="chip m3" aria-haspopup="true" aria-expanded="false" aria-controls="creator-sheet" title="Maker mode">
+            <span class="material-symbols-rounded" aria-hidden="true">auto_awesome</span>
+            <span class="label">Maker mode</span>
+          </button>
+        </li>
+      </ul>
+    </div>
+  </div>
 </nav>
 
+
 <style>
-  .nav {
-    position: sticky; top: 0; z-index: 50;
-    display: flex; align-items: center; justify-content: space-between;
-    padding: .75rem 1rem; border-radius: 999px;
-    margin: .75rem auto; max-width: 1100px;
-  }
+  .nav { position: sticky; top: var(--nav-offset, 24px); z-index: 50; margin: var(--nav-offset, 24px) auto .75rem; }
+  .nav-inner { width: 100%; display: flex; align-items: center; justify-content: space-between; padding-block: .7rem; border-radius: 999px; padding-left: var(--pad-x); padding-right: var(--pad-x); }
   .glass {
     background: linear-gradient(to bottom, rgba(255,255,255,.7), rgba(255,255,255,.5));
     backdrop-filter: saturate(140%) blur(10px);
@@ -58,4 +67,56 @@ const links = [
 .brand:focus-visible {
   text-decoration: none !important;
 }
+
+/* M3 expressive: chip */
+.links a, .chip.m3, .btn.m3 { font-size: var(--body); line-height: 1.2; font-family: inherit; }
+
+.chip.m3 {
+  background: var(--md-sys-color-primary);
+  color: var(--md-sys-color-on-primary);
+  border: 0;
+  border-radius: 999px;
+  padding: .45rem .8rem;
+  box-shadow: var(--md-sys-elevation-1);
+  cursor: pointer;
+  font-weight: 650;
+  white-space: nowrap;
+  transition: transform var(--md-sys-motion-duration-short) var(--md-sys-motion-ease-standard), box-shadow var(--md-sys-motion-duration-short) var(--md-sys-motion-ease-standard);
+}
+.chip.m3:hover { box-shadow: var(--md-sys-elevation-2); transform: translateY(-1px); }
+.chip.m3 .material-symbols-rounded { color: #fff; font-variation-settings: 'FILL' 1, 'wght' 600, 'GRAD' 0, 'opsz' 24; font-size: 18px; vertical-align: -2px; margin-right: .35rem; }
+@media (max-width: 420px) {
+  .chip.m3 .label { display: none; }
+  .chip.m3 { padding: .45rem .6rem; }
+}
+/* JS may add .compact when measuring wrap */
+.chip.m3.compact .label { display: none; }
+.chip.m3.compact { padding: .45rem .6rem; }
+
+.creator-wrap { position: relative; }
 </style>
+
+<script type="module">
+  const qs = (s) => document.querySelector(s);
+  const toggle = qs('#creator-toggle');
+  const studio = qs('#studio-link');
+
+  async function refreshAuth() {
+    try {
+      const res = await fetch('/api/auth/session');
+      const data = await res.json();
+      const authed = !!data?.authenticated;
+      if (studio) studio.style.display = authed ? '' : 'none';
+    } catch {}
+  }
+
+toggle?.addEventListener('click', () => {
+    const html = document.documentElement;
+    const open = html.getAttribute('data-creator') === 'open';
+    html.setAttribute('data-creator', open ? 'closed' : 'open');
+    toggle.setAttribute('aria-expanded', String(!open));
+    window.dispatchEvent(new CustomEvent('toggle-creator', { detail: { open: !open } }));
+  });
+
+  (async () => { await refreshAuth(); })();
+</script>

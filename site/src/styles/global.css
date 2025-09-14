@@ -3,7 +3,9 @@
 :root {
   /* Core neutrals */
   --ink: #101114;
-  --page: #ffffff;
+  --page: #FEFBFF;
+  /* Layout */
+  --pad-x: clamp(1rem, 4vw, 2rem);
 
   /* Palette */
   --wisteria: #8b7cf0;
@@ -23,12 +25,9 @@
   --shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
 }
 /* --- Global system font fallback (instant everywhere) --- */
-html {
-  font-family:
-    ui-sans-serif, system-ui, -apple-system, "SF Pro Text", "SF Pro Display",
-    "Segoe UI", Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
-}
+html { font-family: 'Inter Variable', ui-sans-serif, system-ui; }
 /* src/styles/global.css */
+/* Tailwind base disabled to mirror AstroWind applyBaseStyles:false */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -40,18 +39,40 @@ html {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     font-feature-settings: "kern","liga","clig","calt";
+    min-width: 360px;
   }
 }
+
+/* Global containers defined in AWCustomStyles to avoid duplicates */
+/* Elegant link color + underline only on hover (not for buttons) */
+a:not(.btn) {
+  color: color-mix(in oklab, #7150D9, black 12%);
+  text-decoration: none;
+}
+a:not(.btn):hover {
+  text-decoration: underline;
+  text-decoration-color: color-mix(in oklab, #7150D9, black 12%);
+  text-underline-offset: 3px;
+}
+/* Ensure button links never underline in any state */
+a.btn, a.btn:hover, a.btn:visited, a.btn:active { text-decoration: none !important; }
 /* Material 3-inspired buttons and cards */
 .btn.m3 {
   background: var(--md-sys-color-primary);
   color: var(--md-sys-color-on-primary);
-  border-radius: var(--md-sys-shape-corner-medium);
+  border-radius: 999px; /* match Maker chip curve */
+  border: 0 !important;
   box-shadow: var(--md-sys-elevation-1);
   transition: transform var(--md-sys-motion-duration-short) var(--md-sys-motion-ease-standard),
               box-shadow var(--md-sys-motion-duration-short) var(--md-sys-motion-ease-standard);
   font-weight: 600; padding: .7rem 1rem;
 }
+.btn.m3::after { content: none !important; }
+/* Ensure button label never wraps */
+.btn .label { white-space: nowrap; }
+
+/* Align all top-level sections with the header */
+.wrap, .page-wrap { max-width: 1100px; margin-left: auto; margin-right: auto; padding-left: var(--pad-x); padding-right: var(--pad-x); }
 .btn.m3:hover { transform: translateY(-1px); box-shadow: var(--md-sys-elevation-2); }
 .btn.m3:focus-visible { outline: 2px solid color-mix(in oklab, var(--md-sys-color-primary), white 20%); outline-offset: 3px; }
 
