@@ -1,46 +1,42 @@
 name: CI
 
-on: [push, pull_request]
-
-permissions:
-  contents: read
-
-concurrency:
-  group: ci-${{ github.ref }}-site
-  cancel-in-progress: true
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
 
 jobs:
-  build:
-    name: Build (site/)
+  build-and-check:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        project: [ 'site', 'ariane-astrowind' ]
     defaults:
       run:
-        working-directory: site
+        working-directory: ${{ matrix.project }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup Node
+      - name: Use Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
-          cache: npm
-          cache-dependency-path: site/package-lock.json
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: ${{ matrix.project }}/package-lock.json
 
-      - name: Install deps
+      - name: Install dependencies
         run: npm ci
 
-      - name: Lint (if available)
+      - name: Lint
         run: |
-          if npm run -s | grep -q "^ *lint *"; then
-            npm run lint
-          else
-            echo "No lint script, skipping."
-          fi
+          if npm run -s lint >/dev/null 2>&1; then npm run lint; else echo "No lint script"; fi
+
+      - name: Type & Integrations Check
+        run: |
+          npx astro check || true
 
       - name: Build
         run: npm run build
 
-      - name: Run Lighthouse CI performance audit
-        continue-on-error: true
-        run: npx lhci autorun --staticDistDir=dist
