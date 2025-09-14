@@ -64,7 +64,7 @@ function mountAccessUI(prefill?: string) {
   const wrap = document.createElement('div');
   wrap.className = 'access-ui';
   wrap.innerHTML = `
-    <div class="access-card m3-card">
+    <div class="liquid-glass access-card m3-card">
       <div class="head">
         <span class="material-symbols-rounded" aria-hidden="true">mail</span>
         <div class="titles">
@@ -86,7 +86,7 @@ function mountAccessUI(prefill?: string) {
     if (!email || !email.includes('@')) return;
     localStorage.setItem('maker_email', email);
     await fetch('/api/auth/request-access', { method: 'POST', credentials: 'same-origin', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email }) });
-    wrap.innerHTML = "<div class='access-card m3-card'><div class='head'><span class='material-symbols-rounded' aria-hidden='true'>check_circle</span><div class='titles'><div class='title'>Request sent</div><div class='support'>Thanks — I'll review and email you soon.</div></div></div></div>";
+    wrap.innerHTML = "<div class='liquid-glass access-card m3-card'><div class='head'><span class='material-symbols-rounded' aria-hidden='true'>check_circle</span><div class='titles'><div class='title'>Request sent</div><div class='support'>Thanks — I'll review and email you soon.</div></div></div></div>";
   });
   // focus
   (wrap.querySelector('#email') as HTMLElement | null)?.focus?.();
