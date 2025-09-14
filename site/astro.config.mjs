@@ -9,6 +9,9 @@ export default defineConfig({
   image: {
     domains: ['cdn.sanity.io']
   },
+  vite: {
+    build: { sourcemap: false }
+  },
   integrations: [
     tailwind({ applyBaseStyles: false }),
     icon(),
