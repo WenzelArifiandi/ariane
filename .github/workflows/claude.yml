@@ -17,7 +17,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Run Claude Code Action (Astro Docs MCP enabled)
+      - name: Run Claude Code Action (Astro Docs + GitHub MCP)
         uses: anthropics/claude-code-action@beta
         with:
           anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
@@ -29,6 +29,14 @@ jobs:
                 "astro-docs": {
                   "type": "http",
                   "url": "https://mcp.docs.astro.build/mcp"
+                },
+                "github": {
+                  "type": "stdio",
+                  "command": "npx",
+                  "args": ["-y", "@modelcontextprotocol/server-github"],
+                  "env": {
+                    "GITHUB_TOKEN": "${{ secrets.GITHUB_TOKEN_MCP }}"
+                  }
                 }
               }
             }

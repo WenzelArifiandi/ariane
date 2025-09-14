@@ -2,3 +2,4 @@ node_modules
 fresh-site
 .vercel
 ariane-astrowind/.vercel
+.DS_Store
