@@ -20,6 +20,7 @@ try { projects = await client.fetch(allProjects) } catch { projects = [] }
 ---
 
 <Base title={page.title} description={page.description} ogImage={page.image} pathname="/">
+  <!-- preview-smoke-test: harmless comment to trigger preview workflow -->
   <Nav />
   <Hero />
 
