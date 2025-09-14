@@ -15,6 +15,8 @@ const page = {
   image: '/og.jpg',
 }
 const email = 'hello@wenzelarifiandi.com'
+let projects: any[] = []
+try { projects = await client.fetch(allProjects) } catch { projects = [] }
 ---
 
 <Base title={page.title} description={page.description} ogImage={page.image} pathname="/">
@@ -22,10 +24,6 @@ const email = 'hello@wenzelarifiandi.com'
   <Hero />
 
   {/* Work anchor */}
-  ---
-  let projects: any[] = []
-  try { projects = await client.fetch(allProjects) } catch { projects = [] }
-  ---
   <section id="work" class="container align-hero">
     <div class="section__inner">
       <h2>Work</h2>
