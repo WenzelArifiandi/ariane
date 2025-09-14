@@ -136,7 +136,7 @@ const pageUrl = pathname ? new URL(pathname, siteUrl).toString() : siteUrl
           if (!email) {
             const actions = qs('.creator-bar .creator-bar__actions');
             const bar = qs('.creator-bar');
-            const mount = actions || qs('.creator-bar .creator-bar__inner');
+            const mount = qs('#access-mount') || actions || qs('.creator-bar .creator-bar__inner');
             if (bar) bar.classList.add('access-open');
             if (mount && !qs('#req-access')) {
               const wrap = document.createElement('div');
@@ -178,7 +178,7 @@ const pageUrl = pathname ? new URL(pathname, siteUrl).toString() : siteUrl
           if (!status?.approved && (String(import.meta.env?.ALLOW_REGISTRATION) !== 'true')) {
             const actions = qs('.creator-bar .creator-bar__actions');
             const bar = qs('.creator-bar');
-            const mount = actions || qs('.creator-bar .creator-bar__inner');
+            const mount = qs('#access-mount') || actions || qs('.creator-bar .creator-bar__inner');
             if (bar) bar.classList.add('access-open');
             if (mount && !qs('#req-access')) {
               const wrap = document.createElement('div');

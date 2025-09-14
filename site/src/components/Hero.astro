@@ -14,8 +14,11 @@ const ctaLabel = "See Work";
           <span class="label">Sign in with passkey</span>
         </button>
       </div>
-    </div>
   </div>
+  </div>
+
+<!-- Dedicated mount point for access request UI -->
+<div id="access-mount" class="access-mount container align-hero"></div>
 
 <section class="container align-hero">
   <div class="hero">
@@ -133,6 +136,12 @@ const ctaLabel = "See Work";
   .creator-bar.access-open .access-card { border-radius: 16px; padding: .75rem 1rem; }
   .creator-bar.access-open .access-card form.inline { margin-left: 0; }
   .creator-bar.access-open .access-card input[type="email"] { flex: 1 1 280px; min-width: 240px; }
+
+  /* Dedicated access mount styles (below the bar, above hero) */
+  .access-mount { padding-block: .25rem .75rem; }
+  .access-mount .access-ui { margin-left: 0; }
+  .access-mount .access-card { width: 100%; border-radius: 16px; padding: .85rem 1rem; background: color-mix(in oklab, var(--page), black 3%); }
+  .access-mount .access-card input[type="email"] { flex: 1 1 320px; min-width: 260px; }
 
   @media (min-width: 860px) {
     .creator-bar.access-open .creator-bar__actions { flex-basis: auto; order: 0; }
