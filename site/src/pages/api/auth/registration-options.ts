@@ -1,15 +1,19 @@
 import type { APIRoute } from 'astro';
 import { generateRegistrationOptions } from '@simplewebauthn/server';
 import { getOriginFromRequest, getRpIdFromOrigin, isProd, getEnv } from '../../../lib/auth/config';
+import { isApproved } from '../../../lib/sanityServer';
 import { sign, makeCookie } from '../../../lib/auth/signer';
 
 const USER_ID = 'admin';
 const USER_NAME = 'Site Admin';
 
 export const GET: APIRoute = async ({ request }) => {
-  // Allow registration only when explicitly enabled.
+  // Allow registration when explicitly enabled OR the email is approved.
   const allowReg = process.env.ALLOW_REGISTRATION === 'true';
-  if (!allowReg) {
+  const url = new URL(request.url)
+  const email = url.searchParams.get('email') || ''
+  const approved = email.includes('@') ? await isApproved(email) : false
+  if (!allowReg && !approved) {
     return new Response('Registration closed', { status: 403 });
   }
   const origin = getOriginFromRequest(request);

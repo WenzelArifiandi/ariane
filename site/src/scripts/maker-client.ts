@@ -62,7 +62,39 @@ async function handlePasskeyClick() {
   }
   // Prefer registration first; fallback to sign-in if already enrolled
   try {
-    const roRes = await fetch('/api/auth/registration-options', { credentials: 'same-origin' });
+    // Ask for an email to check approval status. Remember between attempts.
+    let email = (localStorage.getItem('maker_email') || '').trim();
+    if (!email) {
+      email = (window.prompt('Enter your email to continue') || '').trim();
+      if (!email || !email.includes('@')) throw new Error('no-email');
+      localStorage.setItem('maker_email', email);
+    }
+    const status = await fetch(`/api/auth/approval-status?email=${encodeURIComponent(email)}`, { credentials: 'same-origin' }).then(r => r.json()).catch(() => ({ approved: false }));
+    if (!status?.approved && (String(import.meta.env.ALLOW_REGISTRATION) !== 'true')) {
+      // Show access request UI prefilled
+      const inner = qs('.creator-bar .creator-bar__inner');
+      if (inner && !qs('#req-access')) {
+        const wrap = document.createElement('div');
+        wrap.className = 'access-ui';
+        wrap.innerHTML = `<form id="req-access" class="inline">\
+            <label for="email" class="sr-only">Email</label>\
+            <input id="email" name="email" type="email" required placeholder="you@example.com" value="${email}" />\
+            <button class="btn m3 small" type="submit">Request access</button>\
+          </form>`;
+        inner.appendChild(wrap);
+        const form = wrap.querySelector<HTMLFormElement>('#req-access');
+        form?.addEventListener('submit', async (e) => {
+          e.preventDefault();
+          const input = wrap.querySelector<HTMLInputElement>('#email');
+          const e2 = (input && input.value) || '';
+          if (e2) localStorage.setItem('maker_email', e2);
+          await fetch('/api/auth/request-access', { method: 'POST', credentials: 'same-origin', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email: e2 }) });
+          wrap.innerHTML = "<span class='msg'>Thanks — we'll review and notify you.</span>";
+        });
+      }
+      throw new Error('not-approved');
+    }
+    const roRes = await fetch(`/api/auth/registration-options?email=${encodeURIComponent(email)}`, { credentials: 'same-origin' });
     if (roRes.status === 403) throw new Error('registration-closed');
     if (!roRes.ok) throw new Error(`registration-options-failed:${roRes.status}`);
     const ro = await roRes.json();
