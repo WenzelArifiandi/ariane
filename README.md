@@ -9,10 +9,10 @@ Vercel Configuration
 - Root Directory:
   - ariane (site): Set Root Directory to `site`.
   - ariane-studio (studio): Set Root Directory to `studio`.
-- Ignore Builds Unless Path Changes (on main):
-  - Both projects include a `vercel.json` with an `ignoreCommand` that skips deploys unless files in that project changed and the branch is `main`.
-  - site/vercel.json and studio/vercel.json contain:
-    if [ "$VERCEL_GIT_COMMIT_REF" != "main" ]; then exit 0; fi; git diff --quiet HEAD^ HEAD -- . 2>/dev/null; rc=$?; if [ $rc -eq 0 ]; then exit 0; else exit 1; fi
+- Skip builds unless relevant changes (main or PR):
+  - Both projects include a `vercel.json` `ignoreCommand` that builds only if files under that project changed, and only on `main` or PRs.
+  - Command used:
+    if [ "$VERCEL_GIT_COMMIT_REF" != "main" ] && [ -z "$VERCEL_GIT_PULL_REQUEST_ID" ]; then exit 0; fi; git diff --quiet HEAD^ HEAD -- . 2>/dev/null && exit 0 || exit 1
 - Runtime:
   - Vercel Serverless uses Node 22. Local dev can be newer, but logs may warn and fall back in production.
 
@@ -24,6 +24,11 @@ Telemetry & Analytics
 CI (GitHub Actions)
 
 - Workflow builds only the `site` app. The removed `ariane-astrowind` is no longer in the CI matrix.
+- Studio on-demand deploys (best practice):
+  - Workflow `.github/workflows/studio-deploy.yml` triggers a Studio deploy via Vercel Deploy Hook when `studio/**` changes on `main`.
+  - Set the secret `VERCEL_STUDIO_DEPLOY_HOOK_URL` in GitHub → Settings → Secrets and variables → Actions.
+  - In Vercel (project ariane-studio): create a Deploy Hook for branch `main`, copy its URL to the secret.
+  - Optional: In Vercel ariane-studio, turn off automatic deploys to avoid duplicates and rely on the hook + ignoreCommand.
 
 Restore Archived Template
 
@@ -34,4 +39,3 @@ Local Development
 
 - cd site && npm i && npm run dev
 - cd studio && npm i && npm run dev
-

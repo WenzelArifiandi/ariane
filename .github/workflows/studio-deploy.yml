@@ -1,0 +1,26 @@
+name: Studio Deploy (Vercel Hook)
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'studio/**'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  deploy-studio:
+    runs-on: ubuntu-latest
+    env:
+      VERCEL_STUDIO_DEPLOY_HOOK_URL: ${{ secrets.VERCEL_STUDIO_DEPLOY_HOOK_URL }}
+    steps:
+      - name: Trigger Vercel Deploy Hook (studio)
+        if: env.VERCEL_STUDIO_DEPLOY_HOOK_URL != ''
+        run: |
+          curl -fsS -X POST "$VERCEL_STUDIO_DEPLOY_HOOK_URL"
+      - name: Missing Deploy Hook secret notice
+        if: env.VERCEL_STUDIO_DEPLOY_HOOK_URL == ''
+        run: |
+          echo "VERCEL_STUDIO_DEPLOY_HOOK_URL not set. Add it in GitHub repo settings → Secrets → Actions."
