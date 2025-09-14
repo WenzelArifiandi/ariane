@@ -62,9 +62,9 @@ const pageUrl = pathname ? new URL(pathname, siteUrl).toString() : siteUrl
       html { scroll-behavior: smooth; }
     </style>
     <AWCustomStyles />
-  <Analytics />
   </head>
   <body class="antialiased text-default bg-page tracking-tight">
     <slot />
+    {import.meta.env.PROD && <Analytics />}
   </body>
 </html>
