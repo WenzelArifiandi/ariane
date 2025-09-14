@@ -4,6 +4,7 @@ import '../styles/gloss.css'
 import '../styles/tokens.css'
 import AWCustomStyles from '../components/AWCustomStyles.astro'
 import Analytics from '@vercel/analytics/astro'
+import SpeedInsights from '@vercel/speed-insights/astro'
 
 interface Props {
   title?: string
@@ -67,5 +68,6 @@ const pageUrl = pathname ? new URL(pathname, siteUrl).toString() : siteUrl
   <body class="antialiased text-default bg-page tracking-tight">
     <slot />
     {import.meta.env.PROD && <Analytics />}
+    {import.meta.env.PROD && <SpeedInsights />}
   </body>
 </html>
