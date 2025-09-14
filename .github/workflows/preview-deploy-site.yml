@@ -47,6 +47,5 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Deploy (prebuilt)
-        working-directory: .
-        run: vercel deploy site --token "$VERCEL_TOKEN" --archive=tgz --yes
+      - name: Deploy (remote build)
+        run: vercel deploy --token "$VERCEL_TOKEN" --yes
