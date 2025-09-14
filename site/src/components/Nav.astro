@@ -31,6 +31,8 @@ const studioHref = import.meta.env.DEV ? 'http://localhost:3333/' : 'https://stu
 <style>
   .nav { position: sticky; top: var(--nav-offset, 24px); z-index: 50; margin: var(--nav-offset, 24px) auto .75rem; }
   .nav-inner { width: 100%; display: flex; align-items: center; justify-content: space-between; padding-block: .7rem; border-radius: 999px; padding-left: var(--pad-x); padding-right: var(--pad-x); }
+  /* Allow links row to shrink without forcing overflow */
+  .nav-inner .links { min-width: 0; }
   .glass {
     background: linear-gradient(to bottom, rgba(255,255,255,.7), rgba(255,255,255,.5));
     backdrop-filter: saturate(140%) blur(10px);
@@ -71,20 +73,24 @@ const studioHref = import.meta.env.DEV ? 'http://localhost:3333/' : 'https://stu
 /* M3 expressive: chip */
 .links a, .chip.m3, .btn.m3 { font-size: var(--body); line-height: 1.2; font-family: inherit; }
 
-.chip.m3 {
-  background: var(--md-sys-color-primary);
-  color: var(--md-sys-color-on-primary);
-  border: 0;
-  border-radius: 999px;
-  padding: .45rem .8rem;
-  box-shadow: var(--md-sys-elevation-1);
-  cursor: pointer;
-  font-weight: 650;
-  white-space: nowrap;
-  transition: transform var(--md-sys-motion-duration-short) var(--md-sys-motion-ease-standard), box-shadow var(--md-sys-motion-duration-short) var(--md-sys-motion-ease-standard);
-}
+  .chip.m3 {
+    background: var(--md-sys-color-primary);
+    color: var(--md-sys-color-on-primary);
+    border: 0;
+    border-radius: 999px;
+    padding: .45rem .8rem;
+    box-shadow: var(--md-sys-elevation-1);
+    cursor: pointer;
+    font-weight: 650;
+    white-space: nowrap;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    flex: 0 1 auto;
+    transition: transform var(--md-sys-motion-duration-short) var(--md-sys-motion-ease-standard), box-shadow var(--md-sys-motion-duration-short) var(--md-sys-motion-ease-standard);
+  }
 .chip.m3:hover { box-shadow: var(--md-sys-elevation-2); transform: translateY(-1px); }
-.chip.m3 .material-symbols-rounded { color: #fff; font-variation-settings: 'FILL' 1, 'wght' 600, 'GRAD' 0, 'opsz' 24; font-size: 18px; vertical-align: -2px; margin-right: .35rem; }
+  .chip.m3 .material-symbols-rounded { color: #fff; font-variation-settings: 'FILL' 1, 'wght' 600, 'GRAD' 0, 'opsz' 24; font-size: 18px; vertical-align: -2px; margin-right: .35rem; }
 @media (max-width: 420px) {
   .chip.m3 .label { display: none; }
   .chip.m3 { padding: .45rem .6rem; }
@@ -99,6 +105,7 @@ const studioHref = import.meta.env.DEV ? 'http://localhost:3333/' : 'https://stu
 <script type="module">
   const qs = (s) => document.querySelector(s);
   const toggle = qs('#creator-toggle');
+  const navInner = qs('.nav-inner');
   const studio = qs('#studio-link');
 
   async function refreshAuth() {
@@ -119,4 +126,28 @@ toggle?.addEventListener('click', () => {
   });
 
   (async () => { await refreshAuth(); })();
+
+  // Compact the chip based on actual available space, not only viewport width
+  const makerChip = toggle;
+  function compactIfOverflow() {
+    if (!navInner || !makerChip) return;
+    // Temporarily ensure label is visible for an accurate measurement
+    makerChip.classList.remove('compact');
+    // If the nav content overflows its own width, compact the chip to icon-only
+    const needsCompact = navInner.scrollWidth > navInner.clientWidth - 4; // small buffer
+    if (needsCompact) makerChip.classList.add('compact');
+  }
+  // Initial pass and on resize/font load
+  compactIfOverflow();
+  let ro;
+  if ('ResizeObserver' in window) {
+    ro = new ResizeObserver(compactIfOverflow);
+    ro.observe(navInner);
+  } else {
+    window.addEventListener('resize', compactIfOverflow);
+  }
+  // After fonts load (icon/text width may change)
+  if (document.fonts && document.fonts.ready) {
+    document.fonts.ready.then(compactIfOverflow).catch(() => {});
+  }
 </script>
