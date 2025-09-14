@@ -1,0 +1,47 @@
+---
+import { Icon } from 'astro-icon/components';
+---
+
+<footer class="footer border-t border-gray-200 not-prose">
+  <div class="container py-8 md:py-12">
+    <div class="grid grid-cols-12 gap-4 gap-y-8 sm:gap-8">
+      <div class="col-span-12 lg:col-span-6">
+        <a class="brand" href="/">Wenzel Arifiandi</a>
+      </div>
+      <div class="col-span-12 lg:col-span-6 flex items-center justify-start lg:justify-end">
+        <ul class="socials">
+          <li>
+            <a aria-label="Instagram" href="https://www.instagram.com/wenzelarifiandi/" class="social-btn">
+              <Icon name="tabler:brand-instagram" class="w-5 h-5" />
+            </a>
+          </li>
+          <li>
+            <a aria-label="LinkedIn" href="https://www.linkedin.com/in/wenzelarifiandi/" class="social-btn">
+              <Icon name="tabler:brand-linkedin" class="w-5 h-5" />
+            </a>
+          </li>
+          <li>
+            <a aria-label="GitHub" href="https://github.com/WenzelArifiandi/ariane" class="social-btn">
+              <Icon name="tabler:brand-github" class="w-5 h-5" />
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="pt-6 md:pt-8 text-sm text-muted flex items-center justify-between">
+      <span>Made by <a class="link" href="https://github.com/WenzelArifiandi/ariane">Wenzel Arifiandi</a></span>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .footer { background: transparent; }
+  .brand { font-weight: 700; font-size: 1.125rem; text-decoration: none; color: inherit; }
+  .container { max-width: 1100px; margin-inline: auto; padding-inline: var(--pad-x); }
+  .socials { display:flex; gap:.25rem; align-items:center; list-style:none; margin:0; padding:0; }
+  .social-btn { color: var(--aw-color-text-muted, #555); padding:.5rem; border-radius: .5rem; display:inline-flex; align-items:center; }
+  .social-btn:hover { background: rgba(0,0,0,.04); color: inherit; }
+  .link { color: rgb(1 97 239); text-decoration: underline; }
+</style>
+

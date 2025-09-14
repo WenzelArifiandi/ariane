@@ -2,6 +2,7 @@
 import Base from '../layouts/Base.astro'
 import Nav from '../components/Nav.astro'
 import Hero from '../components/Hero.astro'
+import Footer from '../components/Footer.astro'
 import '../styles/global.css' // adjust the relative path if needed
 
 const page = {
@@ -19,25 +20,36 @@ const email = 'hello@wenzelarifiandi.com'
 
   {/* Work anchor */}
   <section id="work" class="container align-hero">
-    <h2>Work</h2>
-    <p class="muted">Selected projects will appear here soon.</p>
+    <div class="section__inner">
+      <h2>Work</h2>
+      <p class="muted">Selected projects will appear here soon.</p>
+    </div>
   </section>
 
   {/* About anchor */}
   <section id="about" class="container align-hero">
-    <h2>About</h2>
-    <p class="muted">More details coming shortly.</p>
+    <div class="section__inner">
+      <h2>About</h2>
+      <p class="muted">More details coming shortly.</p>
+    </div>
   </section>
 
   {/* Contact anchor */}
   <section id="contact" class="container align-hero">
-    <h2>Contact</h2>
-    <p class="muted">Email me at <a href={`mailto:${email}`} class="accent">{email}</a>.</p>
+    <div class="section__inner">
+      <h2>Contact</h2>
+      <p class="muted">Email me at <a href={`mailto:${email}`} class="accent">{email}</a>.</p>
+    </div>
   </section>
+  <Footer />
 </Base>
 
 <style>
   .wrap { max-width: 1100px; margin: 3rem auto; padding: 0 var(--pad-x); }
   h2 { font-size: var(--h2); letter-spacing: -0.01em; margin-bottom: .5rem; }
   .muted { color: color-mix(in oklab, var(--ink), black 25%); }
+  .section__inner { padding-left: var(--pad-x); }
+  #work, #about, #contact { padding-block: 28px; }
+  /* Add space before footer */
+  #contact { padding-bottom: clamp(64px, 10vw, 120px); }
 </style>

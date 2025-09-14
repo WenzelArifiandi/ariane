@@ -1,0 +1,37 @@
+name: Claude Code (Astro Docs MCP)
+
+on:
+  workflow_dispatch:
+  issue_comment:
+    types: [created]
+
+permissions:
+  contents: read
+  issues: write
+  pull-requests: write
+
+jobs:
+  claude:
+    if: github.event_name == 'workflow_dispatch' || github.event.comment.body != ''
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Run Claude Code Action (Astro Docs MCP enabled)
+        uses: anthropics/claude-code-action@beta
+        with:
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          # Optional: limit by keyword to avoid answering every comment
+          # trigger_on_comment: "/astro"
+          mcp_config: |
+            {
+              "mcpServers": {
+                "astro-docs": {
+                  "type": "http",
+                  "url": "https://mcp.docs.astro.build/mcp"
+                }
+              }
+            }
+          allowed_tools: "mcp__astro-docs__search_astro_docs"
+          # Optional: working directory for repo ops
+          working_directory: "."

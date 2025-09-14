@@ -5,7 +5,7 @@
   --ink: #101114;
   --page: #FEFBFF;
   /* Layout */
-  --pad-x: clamp(1.25rem, 5vw, 2.25rem);
+  --pad-x: clamp(1rem, 4vw, 2rem);
 
   /* Palette */
   --wisteria: #8b7cf0;
@@ -25,12 +25,9 @@
   --shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
 }
 /* --- Global system font fallback (instant everywhere) --- */
-html {
-  font-family:
-    ui-sans-serif, system-ui, -apple-system, "SF Pro Text", "SF Pro Display",
-    "Segoe UI", Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
-}
+html { font-family: 'Inter Variable', ui-sans-serif, system-ui; }
 /* src/styles/global.css */
+/* Tailwind base disabled to mirror AstroWind applyBaseStyles:false */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -42,13 +39,11 @@ html {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     font-feature-settings: "kern","liga","clig","calt";
+    min-width: 360px;
   }
 }
 
-/* Global containers for consistent alignment */
-.container { max-width: 1100px; margin-inline: auto; padding-inline: var(--pad-x); }
-.container-xl { max-width: 1200px; margin-inline: auto; padding-inline: var(--pad-x); }
-.align-hero { padding-left: calc(var(--pad-x) + 36px); }
+/* Global containers defined in AWCustomStyles to avoid duplicates */
 /* Elegant link color + underline only on hover (not for buttons) */
 a:not(.btn) {
   color: color-mix(in oklab, #7150D9, black 12%);

@@ -8,30 +8,29 @@ const studioHref = import.meta.env.DEV ? 'http://localhost:3333/' : 'https://stu
 ---
 
 <nav class="nav">
-  <div class="container align-hero nav-inner glass">
-  <a href="/" class="brand">Wenzel Arifiandi</a>
-  <ul class="links">
-    {links.map((l) => (
-      <li><a href={l.href}>{l.label}</a></li>
-    ))}
-    <li id="studio-link" style="display:none"><a href={studioHref}>Studio</a></li>
-    <li class="creator-wrap">
-      <button id="creator-toggle" class="chip m3" aria-haspopup="true" aria-expanded="false" aria-controls="creator-sheet" title="Maker mode">
-        <span class="material-symbols-rounded" aria-hidden="true">auto_awesome</span>
-        <span class="label">Maker mode</span>
-      </button>
-    </li>
-  </ul>
+  <div class="container align-hero">
+    <div class="nav-inner glass">
+      <a href="/" class="brand">Wenzel Arifiandi</a>
+      <ul class="links">
+        {links.map((l) => (
+          <li><a href={l.href}>{l.label}</a></li>
+        ))}
+        <li id="studio-link" style="display:none"><a href={studioHref}>Studio</a></li>
+        <li class="creator-wrap">
+          <button id="creator-toggle" class="chip m3" aria-haspopup="true" aria-expanded="false" aria-controls="creator-sheet" title="Maker mode">
+            <span class="material-symbols-rounded" aria-hidden="true">auto_awesome</span>
+            <span class="label">Maker mode</span>
+          </button>
+        </li>
+      </ul>
+    </div>
   </div>
 </nav>
 
 
 <style>
-  .nav {
-    position: sticky; top: 0; z-index: 50;
-    margin: .75rem auto;
-  }
-  .nav-inner { display: flex; align-items: center; justify-content: space-between; padding-block: .75rem; border-radius: 999px; }
+  .nav { position: sticky; top: var(--nav-offset, 24px); z-index: 50; margin: var(--nav-offset, 24px) auto .75rem; }
+  .nav-inner { width: 100%; display: flex; align-items: center; justify-content: space-between; padding-block: .7rem; border-radius: 999px; padding-left: var(--pad-x); padding-right: var(--pad-x); }
   .glass {
     background: linear-gradient(to bottom, rgba(255,255,255,.7), rgba(255,255,255,.5));
     backdrop-filter: saturate(140%) blur(10px);
@@ -111,7 +110,7 @@ const studioHref = import.meta.env.DEV ? 'http://localhost:3333/' : 'https://stu
     } catch {}
   }
 
-  toggle?.addEventListener('click', () => {
+toggle?.addEventListener('click', () => {
     const html = document.documentElement;
     const open = html.getAttribute('data-creator') === 'open';
     html.setAttribute('data-creator', open ? 'closed' : 'open');

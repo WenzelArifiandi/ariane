@@ -6,7 +6,7 @@ const ctaLabel = "See Work";
 ---
 
   <div class="creator-bar">
-    <div class="creator-bar__inner container">
+    <div class="creator-bar__inner container align-hero">
       <div class="creator-bar__text"><span class="material-symbols-rounded text-icon" aria-hidden="true">auto_awesome</span><span class="text-label">Entering Wenzel's maker space</span></div>
       <div class="creator-bar__actions">
         <button id="creator-passkey" class="btn m3 small" data-mode="signin">
@@ -17,11 +17,13 @@ const ctaLabel = "See Work";
     </div>
   </div>
 
-<section class="hero container">
-  <div class="hero__inner container">
+<section class="container align-hero">
+  <div class="hero">
+    <div class="hero__inner">
     <h1 class="hero__title">{title}</h1>
     <p class="hero__subtitle">{subtitle}</p>
     <a class="btn m3" href={ctaHref}>{ctaLabel}</a>
+    </div>
   </div>
 </section>
 
@@ -37,10 +39,10 @@ const ctaLabel = "See Work";
     position: relative;
     isolation: isolate;
     border-radius: 28px;
-    overflow: clip;
-    margin: 1rem auto 2rem;
+    overflow: hidden;
+    margin: 1rem 0 2rem;
     /* width is handled by .container */
-    min-height: 54svh;
+    min-height: clamp(360px, 60svh, 680px);
 
     /* Sakura → Mauve diagonal */
     background:
@@ -51,15 +53,15 @@ const ctaLabel = "See Work";
   .creator-bar {
     --p: 0; /* spring-driven progress (0..1) */
     max-height: calc(72px * var(--p));
-    overflow: clip;
+    overflow: hidden;
     background: var(--page);
     /* remove divider line to avoid “line under strip” */
     opacity: var(--p);
   }
 
   .creator-bar__inner { display: flex; align-items: center; justify-content: space-between; gap: .75rem; }
-  .creator-bar__text { font-weight: 650; opacity: .9; font-size: var(--body); }
-  .creator-bar__actions { display: inline-flex; gap: .5rem; align-items: center; }
+  .creator-bar__text { font-weight: 650; opacity: .9; font-size: var(--body); display:inline-flex; align-items:center; gap:.4rem; }
+  .creator-bar__actions { display: inline-flex; gap: .5rem; align-items: center; margin-left: auto; padding-right: 1px; }
   .btn.small { padding: .5rem .8rem; border-radius: 999px; font-size: var(--body); line-height: 1.2; border: 0; }
   .creator-bar .btn.m3 { border: 0; box-shadow: none; }
   @media (max-width: 480px) {
@@ -82,7 +84,10 @@ const ctaLabel = "See Work";
     mix-blend-mode: soft-light;
   }
 
-  .hero__inner { position: relative; z-index: 1; padding-block: clamp(2rem, 6vw, 6rem); display: grid; gap: 1rem; }
+  .hero__inner { position: relative; z-index: 1; padding-block: 56px; display: grid; gap: 1rem; padding-inline: var(--pad-x); }
+
+  /* Fallback: if JS spring doesn’t run, honor attribute toggle */
+  html[data-creator="open"] .creator-bar { --p: 1; max-height: 72px; opacity: 1; }
   .hero__title {
     font-size: var(--h1);
     line-height: 1.05;
