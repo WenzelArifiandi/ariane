@@ -17,9 +17,9 @@ const studioHref = import.meta.env.DEV ? 'http://localhost:3333/' : 'https://stu
         ))}
         <li id="studio-link" style="display:none"><a href={studioHref}>Studio</a></li>
         <li class="creator-wrap">
-          <button id="creator-toggle" class="chip m3" aria-haspopup="true" aria-expanded="false" aria-controls="creator-sheet" title="Maker mode">
+          <button id="creator-toggle" class="chip m3" aria-haspopup="true" aria-expanded="false" aria-controls="creator-sheet" title="Maker">
             <span class="material-symbols-rounded" aria-hidden="true">auto_awesome</span>
-            <span class="label">Maker mode</span>
+            <span class="label">Maker</span>
           </button>
         </li>
       </ul>
@@ -91,7 +91,7 @@ const studioHref = import.meta.env.DEV ? 'http://localhost:3333/' : 'https://stu
   }
 .chip.m3:hover { box-shadow: var(--md-sys-elevation-2); transform: translateY(-1px); }
   .chip.m3 .material-symbols-rounded { color: #fff; font-variation-settings: 'FILL' 1, 'wght' 600, 'GRAD' 0, 'opsz' 24; font-size: 18px; vertical-align: -2px; margin-right: .35rem; }
-@media (max-width: 420px) {
+@media (max-width: 500px) {
   .chip.m3 .label { display: none; }
   .chip.m3 { padding: .45rem .6rem; }
 }
