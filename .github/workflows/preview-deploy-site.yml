@@ -47,9 +47,6 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Build (astro)
-        run: npm run build
-
       - name: Deploy (prebuilt)
         working-directory: .
-        run: vercel deploy --prebuilt --token "$VERCEL_TOKEN" --archive=tgz
+        run: vercel deploy site --token "$VERCEL_TOKEN" --archive=tgz --yes
