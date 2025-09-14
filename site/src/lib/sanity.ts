@@ -5,27 +5,48 @@ import type { QueryParams } from '@sanity/client'
 const projectId = import.meta.env.PUBLIC_SANITY_PROJECT_ID
 const dataset = import.meta.env.PUBLIC_SANITY_DATASET
 const apiVersion = import.meta.env.PUBLIC_SANITY_API_VERSION ?? '2023-10-01'
+const enabled = Boolean(projectId && dataset)
 
-// Guard against missing env during dev/build
-if (!projectId || !dataset) {
-  throw new Error('[sanity] Missing PUBLIC_SANITY_PROJECT_ID or PUBLIC_SANITY_DATASET')
+export const client = enabled
+  ? createClient({
+      projectId: projectId!,
+      dataset: dataset!,
+      apiVersion,
+      useCdn: true,
+      perspective: 'published',
+    })
+  : // Create a benign client placeholder; calls will be guarded below
+    ({} as unknown as ReturnType<typeof createClient>)
+
+const realBuilder = enabled ? imageUrlBuilder(client) : null
+
+// Type-safe image source without importing deep types
+export type ImageSource = realBuilder extends null
+  ? unknown
+  : Parameters<NonNullable<typeof realBuilder>['image']>[0]
+
+type UrlBuilder = {
+  width: (n: number) => UrlBuilder
+  height: (n: number) => UrlBuilder
+  fit: (s: string) => UrlBuilder
+  auto: (s: string) => UrlBuilder
+  url: () => string
 }
 
-export const client = createClient({
-  projectId,
-  dataset,
-  apiVersion,
-  useCdn: true,            // fast, public, cached reads
-  perspective: 'published',
-})
+export const urlFor = (src: ImageSource): UrlBuilder => {
+  if (realBuilder) return realBuilder.image(src) as unknown as UrlBuilder
+  const dummy: UrlBuilder = {
+    width: () => dummy,
+    height: () => dummy,
+    fit: () => dummy,
+    auto: () => dummy,
+    url: () => '',
+  }
+  return dummy
+}
 
-const builder = imageUrlBuilder(client)
-// Type-safe image source without importing deep types
-// (uses the parameter type of builder.image)
-export type ImageSource = Parameters<typeof builder.image>[0]
-export const urlFor = (src: ImageSource) => builder.image(src)
-
-// Small helper for typed GROQ fetches
+// Helper for typed GROQ fetches; returns empty fallback when disabled
 export async function fetchSanity<T>(query: string, params: QueryParams = {}): Promise<T> {
-  return client.fetch<T>(query, params)
+  if (!enabled) return ([] as unknown) as T
+  return (client as any).fetch<T>(query, params)
 }
