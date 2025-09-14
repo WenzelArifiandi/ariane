@@ -69,7 +69,7 @@ function mountAccessUI(prefill?: string) {
         <span class="material-symbols-rounded" aria-hidden="true">mail</span>
         <div class="titles">
           <div class="title">Join the maker space</div>
-          <div class="support">Share your email to request access. I’ll review and let you know when it’s ready.</div>
+          <div class="support">Can't wait to welcome you into the makerspace! Pop your email below to request access, and I'll reach out as soon as it's ready.</div>
         </div>
       </div>
       <form id="req-access" class="form">

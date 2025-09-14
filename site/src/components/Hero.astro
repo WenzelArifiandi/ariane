@@ -138,27 +138,27 @@ const ctaLabel = "See Work";
   .creator-bar.access-open .access-card input[type="email"] { flex: 1 1 280px; min-width: 240px; }
 
   /* Dedicated access mount styles (below the bar, above hero) */
-  .access-mount { padding-block: .25rem .75rem; }
+    .access-mount { padding-block: 1rem 1.5rem; }
   .access-mount .access-ui { margin-left: 0; width: 100%; }
   .access-mount .access-card {
     width: 100%;
     max-width: 720px;
     border-radius: 24px;
-    padding: 1rem 1.25rem;
+      padding: 1.5rem 1.75rem;
     margin-inline: 0; /* align with container padding */
     background: var(--page);
     box-shadow: var(--md-sys-elevation-2, 0 8px 28px rgba(0,0,0,.10));
     border: 1px solid color-mix(in oklab, var(--ink), transparent 92%);
-    display: grid; gap: .75rem;
+      display: grid; gap: 1rem;
   }
-  .access-mount .access-card .head { display:flex; align-items:center; gap:.75rem; }
+    .access-mount .access-card .head { display:flex; align-items:center; gap:1rem; }
   .access-mount .access-card .material-symbols-rounded { color: var(--md-sys-color-primary, #7150D9); }
-  .access-mount .access-card .title { font-weight: 700; }
-  .access-mount .access-card .support { color: color-mix(in oklab, var(--ink), black 35%); font-size: .95rem; }
-  .access-mount .access-card .form { display:grid; gap:.5rem; grid-template-columns: 1fr auto; align-items: end; }
+    .access-mount .access-card .title { font-weight: 700; font-size: 1.1em; }
+    .access-mount .access-card .support { color: color-mix(in oklab, var(--ink), black 25%); font-size: 1rem; line-height: 1.5; }
+    .access-mount .access-card .form { display:grid; gap:.75rem; grid-template-columns: 1fr auto; align-items: end; margin-top: .5rem; }
   .access-mount .access-card .label { font-size:.85rem; color: color-mix(in oklab, var(--ink), black 40%); }
-  .access-mount .access-card .field { width: 100%; padding:.7rem .9rem; border-radius: 14px; border: 1px solid color-mix(in oklab, var(--ink), transparent 80%); background: #fff; color: var(--ink); font: inherit; }
-  .access-mount .access-card .btn.m3 { height: 42px; align-self:end; }
+    .access-mount .access-card .field { width: 100%; padding:.8rem 1rem; border-radius: 14px; border: 1px solid color-mix(in oklab, var(--ink), transparent 80%); background: #fff; color: var(--ink); font: inherit; font-size: 1rem; }
+    .access-mount .access-card .btn.m3 { height: 48px; align-self:end; padding: 0 1.5rem; }
   @media (max-width: 640px) {
     .access-mount .access-card .form { grid-template-columns: 1fr; }
     .access-mount .access-card .btn.m3 { width: max-content; }
