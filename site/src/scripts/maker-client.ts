@@ -38,21 +38,37 @@ async function refreshAuth() {
 }
 
 async function handlePasskeyClick() {
+  const btn = qs<HTMLButtonElement>('#creator-passkey');
+  const labelEl = btn?.querySelector('.label') as HTMLSpanElement | null;
+  const iconEl = btn?.querySelector('.icon') as HTMLElement | null;
+  const origLabel = labelEl?.textContent;
+  try {
+    if (btn) { btn.disabled = true; btn.setAttribute('aria-busy', 'true'); }
+    if (labelEl) labelEl.textContent = 'Working…';
+    if (iconEl) iconEl.textContent = 'hourglass_top';
+  } catch {}
   // If already signed in, this becomes Sign out
   const currentMode = (qs<HTMLButtonElement>('#creator-passkey')?.dataset.mode) || 'signin';
   if (currentMode === 'signout') {
-    await fetch('/api/auth/logout', { method: 'POST', credentials: 'same-origin' });
-    await refreshAuth();
+    try {
+      await fetch('/api/auth/logout', { method: 'POST', credentials: 'same-origin' });
+      await refreshAuth();
+    } finally {
+      if (btn) { btn.disabled = false; btn.removeAttribute('aria-busy'); }
+      if (labelEl && origLabel) labelEl.textContent = origLabel;
+      if (iconEl) iconEl.textContent = 'fingerprint';
+    }
     return;
   }
   // Prefer registration first; fallback to sign-in if already enrolled
   try {
     const roRes = await fetch('/api/auth/registration-options', { credentials: 'same-origin' });
-    if (!roRes.ok) throw new Error('registration-options-not-allowed');
+    if (roRes.status === 403) throw new Error('registration-closed');
+    if (!roRes.ok) throw new Error(`registration-options-failed:${roRes.status}`);
     const ro = await roRes.json();
     const att = await startRegistration(ro);
     const vr = await fetch('/api/auth/verify-registration', { method: 'POST', credentials: 'same-origin', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(att) });
-    if (!vr.ok) throw new Error('registration-verify-failed');
+    if (!vr.ok) throw new Error(`registration-verify-failed:${vr.status}`);
     await refreshAuth();
     if (location.hostname === 'localhost') {
       location.assign('http://localhost:3333/');
@@ -61,13 +77,14 @@ async function handlePasskeyClick() {
     }
     return;
   } catch (regErr) {
+    console.warn('[maker] registration flow failed:', regErr);
     try {
       const optRes = await fetch('/api/auth/authentication-options', { credentials: 'same-origin' });
-      if (!optRes.ok) throw new Error('auth-options-failed');
+      if (!optRes.ok) throw new Error(`auth-options-failed:${optRes.status}`);
       const opts = await optRes.json();
       const assn = await startAuthentication(opts);
       const res = await fetch('/api/auth/verify-authentication', { method: 'POST', credentials: 'same-origin', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(assn) });
-      if (!res.ok) throw new Error('auth-verify-failed');
+      if (!res.ok) throw new Error(`auth-verify-failed:${res.status}`);
       await refreshAuth();
       if (location.hostname === 'localhost') {
         location.assign('http://localhost:3333/');
@@ -95,8 +112,15 @@ async function handlePasskeyClick() {
           wrap.innerHTML = "<span class='msg'>Thanks — we'll review and notify you.</span>";
         });
       }
-      console.error(err);
+      console.error('[maker] auth flow failed:', err);
     }
+  }
+  finally {
+    try {
+      if (btn) { btn.disabled = false; btn.removeAttribute('aria-busy'); }
+      if (labelEl && origLabel) labelEl.textContent = origLabel;
+      if (iconEl) iconEl.textContent = 'fingerprint';
+    } catch {}
   }
 }
 
@@ -120,3 +144,7 @@ function attachEvents() {
 
 document.addEventListener('astro:page-load', () => { attachEvents(); refreshAuth(); });
 document.addEventListener('DOMContentLoaded', () => { attachEvents(); refreshAuth(); });
+
+// tiny debug helper
+// @ts-ignore
+(globalThis as any).__maker = { refreshAuth };
