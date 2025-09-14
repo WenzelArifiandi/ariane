@@ -62,6 +62,13 @@ const ctaLabel = "See Work";
   .creator-bar__inner { display: flex; align-items: center; justify-content: space-between; gap: .75rem; }
   .creator-bar__text { font-weight: 650; opacity: .9; font-size: var(--body); display:inline-flex; align-items:center; gap:.4rem; }
   .creator-bar__actions { display: inline-flex; gap: .5rem; align-items: center; margin-left: auto; padding-right: 1px; }
+  .access-ui { margin-left: 1rem; }
+  .access-card { display:flex; flex-wrap:wrap; align-items:center; gap:.75rem; background: color-mix(in oklab, var(--page), black 3%); border-radius: 999px; padding: .35rem .5rem .35rem .5rem; }
+  .access-copy { display:flex; gap:.5rem; align-items:center; }
+  .access-card .title { font-weight: 650; }
+  .access-card .muted { opacity:.8; font-size: .9em; }
+  .access-card form.inline { display:inline-flex; gap:.5rem; align-items:center; margin-left:.25rem; }
+  .access-card input[type="email"] { appearance:none; border: 1px solid color-mix(in oklab, var(--ink), transparent 80%); background: white; color: inherit; padding:.5rem .6rem; border-radius: 999px; font: inherit; min-width: 18ch; }
   .btn.small { padding: .5rem .8rem; border-radius: 999px; font-size: var(--body); line-height: 1.2; border: 0; }
   .creator-bar .btn.m3 { border: 0; box-shadow: none; }
   @media (max-width: 480px) {
