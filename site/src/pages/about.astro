@@ -5,7 +5,8 @@ import groq from 'groq'
 import { toHTML } from '@portabletext/to-html'
 
 const aboutQuery = groq`*[_type == "about"][0]{ bio, headshot, skills, "headshotUrl": headshot.asset->url }`
-const about: any = await client.fetch(aboutQuery)
+let about: any = null
+try { about = await client.fetch(aboutQuery) } catch { about = null }
 const html = about?.bio ? toHTML(about.bio as any) : ''
 ---
 <Base title="About — Ariane" description="About the designer.">

@@ -4,7 +4,8 @@ import { client } from '../../lib/sanity'
 import { allProjects } from '../../lib/queries'
 import { urlFor } from '../../lib/sanity'
 
-const projects: any[] = await client.fetch(allProjects)
+let projects: any[] = []
+try { projects = await client.fetch(allProjects) } catch { projects = [] }
 const page = { title: 'Work — Ariane', description: 'Selected projects' }
 ---
 

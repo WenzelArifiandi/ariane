@@ -6,19 +6,25 @@ import { urlFor } from '../../lib/sanity'
 import '../../styles/global.css' // adjust the relative path if needed
 
 export async function getStaticPaths() {
-  const projects = await client.fetch(allProjects)
-  return projects.map((p: any) => ({ params: { slug: p.slug } }))
+  try {
+    const projects = await client.fetch(allProjects)
+    return projects.map((p: any) => ({ params: { slug: p.slug } }))
+  } catch {
+    return []
+  }
 }
 
 const { slug } = Astro.params
-const project = await client.fetch(projectBySlug, { slug })
-if (!project) throw new Error('Project not found')
+let project: any = null
+try { project = await client.fetch(projectBySlug, { slug }) } catch { project = null }
 ---
 
-<Base title={`${project.title} — Ariane`} description={project.summary ?? ''} ogImage={project.hero ? urlFor(project.hero).width(1600).fit('max').auto('format').url() : undefined} pathname={`/work/${project.slug}`}>
-  <a href="/work" class="text-sm text-neutral-500 hover:underline">← Back to Work</a>
-  <h1 class="mt-4 text-4xl font-semibold">{project.title}</h1>
-  {project.year && <p class="mt-1 text-neutral-500">{project.year}</p>}
+<Base title={(project?.title ? `${project.title} — Ariane` : 'Project — Ariane')} description={project?.summary ?? ''} ogImage={project?.hero ? urlFor(project.hero).width(1600).fit('max').auto('format').url() : undefined} pathname={`/work/${slug}`}>
+  {project ? (
+    <>
+    <a href="/work" class="text-sm text-neutral-500 hover:underline">← Back to Work</a>
+    <h1 class="mt-4 text-4xl font-semibold">{project.title}</h1>
+    {project.year && <p class="mt-1 text-neutral-500">{project.year}</p>}
 
   {project.hero && (
     <img
@@ -142,4 +148,8 @@ if (!project) throw new Error('Project not found')
       }
     })
   </script>
+    </>
+  ) : (
+    <p class="text-neutral-600">Project not found. <a class="underline" href="/work">Back to Work</a></p>
+  )}
 </Base>
