@@ -1,0 +1,82 @@
+{
+  "$schema": "https://tokens.studio/schemas/0.1.0/tokens.json",
+  "$themes": [
+    {
+      "id": "light",
+      "name": "Light",
+      "selectedTokenSets": {
+        "core": "source",
+        "light": "enabled"
+      }
+    },
+    {
+      "id": "dark",
+      "name": "Dark",
+      "selectedTokenSets": {
+        "core": "source",
+        "dark": "enabled"
+      }
+    }
+  ],
+  "core": {
+    "color": {
+      "brand": {
+        "primary": { "value": "#7150D9" },
+        "onPrimary": { "value": "#ffffff" }
+      },
+      "neutral": {
+        "surface": { "value": "#ffffff" },
+        "ink": { "value": "#101010" }
+      }
+    },
+    "radius": {
+      "lg": { "value": "20px" },
+      "xl": { "value": "28px" }
+    },
+    "shadow": {
+      "elevation2": { "value": "0 6px 20px rgba(0,0,0,.08)" },
+      "elevation3": { "value": "0 10px 40px rgba(0,0,0,.10)" }
+    },
+    "space": {
+      "2": { "value": "0.5rem" },
+      "3": { "value": "0.75rem" },
+      "4": { "value": "1rem" },
+      "6": { "value": "1.5rem" }
+    }
+  },
+  "light": {
+    "sys": {
+      "md": {
+        "color": {
+          "primary": { "value": "{color.brand.primary.value}" },
+          "onPrimary": { "value": "{color.brand.onPrimary.value}" },
+          "surface": { "value": "{color.neutral.surface.value}" },
+          "onSurface": { "value": "{color.neutral.ink.value}" }
+        }
+      }
+    }
+  },
+  "dark": {
+    "color": {
+      "neutral": {
+        "surface": { "value": "#0b0d12" },
+        "ink": { "value": "#e5ecf6" }
+      }
+    },
+    "sys": {
+      "md": {
+        "color": {
+          "primary": { "value": "{color.brand.primary.value}" },
+          "onPrimary": { "value": "{color.brand.onPrimary.value}" },
+          "surface": { "value": "{color.neutral.surface.value}" },
+          "onSurface": { "value": "{color.neutral.ink.value}" }
+        }
+      }
+    },
+    "shadow": {
+      "elevation2": { "value": "0 6px 20px rgba(0,0,0,.30)" },
+      "elevation3": { "value": "0 10px 40px rgba(0,0,0,.45)" }
+    }
+  }
+}
+
