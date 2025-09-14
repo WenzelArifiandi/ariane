@@ -14,9 +14,6 @@ jobs:
     # Only run when PR has the 'deploy-preview' label
     if: contains(github.event.pull_request.labels.*.name, 'deploy-preview')
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: site
     env:
       VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN_SITE }}
       VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID_SITE }}
@@ -42,11 +39,11 @@ jobs:
         run: npm i -g vercel@latest
 
       - name: Pull project settings (preview)
-        run: vercel pull --yes --environment=preview --token "$VERCEL_TOKEN" --local-config site/vercel.json
+        run: vercel pull --yes --environment=preview --token "$VERCEL_TOKEN" --cwd site
 
       - name: Install dependencies (site)
         working-directory: ./site
         run: npm ci
 
       - name: Deploy (remote build)
-        run: vercel deploy --token "$VERCEL_TOKEN" --yes --local-config site/vercel.json
+        run: vercel deploy --token "$VERCEL_TOKEN" --yes --cwd site
