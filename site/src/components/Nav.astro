@@ -129,25 +129,32 @@ toggle?.addEventListener('click', () => {
 
   // Compact the chip based on actual available space, not only viewport width
   const makerChip = toggle;
-  function compactIfOverflow() {
+  let rafId = 0;
+  function measureAndToggle() {
     if (!navInner || !makerChip) return;
-    // Temporarily ensure label is visible for an accurate measurement
+    // Show full label for accurate measurement
     makerChip.classList.remove('compact');
-    // If the nav content overflows its own width, compact the chip to icon-only
-    const needsCompact = navInner.scrollWidth > navInner.clientWidth - 4; // small buffer
-    if (needsCompact) makerChip.classList.add('compact');
+    // Use a small threshold to avoid subpixel false positives
+    const overflow = Math.ceil(navInner.scrollWidth - navInner.clientWidth);
+    const needsCompact = overflow > 12; // require a meaningful overflow
+    makerChip.classList.toggle('compact', needsCompact);
   }
-  // Initial pass and on resize/font load
-  compactIfOverflow();
+  function scheduleMeasure() {
+    if (rafId) cancelAnimationFrame(rafId);
+    rafId = requestAnimationFrame(measureAndToggle);
+  }
+  // Initial pass
+  scheduleMeasure();
+  // On container resize
   let ro;
-  if ('ResizeObserver' in window) {
-    ro = new ResizeObserver(compactIfOverflow);
+  if ('ResizeObserver' in window && navInner) {
+    ro = new ResizeObserver(scheduleMeasure);
     ro.observe(navInner);
   } else {
-    window.addEventListener('resize', compactIfOverflow);
+    window.addEventListener('resize', scheduleMeasure);
   }
-  // After fonts load (icon/text width may change)
+  // After fonts are ready (icon/text width may change)
   if (document.fonts && document.fonts.ready) {
-    document.fonts.ready.then(compactIfOverflow).catch(() => {});
+    document.fonts.ready.then(scheduleMeasure).catch(() => {});
   }
 </script>
