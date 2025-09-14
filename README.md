@@ -1,3 +1,6 @@
+![Site Preview Deploy](https://github.com/WenzelArifiandi/ariane/actions/workflows/preview-deploy-site.yml/badge.svg?branch=main)
+![Studio Deploy (Hook)](https://github.com/WenzelArifiandi/ariane/actions/workflows/studio-deploy.yml/badge.svg?branch=main)
+
 Monorepo Overview
 
 - site: Production Astro app deployed on Vercel.
@@ -11,8 +14,8 @@ Vercel Configuration
   - ariane-studio (studio): Set Root Directory to `studio`.
 - Skip builds unless relevant changes (main or PR):
   - Both projects include a `vercel.json` `ignoreCommand` that builds only if files under that project changed, and only on `main` or PRs.
-  - Command used:
-    if [ "$VERCEL_GIT_COMMIT_REF" != "main" ] && [ -z "$VERCEL_GIT_PULL_REQUEST_ID" ]; then exit 0; fi; git diff --quiet HEAD^ HEAD -- . 2>/dev/null && exit 0 || exit 1
+  - Site Preview gating: PR builds are skipped unless CI sets `VERCEL_FORCE_PREVIEW=1` (the label‑gated workflow does this). This avoids duplicate PR previews.
+  - Commands are defined in `site/vercel.json` and `studio/vercel.json`.
 - Runtime:
   - Vercel Serverless uses Node 22. Local dev can be newer, but logs may warn and fall back in production.
 
@@ -40,6 +43,7 @@ PR-gated Preview Deploys (Site)
 - Workflow: `.github/workflows/preview-deploy-site.yml`
   - Triggers on PRs touching `site/**` when the PR has label `deploy-preview`.
   - Builds with `vercel build` and deploys a Preview with `vercel deploy --prebuilt`.
+  - Passes `--build-env VERCEL_FORCE_PREVIEW=1` so the site's `ignoreCommand` allows PR builds only from this workflow.
   - Tip: In the Vercel project (site), you can disable automatic Preview deployments to avoid duplicates, relying on this workflow instead.
 
 Local Studio Deploy Hook
@@ -57,3 +61,5 @@ Local Development
 
 - cd site && npm i && npm run dev
 - cd studio && npm i && npm run dev
+- Root helper scripts:
+  - `npm run deploy:studio` triggers the Studio Deploy Hook using `STUDIO_DEPLOY_HOOK_URL`.
