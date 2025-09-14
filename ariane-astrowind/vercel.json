@@ -16,7 +16,6 @@
     { "source": "/about", "destination": "https://wenzelarifiandi.com/about" },
     { "source": "/links", "destination": "https://wenzelarifiandi.com/links" },
     { "source": "/work", "destination": "https://wenzelarifiandi.com/work" },
-    { "source": "/work/:slug", "destination": "https://wenzelarifiandi.com/work/:slug" },
-    
+    { "source": "/work/:slug", "destination": "https://wenzelarifiandi.com/work/:slug" }
   ]
 }
