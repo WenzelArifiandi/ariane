@@ -1,4 +1,5 @@
 ---
+import makerClientUrl from '../../scripts/maker-client.ts?url'
 const title = "Hi there!";
 const subtitle = "This site is being refreshed!";
 const ctaHref = "#work";
@@ -27,7 +28,7 @@ const ctaLabel = "See Work";
 </section>
 
 <!-- Enable passkey client events (bundle via Vite) -->
-<script type="module" src={Astro.resolve('../../scripts/maker-client.ts')}></script>
+<script type="module" src={makerClientUrl}></script>
 
 <style>
   :root { --mauve: #b99ad9; }
