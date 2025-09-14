@@ -26,8 +26,13 @@ const ctaLabel = "See Work";
   </div>
 </section>
 
-<!-- Enable passkey client events -->
-<script type="module" src="/src/scripts/maker-client.ts"></script>
+<!-- Enable passkey client events (bundle via Vite) -->
+<script type="module" is:inline>
+  import '../../scripts/maker-client.ts';
+  // Note: this inline import ensures the TS module is bundled and not fetched by path.
+  // Astro treats scripts with attributes as inline-only, so make it explicit.
+  void 0;
+  </script>
 
 <style>
   :root { --mauve: #b99ad9; }
