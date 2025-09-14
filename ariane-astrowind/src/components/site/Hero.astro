@@ -27,12 +27,10 @@ const ctaLabel = "See Work";
 </section>
 
 <!-- Enable passkey client events (bundle via Vite) -->
-{import.meta.env.DEV && (
-  <script type="module" is:inline>
-    import '../../scripts/maker-client.ts';
-    void 0;
-  </script>
-)}
+<script type="module" is:inline>
+  import '../../scripts/maker-client.ts';
+  void 0;
+</script>
 
 <style>
   :root { --mauve: #b99ad9; }
