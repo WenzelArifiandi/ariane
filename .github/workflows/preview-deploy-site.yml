@@ -1,0 +1,49 @@
+name: Preview Deploy (Site) on Label
+
+on:
+  pull_request:
+    types: [opened, reopened, synchronize, labeled]
+    paths:
+      - 'site/**'
+
+permissions:
+  contents: read
+
+jobs:
+  deploy-preview:
+    # Only run when PR has the 'deploy-preview' label
+    if: contains(github.event.pull_request.labels.*.name, 'deploy-preview')
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: site
+    env:
+      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN_SITE }}
+      VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID_SITE }}
+      VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID_SITE }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Verify Vercel secrets are present
+        run: |
+          for v in VERCEL_TOKEN VERCEL_ORG_ID VERCEL_PROJECT_ID; do
+            if [ -z "${!v}" ]; then echo "Missing secret: $v"; exit 1; fi;
+          done
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install Vercel CLI
+        run: npm i -g vercel@latest
+
+      - name: Pull project settings (preview)
+        run: vercel pull --yes --environment=preview --token "$VERCEL_TOKEN"
+
+      - name: Build (preview)
+        run: vercel build --token "$VERCEL_TOKEN"
+
+      - name: Deploy (prebuilt)
+        run: vercel deploy --prebuilt --token "$VERCEL_TOKEN" --archive=tgz

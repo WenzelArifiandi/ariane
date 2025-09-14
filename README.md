@@ -30,6 +30,24 @@ CI (GitHub Actions)
   - In Vercel (project ariane-studio): create a Deploy Hook for branch `main`, copy its URL to the secret.
   - Optional: In Vercel ariane-studio, turn off automatic deploys to avoid duplicates and rely on the hook + ignoreCommand.
 
+PR-gated Preview Deploys (Site)
+
+- Label-controlled previews for `site/` using Vercel CLI via GitHub Actions.
+- Add repository secrets (GitHub → Settings → Secrets and variables → Actions):
+  - `VERCEL_TOKEN_SITE`: Vercel token with access to your team
+  - `VERCEL_ORG_ID_SITE`: Organization ID (from Vercel → Settings → Tokens)
+  - `VERCEL_PROJECT_ID_SITE`: Project ID for the `site` project
+- Workflow: `.github/workflows/preview-deploy-site.yml`
+  - Triggers on PRs touching `site/**` when the PR has label `deploy-preview`.
+  - Builds with `vercel build` and deploys a Preview with `vercel deploy --prebuilt`.
+  - Tip: In the Vercel project (site), you can disable automatic Preview deployments to avoid duplicates, relying on this workflow instead.
+
+Local Studio Deploy Hook
+
+- To manually trigger Studio deploys from your machine:
+  - Set `export STUDIO_DEPLOY_HOOK_URL="https://api.vercel.com/v1/integrations/deploy/<HOOK_ID>"`
+  - Run: `cd studio && npm run deploy:hook`
+
 Restore Archived Template
 
 - git fetch --tags
