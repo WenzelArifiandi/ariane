@@ -1,53 +1,38 @@
 ---
-/**
- * Base layout
- * Accepts either:
- *  - title / description props, or
- *  - a `page` object: { title, description, url, image }
- */
-import '../../styles/global.css' // adjust the relative path if needed
+import Base from '../../layouts/Base.astro'
+import { client } from '../../lib/sanity'
+import { allProjects } from '../../lib/queries'
+import { urlFor } from '../../lib/sanity'
 
-interface PageMeta {
-  title?: string
-  description?: string
-  url?: string
-  image?: string
-}
-
-interface Props {
-  title?: string
-  description?: string
-  page?: PageMeta
-}
-
-const { title, description, page } = Astro.props as Props
-
-const meta: PageMeta = {
-  title: page?.title ?? title ?? 'Ariane',
-  description: page?.description ?? description ?? 'Portfolio of Wenzel Arifiandi',
-  url: page?.url,
-  image: page?.image,
-}
+const projects: any[] = await client.fetch(allProjects)
+const page = { title: 'Work — Ariane', description: 'Selected projects' }
 ---
-<html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>{meta.title}</title>
-    {meta.description && <meta name="description" content={meta.description} />}
 
-    {/* OpenGraph / Twitter minimal set */}
-    <meta property="og:title" content={meta.title} />
-    {meta.description && <meta property="og:description" content={meta.description} />}
-    {meta.url && <meta property="og:url" content={meta.url} />}
-    {meta.image && <meta property="og:image" content={meta.image} />}
-    <meta name="twitter:card" content={meta.image ? 'summary_large_image' : 'summary'} />
-
-    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-  </head>
-  <body class="min-h-dvh bg-white text-neutral-900 antialiased font-sans">
-    <main class="mx-auto max-w-6xl px-6 py-16">
-      <slot />
-    </main>
-  </body>
-</html>
+<Base title={page.title} description={page.description} pathname="/work">
+  <h1 class="text-4xl font-semibold">Work</h1>
+  {projects?.length ? (
+    <ul class="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      {projects.map((p) => (
+        <li class="rounded-xl border overflow-hidden hover:shadow-sm transition-shadow">
+          <a href={`/work/${p.slug}`} class="block">
+            {p.hero && (
+              <img
+                src={urlFor(p.hero).width(800).height(500).fit('crop').auto('format').url()}
+                alt={p.hero.alt}
+                class="aspect-[16/10] w-full object-cover"
+                loading="lazy"
+              />
+            )}
+            <div class="p-4">
+              <h3 class="font-semibold">{p.title}</h3>
+              {p.year && <p class="text-sm text-neutral-500 mt-1">{p.year}</p>}
+              {p.summary && <p class="text-sm text-neutral-600 mt-2 line-clamp-2">{p.summary}</p>}
+            </div>
+          </a>
+        </li>
+      ))}
+    </ul>
+  ) : (
+    <p class="mt-6 text-neutral-500">Publish some <code>Project</code> docs in Studio to populate this page.</p>
+  )}
+</Base>

@@ -3,6 +3,9 @@ import Base from '../layouts/Base.astro'
 import Nav from '../components/Nav.astro'
 import Hero from '../components/Hero.astro'
 import Footer from '../components/Footer.astro'
+import { client } from '../lib/sanity'
+import { allProjects } from '../lib/queries'
+import { urlFor } from '../lib/sanity'
 import '../styles/global.css' // adjust the relative path if needed
 
 const page = {
@@ -19,10 +22,37 @@ const email = 'hello@wenzelarifiandi.com'
   <Hero />
 
   {/* Work anchor */}
+  ---
+  const projects: any[] = await client.fetch(allProjects)
+  ---
   <section id="work" class="container align-hero">
     <div class="section__inner">
       <h2>Work</h2>
-      <p class="muted">Selected projects will appear here soon.</p>
+      {projects?.length ? (
+        <ul class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 mt-4">
+          {projects.slice(0, 3).map((p) => (
+            <li class="rounded-xl border overflow-hidden hover:shadow-sm transition-shadow">
+              <a href={`/work/${p.slug}`} class="block">
+                {p.hero && (
+                  <img
+                    src={urlFor(p.hero).width(800).height(500).fit('crop').auto('format').url()}
+                    alt={p.hero.alt}
+                    class="aspect-[16/10] w-full object-cover"
+                    loading="lazy"
+                  />
+                )}
+                <div class="p-4">
+                  <h3 class="font-semibold">{p.title}</h3>
+                  {p.year && <p class="text-sm text-neutral-500 mt-1">{p.year}</p>}
+                </div>
+              </a>
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <p class="muted">Publish some <code>Project</code> docs in Studio to see them here.</p>
+      )}
+      <p class="mt-4"><a class="accent" href="/work">View all work →</a></p>
     </div>
   </section>
 
