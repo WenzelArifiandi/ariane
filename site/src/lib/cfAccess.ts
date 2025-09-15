@@ -50,32 +50,36 @@ export function getProtectedPrefixes(): string[] {
 // Approved claim support (Auth0 Action adds a namespaced boolean claim)
 export function getApprovedClaimEnv() {
   // Example default: https://wenzelarifiandi.com/approved
-  const claim = process.env.CF_ACCESS_APPROVED_CLAIM || "https://wenzelarifiandi.com/approved";
+  const claim =
+    process.env.CF_ACCESS_APPROVED_CLAIM ||
+    "https://wenzelarifiandi.com/approved";
   // Accept 'true' (string) or boolean true in the token
-  const expected = (process.env.CF_ACCESS_APPROVED_VALUE ?? "true").toLowerCase();
+  const expected = (
+    process.env.CF_ACCESS_APPROVED_VALUE ?? "true"
+  ).toLowerCase();
   return { claim, expected };
 }
 
 export function isApprovedFromClaims(claims: Record<string, unknown>): boolean {
   const { claim, expected } = getApprovedClaimEnv();
   const val = claims[claim] as unknown;
-  if (typeof val === 'boolean') return String(val).toLowerCase() === expected;
-  if (typeof val === 'string') return val.toLowerCase() === expected;
+  if (typeof val === "boolean") return String(val).toLowerCase() === expected;
+  if (typeof val === "string") return val.toLowerCase() === expected;
   // Some IdPs nest custom claims; allow simple dot-path fallback
-  if (claim.includes('.')) {
-    const parts = claim.split('.');
+  if (claim.includes(".")) {
+    const parts = claim.split(".");
     let cur: any = claims;
     for (const p of parts) {
-      if (!cur || typeof cur !== 'object') return false;
+      if (!cur || typeof cur !== "object") return false;
       cur = cur[p];
     }
-    if (typeof cur === 'boolean') return String(cur).toLowerCase() === expected;
-    if (typeof cur === 'string') return cur.toLowerCase() === expected;
+    if (typeof cur === "boolean") return String(cur).toLowerCase() === expected;
+    if (typeof cur === "string") return cur.toLowerCase() === expected;
   }
   return false;
 }
 
 export function shouldEnforceApproved(): boolean {
-  const v = (process.env.CF_ACCESS_ENFORCE_APPROVED ?? 'false').toLowerCase();
-  return v === '1' || v === 'true' || v === 'yes';
+  const v = (process.env.CF_ACCESS_ENFORCE_APPROVED ?? "false").toLowerCase();
+  return v === "1" || v === "true" || v === "yes";
 }

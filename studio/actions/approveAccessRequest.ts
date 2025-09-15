@@ -1,7 +1,7 @@
-import { DocumentActionComponent, DocumentActionProps, useClient } from 'sanity'
+import {DocumentActionComponent, DocumentActionProps, useClient} from 'sanity'
 
 const ApproveAccessRequest: DocumentActionComponent = (props: DocumentActionProps) => {
-  const client = useClient({ apiVersion: '2023-10-01' })
+  const client = useClient({apiVersion: '2023-10-01'})
   const docId = props.id
   const type = props.type
   const draft = props.draft as any
@@ -20,18 +20,21 @@ const ApproveAccessRequest: DocumentActionComponent = (props: DocumentActionProp
         const email: string = doc?.email || ''
         if (!email || !email.includes('@')) throw new Error('Missing email')
         // Create approvedUser if not exists
-        const existing = await client.fetch(`*[_type == "approvedUser" && email == $email][0]{_id}`, { email })
+        const existing = await client.fetch(
+          `*[_type == "approvedUser" && email == $email][0]{_id}`,
+          {email},
+        )
         if (!existing?._id) {
-          await client.create({ _type: 'approvedUser', email })
+          await client.create({_type: 'approvedUser', email})
         }
         // Mark request approved
-        await client.patch(docId).set({ status: 'approved' }).commit({ autoGenerateArrayKeys: true })
+        await client.patch(docId).set({status: 'approved'}).commit({autoGenerateArrayKeys: true})
         // Best-effort: mark user approved in Auth0 app_metadata
         try {
           const resp = await fetch('/api/approve-user', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ email }),
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({email}),
           })
           // 200 = updated, 202 = user not in Auth0 yet (first login pending)
           if (!resp.ok && resp.status !== 202) {
@@ -47,9 +50,8 @@ const ApproveAccessRequest: DocumentActionComponent = (props: DocumentActionProp
         console.error(e)
         props.onComplete?.()
       }
-    }
+    },
   }
 }
 
 export default ApproveAccessRequest
-
