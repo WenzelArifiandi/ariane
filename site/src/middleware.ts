@@ -1,5 +1,6 @@
 import type { MiddlewareHandler } from "astro";
 import { verify as verifySig } from "./lib/auth/signer";
+import { getOriginFromHeaders, getProtectedPrefixes, getRequiredGroupsEnv, verifyCfAccessJwt } from "./lib/cfAccess";
 import { getEnv } from "./lib/auth/config";
 
 const PUBLIC_PATHS = [
@@ -36,13 +37,9 @@ export const onRequest: MiddlewareHandler = async (context, next) => {
 
   // Determine host/proto for environment-aware behavior behind proxies/CDNs
   const headers = context.request.headers;
-  const host =
-    headers.get("x-forwarded-host") || headers.get("host") || "127.0.0.1:4321";
-  const proto =
-    headers.get("x-forwarded-proto") ||
-    (host.includes("localhost") || host.startsWith("127.0.0.1")
-      ? "http"
-      : "https");
+  const origin = getOriginFromHeaders(headers);
+  const host = origin.replace(/^https?:\/\//, "");
+  const proto = origin.startsWith("https") ? "https" : "http";
 
   // Auth modes:
   // - 'public' (default): no app auth required
@@ -59,8 +56,31 @@ export const onRequest: MiddlewareHandler = async (context, next) => {
     authMode = "public";
   }
   if (authMode === "cf-access-only") {
-    console.log("[Middleware] AUTH_MODE=cf-access-only, skipping all app auth");
-    return next();
+    // Optional: enforce group-based authorization for selected path prefixes using CF Access JWT
+    const protectedPrefixes = getProtectedPrefixes();
+    const requiresAuthz = protectedPrefixes.some((p) => path.startsWith(p));
+    if (!requiresAuthz) {
+      return next();
+    }
+    try {
+      const token = context.request.headers.get("cf-access-jwt-assertion");
+      if (!token) {
+        return new Response("Unauthorized", { status: 401 });
+      }
+      const claims = await verifyCfAccessJwt(token, { origin });
+      const { claim, required } = getRequiredGroupsEnv();
+      if (required.length === 0) {
+        return next();
+      }
+      const groups = (claims[claim] as unknown) as string[] | undefined;
+      const has = Array.isArray(groups) && required.every((g) => groups.includes(g));
+      if (!has) {
+        return new Response("Forbidden", { status: 403 });
+      }
+      return next();
+    } catch (e) {
+      return new Response("Unauthorized", { status: 401 });
+    }
   }
 
   // If Cloudflare Access is enforcing at the edge, trust it and skip app auth
@@ -104,7 +124,8 @@ export const onRequest: MiddlewareHandler = async (context, next) => {
   // Not authenticated: redirect to OAuth start with return path
   const requestedPath = `${url.pathname}${url.search}` || "/";
   const redirect = encodeURIComponent(requestedPath);
-  const origin = `${proto}://${host}`;
-  const absolute = `${origin}/access-required?next=${redirect}`;
+  // Absolute redirect for proxies
+  const absoluteOrigin = `${proto}://${host}`;
+  const absolute = `${absoluteOrigin}/access-required?next=${redirect}`;
   return Response.redirect(absolute, 302);
 };
