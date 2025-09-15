@@ -1,12 +1,17 @@
 import type { APIRoute } from 'astro'
-import { isApproved } from '../../../lib/sanityServer'
+import { getOriginFromHeaders, verifyCfAccessJwt, isApprovedFromClaims } from '../../../lib/cfAccess'
 
 export const GET: APIRoute = async ({ request }) => {
   try {
-    const url = new URL(request.url)
-    const email = url.searchParams.get('email') || ''
-    const ok = email.includes('@')
-    const approved = ok ? await isApproved(email) : false
+    const token = request.headers.get('cf-access-jwt-assertion')
+    const origin = getOriginFromHeaders(request.headers)
+    let approved = false
+    if (token) {
+      try {
+        const claims = await verifyCfAccessJwt(token, { origin })
+        approved = isApprovedFromClaims(claims as any)
+      } catch {}
+    }
     return new Response(JSON.stringify({ approved }), { headers: { 'Content-Type': 'application/json' } })
   } catch {
     return new Response(JSON.stringify({ approved: false }), { headers: { 'Content-Type': 'application/json' } })

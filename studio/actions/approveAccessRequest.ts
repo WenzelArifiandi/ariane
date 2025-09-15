@@ -26,6 +26,22 @@ const ApproveAccessRequest: DocumentActionComponent = (props: DocumentActionProp
         }
         // Mark request approved
         await client.patch(docId).set({ status: 'approved' }).commit({ autoGenerateArrayKeys: true })
+        // Best-effort: mark user approved in Auth0 app_metadata
+        try {
+          const resp = await fetch('/api/approve-user', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email }),
+          })
+          // 200 = updated, 202 = user not in Auth0 yet (first login pending)
+          if (!resp.ok && resp.status !== 202) {
+            // Log and continue; do not block Studio UX
+            const text = await resp.text()
+            console.warn('Auth0 approval failed:', resp.status, text)
+          }
+        } catch (e) {
+          console.warn('Auth0 approval call error:', e)
+        }
         props.onComplete?.()
       } catch (e) {
         console.error(e)

@@ -1,6 +1,13 @@
 import type { MiddlewareHandler } from "astro";
 import { verify as verifySig } from "./lib/auth/signer";
-import { getOriginFromHeaders, getProtectedPrefixes, getRequiredGroupsEnv, verifyCfAccessJwt } from "./lib/cfAccess";
+import {
+  getOriginFromHeaders,
+  getProtectedPrefixes,
+  getRequiredGroupsEnv,
+  verifyCfAccessJwt,
+  isApprovedFromClaims,
+  shouldEnforceApproved,
+} from "./lib/cfAccess";
 import { getEnv } from "./lib/auth/config";
 
 const PUBLIC_PATHS = [
@@ -59,7 +66,21 @@ export const onRequest: MiddlewareHandler = async (context, next) => {
     // Optional: enforce group-based authorization for selected path prefixes using CF Access JWT
     const protectedPrefixes = getProtectedPrefixes();
     const requiresAuthz = protectedPrefixes.some((p) => path.startsWith(p));
+    // If not a protected path, still allow through (public-by-default under cf-access-only)
     if (!requiresAuthz) {
+      // Optionally enforce Auth0-approved globally when behind Access
+      if (shouldEnforceApproved()) {
+        try {
+          const token = context.request.headers.get("cf-access-jwt-assertion");
+          if (!token) return new Response("Unauthorized", { status: 401 });
+          const claims = await verifyCfAccessJwt(token, { origin });
+          if (!isApprovedFromClaims(claims as any)) {
+            return new Response("Forbidden", { status: 403 });
+          }
+        } catch {
+          return new Response("Unauthorized", { status: 401 });
+        }
+      }
       return next();
     }
     try {
@@ -70,13 +91,18 @@ export const onRequest: MiddlewareHandler = async (context, next) => {
       const claims = await verifyCfAccessJwt(token, { origin });
       const { claim, required } = getRequiredGroupsEnv();
       if (required.length === 0) {
+        // If no groups required, check Auth0-approved flag if present; otherwise allow
+        if (isApprovedFromClaims(claims as any)) return next();
+        // If no approved flag configured/found, allow by default
         return next();
       }
-      const groups = (claims[claim] as unknown) as string[] | undefined;
-      const has = Array.isArray(groups) && required.every((g) => groups.includes(g));
+      const groups = claims[claim] as unknown as string[] | undefined;
+      const has =
+        Array.isArray(groups) && required.every((g) => groups.includes(g));
       if (!has) {
         return new Response("Forbidden", { status: 403 });
       }
+      // Passed group check; also allow Auth0-approved flow
       return next();
     } catch (e) {
       return new Response("Unauthorized", { status: 401 });
@@ -92,9 +118,15 @@ export const onRequest: MiddlewareHandler = async (context, next) => {
 
   // If any Cloudflare Access headers are present, user has been authenticated by CF Access
   if (cfAccessJwt || cfAccessEmail || cfAccessOrgId) {
-    console.log(
-      "[Middleware] Cloudflare Access authenticated user, skipping app auth",
-    );
+    // Optional: if you want to require Auth0-approved for the whole site when behind Access,
+    // you can uncomment the block below to enforce globally.
+    // try {
+    //   const origin = getOriginFromHeaders(context.request.headers)
+    //   const claims = await verifyCfAccessJwt(cfAccessJwt!, { origin })
+    //   if (!isApprovedFromClaims(claims as any)) {
+    //     return new Response("Forbidden", { status: 403 })
+    //   }
+    // } catch {}
     return next();
   }
 

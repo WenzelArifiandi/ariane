@@ -17,9 +17,9 @@
     "tunnel:subdomain": "wait-on -t 300000 http://127.0.0.1:4321 && lt --port 4321 --local-host 127.0.0.1 --subdomain ariane-dev",
     "dev:bubble": "concurrently -k -n dev,tunnel -c auto \"npm:dev\" \"npm:tunnel\"",
     "cf:tunnel": "wait-on -t 300000 http://127.0.0.1:4321 && cloudflared tunnel --url http://127.0.0.1:4321",
-  "cf:tunnel:named": "wait-on -t 300000 http://127.0.0.1:4321 && cloudflared tunnel --protocol http2 --edge-ip-version 4 --config cloudflared/config.yml run ariane-dev",
-  "cf:setup": "bash scripts/setup-cf-tunnel.sh",
-  "dev:bubble:cf:named": "concurrently -k -n dev,cf -c auto \"npm:dev:cf\" \"npm:cf:tunnel:named\"",
+    "cf:tunnel:named": "wait-on -t 300000 http://127.0.0.1:4321 && cloudflared tunnel --protocol http2 --edge-ip-version 4 --config cloudflared/config.yml run ariane-dev",
+    "cf:setup": "bash scripts/setup-cf-tunnel.sh",
+    "dev:bubble:cf:named": "concurrently -k -n dev,cf -c auto \"npm:dev:cf\" \"npm:cf:tunnel:named\"",
     "dev:bubble:cf": "concurrently -k -n dev,cf -c auto \"npm:dev\" \"npm:cf:tunnel\"",
     "build": "astro build",
     "preview": "astro preview",
@@ -39,7 +39,8 @@
     "@vercel/speed-insights": "^1.2.0",
     "astro": "^5.13.7",
     "astro-icon": "^1.1.5",
-    "groq": "^4.8.1"
+    "groq": "^4.8.1",
+    "jose": "^5.10.0"
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.4",
@@ -51,15 +52,15 @@
     "@typescript-eslint/eslint-plugin": "^8.43.0",
     "@typescript-eslint/parser": "^8.43.0",
     "autoprefixer": "^10.4.21",
+    "concurrently": "^8.2.2",
     "eslint": "^9.35.0",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-astro": "^1.3.1",
+    "localtunnel": "^2.0.2",
     "postcss": "^8.5.6",
     "prettier": "^3.6.2",
     "tailwindcss": "^3.4.17",
     "typescript": "^5.6.3",
-    "concurrently": "^8.2.2",
-    "localtunnel": "^2.0.2",
     "wait-on": "^7.0.1"
   }
 }

@@ -5,7 +5,6 @@ import {
   verify as verifySig,
 } from "../../../../lib/auth/signer";
 import { getEnv, isProd } from "../../../../lib/auth/config";
-import { isApproved } from "../../../../lib/sanityServer";
 import { createHmac } from "node:crypto";
 
 function b64url(buf: Buffer): string {
@@ -183,21 +182,7 @@ export const GET: APIRoute = async ({ url, request }) => {
     }
   }
 
-  // Sanity approved list check (if SANITY token is configured)
-  if (email) {
-    try {
-      const ok = await isApproved(email);
-      if (!ok) {
-        return Response.redirect(
-          new URL(
-            "/access-denied?msg=" + encodeURIComponent("Email not approved"),
-            url,
-          ).toString(),
-          302,
-        );
-      }
-    } catch {}
-  }
+  // Approval enforcement is handled by Auth0/Cloudflare Access; no Sanity check here
 
   // Create a signed session cookie compatible with existing session APIs
   const secret = sessionSecret;
