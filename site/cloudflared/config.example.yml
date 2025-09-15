@@ -1,0 +1,16 @@
+# Cloudflare Tunnel config example for Ariane site dev
+# Copy to config.yml and edit the hostname to your domain/subdomain.
+# Requires: `cloudflared` CLI and your Cloudflare account (with your zone).
+
+# When using a named tunnel, set these after `cloudflared tunnel create <name>`.
+# tunnel: <TUNNEL_ID>
+# credentials-file: /Users/<you>/.cloudflared/<TUNNEL_ID>.json
+
+# Ingress rules: send traffic for your chosen hostname to local dev server
+ingress:
+  - hostname: dev.your-domain.tld
+    service: http://127.0.0.1:4321
+  - service: http_status:404
+# Optional: Set the default origin to use for `cloudflared tunnel --config config.yml run`
+# warp-routing:
+#   enabled: true

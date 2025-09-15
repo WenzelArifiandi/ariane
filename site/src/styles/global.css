@@ -29,6 +29,19 @@
   --shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
 }
 
+/* Local Material Symbols font (optional). If /public/fonts/material-symbols-rounded.woff2 exists,
+   it will be used; otherwise we fall back to Google Fonts stylesheet declared in Base.astro. */
+@layer base {
+  @font-face {
+    font-family: 'Material Symbols Rounded Local';
+    src: url('/fonts/material-symbols-rounded.woff2') format('woff2');
+    font-weight: 100 700;
+    font-style: normal;
+    font-display: block;
+    /* avoid showing placeholder text for icons */
+  }
+}
+
 /* --- Global system font fallback (instant everywhere) --- */
 @layer base {
   html {
@@ -138,7 +151,8 @@
 /* Material Symbols utility (font provided via CDN in Base.astro) */
 @layer utilities {
   .material-symbols-rounded {
-    font-family: 'Material Symbols Rounded';
+    /* Prefer local font if present, otherwise fall back to Google stylesheet */
+    font-family: 'Material Symbols Rounded Local', 'Material Symbols Rounded';
     font-variation-settings: 'FILL' 0, 'wght' 500, 'GRAD' 0, 'opsz' 24;
   }
 }

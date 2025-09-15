@@ -8,6 +8,9 @@
   },
   "scripts": {
     "dev": "npm run dev:site",
+    "dev:bubble": "npm --prefix site run dev:bubble:cf:named",
+    "env:site:init": "bash -lc 'cd site && cp -n .env.example .env || true && echo \"Created site/.env (or it already exists).\"'",
+    "env:site:open": "bash -lc 'open site/.env'",
     "dev:site": "npm --prefix site run dev",
     "dev:studio": "npm --prefix studio run dev",
     "deploy:studio": "bash studio/scripts/deploy.sh"

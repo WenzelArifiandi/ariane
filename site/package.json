@@ -6,7 +6,21 @@
     "node": "22.x"
   },
   "scripts": {
-    "dev": "astro dev --host --port 4321",
+    "dev:kill": "bash -lc 'pkill -f \"astro dev\" || true; lsof -t -i:4321 | xargs kill -9 2>/dev/null || true'",
+    "predev": "npm run dev:kill",
+    "dev": "astro dev --host 127.0.0.1 --port 4321",
+    "predev:cf": "npm run dev:kill",
+    "dev:cf": "CF_TUNNEL_HOST=tunnel.wenzelarifiandi.com astro dev --host 127.0.0.1 --port 4321",
+    "dev:lan": "astro dev --host 0.0.0.0 --port 4321",
+    "dev:local": "astro dev --host 127.0.0.1 --port 4321",
+    "tunnel": "wait-on -t 300000 http://127.0.0.1:4321 && lt --port 4321 --local-host 127.0.0.1",
+    "tunnel:subdomain": "wait-on -t 300000 http://127.0.0.1:4321 && lt --port 4321 --local-host 127.0.0.1 --subdomain ariane-dev",
+    "dev:bubble": "concurrently -k -n dev,tunnel -c auto \"npm:dev\" \"npm:tunnel\"",
+    "cf:tunnel": "wait-on -t 300000 http://127.0.0.1:4321 && cloudflared tunnel --url http://127.0.0.1:4321",
+  "cf:tunnel:named": "wait-on -t 300000 http://127.0.0.1:4321 && cloudflared tunnel --protocol http2 --edge-ip-version 4 --config cloudflared/config.yml run ariane-dev",
+  "cf:setup": "bash scripts/setup-cf-tunnel.sh",
+  "dev:bubble:cf:named": "concurrently -k -n dev,cf -c auto \"npm:dev:cf\" \"npm:cf:tunnel:named\"",
+    "dev:bubble:cf": "concurrently -k -n dev,cf -c auto \"npm:dev\" \"npm:cf:tunnel\"",
     "build": "astro build",
     "preview": "astro preview",
     "lint": "eslint .",
@@ -43,6 +57,9 @@
     "postcss": "^8.5.6",
     "prettier": "^3.6.2",
     "tailwindcss": "^3.4.17",
-    "typescript": "^5.6.3"
+    "typescript": "^5.6.3",
+    "concurrently": "^8.2.2",
+    "localtunnel": "^2.0.2",
+    "wait-on": "^7.0.1"
   }
 }

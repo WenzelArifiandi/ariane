@@ -5,9 +5,26 @@ const links = [
   { label: 'Contact', href: '#contact' },
 ]
 const studioHref = import.meta.env.DEV ? 'http://localhost:3333/' : 'https://studio.wenzelarifiandi.com';
+// In dev tunnel, we may rely solely on Cloudflare Access (no app OAuth)
+const AUTH_MODE = (import.meta as any).env?.AUTH_MODE ?? process.env.AUTH_MODE;
+const isAccessOnly = AUTH_MODE === 'cf-access-only';
+// Build absolute CF Access logout URL at SSR time (works even before JS runs)
+let cfLogoutHref: string | undefined;
+try {
+  // Astro.request is available in components; fall back to dev origin if missing
+  const headers = (Astro as any).request?.headers;
+  const host = headers?.get('x-forwarded-host') || headers?.get('host') || '127.0.0.1:4321';
+  const proto = headers?.get('x-forwarded-proto') || (host.includes('127.0.0.1') || host.includes('localhost') ? 'http' : 'https');
+  const origin = `${proto}://${host}`;
+  // After Access logout, land on our Access Required page to avoid instant silent re-login via IdP SSO
+  const here = (Astro as any).url as URL | undefined;
+  const nextPath = here ? `${here.pathname}${here.search}` : '/';
+  const rt = new URL(`/access-required?next=${encodeURIComponent(nextPath)}`, origin).toString();
+  cfLogoutHref = `/cdn-cgi/access/logout?returnTo=${encodeURIComponent(rt)}`;
+} catch {}
 ---
 
-<nav class="nav">
+<nav class="nav" data-access-only={isAccessOnly ? 'true' : 'false'}>
   <div class="container align-hero">
     <div class="nav-inner glass">
       <a href="/" class="brand">Wenzel Arifiandi</a>
@@ -15,10 +32,34 @@ const studioHref = import.meta.env.DEV ? 'http://localhost:3333/' : 'https://stu
         {links.map((l) => (
           <li><a href={l.href}>{l.label}</a></li>
         ))}
-        <li id="studio-link" style="display:none"><a href={studioHref}>Studio</a></li>
+  <li id="studio-link" style="display:none"><a href={studioHref}>Studio</a></li>
+  {isAccessOnly && (
+    <li id="cf-signout-link">
+      <a id="cf-logout" class="nav-action shrinkable" href={cfLogoutHref || '/cdn-cgi/access/logout'} title="Sign out">
+        <svg class="icon-svg" aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M10 17l-1.4-1.4L12.2 12 8.6 8.4 10 7l5 5-5 5z" fill="currentColor"/>
+          <path d="M4 5h6v2H6v10h4v2H4a2 2 0 01-2-2V7a2 2 0 012-2z" fill="currentColor"/>
+        </svg>
+        <span class="label">Sign out</span>
+      </a>
+    </li>
+  )}
+  {!isAccessOnly && (
+    <li id="signin-link" style="display:none"><a href="/api/oauth/github/start?redirect=/">Sign in</a></li>
+  )}
+  {!isAccessOnly && (
+      <li id="signout-link" style="display:none">
+        <form method="get" action="/api/auth/logout">
+          <input type="hidden" name="next" value={(Astro as any).url?.pathname + ((Astro as any).url?.search || '') || '/'} />
+          <button class="btn m3" style="background:#ef4444">Sign out</button>
+        </form>
+      </li>
+  )}
         <li class="creator-wrap">
           <button id="creator-toggle" class="chip m3" aria-haspopup="true" aria-expanded="false" aria-controls="creator-sheet" title="Maker">
-            <span class="material-symbols-rounded" aria-hidden="true">auto_awesome</span>
+            <svg class="icon-svg" aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M11 2l1.2 3.6L16 7l-3.8 1.4L11 12 9.8 8.4 6 7l3.8-1.4L11 2zM19 10l.8 2.4L22 13l-2.2.6L19 16l-.8-2.4L16 13l2.2-.6L19 10zM6 14l1 3 3 1-3 1-1 3-1-3-3-1 3-1 1-3z" fill="currentColor"/>
+            </svg>
             <span class="label">Maker</span>
           </button>
         </li>
@@ -46,16 +87,17 @@ const studioHref = import.meta.env.DEV ? 'http://localhost:3333/' : 'https://stu
     color: var(--ink);
   }
   .links {
-    display: flex; gap: 1rem; align-items: center;
+    display: flex; gap: 1rem; align-items: center; flex-wrap: nowrap;
     list-style: none; /* remove bullets */
     margin: 0; padding: 0; /* remove default UL indent */
   }
-  .links li { list-style: none; }
+  .links li { list-style: none; white-space: nowrap; }
   .links a {
     color: var(--ink);
     opacity: .8;
     text-decoration: none;
     font-weight: 600;
+    white-space: nowrap;
   }
   .links a:hover { opacity: 1; }
   /* — minimal fixes only — */
@@ -91,6 +133,16 @@ const studioHref = import.meta.env.DEV ? 'http://localhost:3333/' : 'https://stu
   }
 .chip.m3:hover { box-shadow: var(--md-sys-elevation-2); transform: translateY(-1px); }
   .chip.m3 .material-symbols-rounded { color: #fff; font-variation-settings: 'FILL' 1, 'wght' 600, 'GRAD' 0, 'opsz' 24; font-size: 18px; vertical-align: -2px; margin-right: .35rem; }
+  .chip.m3 .icon-svg { color: #fff; display:inline-block; vertical-align:-2px; margin-right: .35rem; }
+
+  /* Prevent nav actions from wrapping to a second line */
+  .links { flex-wrap: nowrap; }
+  .links .nav-action { display: inline-flex; align-items: center; gap: .35rem; padding: .4rem .6rem; border-radius: 999px; }
+  .links .nav-action .label { white-space: nowrap; }
+  @media (max-width: 560px) {
+    .links { gap: .5rem; }
+    .links .nav-action.shrinkable .label { display: none; }
+  }
 @media (max-width: 500px) {
   .chip.m3 .label { display: none; }
   .chip.m3 { padding: .45rem .6rem; }
@@ -107,6 +159,8 @@ const studioHref = import.meta.env.DEV ? 'http://localhost:3333/' : 'https://stu
   const toggle = qs('#creator-toggle');
   const navInner = qs('.nav-inner');
   const studio = qs('#studio-link');
+  const navEl = qs('nav.nav');
+  const ACCESS_ONLY = navEl?.dataset?.accessOnly === 'true';
 
   async function refreshAuth() {
     try {
@@ -114,6 +168,10 @@ const studioHref = import.meta.env.DEV ? 'http://localhost:3333/' : 'https://stu
       const data = await res.json();
       const authed = !!data?.authenticated;
       if (studio) studio.style.display = authed ? '' : 'none';
+      const signin = qs('#signin-link');
+      const signout = qs('#signout-link');
+      if (signin) signin.style.display = authed ? 'none' : '';
+      if (signout) signout.style.display = authed ? '' : 'none';
     } catch {}
   }
 
@@ -125,7 +183,36 @@ toggle?.addEventListener('click', () => {
     window.dispatchEvent(new CustomEvent('toggle-creator', { detail: { open: !open } }));
   });
 
-  (async () => { await refreshAuth(); })();
+  // In Access-only mode, there is no app session concept to fetch
+  if (!ACCESS_ONLY) {
+    (async () => { await refreshAuth(); })();
+  } else {
+    // Hide auth UI if it somehow exists
+    const signin = qs('#signin-link');
+    const signout = qs('#signout-link');
+    if (signin) signin.remove();
+    if (signout) signout.remove();
+    // Ensure Studio link is visible in Access-only mode
+    if (studio) studio.style.display = '';
+    // Make CF logout link use absolute returnTo to satisfy Access validation
+    const cfLogout = qs('#cf-logout');
+    if (cfLogout) {
+      try {
+        const origin = window.location.origin;
+        const rt = new URL('/', origin).toString();
+        const u = new URL(cfLogout.getAttribute('href') || '/cdn-cgi/access/logout', origin);
+        u.searchParams.set('returnTo', rt);
+        cfLogout.setAttribute('href', u.toString());
+        // Fallback: force full-page navigation on click
+        cfLogout.addEventListener('click', () => {
+          try {
+            const href = cfLogout.getAttribute('href');
+            if (href) window.location.href = href;
+          } catch {}
+        }, { once: true });
+      } catch {}
+    }
+  }
 
   // Compact the chip based on actual available space, not only viewport width
   const makerChip = toggle;

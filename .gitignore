@@ -1,3 +1,6 @@
+site/cloudflared/config.yml
+site/cloudflared/*.json
+site/cloudflared/cert.pem
 node_modules
 fresh-site
 .vercel
