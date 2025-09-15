@@ -34,8 +34,29 @@ export const onRequest: MiddlewareHandler = async (context, next) => {
     return next();
   }
 
-  // Check if we're running behind Cloudflare Access and should skip app auth entirely
-  const authMode = process.env.AUTH_MODE || (import.meta as any).env?.AUTH_MODE;
+  // Determine host/proto for environment-aware behavior behind proxies/CDNs
+  const headers = context.request.headers;
+  const host =
+    headers.get("x-forwarded-host") || headers.get("host") || "127.0.0.1:4321";
+  const proto =
+    headers.get("x-forwarded-proto") ||
+    (host.includes("localhost") || host.startsWith("127.0.0.1")
+      ? "http"
+      : "https");
+
+  // Auth modes:
+  // - 'public' (default): no app auth required
+  // - 'app': require app session unless Cloudflare Access headers are present
+  // - 'cf-access-only': skip app auth entirely; rely on Cloudflare Access at the edge
+  let authMode =
+    process.env.AUTH_MODE || (import.meta as any).env?.AUTH_MODE || "public";
+
+  // Safety: on the primary public domain, default to public mode to avoid accidental prompts
+  // This prevents a mis-set AUTH_MODE from forcing app login on wenzelarifiandi.com
+  const isMainSite = host === "wenzelarifiandi.com" || host === "www.wenzelarifiandi.com";
+  if (isMainSite && authMode === "app") {
+    authMode = "public";
+  }
   if (authMode === "cf-access-only") {
     console.log("[Middleware] AUTH_MODE=cf-access-only, skipping all app auth");
     return next();
@@ -53,6 +74,11 @@ export const onRequest: MiddlewareHandler = async (context, next) => {
     console.log(
       "[Middleware] Cloudflare Access authenticated user, skipping app auth",
     );
+    return next();
+  }
+
+  // In public mode, don't enforce app auth
+  if (authMode !== "app") {
     return next();
   }
 
@@ -77,14 +103,6 @@ export const onRequest: MiddlewareHandler = async (context, next) => {
   // Not authenticated: redirect to OAuth start with return path
   const requestedPath = `${url.pathname}${url.search}` || "/";
   const redirect = encodeURIComponent(requestedPath);
-  const headers = context.request.headers;
-  const host =
-    headers.get("x-forwarded-host") || headers.get("host") || "127.0.0.1:4321";
-  const proto =
-    headers.get("x-forwarded-proto") ||
-    (host.includes("localhost") || host.startsWith("127.0.0.1")
-      ? "http"
-      : "https");
   const origin = `${proto}://${host}`;
   const absolute = `${origin}/access-required?next=${redirect}`;
   return Response.redirect(absolute, 302);

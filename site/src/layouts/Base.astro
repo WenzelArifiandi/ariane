@@ -54,19 +54,31 @@ const pageUrl = pathname ? new URL(pathname, siteUrl).toString() : siteUrl
     <link rel="canonical" href={pageUrl} />
     <link rel="icon" href="/favicon.svg" />
     <link rel="preload" as="image" href="/favicon.svg" imagesrcset="/favicon.svg" />
-  <!-- Material Symbols: use local @font-face if available; fallback to CDN until font file is added -->
-  <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap" />
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap" />
+  <!-- Material Symbols: prefer local font when PUBLIC_USE_LOCAL_ICONS=true; otherwise load from Google Fonts -->
+  {((import.meta as any).env?.PUBLIC_USE_LOCAL_ICONS || process.env.PUBLIC_USE_LOCAL_ICONS) ? (
+    <>
+      <link rel="preload" as="font" type="font/woff2" href="/fonts/material-symbols-rounded.woff2" crossorigin />
+      <script is:inline>
+        // Mark icons loaded immediately; local font is preloaded and @font-face uses font-display:block
+        try { document.documentElement.setAttribute('data-icons-loaded', 'true'); } catch {}
+      </script>
+    </>
+  ) : (
+    <>
+      <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+      <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+      <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap" />
+      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap" />
+    </>
+  )}
     
     <!-- Base styles (keep only non-overlapping rules; AWCustomStyles governs tokens/helpers) -->
     <style>
       *,*::before,*::after{ box-sizing: border-box; }
       html { scroll-behavior: smooth; }
-      /* Hide icon glyph text until the font is ready to avoid placeholder text flash */
-      .material-symbols-rounded { visibility: hidden; }
-      html[data-icons-loaded="true"] .material-symbols-rounded { visibility: visible; }
+  /* Hide icon glyph text until the font is ready to avoid placeholder text flash */
+  .material-symbols-rounded { visibility: hidden; }
+  html[data-icons-loaded="true"] .material-symbols-rounded { visibility: visible; }
     </style>
     <AWCustomStyles />
   </head>
@@ -75,20 +87,21 @@ const pageUrl = pathname ? new URL(pathname, siteUrl).toString() : siteUrl
     {import.meta.env.PROD && <Analytics />}
     {import.meta.env.PROD && <SpeedInsights />}
     
-    <script is:inline>
-      // Mark when icon fonts are ready to reveal symbols without flashing fallback text
-      try {
-        const setReady = () => document.documentElement.setAttribute('data-icons-loaded', 'true');
-  const fonts = (document && (document).fonts) || null;
-        if (fonts && typeof fonts.ready?.then === 'function') {
-          // If fonts already loaded, set immediately; else set when ready
-          if (fonts.status === 'loaded') setReady();
-          else fonts.ready.then(setReady).catch(setReady);
-        } else {
-          setReady();
-        }
-      } catch {}
-    </script>
+    {(!((import.meta as any).env?.PUBLIC_USE_LOCAL_ICONS || process.env.PUBLIC_USE_LOCAL_ICONS)) && (
+      <script is:inline>
+        // Mark when icon fonts are ready to reveal symbols without flashing fallback text
+        try {
+          const setReady = () => document.documentElement.setAttribute('data-icons-loaded', 'true');
+          const fonts = (document && (document).fonts) || null;
+          if (fonts && typeof fonts.ready?.then === 'function') {
+            if (fonts.status === 'loaded') setReady();
+            else fonts.ready.then(setReady).catch(setReady);
+          } else {
+            setReady();
+          }
+        } catch {}
+      </script>
+    )}
     <script type="module" src="/src/scripts/maker-client.ts"></script>
   </body>
 </html>
