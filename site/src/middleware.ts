@@ -53,7 +53,8 @@ export const onRequest: MiddlewareHandler = async (context, next) => {
 
   // Safety: on the primary public domain, default to public mode to avoid accidental prompts
   // This prevents a mis-set AUTH_MODE from forcing app login on wenzelarifiandi.com
-  const isMainSite = host === "wenzelarifiandi.com" || host === "www.wenzelarifiandi.com";
+  const isMainSite =
+    host === "wenzelarifiandi.com" || host === "www.wenzelarifiandi.com";
   if (isMainSite && authMode === "app") {
     authMode = "public";
   }
