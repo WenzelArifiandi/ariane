@@ -1,4 +1,8 @@
+/* Declare global CSS layer order */
+@layer reset, base, tokens, app-components, components, utilities, overrides;
+
 @import './m3-tokens.css';
+
 /* Design tokens */
 :root {
   /* Core neutrals */
@@ -16,7 +20,7 @@
   --mauve: #b99ad9;
 
   /* Type scale */
-  --h1: clamp(2.5rem, 3vw + 1rem, 4rem);
+  --h1: clamp(3rem, 3.5vw + 1rem, 5rem);
   --h2: clamp(1.5rem, 1.5vw + 1rem, 2rem);
   --body: clamp(1rem, 0.2vw + 0.9rem, 1.125rem);
 
@@ -24,8 +28,14 @@
   --radius: 12px;
   --shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
 }
+
 /* --- Global system font fallback (instant everywhere) --- */
-html { font-family: 'Inter Variable', ui-sans-serif, system-ui; }
+@layer base {
+  html {
+    font-family: 'Inter Variable', 'Inter', ui-sans-serif, system-ui;
+  }
+}
+
 /* src/styles/global.css */
 /* Tailwind base disabled to mirror AstroWind applyBaseStyles:false */
 @tailwind base;
@@ -33,53 +43,162 @@ html { font-family: 'Inter Variable', ui-sans-serif, system-ui; }
 @tailwind utilities;
 
 @layer base {
-  html { -webkit-text-size-adjust: 100%; }
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+
   body {
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    font-feature-settings: "kern","liga","clig","calt";
+    font-feature-settings: "kern", "liga", "clig", "calt";
     min-width: 360px;
+  }
+}
+
+/* Utilities: simple layout primitives */
+@layer utilities {
+  .stack {
+    display: grid;
+    gap: var(--space-3);
+  }
+
+  .stack-2 {
+    display: grid;
+    gap: var(--space-2);
+  }
+
+  .stack-4 {
+    display: grid;
+    gap: var(--space-4);
+  }
+
+  .cluster {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+    align-items: center;
+  }
+
+  .cluster-2 {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    align-items: center;
+  }
+
+  .cluster-4 {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-4);
+    align-items: center;
+  }
+}
+
+/* Ensure Material Web components inherit Inter */
+@layer components {
+
+  md-outlined-text-field,
+  md-filled-button {
+    font-family: inherit !important;
+  }
+
+  md-outlined-text-field::part(input-field),
+  md-filled-button::part(button) {
+    font-family: inherit !important;
   }
 }
 
 /* Global containers defined in AWCustomStyles to avoid duplicates */
 /* Elegant link color + underline only on hover (not for buttons) */
-a:not(.btn) {
-  color: color-mix(in oklab, #7150D9, black 12%);
-  text-decoration: none;
+@layer components {
+  a:not(.btn) {
+    color: color-mix(in oklab, #7150D9, black 12%);
+    text-decoration: none;
+  }
+
+  a:not(.btn):hover {
+    text-decoration: underline;
+    text-decoration-color: color-mix(in oklab, #7150D9, black 12%);
+    text-underline-offset: 3px;
+  }
 }
-a:not(.btn):hover {
-  text-decoration: underline;
-  text-decoration-color: color-mix(in oklab, #7150D9, black 12%);
-  text-underline-offset: 3px;
-}
+
 /* Ensure button links never underline in any state */
-a.btn, a.btn:hover, a.btn:visited, a.btn:active { text-decoration: none !important; }
-/* Material 3-inspired buttons and cards */
-.btn.m3 {
-  background: var(--md-sys-color-primary);
-  color: var(--md-sys-color-on-primary);
-  border-radius: 999px; /* match Maker chip curve */
-  border: 0 !important;
-  box-shadow: var(--md-sys-elevation-1);
-  transition: transform var(--md-sys-motion-duration-short) var(--md-sys-motion-ease-standard),
-              box-shadow var(--md-sys-motion-duration-short) var(--md-sys-motion-ease-standard);
-  font-weight: 600; padding: .7rem 1rem;
+@layer components {
+
+  a.btn,
+  a.btn:hover,
+  a.btn:visited,
+  a.btn:active {
+    text-decoration: none !important;
+  }
 }
-.btn.m3::after { content: none !important; }
-/* Ensure button label never wraps */
-.btn .label { white-space: nowrap; }
+
+/* Material Symbols utility (font provided via CDN in Base.astro) */
+@layer utilities {
+  .material-symbols-rounded {
+    font-family: 'Material Symbols Rounded';
+    font-variation-settings: 'FILL' 0, 'wght' 500, 'GRAD' 0, 'opsz' 24;
+  }
+}
+
+/* Material 3-inspired buttons and cards */
+@layer components {
+  .btn.m3 {
+    background: var(--md-sys-color-primary);
+    color: var(--md-sys-color-on-primary);
+    border-radius: 999px;
+    /* match Maker chip curve */
+    border: 0 !important;
+    box-shadow: var(--md-sys-elevation-1);
+    transition: transform var(--md-sys-motion-duration-short) var(--md-sys-motion-ease-standard),
+      box-shadow var(--md-sys-motion-duration-short) var(--md-sys-motion-ease-standard);
+    font-weight: 600;
+    padding: .7rem 1rem;
+  }
+
+  .btn.m3::after {
+    content: none !important;
+  }
+
+  /* Ensure button label never wraps */
+  .btn .label {
+    white-space: nowrap;
+  }
+}
 
 /* Align all top-level sections with the header */
-.wrap, .page-wrap { max-width: 1100px; margin-left: auto; margin-right: auto; padding-left: var(--pad-x); padding-right: var(--pad-x); }
-.btn.m3:hover { transform: translateY(-1px); box-shadow: var(--md-sys-elevation-2); }
-.btn.m3:focus-visible { outline: 2px solid color-mix(in oklab, var(--md-sys-color-primary), white 20%); outline-offset: 3px; }
+@layer components {
 
-.card.m3 {
-  background: var(--md-sys-color-surface);
-  color: var(--md-sys-color-on-surface);
-  border-radius: var(--md-sys-shape-corner-large);
-  box-shadow: var(--md-sys-elevation-1);
-  padding: 1.25rem;
+  .wrap,
+  .page-wrap {
+    max-width: 1100px;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: var(--pad-x);
+    padding-right: var(--pad-x);
+  }
+}
+
+@layer components {
+  .btn.m3:hover {
+    transform: translateY(-1px);
+    box-shadow: var(--md-sys-elevation-2);
+  }
+
+  .btn.m3:focus-visible {
+    outline: 2px solid color-mix(in oklab, var(--md-sys-color-primary), white 20%);
+    outline-offset: 3px;
+  }
+}
+
+@layer components {
+  .card.m3 {
+    background: var(--md-sys-color-surface);
+    color: var(--md-sys-color-on-surface);
+    border-radius: var(--md-sys-shape-corner-large);
+    box-shadow: var(--md-sys-elevation-1);
+    padding: 1.25rem;
+  }
 }

@@ -63,3 +63,13 @@ Local Development
 - cd studio && npm i && npm run dev
 - Root helper scripts:
   - `npm run deploy:studio` triggers the Studio Deploy Hook using `STUDIO_DEPLOY_HOOK_URL`.
+
+Dev server access & troubleshooting
+
+- Site dev server binds to all interfaces on port 4321.
+  - Local: http://localhost:4321/
+  - LAN/Hotspot: use the "Network" URL printed in the terminal (e.g., http://172.20.10.2:4321/)
+- If the page doesn't load:
+  - Ensure the server is running (look for "astro ready" in the terminal).
+  - Kill stray processes and restart: `pkill -f "astro dev" || true && cd site && npm run dev`.
+  - Check that nothing else is using port 4321; if needed, change the port in `site/astro.config.mjs` and the `dev` script.

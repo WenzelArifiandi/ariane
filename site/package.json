@@ -6,7 +6,7 @@
     "node": "22.x"
   },
   "scripts": {
-    "dev": "astro dev",
+    "dev": "astro dev --host --port 4321",
     "build": "astro build",
     "preview": "astro preview",
     "lint": "eslint .",

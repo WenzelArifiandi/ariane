@@ -3,7 +3,13 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
+  "engines": {
+    "node": "22.x"
+  },
   "scripts": {
+    "dev": "npm run dev:site",
+    "dev:site": "npm --prefix site run dev",
+    "dev:studio": "npm --prefix studio run dev",
     "deploy:studio": "bash studio/scripts/deploy.sh"
   }
 }

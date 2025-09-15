@@ -10,7 +10,15 @@ export default defineConfig({
     domains: ['cdn.sanity.io']
   },
   vite: {
-    build: { sourcemap: false }
+    build: { sourcemap: false },
+    server: {
+      host: true,
+      port: 4321,
+    },
+  },
+  server: {
+    host: true,
+    port: 4321,
   },
   integrations: [
     tailwind({ applyBaseStyles: false }),

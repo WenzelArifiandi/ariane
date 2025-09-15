@@ -1,63 +1,108 @@
 /* Design tokens and theming for M3 + site brand */
-:root {
-  /* Brand colors */
-  --brand-primary: #7150D9;
-  --brand-on-primary: #ffffff;
-  --brand-surface: #ffffff;
-  --brand-ink: #101010;
-
-  /* Material Web theming tokens (consumed by md-* web components) */
-  --md-sys-color-primary: var(--brand-primary);
-  --md-sys-color-on-primary: var(--brand-on-primary);
-  --md-sys-color-surface: var(--brand-surface);
-  --md-sys-color-on-surface: var(--brand-ink);
-
-  /* Shape, spacing, elevation */
-  --radius-lg: 20px;
-  --radius-xl: 28px; /* Expressive */
-  --space-2: .5rem; --space-3: .75rem; --space-4: 1rem; --space-6: 1.5rem;
-
-  /* Shadows tuned for light mode */
-  --shadow-2: 0 6px 20px rgba(0,0,0,.08);
-  --shadow-3: 0 10px 40px rgba(0,0,0,.10);
-}
-
-@media (prefers-color-scheme: dark) {
+@layer tokens {
   :root {
-    --brand-surface: #0b0d12;
-    --brand-ink: #e5ecf6;
-    --shadow-2: 0 6px 20px rgba(0,0,0,.30);
-    --shadow-3: 0 10px 40px rgba(0,0,0,.45);
+    /* Brand colors */
+    --brand-primary: #7150D9;
+    --brand-on-primary: #ffffff;
+    --brand-surface: #ffffff;
+    --brand-ink: #101010;
+
+    /* Material Web theming tokens (consumed by md-* web components) */
+    --md-sys-color-primary: var(--brand-primary);
+    --md-sys-color-on-primary: var(--brand-on-primary);
+    --md-sys-color-surface: var(--brand-surface);
+    --md-sys-color-on-surface: var(--brand-ink);
+
+    /* Shape, spacing, elevation */
+    --radius-lg: 20px;
+    --radius-xl: 28px;
+    /* Expressive */
+    /* Unified spacing scale */
+    --space-1: .25rem;
+    --space-2: .5rem;
+    --space-3: .75rem;
+    --space-4: 1rem;
+    --space-5: 1.25rem;
+    --space-6: 1.5rem;
+
+    /* Shadows tuned for light mode */
+    --shadow-2: 0 6px 20px rgba(0, 0, 0, .08);
+    --shadow-3: 0 10px 40px rgba(0, 0, 0, .10);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --brand-surface: #0b0d12;
+      --brand-ink: #e5ecf6;
+      --shadow-2: 0 6px 20px rgba(0, 0, 0, .30);
+      --shadow-3: 0 10px 40px rgba(0, 0, 0, .45);
+    }
+  }
+
+  /* Apple-style Liquid Glass container */
+  .liquid-glass {
+    position: relative;
+    border-radius: var(--radius-xl);
+    background: linear-gradient(180deg,
+        color-mix(in oklab, var(--brand-surface), white 6%) 0%,
+        color-mix(in oklab, var(--brand-surface), black 4%) 100%);
+    border: 1px solid color-mix(in oklab, var(--brand-ink), transparent 90%);
+    backdrop-filter: saturate(140%) blur(22px);
+    -webkit-backdrop-filter: saturate(140%) blur(22px);
+    box-shadow: var(--shadow-3);
+    overflow: hidden;
+  }
+
+  .liquid-glass::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(120% 60% at 20% 0%, rgba(255, 255, 255, .30), rgba(255, 255, 255, 0) 60%);
+    mix-blend-mode: soft-light;
+    pointer-events: none;
+  }
+
+  .liquid-glass::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image: url('/noise.svg');
+    opacity: .06;
+    pointer-events: none;
+  }
+
+  /* Access card layout helpers (shared) */
+  .access-card {
+    display: grid;
+    gap: var(--space-3);
+    padding: var(--space-4) calc(var(--space-4) + 4px);
+  }
+
+  .access-card .head {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+  }
+
+  .access-card .title {
+    font-weight: 700;
+  }
+
+  .access-card .support {
+    color: color-mix(in oklab, var(--brand-ink), black 35%);
+    font-size: .95rem;
+  }
+
+  .access-card .form {
+    display: grid;
+    gap: var(--space-3);
+    grid-template-columns: 1fr auto;
+    align-items: end;
+  }
+
+  @media (max-width: 640px) {
+    .access-card .form {
+      grid-template-columns: 1fr;
+    }
   }
 }
-
-/* Apple-style Liquid Glass container */
-.liquid-glass {
-  position: relative;
-  border-radius: var(--radius-xl);
-  background: linear-gradient(180deg,
-    color-mix(in oklab, var(--brand-surface), white 6%) 0%,
-    color-mix(in oklab, var(--brand-surface), black 4%) 100%);
-  border: 1px solid color-mix(in oklab, var(--brand-ink), transparent 90%);
-  backdrop-filter: saturate(140%) blur(22px);
-  -webkit-backdrop-filter: saturate(140%) blur(22px);
-  box-shadow: var(--shadow-3);
-  overflow: hidden;
-}
-.liquid-glass::before {
-  content: ""; position: absolute; inset: 0;
-  background: radial-gradient(120% 60% at 20% 0%, rgba(255,255,255,.30), rgba(255,255,255,0) 60%);
-  mix-blend-mode: soft-light; pointer-events: none;
-}
-.liquid-glass::after {
-  content: ""; position: absolute; inset: 0;
-  background-image: url('/noise.svg'); opacity: .06; pointer-events: none;
-}
-
-/* Access card layout helpers (shared) */
-.access-card { display: grid; gap: var(--space-3); padding: var(--space-4) calc(var(--space-4) + 4px); }
-.access-card .head { display: flex; align-items: center; gap: var(--space-3); }
-.access-card .title { font-weight: 700; }
-.access-card .support { color: color-mix(in oklab, var(--brand-ink), black 35%); font-size: .95rem; }
-.access-card .form { display: grid; gap: var(--space-3); grid-template-columns: 1fr auto; align-items: end; }
-@media (max-width: 640px) { .access-card .form { grid-template-columns: 1fr; } }
