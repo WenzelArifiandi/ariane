@@ -26,6 +26,7 @@ jobs:
   security-configuration:
     name: 🛡️ Configure Repository Security
     runs-on: ubuntu-latest
+    continue-on-error: true
 
     steps:
       - name: 📥 Checkout Code
