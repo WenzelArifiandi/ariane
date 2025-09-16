@@ -3,11 +3,17 @@ import type { APIRoute } from "astro";
 export const GET: APIRoute = async ({ request }) => {
   const headers = request.headers;
   const url = new URL(request.url);
-  const host = headers.get("x-forwarded-host") || headers.get("host") || "127.0.0.1:4321";
-  const proto = headers.get("x-forwarded-proto") || (host.includes("127.0.0.1") || host.includes("localhost") ? "http" : "https");
+  const host =
+    headers.get("x-forwarded-host") || headers.get("host") || "127.0.0.1:4321";
+  const proto =
+    headers.get("x-forwarded-proto") ||
+    (host.includes("127.0.0.1") || host.includes("localhost")
+      ? "http"
+      : "https");
   const origin = `${proto}://${host}`;
 
-  const discoveryUrl = "https://auth.wenzelarifiandi.com/.well-known/openid-configuration";
+  const discoveryUrl =
+    "https://auth.wenzelarifiandi.com/.well-known/openid-configuration";
   let discovery: any = null;
   let endSession: string | undefined;
   let authorizationEndpoint: string | undefined;
@@ -42,18 +48,22 @@ export const GET: APIRoute = async ({ request }) => {
   ].filter(Boolean) as string[];
 
   // Accept inputs for a live authorization test
-  const inputClientId = url.searchParams.get("client_id") || OIDC_CLIENT_ID || undefined;
-  const inputRedirect = url.searchParams.get("redirect_uri") || (cfRedirects[0] ?? undefined);
+  const inputClientId =
+    url.searchParams.get("client_id") || OIDC_CLIENT_ID || undefined;
+  const inputRedirect =
+    url.searchParams.get("redirect_uri") || (cfRedirects[0] ?? undefined);
   const inputScope = url.searchParams.get("scope") || "openid profile email";
   const inputResponseType = url.searchParams.get("response_type") || "code";
 
-  let authTest: undefined | {
-    url?: string;
-    status?: number;
-    location?: string | null;
-    bodyPreview?: string;
-    hint?: string;
-  };
+  let authTest:
+    | undefined
+    | {
+        url?: string;
+        status?: number;
+        location?: string | null;
+        bodyPreview?: string;
+        hint?: string;
+      };
 
   if (authorizationEndpoint && inputClientId && inputRedirect) {
     try {
@@ -76,13 +86,16 @@ export const GET: APIRoute = async ({ request }) => {
         const text = await resp.text();
         bodyPreview = text.slice(0, 500);
         if (/Errors\.App\.NotFound/i.test(text)) {
-          hint = "Zitadel says the application (client_id) is not found. Use the exact Client ID from your Zitadel app.";
+          hint =
+            "Zitadel says the application (client_id) is not found. Use the exact Client ID from your Zitadel app.";
         } else if (/redirect/iu.test(text)) {
-          hint = "Redirect URI likely does not match the one registered in Zitadel. Paste Cloudflare's exact callback URL into Zitadel.";
+          hint =
+            "Redirect URI likely does not match the one registered in Zitadel. Paste Cloudflare's exact callback URL into Zitadel.";
         }
       } else if (status >= 300 && status < 400 && location) {
         // Redirect is good; likely the client_id and redirect are valid
-        hint = "Authorization request accepted. If Cloudflare Access shows next, the setup is correct.";
+        hint =
+          "Authorization request accepted. If Cloudflare Access shows next, the setup is correct.";
       }
 
       authTest = { url: u.toString(), status, location, bodyPreview, hint };
@@ -108,7 +121,8 @@ export const GET: APIRoute = async ({ request }) => {
           response_type: inputResponseType,
         },
         env: {
-          PUBLIC_OIDC_END_SESSION_ENDPOINT: process.env.PUBLIC_OIDC_END_SESSION_ENDPOINT,
+          PUBLIC_OIDC_END_SESSION_ENDPOINT:
+            process.env.PUBLIC_OIDC_END_SESSION_ENDPOINT,
           PUBLIC_OIDC_CLIENT_ID: process.env.PUBLIC_OIDC_CLIENT_ID,
           CF_TEAM_DOMAIN: process.env.CF_TEAM_DOMAIN,
         },
@@ -119,6 +133,9 @@ export const GET: APIRoute = async ({ request }) => {
       null,
       2,
     ),
-    { status: 200, headers: { "content-type": "application/json; charset=utf-8" } },
+    {
+      status: 200,
+      headers: { "content-type": "application/json; charset=utf-8" },
+    },
   );
 };

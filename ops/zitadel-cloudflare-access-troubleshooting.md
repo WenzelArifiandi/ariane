@@ -21,36 +21,44 @@ Tip: In Cloudflare Zero Trust → Settings → Authentication → Login methods 
 
 ## Common causes of “code 5 Not Found”
 
-1) Redirect URL mismatch
+1. Redirect URL mismatch
+
 - Zitadel app’s Redirect URIs must include Cloudflare’s redirect exactly as shown. If your Cloudflare team domain is custom, use that exact hostname.
 
-2) Wrong Client ID
+2. Wrong Client ID
+
 - If the Client ID entered in Cloudflare doesn’t exist in Zitadel (or is in another project), Zitadel will respond with code 5.
 
-3) Authorization endpoint path typos
+3. Authorization endpoint path typos
+
 - Always use the Discovery URL; Cloudflare derives `authorization_endpoint` from it.
 
 ## How to verify quickly
 
-1) Check Discovery
+1. Check Discovery
+
 ```bash
 curl -s https://auth.wenzelarifiandi.com/.well-known/openid-configuration | jq '{issuer, authorization_endpoint, end_session_endpoint}'
 ```
+
 Expect `authorization_endpoint` and `end_session_endpoint` URLs under `auth.wenzelarifiandi.com`.
 
-2) Verify your expected Redirect URL candidates
+2. Verify your expected Redirect URL candidates
+
 - If your site is behind a custom Access team domain (same as your main domain), try:
   - `https://wenzelarifiandi.com/cdn-cgi/access/callback`
 - If using a Cloudflare team subdomain, try:
   - `https://<team>.cloudflareaccess.com/cdn-cgi/access/callback`
 
-3) Build a test authorization URL (replace CLIENT_ID and choose the right redirect)
+3. Build a test authorization URL (replace CLIENT_ID and choose the right redirect)
+
 ```bash
 AUTHZ="https://auth.wenzelarifiandi.com/oauth/v2/authorize"
 REDIRECT="https://wenzelarifiandi.com/cdn-cgi/access/callback"  # or your <team>.cloudflareaccess.com one
 CLIENT_ID="<paste-from-zitadel>"
 open "${AUTHZ}?client_id=${CLIENT_ID}&response_type=code&redirect_uri=${REDIRECT}&scope=openid%20profile%20email&state=diag_state&nonce=diag_nonce"
 ```
+
 - If you see “code 5 Not Found,” the client_id isn’t found or redirect doesn’t match the app.
 
 ## App-side checks (optional)
@@ -61,6 +69,7 @@ open "${AUTHZ}?client_id=${CLIENT_ID}&response_type=code&redirect_uri=${REDIRECT
 - Visit `/api/oidc/diag` on your site to see discovery and sample logout link. Set `CF_TEAM_DOMAIN` env to show Cloudflare callback candidates.
 
 ## When it works
+
 - Cloudflare presents the Zitadel consent/login page.
 - After authentication, you’re redirected to `.../cdn-cgi/access/callback`, then back to your site.
 

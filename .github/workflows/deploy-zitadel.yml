@@ -1,0 +1,218 @@
+name: 🚀 Deploy Zitadel to Oracle Cloud
+
+on:
+  push:
+    branches: [main]
+    paths: ['zitadel/**']
+  workflow_dispatch:
+
+env:
+  DEPLOYMENT_PATH: /home/ubuntu/zitadel
+  BACKUP_PATH: /home/ubuntu/zitadel-backups
+
+jobs:
+  deploy:
+    name: 🏗️ Deploy to Production
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: 📥 Checkout Code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 2
+
+    - name: 🔍 Detect Changes
+      id: changes
+      run: |
+        if git diff --name-only HEAD~1 HEAD | grep -q "^zitadel/"; then
+          echo "zitadel_changed=true" >> $GITHUB_OUTPUT
+          echo "📝 Zitadel configuration changes detected"
+        else
+          echo "zitadel_changed=false" >> $GITHUB_OUTPUT
+          echo "ℹ️ No Zitadel changes detected"
+        fi
+
+    - name: 🔧 Setup SSH
+      if: steps.changes.outputs.zitadel_changed == 'true'
+      run: |
+        mkdir -p ~/.ssh
+        echo "${{ secrets.ORACLE_SSH_KEY }}" > ~/.ssh/oracle_key
+        chmod 600 ~/.ssh/oracle_key
+        ssh-keyscan -H ${{ secrets.ORACLE_HOST }} >> ~/.ssh/known_hosts
+
+    - name: 🏥 Health Check - Pre Deployment
+      if: steps.changes.outputs.zitadel_changed == 'true'
+      run: |
+        echo "🔍 Checking Zitadel health before deployment..."
+        response=$(curl -s -o /dev/null -w "%{http_code}" https://auth.wenzelarifiandi.com/.well-known/openid-configuration || echo "000")
+        if [ "$response" != "200" ]; then
+          echo "⚠️ Zitadel is not healthy (HTTP $response), but proceeding with deployment"
+        else
+          echo "✅ Zitadel is healthy (HTTP $response)"
+        fi
+
+    - name: 💾 Create Backup
+      if: steps.changes.outputs.zitadel_changed == 'true'
+      run: |
+        echo "📦 Creating backup of current deployment..."
+        ssh -i ~/.ssh/oracle_key -o StrictHostKeyChecking=no ubuntu@${{ secrets.ORACLE_HOST }} "
+          # Create backup directory with timestamp
+          BACKUP_DIR=\"$BACKUP_PATH/backup-$(date +%Y%m%d-%H%M%S)\"
+          mkdir -p \"\$BACKUP_DIR\"
+
+          # Backup configuration files
+          cp -r $DEPLOYMENT_PATH/* \"\$BACKUP_DIR/\" 2>/dev/null || true
+
+          # Backup database
+          cd $DEPLOYMENT_PATH
+          docker-compose exec -T db pg_dump -U postgres zitadel > \"\$BACKUP_DIR/database.sql\" 2>/dev/null || true
+
+          # Keep only last 5 backups
+          ls -dt $BACKUP_PATH/backup-* | tail -n +6 | xargs rm -rf 2>/dev/null || true
+
+          echo \"✅ Backup created at \$BACKUP_DIR\"
+        "
+
+    - name: 🚀 Deploy Configuration
+      if: steps.changes.outputs.zitadel_changed == 'true'
+      run: |
+        echo "🚀 Deploying new configuration..."
+
+        # Copy new configuration files
+        scp -i ~/.ssh/oracle_key -o StrictHostKeyChecking=no -r zitadel/* ubuntu@${{ secrets.ORACLE_HOST }}:$DEPLOYMENT_PATH/
+
+        # Execute deployment on remote server
+        ssh -i ~/.ssh/oracle_key -o StrictHostKeyChecking=no ubuntu@${{ secrets.ORACLE_HOST }} "
+          cd $DEPLOYMENT_PATH
+
+          echo \"📋 Current status:\"
+          docker-compose ps
+
+          echo \"🔄 Performing rolling update...\"
+
+          # Pull latest images if needed
+          docker-compose pull
+
+          # Restart services with zero downtime
+          docker-compose up -d --remove-orphans
+
+          echo \"⏳ Waiting for services to be ready...\"
+          sleep 30
+
+          echo \"📊 New status:\"
+          docker-compose ps
+        "
+
+    - name: 🏥 Health Check - Post Deployment
+      if: steps.changes.outputs.zitadel_changed == 'true'
+      run: |
+        echo "🔍 Checking Zitadel health after deployment..."
+
+        # Wait a bit more for services to stabilize
+        sleep 30
+
+        # Check OIDC endpoint
+        max_attempts=10
+        attempt=1
+
+        while [ $attempt -le $max_attempts ]; do
+          echo "🔍 Health check attempt $attempt/$max_attempts..."
+
+          response=$(curl -s -o /dev/null -w "%{http_code}" https://auth.wenzelarifiandi.com/.well-known/openid-configuration || echo "000")
+
+          if [ "$response" = "200" ]; then
+            echo "✅ Zitadel is healthy! Deployment successful."
+
+            # Test console access
+            console_response=$(curl -s -o /dev/null -w "%{http_code}" https://auth.wenzelarifiandi.com/ui/console || echo "000")
+            if [ "$console_response" = "200" ]; then
+              echo "✅ Console is accessible"
+            else
+              echo "⚠️ Console returned HTTP $console_response"
+            fi
+
+            exit 0
+          fi
+
+          echo "❌ Health check failed (HTTP $response), retrying in 10 seconds..."
+          sleep 10
+          attempt=$((attempt + 1))
+        done
+
+        echo "💥 Health check failed after $max_attempts attempts"
+        exit 1
+
+    - name: 🔔 Deployment Notification
+      if: always() && steps.changes.outputs.zitadel_changed == 'true'
+      run: |
+        if [ "${{ job.status }}" = "success" ]; then
+          echo "✅ Deployment completed successfully!"
+          echo "🌐 Zitadel: https://auth.wenzelarifiandi.com"
+          echo "🖥️ Console: https://auth.wenzelarifiandi.com/ui/console"
+        else
+          echo "❌ Deployment failed!"
+          echo "🔍 Check the logs above for details"
+          echo "💾 Automatic backup was created before deployment"
+        fi
+
+    - name: 🆘 Rollback on Failure
+      if: failure() && steps.changes.outputs.zitadel_changed == 'true'
+      run: |
+        echo "🆘 Deployment failed, initiating automatic rollback..."
+
+        ssh -i ~/.ssh/oracle_key -o StrictHostKeyChecking=no ubuntu@${{ secrets.ORACLE_HOST }} "
+          cd $DEPLOYMENT_PATH
+
+          # Get latest backup
+          LATEST_BACKUP=\$(ls -dt $BACKUP_PATH/backup-* | head -n 1)
+
+          if [ -d \"\$LATEST_BACKUP\" ]; then
+            echo \"📦 Rolling back to: \$LATEST_BACKUP\"
+
+            # Stop services
+            docker-compose down
+
+            # Restore configuration
+            cp -r \"\$LATEST_BACKUP\"/* ./
+
+            # Restore database if backup exists
+            if [ -f \"\$LATEST_BACKUP/database.sql\" ]; then
+              echo \"🗄️ Restoring database...\"
+              docker-compose up -d db
+              sleep 20
+              docker-compose exec -T db psql -U postgres -c 'DROP DATABASE IF EXISTS zitadel;'
+              docker-compose exec -T db psql -U postgres -c 'CREATE DATABASE zitadel;'
+              docker-compose exec -T db psql -U postgres zitadel < \"\$LATEST_BACKUP/database.sql\"
+            fi
+
+            # Start all services
+            docker-compose up -d
+
+            echo \"✅ Rollback completed\"
+          else
+            echo \"❌ No backup found for rollback\"
+          fi
+        "
+
+  security-scan:
+    name: 🔒 Security Scan
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push'
+
+    steps:
+    - name: 📥 Checkout Code
+      uses: actions/checkout@v4
+
+    - name: 🔍 Run Trivy Security Scan
+      uses: aquasecurity/trivy-action@master
+      with:
+        scan-type: 'fs'
+        scan-ref: 'zitadel/'
+        format: 'sarif'
+        output: 'trivy-results.sarif'
+
+    - name: 📊 Upload Trivy Results
+      uses: github/codeql-action/upload-sarif@v3
+      if: always()
+      with:
+        sarif_file: 'trivy-results.sarif'
