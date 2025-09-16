@@ -1,5 +1,7 @@
 # Ariane
 
+> A modern authentication and authorization system built with Zitadel, featuring automated security scanning and deployment workflows.
+
 ## 📊 System Status
 
 ### 🚀 Deployment & CI/CD
