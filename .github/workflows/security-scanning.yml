@@ -69,7 +69,6 @@ jobs:
         sarif_file: 'trivy-results.sarif'
 
     - name: 🔍 Run Snyk Security Scan
-      if: ${{ secrets.SNYK_TOKEN }}
       uses: snyk/actions/node@master
       continue-on-error: true
       env:
@@ -77,14 +76,17 @@ jobs:
       with:
         args: --severity-threshold=medium --all-projects
 
-    - name: ⚠️ Snyk Token Not Configured
-      if: ${{ !secrets.SNYK_TOKEN }}
+    - name: 📝 Snyk Scan Info
       run: |
-        echo "⚠️ Snyk token not configured - skipping Snyk scan"
-        echo "To enable Snyk scanning:"
-        echo "1. Go to https://snyk.io and create an account"
-        echo "2. Get your API token"
-        echo "3. Add it as SNYK_TOKEN secret in GitHub repository settings"
+        if [ -z "${{ secrets.SNYK_TOKEN }}" ]; then
+          echo "ℹ️ Snyk token not configured - scan may be skipped"
+          echo "To enable Snyk scanning:"
+          echo "1. Go to https://snyk.io and create an account"
+          echo "2. Get your API token"
+          echo "3. Add it as SNYK_TOKEN secret in GitHub repository settings"
+        else
+          echo "✅ Snyk scan configured and executed"
+        fi
 
   docker-security-scan:
     name: 🐳 Docker Security Scan
