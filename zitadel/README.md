@@ -2,6 +2,8 @@
 
 This directory contains the configuration for the Zitadel authentication server used by the Ariane project.
 
+**🚀 GitOps Test Deployment** - Testing automated deployment pipeline at 2025-09-16 14:47 UTC
+
 ## Overview
 
 Zitadel provides OIDC/OAuth2 authentication services for:
