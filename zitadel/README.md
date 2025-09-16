@@ -292,3 +292,4 @@ For issues related to:
 - Cloudflare integration: See `ops/zitadel-cloudflare-access-troubleshooting.md`
 - Deployment issues: Use `./scripts/deployment-status.sh` and check GitHub Actions
 - Error handling: Check `error-handler.js` for supported error codes
+- Initializing users properly (avoiding DB flips): See `../ops/zitadel-user-initialization.md`
