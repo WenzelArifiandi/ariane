@@ -36,9 +36,36 @@ jobs:
       if: steps.changes.outputs.zitadel_changed == 'true'
       run: |
         mkdir -p ~/.ssh
-        echo "${{ secrets.ORACLE_SSH_KEY }}" > ~/.ssh/oracle_key
+        # Write SSH key with proper line endings
+        printf '%s\n' "${{ secrets.ORACLE_SSH_KEY }}" > ~/.ssh/oracle_key
         chmod 600 ~/.ssh/oracle_key
+
+        # Verify key format
+        echo "🔍 Verifying SSH key format..."
+        head -n1 ~/.ssh/oracle_key
+        tail -n1 ~/.ssh/oracle_key
+
+        # Add known hosts
         ssh-keyscan -H ${{ secrets.ORACLE_HOST }} >> ~/.ssh/known_hosts
+
+        # Test SSH connection
+        echo "🔗 Testing SSH connection..."
+        if ! ssh -i ~/.ssh/oracle_key -o StrictHostKeyChecking=no -o ConnectTimeout=10 ubuntu@${{ secrets.ORACLE_HOST }} "echo 'SSH connection successful'"; then
+          echo "❌ SSH connection failed. Troubleshooting info:"
+          echo "🔍 Key file size: $(wc -c < ~/.ssh/oracle_key) bytes"
+          echo "🔍 Key permissions: $(stat -c '%a' ~/.ssh/oracle_key)"
+          echo "🔍 First line starts with: $(head -c 20 ~/.ssh/oracle_key)"
+          echo "🔍 Last line ends with: $(tail -c 20 ~/.ssh/oracle_key)"
+
+          echo ""
+          echo "💡 Common fixes:"
+          echo "  1. Ensure ORACLE_SSH_KEY contains the complete private key"
+          echo "  2. Check key format (should start with -----BEGIN and end with -----END)"
+          echo "  3. Verify ORACLE_HOST IP is correct: ${{ secrets.ORACLE_HOST }}"
+          echo "  4. Ensure Oracle Cloud security rules allow SSH from GitHub Actions IPs"
+
+          exit 1
+        fi
 
     - name: 🏥 Health Check - Pre Deployment
       if: steps.changes.outputs.zitadel_changed == 'true'
@@ -160,7 +187,15 @@ jobs:
       run: |
         echo "🆘 Deployment failed, initiating automatic rollback..."
 
-        ssh -i ~/.ssh/oracle_key -o StrictHostKeyChecking=no ubuntu@${{ secrets.ORACLE_HOST }} "
+        # Verify SSH key is still available
+        if [ ! -f ~/.ssh/oracle_key ]; then
+          echo "❌ SSH key not found, recreating..."
+          mkdir -p ~/.ssh
+          printf '%s\n' "${{ secrets.ORACLE_SSH_KEY }}" > ~/.ssh/oracle_key
+          chmod 600 ~/.ssh/oracle_key
+        fi
+
+        ssh -i ~/.ssh/oracle_key -o StrictHostKeyChecking=no -o ConnectTimeout=30 ubuntu@${{ secrets.ORACLE_HOST }} "
           cd $DEPLOYMENT_PATH
 
           # Get latest backup
