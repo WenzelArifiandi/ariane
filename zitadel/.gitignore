@@ -1,0 +1,5 @@
+# Local-only overrides and secrets
+.env
+.env.local
+zitadel.local.yaml
+docker-compose.override.yml
