@@ -65,26 +65,61 @@ async function mountAccessUI(prefill?: string) {
   if (bar) bar.classList.add("access-open");
   const wrap = document.createElement("div");
   wrap.className = "access-ui";
-  wrap.innerHTML = `
-    <div class="liquid-glass access-card m3-card">
-      <div class="head">
-        <span class="material-symbols-rounded" aria-hidden="true">mail</span>
-        <div class="titles">
-          <div class="title">Join the maker space</div>
-          <div class="support">Can't wait to welcome you into the makerspace! Pop your email below to request access, and I'll reach out as soon as it's ready.</div>
-        </div>
-      </div>
-      <form id="req-access" class="form">
-        <input id="email" name="email" type="email" required placeholder="you@example.com" ${prefill ? `value="${prefill}"` : ""} class="field" />
-        <button class="btn m3" type="submit">Send request</button>
-      </form>
-    </div>`;
+  // Create elements safely using DOM methods instead of innerHTML to prevent XSS
+  const card = document.createElement("div");
+  card.className = "liquid-glass access-card m3-card";
+
+  const head = document.createElement("div");
+  head.className = "head";
+
+  const icon = document.createElement("span");
+  icon.className = "material-symbols-rounded";
+  icon.setAttribute("aria-hidden", "true");
+  icon.textContent = "mail";
+
+  const titles = document.createElement("div");
+  titles.className = "titles";
+
+  const title = document.createElement("div");
+  title.className = "title";
+  title.textContent = "Join the maker space";
+
+  const support = document.createElement("div");
+  support.className = "support";
+  support.textContent = "Can't wait to welcome you into the makerspace! Pop your email below to request access, and I'll reach out as soon as it's ready.";
+
+  titles.appendChild(title);
+  titles.appendChild(support);
+  head.appendChild(icon);
+  head.appendChild(titles);
+
+  const form = document.createElement("form");
+  form.id = "req-access";
+  form.className = "form";
+
+  const emailInput = document.createElement("input");
+  emailInput.id = "email";
+  emailInput.name = "email";
+  emailInput.type = "email";
+  emailInput.required = true;
+  emailInput.placeholder = "you@example.com";
+  emailInput.className = "field";
+  if (prefill) emailInput.value = prefill;
+
+  const submitButton = document.createElement("button");
+  submitButton.className = "btn m3";
+  submitButton.type = "submit";
+  submitButton.textContent = "Send request";
+
+  form.appendChild(emailInput);
+  form.appendChild(submitButton);
+  card.appendChild(head);
+  card.appendChild(form);
+  wrap.appendChild(card);
   mount.appendChild(wrap);
-  const form = wrap.querySelector("#req-access") as HTMLFormElement | null;
-  form?.addEventListener("submit", async (e) => {
+  form.addEventListener("submit", async (e) => {
     e.preventDefault();
-    const input = wrap.querySelector("#email") as HTMLInputElement | null;
-    const email = String(input?.value ?? "").trim();
+    const email = String(emailInput.value ?? "").trim();
     if (!email || !email.includes("@")) return;
     localStorage.setItem("maker_email", email);
     await fetch("/api/auth/request-access", {

@@ -1,0 +1,47 @@
+# CodeQL Configuration for Enhanced Security Scanning
+
+name: "Enhanced Security Scanning"
+
+disable-default-queries: false
+
+queries:
+  - name: security-and-quality
+    uses: security-and-quality
+  - name: security-extended
+    uses: security-extended
+
+paths-ignore:
+  - node_modules/**
+  - "**/node_modules/**"
+  - dist/**
+  - "**/dist/**"
+  - .vercel/**
+  - "**/.vercel/**"
+  - "*.config.js"
+  - "*.config.ts"
+  - "*.config.mjs"
+  - ".next/**"
+  - "**/coverage/**"
+  - "**/test/**"
+  - "**/tests/**"
+  - "**/spec/**"
+  - "**/*.test.*"
+  - "**/*.spec.*"
+
+# Include specific directories for scanning
+paths:
+  - site/src/**
+  - studio/api/**
+  - studio/schemas/**
+
+# Specific query configurations
+query-filters:
+  # Disable noisy queries that might not be relevant
+  - include:
+      tags:
+        - security
+        - correctness
+  - exclude:
+      tags:
+        - experimental
+        - statistical

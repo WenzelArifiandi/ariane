@@ -10,6 +10,13 @@ on:
     - cron: '0 3 * * 0'
   workflow_dispatch:
 
+permissions:
+  contents: read
+  security-events: write
+  actions: read
+  pull-requests: write
+  issues: write
+
 jobs:
   codeql-analysis:
     name: 🔎 CodeQL Security Analysis
@@ -32,7 +39,7 @@ jobs:
       uses: github/codeql-action/init@v3
       with:
         languages: ${{ matrix.language }}
-        queries: security-and-quality
+        config-file: ./.github/codeql/codeql-config.yml
 
     - name: 🏗️ Autobuild
       uses: github/codeql-action/autobuild@v3

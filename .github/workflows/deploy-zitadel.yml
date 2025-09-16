@@ -6,6 +6,11 @@ on:
     paths: ['zitadel/**']
   workflow_dispatch:
 
+permissions:
+  contents: write
+  security-events: write
+  actions: read
+
 env:
   DEPLOYMENT_PATH: /home/ubuntu/zitadel
   BACKUP_PATH: /home/ubuntu/zitadel-backups

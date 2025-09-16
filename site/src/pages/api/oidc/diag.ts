@@ -100,7 +100,8 @@ export const GET: APIRoute = async ({ request }) => {
 
       authTest = { url: u.toString(), status, location, bodyPreview, hint };
     } catch (e: any) {
-      authTest = { hint: `Auth test failed: ${e?.message || String(e)}` };
+      // Avoid exposing sensitive error details in stack traces
+      authTest = { hint: "Auth test failed: Unable to complete authorization request" };
     }
   }
 

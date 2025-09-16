@@ -12,6 +12,13 @@ on:
     # Run monthly to ensure security features stay enabled
     - cron: '0 6 1 * *'
 
+permissions:
+  contents: read
+  security-events: write
+  actions: write
+  issues: write
+  administration: write
+
 jobs:
   security-configuration:
     name: 🛡️ Configure Repository Security
