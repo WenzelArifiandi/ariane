@@ -3,8 +3,13 @@ name: 🚀 Deploy Zitadel to Oracle Cloud
 on:
   push:
     branches: [main]
-    paths: ["zitadel/**"]
   workflow_dispatch:
+    inputs:
+      force:
+        description: "Force deploy even if no changes detected"
+        required: false
+        default: false
+        type: boolean
 
 permissions:
   contents: write
@@ -29,7 +34,24 @@ jobs:
       - name: 🔍 Detect Changes
         id: changes
         run: |
-          if git diff --name-only HEAD~1 HEAD | grep -q "^zitadel/"; then
+          # Determine whether to deploy
+          # 1) If manually dispatched with force=true, always deploy
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ "${{ github.event.inputs.force }}" = "true" ]; then
+            echo "zitadel_changed=true" >> $GITHUB_OUTPUT
+            echo "📝 Manual dispatch with force=true: will deploy"
+            exit 0
+          fi
+
+          # 2) For push events, check for changes under zitadel/ between the previous and current commit
+          # Ensure we have sufficient history
+          git fetch --no-tags --depth=2 origin ${{ github.ref }}
+
+          BASE="${{ github.event.before }}"
+          if [ -z "$BASE" ] || ! git cat-file -e "$BASE^{commit}" 2>/dev/null; then
+            BASE="HEAD~1"
+          fi
+
+          if git diff --name-only "$BASE"...HEAD | grep -q "^zitadel/"; then
             echo "zitadel_changed=true" >> $GITHUB_OUTPUT
             echo "📝 Zitadel configuration changes detected"
           else
@@ -41,16 +63,27 @@ jobs:
         if: steps.changes.outputs.zitadel_changed == 'true'
         run: |
           mkdir -p ~/.ssh
-            # Write SSH key and normalize newlines
-            printf '%s\n' "${{ secrets.ORACLE_SSH_KEY }}" > ~/.ssh/oracle_key.raw
-            tr -d '\r' < ~/.ssh/oracle_key.raw > ~/.ssh/oracle_key || cp ~/.ssh/oracle_key.raw ~/.ssh/oracle_key
-            rm -f ~/.ssh/oracle_key.raw
-            # If the key doesn't look like PEM, attempt base64 decode (supports base64-encoded secrets)
-            if ! grep -q "BEGIN .*PRIVATE KEY" ~/.ssh/oracle_key; then
-              if base64 -d ~/.ssh/oracle_key > ~/.ssh/oracle_key.dec 2>/dev/null; then
-                mv ~/.ssh/oracle_key.dec ~/.ssh/oracle_key
-              fi
+          KEY_TMP=~/.ssh/oracle_key.tmp
+          KEY_PATH=~/.ssh/oracle_key
+
+          # Write SSH key and normalize formats
+          # Supports: PEM with actual newlines, PEM with literal \n, base64-encoded PEM, CRLF endings
+          printf '%s' "${{ secrets.ORACLE_SSH_KEY }}" > "$KEY_TMP"
+          if grep -q '\\n' "$KEY_TMP"; then
+            # Convert literal \n sequences into real newlines and strip any \r
+            sed -e 's/\\r//g' -e 's/\\n/\n/g' "$KEY_TMP" > "$KEY_PATH"
+          else
+            # Remove CRLF if present
+            tr -d '\r' < "$KEY_TMP" > "$KEY_PATH"
+          fi
+          rm -f "$KEY_TMP"
+
+          # If the key doesn't look like PEM, attempt base64 decode (supports base64-encoded secrets)
+          if ! head -n1 "$KEY_PATH" | grep -q "BEGIN .*PRIVATE KEY"; then
+            if base64 -d "$KEY_PATH" > "$KEY_PATH.dec" 2>/dev/null; then
+              mv "$KEY_PATH.dec" "$KEY_PATH"
             fi
+          fi
           chmod 600 ~/.ssh/oracle_key
 
           # Verify key format
@@ -58,12 +91,25 @@ jobs:
           head -n1 ~/.ssh/oracle_key
           tail -n1 ~/.ssh/oracle_key
 
+          # Validate key can be parsed by ssh-keygen
+          if ! ssh-keygen -y -f ~/.ssh/oracle_key >/dev/null 2>&1; then
+            echo "❌ SSH private key could not be parsed."
+            echo "💡 Tips:"
+            echo "  - Ensure the secret contains the full private key, including BEGIN/END lines"
+            echo "  - If you pasted a single-line key with \\n, keep it — we convert it automatically"
+            echo "  - If the key is base64-encoded, that's supported too"
+            exit 1
+          fi
+
           # Add known hosts
           ssh-keyscan -H ${{ secrets.ORACLE_HOST }} >> ~/.ssh/known_hosts
 
+          # Make SSH options available to all subsequent steps
+          echo "SSH_OPTS=-i ~/.ssh/oracle_key -o StrictHostKeyChecking=no -o IdentitiesOnly=yes -o UserKnownHostsFile=~/.ssh/known_hosts -o ConnectTimeout=20" >> "$GITHUB_ENV"
+
           # Test SSH connection
           echo "🔗 Testing SSH connection..."
-          if ! ssh -i ~/.ssh/oracle_key -o StrictHostKeyChecking=no -o IdentitiesOnly=yes -o ConnectTimeout=10 ubuntu@${{ secrets.ORACLE_HOST }} "echo 'SSH connection successful'"; then
+          if ! ssh $SSH_OPTS ubuntu@${{ secrets.ORACLE_HOST }} "echo 'SSH connection successful'"; then
             echo "❌ SSH connection failed. Troubleshooting info:"
             echo "🔍 Key file size: $(wc -c < ~/.ssh/oracle_key) bytes"
             echo "🔍 Key permissions: $(stat -c '%a' ~/.ssh/oracle_key)"
@@ -83,8 +129,8 @@ jobs:
       - name: 📁 Ensure Remote Deployment Directory
         if: steps.changes.outputs.zitadel_changed == 'true'
         run: |
-          ssh -i ~/.ssh/oracle_key -o StrictHostKeyChecking=no ubuntu@${{ secrets.ORACLE_HOST }} "
-            sudo mkdir -p $DEPLOYMENT_PATH && sudo chown -R ubuntu:ubuntu $DEPLOYMENT_PATH
+          ssh $SSH_OPTS ubuntu@${{ secrets.ORACLE_HOST }} "
+            sudo mkdir -p $DEPLOYMENT_PATH $BACKUP_PATH && sudo chown -R ubuntu:ubuntu $DEPLOYMENT_PATH $BACKUP_PATH
           "
 
       - name: 🏥 Health Check - Pre Deployment
@@ -102,7 +148,7 @@ jobs:
         if: steps.changes.outputs.zitadel_changed == 'true'
         run: |
           echo "📦 Creating backup of current deployment..."
-          ssh -i ~/.ssh/oracle_key -o StrictHostKeyChecking=no ubuntu@${{ secrets.ORACLE_HOST }} "
+          ssh $SSH_OPTS ubuntu@${{ secrets.ORACLE_HOST }} "
             # Select docker compose command
             if command -v docker-compose >/dev/null 2>&1; then DC='docker-compose'; else DC='docker compose'; fi
 
@@ -129,10 +175,10 @@ jobs:
           echo "🚀 Deploying new configuration..."
 
           # Copy new configuration files
-          scp -i ~/.ssh/oracle_key -o StrictHostKeyChecking=no -r zitadel/* ubuntu@${{ secrets.ORACLE_HOST }}:$DEPLOYMENT_PATH/
+          scp $SSH_OPTS -r zitadel/* ubuntu@${{ secrets.ORACLE_HOST }}:$DEPLOYMENT_PATH/
 
           # Execute deployment on remote server
-          ssh -i ~/.ssh/oracle_key -o StrictHostKeyChecking=no ubuntu@${{ secrets.ORACLE_HOST }} "
+          ssh $SSH_OPTS ubuntu@${{ secrets.ORACLE_HOST }} "
             cd $DEPLOYMENT_PATH
 
             # Select docker compose command
@@ -217,11 +263,24 @@ jobs:
           if [ ! -f ~/.ssh/oracle_key ]; then
             echo "❌ SSH key not found, recreating..."
             mkdir -p ~/.ssh
-            printf '%s\n' "${{ secrets.ORACLE_SSH_KEY }}" > ~/.ssh/oracle_key
-            chmod 600 ~/.ssh/oracle_key
+            KEY_TMP=~/.ssh/oracle_key.tmp
+            KEY_PATH=~/.ssh/oracle_key
+            printf '%s' "${{ secrets.ORACLE_SSH_KEY }}" > "$KEY_TMP"
+            if grep -q '\\n' "$KEY_TMP"; then
+              sed -e 's/\\r//g' -e 's/\\n/\n/g' "$KEY_TMP" > "$KEY_PATH"
+            else
+              tr -d '\r' < "$KEY_TMP" > "$KEY_PATH"
+            fi
+            rm -f "$KEY_TMP"
+            if ! head -n1 "$KEY_PATH" | grep -q "BEGIN .*PRIVATE KEY"; then
+              if base64 -d "$KEY_PATH" > "$KEY_PATH.dec" 2>/dev/null; then
+                mv "$KEY_PATH.dec" "$KEY_PATH"
+              fi
+            fi
+            chmod 600 "$KEY_PATH"
           fi
 
-          ssh -i ~/.ssh/oracle_key -o StrictHostKeyChecking=no -o ConnectTimeout=30 ubuntu@${{ secrets.ORACLE_HOST }} "
+          ssh $SSH_OPTS ubuntu@${{ secrets.ORACLE_HOST }} "
             cd $DEPLOYMENT_PATH
 
             # Select docker compose command
