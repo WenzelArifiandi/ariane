@@ -45,9 +45,7 @@ jobs:
             try {
               // Enable vulnerability alerts
               console.log('📢 Enabling vulnerability alerts...');
-              const octokit = github.getOctokit(core.getInput('github-token'));
-
-              await octokit.rest.repos.enableVulnerabilityAlerts({
+              await github.rest.repos.enableVulnerabilityAlerts({
                 owner,
                 repo
               });
@@ -55,7 +53,7 @@ jobs:
 
               // Enable automated security fixes (Dependabot security updates)
               console.log('🤖 Enabling automated security fixes...');
-              await octokit.rest.repos.enableAutomatedSecurityFixes({
+              await github.rest.repos.enableAutomatedSecurityFixes({
                 owner,
                 repo
               });
@@ -63,14 +61,14 @@ jobs:
 
               // Get current repository settings
               console.log('🔍 Checking current security settings...');
-              const repoData = await octokit.rest.repos.get({
+              const repoData = await github.rest.repos.get({
                 owner,
                 repo
               });
 
               // Enable private vulnerability reporting if not already enabled
               console.log('🔒 Configuring private vulnerability reporting...');
-              await octokit.rest.repos.update({
+              await github.rest.repos.update({
                 owner,
                 repo,
                 security_and_analysis: {

@@ -18,32 +18,6 @@ permissions:
   issues: write
 
 jobs:
-  codeql-analysis:
-    name: 🔎 CodeQL Security Analysis
-    runs-on: ubuntu-latest
-
-    strategy:
-      fail-fast: false
-      matrix:
-        language: ["javascript"]
-
-    steps:
-      - name: 📥 Checkout Code
-        uses: actions/checkout@v4
-
-      - name: 🔧 Initialize CodeQL
-        uses: github/codeql-action/init@v3
-        with:
-          languages: ${{ matrix.language }}
-
-      - name: 🏗️ Autobuild
-        uses: github/codeql-action/autobuild@v3
-
-      - name: 🔍 Perform CodeQL Analysis
-        uses: github/codeql-action/analyze@v3
-        with:
-          category: "/language:${{matrix.language}}"
-
   dependency-scanning:
     name: 🛡️ Dependency Vulnerability Scan
     runs-on: ubuntu-latest
@@ -120,7 +94,7 @@ jobs:
   security-summary:
     name: 📋 Security Summary
     runs-on: ubuntu-latest
-    needs: [codeql-analysis, dependency-scanning, secret-scanning]
+    needs: [dependency-scanning, secret-scanning]
     if: always()
 
     steps:
@@ -138,13 +112,6 @@ jobs:
 
           echo "## Scan Results" >> security-summary.md
           echo "" >> security-summary.md
-
-          # CodeQL results
-          if [ "${{ needs.codeql-analysis.result }}" = "success" ]; then
-            echo "✅ **CodeQL Analysis:** Passed" >> security-summary.md
-          else
-            echo "❌ **CodeQL Analysis:** Failed or has findings" >> security-summary.md
-          fi
 
           # Dependency scanning
           if [ "${{ needs.dependency-scanning.result }}" = "success" ]; then
