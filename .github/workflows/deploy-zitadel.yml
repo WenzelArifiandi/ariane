@@ -56,8 +56,12 @@ jobs:
           if [ -z "$BASE" ] || ! git cat-file -e "$BASE^{commit}" 2>/dev/null; then
             BASE="HEAD~1"
           fi
+          # Use git path filtering to avoid grep variability
+          CHANGED_FILES=$(git diff --name-only "$BASE"...HEAD -- zitadel/ || true)
+          echo "📄 Files changed under zitadel/:"
+          echo "$CHANGED_FILES"
 
-          if git diff --name-only "$BASE"...HEAD | grep -q "^zitadel/"; then
+          if [ -n "$CHANGED_FILES" ]; then
             echo "zitadel_changed=true" >> $GITHUB_OUTPUT
             echo "📝 Zitadel configuration changes detected"
           else
