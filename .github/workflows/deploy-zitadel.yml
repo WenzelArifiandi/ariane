@@ -388,21 +388,33 @@ jobs:
           git config --local user.email "security-scan@github.com"
           git config --local user.name "Security Scanner"
 
-          if [ -n "$(git status --porcelain)" ]; then
-            git add site/package*.json studio/package*.json
-            git commit -m "security: auto-fix vulnerabilities during deployment scan
+          # Only consider tracked files for changes (avoid untracked scan artifacts like .cache/*.sarif)
+          CHANGED=$(git diff --name-only -- site/package-lock.json site/package.json studio/package-lock.json studio/package.json || true)
 
-            🔍 Automated security fixes applied during deployment:
-            - Updated dependencies to resolve vulnerabilities
-            - Applied npm audit fixes
-
-            🤖 Applied by deployment security scan
-            🚀 Generated with [Claude Code](https://claude.ai/code)
-
-            Co-Authored-By: Security Scanner <security-scan@github.com>"
-
-            git push
-            echo "✅ Security fixes applied and committed"
-          else
-            echo "ℹ️ No security fixes needed"
+          if [ -z "$CHANGED" ]; then
+            echo "ℹ️ No security fixes needed (no tracked package files changed)"
+            exit 0
           fi
+
+          # Stage only the intended files
+          git add site/package*.json studio/package*.json || true
+
+          # If nothing ended up staged, skip committing to avoid 'nothing to commit' failures
+          if git diff --cached --quiet; then
+            echo "ℹ️ No staged changes after audit fixes; skipping commit"
+            exit 0
+          fi
+
+          git commit -m "security: auto-fix vulnerabilities during deployment scan
+
+          🔍 Automated security fixes applied during deployment:
+          - Updated dependencies to resolve vulnerabilities
+          - Applied npm audit fixes
+
+          🤖 Applied by deployment security scan
+          🚀 Generated with [Claude Code](https://claude.ai/code)
+
+          Co-Authored-By: Security Scanner <security-scan@github.com>"
+
+          git push
+          echo "✅ Security fixes applied and committed"

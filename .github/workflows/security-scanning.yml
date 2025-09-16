@@ -210,24 +210,36 @@ jobs:
           git config --local user.email "security-bot@github.com"
           git config --local user.name "Security Bot"
 
-          if [ -n "$(git status --porcelain)" ]; then
-            git add .
-            git commit -m "security: automated dependency updates and vulnerability fixes
+          # Only consider tracked package files to avoid untracked artifacts (e.g., SARIF, .cache)
+          CHANGED=$(git diff --name-only -- site/package-lock.json site/package.json studio/package-lock.json studio/package.json || true)
 
-            🤖 Automated security maintenance:
-            - Updated dependencies to latest secure versions
-            - Applied npm audit fixes
-            - Resolved known vulnerabilities
-
-            🔍 Triggered by: ${{ github.event_name }}
-            📅 Date: $(date -Iseconds)
-
-            🚀 Generated with [Claude Code](https://claude.ai/code)
-
-            Co-Authored-By: Security Bot <security-bot@github.com>"
-
-            git push
-            echo "✅ Automated security fixes committed and pushed"
-          else
-            echo "ℹ️ No security fixes needed"
+          if [ -z "$CHANGED" ]; then
+            echo "ℹ️ No security fixes needed (no tracked package files changed)"
+            exit 0
           fi
+
+          # Stage only the intended files
+          git add site/package*.json studio/package*.json || true
+
+          # If nothing actually got staged, skip committing
+          if git diff --cached --quiet; then
+            echo "ℹ️ No staged changes after audit fixes; skipping commit"
+            exit 0
+          fi
+
+          git commit -m "security: automated dependency updates and vulnerability fixes
+
+          🤖 Automated security maintenance:
+          - Updated dependencies to latest secure versions
+          - Applied npm audit fixes
+          - Resolved known vulnerabilities
+
+          🔍 Triggered by: ${{ github.event_name }}
+          📅 Date: $(date -Iseconds)
+
+          🚀 Generated with [Claude Code](https://claude.ai/code)
+
+          Co-Authored-By: Security Bot <security-bot@github.com>"
+
+          git push
+          echo "✅ Automated security fixes committed and pushed"
