@@ -31,10 +31,11 @@ jobs:
         env:
           # Manual input provided via workflow_dispatch; secret fallback resolved inside script via environment
           SNYK_TOKEN_INPUT: ${{ inputs.snyk_token }}
+          SNYK_TOKEN_SECRET: ${{ secrets.SNYK_TOKEN }}
         continue-on-error: true
         run: |
           # Resolve token: prefer input; else use SNYK_TOKEN if set as an env/secret at runtime
-          SNYK_TOKEN="${SNYK_TOKEN_INPUT:-$SNYK_TOKEN}"
+          SNYK_TOKEN="${SNYK_TOKEN_INPUT:-${SNYK_TOKEN:-$SNYK_TOKEN_SECRET}}"
           if [ -z "${SNYK_TOKEN}" ]; then
             echo "ℹ️ Snyk token not configured (no input and no secret); skipping Snyk scan"
             exit 0

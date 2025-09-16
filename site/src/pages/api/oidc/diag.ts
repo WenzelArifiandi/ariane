@@ -25,7 +25,9 @@ export const GET: APIRoute = async ({ request }) => {
     endSession = discovery?.end_session_endpoint;
     authorizationEndpoint = discovery?.authorization_endpoint;
   } catch (e: any) {
-    error = { message: e?.message || String(e) };
+    // Log detailed error server-side for diagnostics, but do not expose details to clients
+    console.error("OIDC discovery fetch failed", e);
+    error = { message: "Failed to fetch OIDC discovery document" };
   }
 
   // Build OIDC end-session link if env present
@@ -101,7 +103,9 @@ export const GET: APIRoute = async ({ request }) => {
       authTest = { url: u.toString(), status, location, bodyPreview, hint };
     } catch (e: any) {
       // Avoid exposing sensitive error details in stack traces
-      authTest = { hint: "Auth test failed: Unable to complete authorization request" };
+      authTest = {
+        hint: "Auth test failed: Unable to complete authorization request",
+      };
     }
   }
 
