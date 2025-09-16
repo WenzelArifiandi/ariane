@@ -14,27 +14,16 @@ auth.wenzelarifiandi.com {
         file_server
     }
 
-    # Handle API errors with custom error translation
-    @api_errors {
-        path /management/v1/* /auth/v1/* /admin/v1/*
-        status 400 404 500
-    }
-    handle @api_errors {
-        # Log the error for debugging
-        log {
-            output file /var/log/caddy/zitadel-errors.log
-            format json
-        }
-
-        # Try to serve a custom error page, fallback to original response
-        try_files /errors/api-error.html
+    # Log all requests for debugging
+    log {
+        output file /var/log/caddy/zitadel-errors.log
+        format json
     }
 
     # Main reverse proxy with error handling
     reverse_proxy zitadel:8080 {
         # Custom error pages for different status codes
-        @error_400 status 400
-        handle_response @error_400 {
+        handle_response 400 {
             # Check if this is a profile update error
             header Content-Type "text/html"
             respond `<!DOCTYPE html>
@@ -95,8 +84,7 @@ try {
 </body></html>` 400
         }
 
-        @error_500 status 500
-        handle_response @error_500 {
+        handle_response 500 {
             header Content-Type "text/html"
             respond `<!DOCTYPE html>
 <html><head><title>Server Error</title><style>
