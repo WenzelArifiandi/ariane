@@ -51,20 +51,45 @@ jobs:
           if ! ssh-keygen -y -f "$KEY_PATH" >/dev/null 2>&1; then
             echo "⚠️ SSH private key could not be parsed by ssh-keygen; will attempt connection anyway"
           fi
-          ssh-keyscan -H ${{ secrets.ORACLE_HOST }} >> ~/.ssh/known_hosts
+
+          # Resolve SSH host/user/port with sensible defaults
+          SSH_HOST="${{ secrets.ORACLE_HOST }}"
+          SSH_USER="${{ secrets.ORACLE_SSH_USER }}"
+          SSH_PORT="${{ secrets.ORACLE_SSH_PORT }}"
+          [ -z "$SSH_USER" ] && SSH_USER="ubuntu"
+          [ -z "$SSH_PORT" ] && SSH_PORT="22"
+
+          # Add known host (respect port)
+          ssh-keyscan -p "$SSH_PORT" -H "$SSH_HOST" >> ~/.ssh/known_hosts 2>/dev/null || true
+
+          # Make SSH options available to subsequent steps
+          echo "SSH_HOST=$SSH_HOST" >> "$GITHUB_ENV"
+          echo "SSH_USER=$SSH_USER" >> "$GITHUB_ENV"
+          echo "SSH_PORT=$SSH_PORT" >> "$GITHUB_ENV"
           echo "SSH_OPTS=-i ~/.ssh/oracle_key -o StrictHostKeyChecking=no -o IdentitiesOnly=yes -o BatchMode=yes -o UserKnownHostsFile=~/.ssh/known_hosts -o ConnectTimeout=20" >> "$GITHUB_ENV"
+
+          # Test SSH connection; if explicit user not provided, try opc fallback once
           set +e
-          ssh $SSH_OPTS ubuntu@${{ secrets.ORACLE_HOST }} "echo 'SSH OK'"
+          echo "🔗 Testing SSH connection to $SSH_USER@$SSH_HOST:$SSH_PORT ..."
+          ssh -p "$SSH_PORT" $SSH_OPTS "$SSH_USER@$SSH_HOST" "echo 'SSH OK'"
           SSH_STATUS=$?
+          if [ "$SSH_STATUS" -ne 0 ] && [ "${{ secrets.ORACLE_SSH_USER }}" = "" ]; then
+            echo "⚠️ SSH failed for user 'ubuntu'. Trying fallback user 'opc'..."
+            SSH_USER="opc"
+            echo "SSH_USER=$SSH_USER" >> "$GITHUB_ENV"
+            ssh -p "$SSH_PORT" $SSH_OPTS "$SSH_USER@$SSH_HOST" "echo 'SSH OK'"
+            SSH_STATUS=$?
+          fi
           set -e
           if [ "$SSH_STATUS" -ne 0 ]; then
-            echo "❌ SSH connection failed. Please verify that ORACLE_SSH_KEY is an unencrypted private key matching ~/.ssh/authorized_keys on the server."
+            echo "❌ SSH connection failed. Verify: host=$SSH_HOST port=$SSH_PORT user attempted=$SSH_USER"
+            echo "   Ensure ORACLE_SSH_KEY is an unencrypted private key and the matching public key is in ~/.ssh/authorized_keys on the server."
             exit 1
           fi
 
       - name: 🛠️ Run Zitadel Init (DB, User, Grant)
         run: |
-          ssh $SSH_OPTS ubuntu@${{ secrets.ORACLE_HOST }} "
+          ssh -p "$SSH_PORT" $SSH_OPTS "$SSH_USER@$SSH_HOST" "
             set -e
             # Ensure deployment dir exists
             sudo mkdir -p $DEPLOYMENT_PATH && sudo chown -R ubuntu:ubuntu $DEPLOYMENT_PATH
