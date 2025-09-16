@@ -49,12 +49,18 @@ jobs:
           fi
           chmod 600 "$KEY_PATH"
           if ! ssh-keygen -y -f "$KEY_PATH" >/dev/null 2>&1; then
-            echo "❌ SSH private key could not be parsed"
-            exit 1
+            echo "⚠️ SSH private key could not be parsed by ssh-keygen; will attempt connection anyway"
           fi
           ssh-keyscan -H ${{ secrets.ORACLE_HOST }} >> ~/.ssh/known_hosts
-          echo "SSH_OPTS=-i ~/.ssh/oracle_key -o StrictHostKeyChecking=no -o IdentitiesOnly=yes -o UserKnownHostsFile=~/.ssh/known_hosts -o ConnectTimeout=20" >> "$GITHUB_ENV"
+          echo "SSH_OPTS=-i ~/.ssh/oracle_key -o StrictHostKeyChecking=no -o IdentitiesOnly=yes -o BatchMode=yes -o UserKnownHostsFile=~/.ssh/known_hosts -o ConnectTimeout=20" >> "$GITHUB_ENV"
+          set +e
           ssh $SSH_OPTS ubuntu@${{ secrets.ORACLE_HOST }} "echo 'SSH OK'"
+          SSH_STATUS=$?
+          set -e
+          if [ "$SSH_STATUS" -ne 0 ]; then
+            echo "❌ SSH connection failed. Please verify that ORACLE_SSH_KEY is an unencrypted private key matching ~/.ssh/authorized_keys on the server."
+            exit 1
+          fi
 
       - name: 🛠️ Run Zitadel Init (DB, User, Grant)
         run: |
