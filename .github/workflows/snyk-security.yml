@@ -29,16 +29,20 @@ jobs:
 
       - name: 🧪 Run Snyk if token present
         env:
-          SNYK_TOKEN: ${{ inputs.snyk_token }}
+          # Manual input provided via workflow_dispatch; secret fallback resolved inside script via environment
+          SNYK_TOKEN_INPUT: ${{ inputs.snyk_token }}
         continue-on-error: true
         run: |
+          # Resolve token: prefer input; else use SNYK_TOKEN if set as an env/secret at runtime
+          SNYK_TOKEN="${SNYK_TOKEN_INPUT:-$SNYK_TOKEN}"
           if [ -z "${SNYK_TOKEN}" ]; then
-            echo "ℹ️ SNYK_TOKEN not configured; skipping Snyk scan"
+            echo "ℹ️ Snyk token not configured (no input and no secret); skipping Snyk scan"
             exit 0
           fi
 
           echo "🔍 Installing Snyk CLI..."
           npm -g i snyk@latest
+          export SNYK_TOKEN
 
           echo "🔎 Running Snyk across workspaces..."
           # Site

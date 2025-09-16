@@ -41,10 +41,16 @@ jobs:
         if: steps.changes.outputs.zitadel_changed == 'true'
         run: |
           mkdir -p ~/.ssh
-          # Write SSH key with proper line endings
-          printf '%s\n' "${{ secrets.ORACLE_SSH_KEY }}" > ~/.ssh/oracle_key
-          # Normalize CRLF to LF just in case the secret has Windows newlines
-          tr -d '\r' < ~/.ssh/oracle_key > ~/.ssh/oracle_key.tmp && mv ~/.ssh/oracle_key.tmp ~/.ssh/oracle_key
+            # Write SSH key and normalize newlines
+            printf '%s\n' "${{ secrets.ORACLE_SSH_KEY }}" > ~/.ssh/oracle_key.raw
+            tr -d '\r' < ~/.ssh/oracle_key.raw > ~/.ssh/oracle_key || cp ~/.ssh/oracle_key.raw ~/.ssh/oracle_key
+            rm -f ~/.ssh/oracle_key.raw
+            # If the key doesn't look like PEM, attempt base64 decode (supports base64-encoded secrets)
+            if ! grep -q "BEGIN .*PRIVATE KEY" ~/.ssh/oracle_key; then
+              if base64 -d ~/.ssh/oracle_key > ~/.ssh/oracle_key.dec 2>/dev/null; then
+                mv ~/.ssh/oracle_key.dec ~/.ssh/oracle_key
+              fi
+            fi
           chmod 600 ~/.ssh/oracle_key
 
           # Verify key format
@@ -57,12 +63,12 @@ jobs:
 
           # Test SSH connection
           echo "🔗 Testing SSH connection..."
-          if ! ssh -i ~/.ssh/oracle_key -o StrictHostKeyChecking=no -o ConnectTimeout=10 ubuntu@${{ secrets.ORACLE_HOST }} "echo 'SSH connection successful'"; then
+          if ! ssh -i ~/.ssh/oracle_key -o StrictHostKeyChecking=no -o IdentitiesOnly=yes -o ConnectTimeout=10 ubuntu@${{ secrets.ORACLE_HOST }} "echo 'SSH connection successful'"; then
             echo "❌ SSH connection failed. Troubleshooting info:"
             echo "🔍 Key file size: $(wc -c < ~/.ssh/oracle_key) bytes"
             echo "🔍 Key permissions: $(stat -c '%a' ~/.ssh/oracle_key)"
-            echo "🔍 First line starts with: $(head -c 20 ~/.ssh/oracle_key)"
-            echo "🔍 Last line ends with: $(tail -c 20 ~/.ssh/oracle_key)"
+            echo "🔍 First line: $(head -n1 ~/.ssh/oracle_key)"
+            echo "🔍 Last line: $(tail -n1 ~/.ssh/oracle_key)"
 
             echo ""
             echo "💡 Common fixes:"
