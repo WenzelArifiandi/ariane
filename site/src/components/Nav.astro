@@ -9,20 +9,8 @@ const studioHref = import.meta.env.DEV ? 'http://localhost:3333/' : 'https://stu
 const AUTH_MODE = (import.meta as any).env?.AUTH_MODE ?? process.env.AUTH_MODE;
 const isAccessOnly = AUTH_MODE === 'cf-access-only';
 const isAppAuth = AUTH_MODE === 'app';
-// Build absolute CF Access logout URL at SSR time (works even before JS runs)
-let cfLogoutHref: string | undefined;
-try {
-  // Astro.request is available in components; fall back to dev origin if missing
-  const headers = (Astro as any).request?.headers;
-  const host = headers?.get('x-forwarded-host') || headers?.get('host') || '127.0.0.1:4321';
-  const proto = headers?.get('x-forwarded-proto') || (host.includes('127.0.0.1') || host.includes('localhost') ? 'http' : 'https');
-  const origin = `${proto}://${host}`;
-  // After Access logout, land on our Access Required page to avoid instant silent re-login via IdP SSO
-  const here = (Astro as any).url as URL | undefined;
-  const nextPath = here ? `${here.pathname}${here.search}` : '/';
-  const rt = new URL(`/access-required?next=${encodeURIComponent(nextPath)}`, origin).toString();
-  cfLogoutHref = `/cdn-cgi/access/logout?returnTo=${encodeURIComponent(rt)}`;
-} catch {}
+// Use Access-first zero-UI signout route; it logs out of Cloudflare Access, then (optionally) Auth0 via /post-access-logout, and returns to root to trigger login.
+const cfLogoutHref: string = '/signout';
 ---
 
 <nav class="nav" data-access-only={isAccessOnly ? 'true' : 'false'} data-app-auth={isAppAuth ? 'true' : 'false'}>
@@ -36,7 +24,7 @@ try {
   <li id="studio-link" style="display:none"><a href={studioHref}>Studio</a></li>
   {isAccessOnly && (
     <li id="cf-signout-link">
-      <a id="cf-logout" class="nav-action shrinkable" href={cfLogoutHref || '/cdn-cgi/access/logout'} title="Sign out">
+  <a id="cf-logout" class="nav-action shrinkable" href={cfLogoutHref || '/signout'} title="Sign out">
         <svg class="icon-svg" aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
           <path d="M10 17l-1.4-1.4L12.2 12 8.6 8.4 10 7l5 5-5 5z" fill="currentColor"/>
           <path d="M4 5h6v2H6v10h4v2H4a2 2 0 01-2-2V7a2 2 0 012-2z" fill="currentColor"/>
@@ -196,15 +184,25 @@ toggle?.addEventListener('click', () => {
     if (signout) signout.remove();
     // Ensure Studio link is visible in Access-only mode
     if (studio) studio.style.display = '';
-    // Make CF logout link use absolute returnTo to satisfy Access validation
+    // If link targets our zero-UI flow (/signout) or IdP URL, leave it; otherwise ensure absolute returnTo for CF logout URLs
     const cfLogout = qs('#cf-logout');
     if (cfLogout) {
       try {
         const origin = window.location.origin;
-        const rt = new URL('/', origin).toString();
-        const u = new URL(cfLogout.getAttribute('href') || '/cdn-cgi/access/logout', origin);
-        u.searchParams.set('returnTo', rt);
-        cfLogout.setAttribute('href', u.toString());
+        const href = cfLogout.getAttribute('href') || '';
+        if (href.startsWith('https://') || href.startsWith('http://') || href.startsWith('/signout')) {
+          // keep as-is
+        } else if (href.startsWith('/cdn-cgi/access/logout')) {
+          const u = new URL(href, origin);
+          if (!u.searchParams.has('returnTo')) {
+            const rt = new URL('/logged-out', origin).toString();
+            u.searchParams.set('returnTo', rt);
+          }
+          cfLogout.setAttribute('href', u.toString());
+        } else {
+          // If it's /signout, keep as-is
+          if (!href) cfLogout.setAttribute('href', '/signout');
+        }
         // Fallback: force full-page navigation on click
         cfLogout.addEventListener('click', () => {
           try {

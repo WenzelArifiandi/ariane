@@ -1,0 +1,49 @@
+import type { APIRoute } from "astro";
+
+function getOrigin(headers: Headers): string {
+  const host =
+    headers.get("x-forwarded-host") || headers.get("host") || "127.0.0.1:4321";
+  const proto =
+    headers.get("x-forwarded-proto") ||
+    (host.includes("127.0.0.1") || host.includes("localhost")
+      ? "http"
+      : "https");
+  return `${proto}://${host}`;
+}
+
+export const GET: APIRoute = async ({ request }) => {
+  const origin = getOrigin(request.headers);
+  const AUTH0_DOMAIN =
+    process.env.PUBLIC_AUTH0_DOMAIN ||
+    (import.meta as any).env?.PUBLIC_AUTH0_DOMAIN;
+  const AUTH0_CLIENT_ID =
+    process.env.PUBLIC_AUTH0_CLIENT_ID ||
+    (import.meta as any).env?.PUBLIC_AUTH0_CLIENT_ID;
+  const host = new URL(origin).host;
+  const isLocal = host.includes("127.0.0.1") || host.includes("localhost");
+  // We'll return to site root, letting Access trigger the correct login flow
+
+  // If Auth0 is configured, do IdP-first logout to clear SSO before Access logout
+  if (!isLocal && AUTH0_DOMAIN && AUTH0_CLIENT_ID) {
+    // After IdP logout, hit CF Access logout then return to '/', allowing Access to redirect to team login
+    const cfLogout = new URL("/cdn-cgi/access/logout", origin);
+    cfLogout.searchParams.set("returnTo", new URL("/", origin).toString());
+    const auth0Logout = new URL(`https://${AUTH0_DOMAIN}/v2/logout`);
+    auth0Logout.searchParams.set("client_id", AUTH0_CLIENT_ID);
+    auth0Logout.searchParams.set("returnTo", cfLogout.toString());
+    return new Response(null, {
+      status: 302,
+      headers: { Location: auth0Logout.toString() },
+    });
+  }
+
+  // Fallback: just clear Access and return home (Access will prompt login)
+  const cfLogout = new URL("/cdn-cgi/access/logout", origin);
+  cfLogout.searchParams.set("returnTo", new URL("/", origin).toString());
+  return new Response(null, {
+    status: 302,
+    headers: { Location: cfLogout.toString() },
+  });
+};
+
+export const prerender = false;

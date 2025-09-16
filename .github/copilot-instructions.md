@@ -1,134 +1,55 @@
-# AI Agent Instructions for Ariane
+## AI Agent Quickstart for Ariane
 
-This document explains the key architectural decisions and patterns in this codebase, why they matter, and how to validate them.
+Monorepo overview (Node `22.x`, independent deploys):
+- `site/` — Astro app (`output: "server"`) on Vercel; data from Sanity via GROQ.
+- `studio/` — Sanity Studio on Vercel; deploys via hook when `studio/**` changes on `main`.
 
-## Project Architecture
+Local dev (fast path):
+- Root helpers: `npm run dev:site`, `npm run dev:studio`, `npm run dev:bubble` (site + named Cloudflare tunnel).
+- In `site/`: `npm i && npm run dev` binds `127.0.0.1:4321` with HMR; set `CF_TUNNEL_HOST` to enable HMR over tunnels (`astro.config.mjs`).
+- Tunnels: `npm --prefix site run cf:tunnel` (ephemeral) or `cf:tunnel:named` using `site/cloudflared/config.yml`.
 
-The project uses a monorepo pattern to keep related code together while maintaining clear boundaries. This provides:
+Vercel configuration (build gating + caching):
+- `site/vercel.json`: `ignoreCommand` skips builds unless on `main` or PR with changes; long-cache for `/_astro/*` and assets; rewrites `/favicon.ico -> /favicon.svg`.
+- `studio/vercel.json`: `ignoreCommand` skips unless `main` changed under `studio/`.
 
-1. **Single Source of Truth**: All code lives in one repository, making it easier to track changes and dependencies
-2. **Independent Deployments**: Each app (`site` and `studio`) can be deployed separately
-3. **Type Safety**: Shared types between frontend and CMS ensure data consistency
+CI & PR previews (GitHub Actions):
+- Site preview deploys are label-gated via `.github/workflows/preview-deploy-site.yml` using `vercel build`/`vercel deploy --prebuilt` with `--build-env VERCEL_FORCE_PREVIEW=1`.
+- Studio deploys via Vercel Deploy Hook in `.github/workflows/studio-deploy.yml` when `studio/**` changes on `main`.
+- Required secrets: `VERCEL_TOKEN_SITE`, `VERCEL_ORG_ID_SITE`, `VERCEL_PROJECT_ID_SITE`, and `VERCEL_STUDIO_DEPLOY_HOOK_URL` (for the Studio hook).
 
-- **Monorepo Structure**
-  - `/site`: Astro.js frontend deployed on Vercel (Node 22.x)
-  - `/studio`: Sanity CMS studio deployed on Vercel
-  - Components communicate via Sanity Client/GROQ queries
+Auth modes and middleware (`site/src/middleware.ts`):
+- `AUTH_MODE=public|app|cf-access-only` controls enforcement.
+   - `public` (default): no in-app auth.
+   - `app`: require signed `session` cookie (HMAC in `site/src/lib/auth/signer.ts`); redirects to `/access-required` with absolute origin from proxy headers.
+   - `cf-access-only`: trust Cloudflare Access; optional group/approval checks via CF JWT.
+- Public paths and assets bypass auth; origin is derived via `getOriginFromHeaders` for proxy/tunnel safety.
 
-### Key Integration Points
+Cloudflare Access utilities (`site/src/lib/cfAccess.ts`):
+- Verify JWT against `/<origin>/cdn-cgi/access/certs`; derive origin from headers.
+- Env-driven controls:
+   - `CF_ACCESS_PROTECTED_PREFIXES` (comma list), `CF_ACCESS_GROUPS_CLAIM` (default `groups`), `CF_ACCESS_REQUIRED_GROUPS`.
+   - Approval flag: `CF_ACCESS_APPROVED_CLAIM` (default `https://wenzelarifiandi.com/approved`), `CF_ACCESS_ENFORCE_APPROVED=true`.
+   - Setup guide: see `ops/cloudflare-access-github.md` for protecting tunnels with GitHub sign-in + hardware key.
 
-1. **Sanity Integration** (`site/src/lib/sanity.ts`)
+Sanity integration (`site/src/lib/sanity.ts`):
+- Client created only when `PUBLIC_SANITY_PROJECT_ID` and `PUBLIC_SANITY_DATASET` exist; otherwise `fetchSanity<T>()` returns empty fallback to keep pages stable in dev.
+- Images via `urlFor(src).width(...).height(...).fit('max').auto('format').url()`; allowlist `cdn.sanity.io` in `astro.config.mjs`.
+- Queries live in `site/src/lib/queries.ts` (e.g., `projectBySlug`, `allProjects`).
 
-   Why this matters:
+Analytics (prod-only):
+- `site/src/layouts/Base.astro` includes `@vercel/analytics/astro` and `@vercel/speed-insights/astro` gated by `import.meta.env.PROD`.
 
-   - Type-safe GROQ queries prevent runtime errors by catching mismatched data shapes at compile time
-   - Environment variables enable different configurations per environment without code changes
-   - Image URL builder ensures consistent image optimization and caching across the site
+Key API routes (discoverable patterns):
+- Auth/session: `site/src/pages/api/auth/*` (e.g., `session.ts` checks signed cookie); OAuth GitHub: `api/oauth/github/{start,callback}.ts`.
 
-   How to validate:
+Common tasks:
+- Add a content type: define in `studio/schemas/`, export in `studio/schemaTypes/index.ts`, then add GROQ in `site/src/lib/queries.ts` and render under `site/src/pages/` or components.
 
-   - Check GROQ queries compile with `sanity check`
-   - Image URLs should include width/height and CDN optimization params
-   - TypeScript types should match Sanity schema definitions
+Environment variables (site highlights):
+- `AUTH_MODE`, `SESSION_SECRET`, `PUBLIC_ORIGIN`, `PUBLIC_SANITY_*`, `CF_*` (as above), optional `PUBLIC_USE_LOCAL_ICONS` to load local Material Symbols in `Base.astro`.
 
-2. **Authentication** (`site/src/lib/auth/`)
-
-   Why this matters:
-
-   - WebAuthn eliminates password risks while improving user experience
-   - Environment-aware config adapts to dev/prod without code changes
-   - Session store provides consistent auth state across components
-
-   How to validate:
-
-   - Auth flows should work in both dev and prod environments
-   - Sessions should persist across page reloads
-   - Registration should create correct Sanity documents
-
-## Development Workflow
-
-### Local Development
-
-```bash
-# Site (Astro frontend)
-cd site && npm i && npm run dev
-
-# Sanity Studio
-cd studio && npm i && npm run dev
-```
-
-### Deployment
-
-- **Site**: Deploys via Vercel (automatic for `main`, PR previews gated by `deploy-preview` label)
-- **Studio**: Deploys via webhook when `studio/**` changes on `main`
-  - Manual deploy: `cd studio && npm run deploy:hook`
-
-### Project Conventions
-
-1. **Vercel Configuration**
-
-   Why this matters:
-
-   - `ignoreCommand` in `vercel.json` saves build minutes by skipping unchanged projects
-   - PR preview control prevents duplicate deployments and keeps URLs consistent
-   - Each project can deploy independently but share the same Vercel team
-
-   How to validate:
-
-   - Verify PR deployments only trigger with `deploy-preview` label
-   - Check build logs show skipped builds for unchanged projects
-   - Test that deploy hooks correctly trigger studio builds
-
-2. **Code Organization**
-
-   Why this matters:
-
-   - File locations follow Astro's file-based routing conventions
-   - API routes are discoverable and match their URL paths
-   - Schemas stay grouped with their CMS configuration
-
-   How to validate:
-
-   - URLs should match file paths under `pages/`
-   - Components should be properly imported and tree-shaken
-   - Schemas should sync with Sanity on deploy
-
-3. **Analytics**
-
-   Why this matters:
-
-   - Speed Insights tracks Core Web Vitals for real users
-   - Production-only analytics prevent dev data contamination
-   - All tracking respects user privacy preferences
-
-   How to validate:
-
-   - Check analytics only load in production builds
-   - Verify metrics appear in Vercel dashboard
-   - Test that dev builds have no tracking code
-
-## Common Tasks
-
-### Adding Content Types
-
-1. Define schema in `studio/schemas/`
-2. Add to `studio/schemaTypes/index.ts`
-3. Create corresponding GROQ query in `site/src/lib/queries.ts`
-4. Add type definition if needed
-
-### Modifying Auth Flow
-
-1. API routes in `site/src/pages/api/auth/`
-2. Configuration in `site/src/lib/auth/config.ts`
-3. Session management via `site/src/lib/auth/store.ts`
-
-### Environment Variables
-
-- **Site**:
-
-  - `PUBLIC_ORIGIN`: Production URL
-  - `PUBLIC_SANITY_*`: Sanity configuration
-  - Review `.env.example` files for complete list
-
-- **Studio**:
-  - `STUDIO_DEPLOY_HOOK_URL`: Vercel deploy hook URL for CI/CD
+Validate changes quickly:
+- Sanity images resolve with width/height params; queries return expected shapes; pages render without runtime fetch errors when `PUBLIC_SANITY_*` is unset.
+- Auth: `GET /api/auth/session` reflects cookie state; redirects are absolute behind tunnels/proxies.
+- Vercel: unchanged folders are skipped via `ignoreCommand`; assets under `/_astro/` are immutable.

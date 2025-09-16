@@ -18,6 +18,9 @@ const PUBLIC_PATHS = [
   "/api/diag",
   "/access-required",
   "/access-denied",
+  "/logged-out",
+  "/signout",
+  "/post-access-logout",
 ];
 
 function isApiOrAsset(path: string): boolean {
