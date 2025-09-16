@@ -337,6 +337,20 @@ ls -1 triage-*  # choose newest folder
 
 Attach the produced tarball for further analysis if escalation is needed.
 
+### Remote SSH Helper
+
+From repo root (local workstation) you can launch an interactive remediation session with pre-filled guidance:
+
+```bash
+./scripts/zitadel-remote-session.sh            # uses ubuntu@auth.wenzelarifiandi.com and key at ~/.ssh/oracle_key_correct
+
+# Override target or key
+SSH_KEY_PATH=~/.ssh/alternative_key \
+   ./scripts/zitadel-remote-session.sh otheruser@yourhost.example.com path/to/zitadel
+```
+
+Inside the remote shell it prints suggested next commands (triage, healthcheck removal, restart sequence).
+
 ---
 
 ## Advanced: Minimal Patch to Remove Healthcheck
