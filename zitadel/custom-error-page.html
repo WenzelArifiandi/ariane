@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zitadel - User Friendly Errors</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f8f9fa;
+        }
+        .error-container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 8px;
+            padding: 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .error-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .error-icon {
+            width: 40px;
+            height: 40px;
+            margin-right: 15px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+        .error-warning { background-color: #fff3cd; color: #856404; }
+        .error-error { background-color: #f8d7da; color: #721c24; }
+        .error-info { background-color: #d1ecf1; color: #0c5460; }
+        .error-success { background-color: #d4edda; color: #155724; }
+
+        .error-title {
+            font-size: 24px;
+            font-weight: 600;
+            margin: 0;
+            color: #333;
+        }
+        .error-description {
+            font-size: 16px;
+            line-height: 1.5;
+            color: #666;
+            margin: 15px 0 25px 0;
+        }
+        .error-code {
+            font-family: 'Monaco', 'Menlo', monospace;
+            background-color: #f1f3f4;
+            padding: 8px 12px;
+            border-radius: 4px;
+            font-size: 14px;
+            color: #5f6368;
+            margin: 15px 0;
+        }
+        .error-suggestions {
+            background-color: #f8f9fa;
+            border-left: 4px solid #007bff;
+            padding: 15px 20px;
+            margin: 20px 0;
+        }
+        .error-suggestions h4 {
+            margin: 0 0 10px 0;
+            color: #007bff;
+            font-size: 16px;
+        }
+        .error-suggestions ul {
+            margin: 0;
+            padding-left: 20px;
+        }
+        .error-suggestions li {
+            margin-bottom: 8px;
+            color: #666;
+        }
+        .error-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 30px;
+        }
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+        }
+        .btn-primary {
+            background-color: #007bff;
+            color: white;
+        }
+        .btn-secondary {
+            background-color: #6c757d;
+            color: white;
+        }
+        .btn:hover {
+            opacity: 0.9;
+        }
+        .technical-details {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+        }
+        .technical-toggle {
+            color: #007bff;
+            cursor: pointer;
+            font-size: 14px;
+            text-decoration: underline;
+        }
+        .technical-content {
+            display: none;
+            margin-top: 15px;
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 12px;
+            color: #666;
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+<body>
+    <div class="error-container">
+        <div class="error-header">
+            <div class="error-icon error-warning">⚠️</div>
+            <h1 class="error-title" id="error-title">Profile Not Changed</h1>
+        </div>
+
+        <div class="error-description" id="error-description">
+            The profile information you entered is the same as what's already saved.
+            Please modify at least one field to update your profile.
+        </div>
+
+        <div class="error-code" id="error-code">
+            Error Code: PROFILE_NO_CHANGES (was: COMMAND-2M0fs)
+        </div>
+
+        <div class="error-suggestions">
+            <h4>💡 How to fix this:</h4>
+            <ul id="error-suggestions">
+                <li>Change your first name, last name, or display name to a different value</li>
+                <li>Update your profile picture or bio if available</li>
+                <li>If you don't want to make changes, you can simply close this dialog</li>
+                <li>The system prevents unnecessary database updates when no actual changes are made</li>
+            </ul>
+        </div>
+
+        <div class="error-actions">
+            <button class="btn btn-primary" onclick="goBack()">Try Again</button>
+            <button class="btn btn-secondary" onclick="goHome()">Go to Dashboard</button>
+        </div>
+
+        <div class="technical-details">
+            <div class="technical-toggle" onclick="toggleTechnical()">
+                Show technical details
+            </div>
+            <div class="technical-content" id="technical-content">
+Original Error: COMMAND-2M0fs
+gRPC Status: 9 (FAILED_PRECONDITION)
+HTTP Status: 400
+Timestamp: 2025-09-16T14:35:00Z
+User Agent: Mozilla/5.0...
+Context: Profile update attempt with identical data
+            </div>
+        </div>
+    </div>
+
+    <script src="error-handler.js"></script>
+    <script>
+        function goBack() {
+            history.back();
+        }
+
+        function goHome() {
+            window.location.href = '/ui/console';
+        }
+
+        function toggleTechnical() {
+            const content = document.getElementById('technical-content');
+            const toggle = document.querySelector('.technical-toggle');
+
+            if (content.style.display === 'none' || content.style.display === '') {
+                content.style.display = 'block';
+                toggle.textContent = 'Hide technical details';
+            } else {
+                content.style.display = 'none';
+                toggle.textContent = 'Show technical details';
+            }
+        }
+
+        // Initialize with URL parameters or default
+        function initializeError() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const errorCode = urlParams.get('code') || 'COMMAND-2M0fs';
+            const context = {
+                userAgent: navigator.userAgent,
+                timestamp: new Date().toISOString(),
+                url: window.location.href
+            };
+
+            if (typeof friendlyErrorHandler !== 'undefined') {
+                const friendlyError = friendlyErrorHandler(errorCode, context);
+                updateErrorDisplay(friendlyError);
+            }
+        }
+
+        function updateErrorDisplay(error) {
+            document.getElementById('error-title').textContent = error.message;
+            document.getElementById('error-description').textContent = error.description;
+            document.getElementById('error-code').textContent =
+                `Error Code: ${error.code} (was: ${error.originalCode})`;
+
+            // Update icon and styling based on error type
+            const icon = document.querySelector('.error-icon');
+            icon.className = `error-icon error-${error.type}`;
+
+            const iconEmoji = {
+                warning: '⚠️',
+                error: '❌',
+                info: 'ℹ️',
+                success: '✅'
+            };
+            icon.textContent = iconEmoji[error.type] || '⚠️';
+
+            // Update technical details
+            document.getElementById('technical-content').textContent =
+                `Original Error: ${error.originalCode}\ngRPC Status: ${error.original?.grpcStatus || 'N/A'}\nHTTP Status: ${error.original?.status || 'N/A'}\nTimestamp: ${error.timestamp}\nUser Agent: ${error.context?.userAgent || 'N/A'}\nContext: ${JSON.stringify(error.context, null, 2)}`;
+        }
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', initializeError);
+    </script>
+</body>
+</html>

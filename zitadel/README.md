@@ -2,7 +2,7 @@
 
 This directory contains the configuration for the Zitadel authentication server used by the Ariane project.
 
-**🎯 Configuration Synced** - Oracle deployment now matches repository version at 2025-09-16 17:45 UTC
+**🎯 User-Friendly Error Handling** - Added comprehensive error translation and better UX at 2025-09-16 18:00 UTC
 
 ## Overview
 
@@ -13,11 +13,31 @@ Zitadel provides OIDC/OAuth2 authentication services for:
 - Session management
 - Multi-factor authentication (when enabled)
 
+## User-Friendly Error Handling ✨
+
+This deployment includes enhanced error handling to translate cryptic Zitadel error codes into user-friendly messages:
+
+### Error Code Translations
+- `COMMAND-2M0fs` → "No changes detected - please modify at least one field"
+- `COMMAND-J8dsk` → "User initialization required - complete setup process"
+- `QUERY-d3fas` → "Database connection issue - try again in a moment"
+
+### Features
+- **Custom Error Pages**: Beautiful, actionable error messages instead of raw HTTP codes
+- **Contextual Help**: Specific suggestions for each error type
+- **Technical Details**: Expandable technical information for debugging
+- **Smart Error Detection**: Automatic pattern matching and translation
+
+### Files
+- `error-handler.js` - JavaScript error translation library
+- `custom-error-page.html` - Styled error page template
+- `Caddyfile` - Enhanced with error interception and custom responses
+
 ## Files
 
 - `docker-compose.yml` - Docker Compose configuration for Zitadel, PostgreSQL, and Caddy
 - `zitadel.yaml` - Zitadel server configuration
-- `Caddyfile` - Caddy reverse proxy configuration with SSL
+- `Caddyfile` - Caddy reverse proxy configuration with SSL and error handling
 - `.env.example` - Environment variables template
 
 ## Current Deployment
@@ -28,7 +48,7 @@ Zitadel provides OIDC/OAuth2 authentication services for:
 
 - **Zitadel:** Authentication server (port 8080, proxied through Caddy)
 - **PostgreSQL:** Database backend
-- **Caddy:** Reverse proxy with automatic SSL (ZeroSSL)
+- **Caddy:** Reverse proxy with automatic SSL (ZeroSSL) and error translation
 
 ## Quick Start
 
@@ -140,7 +160,9 @@ All configuration files are version controlled in this repository.
    - Disable mandatory MFA if not needed
 
 3. **Profile Update Errors**
-   - Rebuild projections: `docker-compose exec zitadel zitadel setup --init-projections`
+   - **"Profile not changed"**: You're trying to update with the same data - change at least one field
+   - **"User not initialized"**: Complete the account setup process or verify email
+   - Rebuild projections if needed: `docker-compose exec zitadel zitadel setup --init-projections`
 
 ### Logs
 
@@ -153,6 +175,9 @@ docker-compose logs zitadel
 
 # Follow logs
 docker-compose logs -f zitadel
+
+# View error handling logs
+docker-compose exec caddy cat /var/log/caddy/zitadel-errors.log
 ```
 
 ## Security Notes
@@ -174,3 +199,4 @@ For issues related to:
 - Zitadel configuration: Check [Zitadel Documentation](https://zitadel.com/docs)
 - Cloudflare integration: See `ops/zitadel-cloudflare-access-troubleshooting.md`
 - Deployment issues: Check the logs and this README
+- Error handling: Check `error-handler.js` for supported error codes

@@ -7,5 +7,117 @@ auth.wenzelarifiandi.com {
     tls {
         ca https://acme.zerossl.com/v2/DV90
     }
-    reverse_proxy zitadel:8080
+
+    # Serve custom error pages
+    route /errors/* {
+        root * /var/www/errors
+        file_server
+    }
+
+    # Handle API errors with custom error translation
+    @api_errors {
+        path /management/v1/* /auth/v1/* /admin/v1/*
+        status 400 404 500
+    }
+    handle @api_errors {
+        # Log the error for debugging
+        log {
+            output file /var/log/caddy/zitadel-errors.log
+            format json
+        }
+
+        # Try to serve a custom error page, fallback to original response
+        try_files /errors/api-error.html
+    }
+
+    # Main reverse proxy with error handling
+    reverse_proxy zitadel:8080 {
+        # Custom error pages for different status codes
+        @error_400 status 400
+        handle_response @error_400 {
+            # Check if this is a profile update error
+            header Content-Type "text/html"
+            respond `<!DOCTYPE html>
+<html><head><title>Request Error</title><style>
+body { font-family: -apple-system, BlinkMacSystemFont, sans-serif; padding: 40px; background: #f8f9fa; }
+.container { max-width: 600px; margin: 0 auto; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+.error-warning { background: #fff3cd; padding: 15px; border-radius: 4px; border-left: 4px solid #ffc107; margin: 20px 0; }
+.error-info { background: #d1ecf1; padding: 15px; border-radius: 4px; border-left: 4px solid #17a2b8; margin: 20px 0; }
+h1 { color: #333; margin-bottom: 10px; }
+p { color: #666; line-height: 1.5; }
+.btn { display: inline-block; padding: 10px 20px; background: #007bff; color: white; text-decoration: none; border-radius: 4px; margin-top: 20px; }
+</style></head><body>
+<div class="container">
+<h1>🤔 Something's Not Quite Right</h1>
+<div id="error-message" class="error-warning">
+<p><strong>We encountered an issue:</strong></p>
+<p>It looks like there might be a problem with your request. This could be because:</p>
+<ul>
+<li>No changes were detected in your profile update</li>
+<li>Your user account needs additional setup</li>
+<li>Some required information is missing</li>
+</ul>
+</div>
+<div class="error-info">
+<p><strong>💡 What to try:</strong></p>
+<ul>
+<li>Make sure you've actually changed something in your profile before saving</li>
+<li>Check if your email address is verified</li>
+<li>Try refreshing the page and attempting the action again</li>
+<li>If this continues, please contact support</li>
+</ul>
+</div>
+<a href="javascript:history.back()" class="btn">← Go Back</a>
+<a href="/ui/console" class="btn">Dashboard</a>
+</div>
+<script>
+// Try to extract more specific error information from the response
+try {
+  const errorPatterns = {
+    'COMMAND-2M0fs': 'No changes detected in your profile. Please modify at least one field before saving.',
+    'COMMAND-J8dsk': 'Your user account needs to be fully initialized. Please complete the setup process or contact your administrator.',
+    'QUERY-d3fas': 'Temporary database issue. Please try again in a moment.'
+  };
+
+  const errorDiv = document.getElementById('error-message');
+  const currentUrl = window.location.href;
+
+  for (const [code, message] of Object.entries(errorPatterns)) {
+    if (currentUrl.includes(code) || document.body.textContent.includes(code)) {
+      errorDiv.innerHTML = '<p><strong>Friendly Error:</strong></p><p>' + message + '</p>';
+      break;
+    }
+  }
+} catch (e) {
+  console.log('Error pattern matching failed:', e);
+}
+</script>
+</body></html>` 400
+        }
+
+        @error_500 status 500
+        handle_response @error_500 {
+            header Content-Type "text/html"
+            respond `<!DOCTYPE html>
+<html><head><title>Server Error</title><style>
+body { font-family: -apple-system, BlinkMacSystemFont, sans-serif; padding: 40px; background: #f8f9fa; }
+.container { max-width: 600px; margin: 0 auto; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+.error-danger { background: #f8d7da; padding: 15px; border-radius: 4px; border-left: 4px solid #dc3545; margin: 20px 0; }
+h1 { color: #333; margin-bottom: 10px; }
+p { color: #666; line-height: 1.5; }
+.btn { display: inline-block; padding: 10px 20px; background: #007bff; color: white; text-decoration: none; border-radius: 4px; margin-top: 20px; }
+</style></head><body>
+<div class="container">
+<h1>🚨 Server Error</h1>
+<div class="error-danger">
+<p><strong>Something went wrong on our end.</strong></p>
+<p>We're experiencing a temporary server issue. Our team has been notified and is working on fixing this.</p>
+</div>
+<p>Please try again in a few minutes. If the problem persists, please contact support.</p>
+<a href="javascript:history.back()" class="btn">← Try Again</a>
+<a href="/ui/console" class="btn">Dashboard</a>
+</div>
+</body></html>` 500
+        }
+    }
 }
