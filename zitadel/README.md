@@ -72,12 +72,15 @@ Currently configured to use ZeroSSL via Caddy. To switch providers, update the `
 
 ## Admin Access
 
-**Default Admin User:**
-- Username: `admin@zitadel.auth.wenzelarifiandi.com`
-- Password: `Password1!`
-- Console: https://auth.wenzelarifiandi.com/ui/console
+**Console URL:** https://auth.wenzelarifiandi.com/ui/console
 
-**Important:** Change the default password after first login.
+**First-time Setup:**
+1. Use the admin credentials that were configured during initial setup
+2. **Immediately change the default password** after first login
+3. Enable MFA for additional security
+4. Create additional admin users and disable the default account
+
+**Security Note:** Default credentials should never be stored in version control or documentation.
 
 ## Cloudflare Access Integration
 
