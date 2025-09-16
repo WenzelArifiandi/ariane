@@ -7,6 +7,7 @@ This directory contains the configuration for the Zitadel authentication server 
 ## Overview
 
 Zitadel provides OIDC/OAuth2 authentication services for:
+
 - User authentication and authorization
 - Integration with Cloudflare Access
 - Session management
@@ -24,6 +25,7 @@ Zitadel provides OIDC/OAuth2 authentication services for:
 **Production URL:** https://auth.wenzelarifiandi.com
 
 **Services:**
+
 - **Zitadel:** Authentication server (port 8080, proxied through Caddy)
 - **PostgreSQL:** Database backend
 - **Caddy:** Reverse proxy with automatic SSL (ZeroSSL)
@@ -31,6 +33,7 @@ Zitadel provides OIDC/OAuth2 authentication services for:
 ## Quick Start
 
 1. Copy environment template:
+
    ```bash
    cp .env.example .env
    ```
@@ -38,11 +41,13 @@ Zitadel provides OIDC/OAuth2 authentication services for:
 2. Update environment variables in `.env`
 
 3. Start services:
+
    ```bash
    docker-compose up -d
    ```
 
 4. Initialize Zitadel (first time only):
+
    ```bash
    # Initialize database
    docker-compose exec zitadel zitadel init database
@@ -56,18 +61,23 @@ Zitadel provides OIDC/OAuth2 authentication services for:
 ## Configuration
 
 ### Master Key
+
 The master key is used for encryption. Set it in your environment:
+
 ```bash
 ZITADEL_MASTERKEY="MasterkeyNeedsToHave32Characters"
 ```
 
 ### External Domain
+
 Update the external domain in both `docker-compose.yml` and `zitadel.yaml`:
+
 ```yaml
 ZITADEL_EXTERNALDOMAIN=auth.yourdomain.com
 ```
 
 ### SSL Certificates
+
 Currently configured to use ZeroSSL via Caddy. To switch providers, update the `Caddyfile`.
 
 ## Admin Access
@@ -75,6 +85,7 @@ Currently configured to use ZeroSSL via Caddy. To switch providers, update the `
 **Console URL:** https://auth.wenzelarifiandi.com/ui/console
 
 **First-time Setup:**
+
 1. Use the admin credentials that were configured during initial setup
 2. **Immediately change the default password** after first login
 3. Enable MFA for additional security
@@ -87,6 +98,7 @@ Currently configured to use ZeroSSL via Caddy. To switch providers, update the `
 To integrate with Cloudflare Access:
 
 1. **Create OIDC Application in Zitadel:**
+
    - Go to Projects → Create Project
    - Add Application → OIDC → Confidential
    - Set redirect URI to: `https://yourteam.cloudflareaccess.com/cdn-cgi/access/callback`
@@ -98,14 +110,17 @@ To integrate with Cloudflare Access:
 ## Backup and Recovery
 
 ### Database Backup
+
 ```bash
 docker-compose exec db pg_dump -U postgres zitadel > backup.sql
 ```
 
 ### Configuration Backup
+
 All configuration files are version controlled in this repository.
 
 ### Full Restore
+
 1. Deploy using docker-compose
 2. Restore database: `docker-compose exec -T db psql -U postgres zitadel < backup.sql`
 3. Restart services: `docker-compose restart`
@@ -115,10 +130,12 @@ All configuration files are version controlled in this repository.
 ### Common Issues
 
 1. **Email Verification Required**
+
    - Admin users may need email verification
    - Manually verify in database or configure SMTP
 
 2. **WebAuthn/Security Key Errors**
+
    - Check login policy settings
    - Disable mandatory MFA if not needed
 
@@ -126,6 +143,7 @@ All configuration files are version controlled in this repository.
    - Rebuild projections: `docker-compose exec zitadel zitadel setup --init-projections`
 
 ### Logs
+
 ```bash
 # View all logs
 docker-compose logs
@@ -152,6 +170,7 @@ Current Zitadel version: v2.65.1
 ## Support
 
 For issues related to:
+
 - Zitadel configuration: Check [Zitadel Documentation](https://zitadel.com/docs)
 - Cloudflare integration: See `ops/zitadel-cloudflare-access-troubleshooting.md`
 - Deployment issues: Check the logs and this README
