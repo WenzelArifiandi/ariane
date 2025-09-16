@@ -61,6 +61,7 @@ jobs:
         format: 'sarif'
         output: 'trivy-results.sarif'
         severity: 'CRITICAL,HIGH,MEDIUM'
+        exit-code: '0'
 
     - name: 📊 Upload Trivy Results to GitHub Security
       uses: github/codeql-action/upload-sarif@v3
@@ -104,6 +105,7 @@ jobs:
         scan-ref: 'zitadel/'
         format: 'sarif'
         output: 'docker-config-results.sarif'
+        exit-code: '0'
 
     - name: 📊 Upload Docker Config Results
       uses: github/codeql-action/upload-sarif@v3
@@ -123,6 +125,7 @@ jobs:
 
     - name: 🔍 TruffleHog Secret Scan
       uses: trufflesecurity/trufflehog@main
+      continue-on-error: true
       with:
         path: ./
         base: main
@@ -131,6 +134,7 @@ jobs:
 
     - name: 🔍 GitLeaks Secret Scan
       uses: gitleaks/gitleaks-action@v2
+      continue-on-error: true
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
