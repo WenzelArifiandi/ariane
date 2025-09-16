@@ -195,6 +195,182 @@ docker-compose exec caddy cat /var/log/caddy/zitadel-errors.log
 
 Current Zitadel version: v2.65.1
 
+## Critical Runtime Remediation (Docker Compose / Healthcheck / SMTP)
+
+Recent incident summary (Sept 2025):
+
+1. `zitadel` container reported `unhealthy` due to a healthcheck using `wget`, which is not present in the official image.
+2. Attempts to restart the stack began failing with `KeyError: 'ContainerConfig'` – an underlying Docker / docker-compose runtime metadata issue rather than an application misconfiguration.
+3. SMTP block absent in `zitadel.yaml` led to `Errors.SMTPConfig.NotFound` noise in logs (non-fatal for core auth unless email flows needed).
+
+### Fast Recovery Flow
+
+```bash
+# 0. SSH in
+ssh -i ~/.ssh/oracle_key_correct ubuntu@<SERVER_IP>
+
+cd ~/zitadel   # directory containing docker-compose.yml
+
+# 1. Collect diagnostics (non-destructive)
+bash scripts/triage.sh
+
+# 2. Render/validate compose
+docker compose config
+
+# 3. Stop stack (ignore errors)
+docker compose down --remove-orphans || true
+
+# 4. Manually remove lingering containers if compose down fails early
+docker ps -a --format '{{.ID}} {{.Names}}' | grep -E 'zitadel|caddy|postgres|db' | awk '{print $1}' | xargs -r docker rm -f
+
+# 5. OPTIONAL: prune unused (SAFE-ish but global)
+docker system prune -f
+
+# 6. (If still KeyError) restart Docker engine
+sudo systemctl restart docker
+
+# 7. Bring up only Postgres first
+docker compose up -d db
+docker compose logs -f db | grep -m1 'database system is ready'
+
+# 8. Start Zitadel (after editing healthcheck if needed)
+docker compose up -d zitadel
+docker compose logs --tail=120 zitadel
+
+# 9. Start Caddy
+docker compose up -d caddy
+```
+
+### Healthcheck Fix Options
+
+Remove existing `healthcheck:` block OR replace with one that uses a built-in tool. Easiest is removal (Docker will still show running state). If you prefer a check:
+
+```yaml
+healthcheck:
+  test: ["CMD-SHELL", "nc -z 127.0.0.1 8080 || exit 1"]
+  interval: 30s
+  timeout: 5s
+  retries: 5
+  start_period: 60s
+```
+
+This uses `nc` (busybox `netcat` is in most base images). If absent, simply delete the healthcheck.
+
+### SMTP Configuration
+
+Add minimal block to `zitadel.yaml` (do NOT commit secrets; use env for password):
+
+```yaml
+DefaultInstance:
+  SMTPConfiguration:
+    Host: smtp.resend.com:465
+    User: resend
+    Password: ${ZITADEL_SMTP_PASSWORD}
+    From: hello@notify.wenzelarifiandi.com
+    TLS: true
+```
+
+Compose environment (sanitize in real deployment):
+
+```yaml
+services:
+  zitadel:
+    environment:
+      - ZITADEL_MASTERKEY=MasterkeyNeedsToHave32Characters
+      - ZITADEL_SMTP_PASSWORD=REDACTED_SECRET
+```
+
+After restart, verify:
+
+```bash
+docker compose logs zitadel | grep -i smtp || echo 'SMTP lines not found'
+```
+
+If still missing: ensure the `zitadel.yaml` path (`/config/zitadel.yaml`) matches the mount and that the block indentation is correct.
+
+### Detecting Compose Binary Issues
+
+```bash
+docker compose version
+which docker-compose || true  # legacy symlink?
+docker-compose version || true
+```
+
+If both binaries exist and conflict, remove legacy:
+
+```bash
+sudo rm -f /usr/local/bin/docker-compose
+sudo apt-get update && sudo apt-get install --reinstall docker-compose-plugin
+```
+
+### Last Resort (Hard Reset Docker Engine)
+
+Only if metadata corruption persists and data can be lost / already backed up:
+
+```bash
+sudo systemctl stop docker
+sudo tar -C /var/lib -czf ~/docker-lib-backup-$(date +%s).tgz docker
+sudo mv /var/lib/docker /var/lib/docker.broken.$(date +%s)
+sudo systemctl start docker
+docker compose pull
+docker compose up -d
+```
+
+### Post-Fix Validation Checklist
+
+- [ ] `docker compose ps` shows all three services `Up` (no `(health: starting)` loop)
+- [ ] `docker compose logs --tail=50 zitadel` contains startup without repeating crash loops
+- [ ] Access `https://auth.wenzelarifiandi.com/.well-known/openid-configuration` returns JSON
+- [ ] (If SMTP configured) No `Errors.SMTPConfig.NotFound` lines in recent logs
+- [ ] Admin console reachable: `/ui/console`
+- [ ] Optional: Send a test email (trigger password reset) and confirm delivery
+
+### Automation Aid
+
+Use the added script:
+
+```bash
+cd zitadel
+bash scripts/triage.sh
+ls -1 triage-*  # choose newest folder
+```
+
+Attach the produced tarball for further analysis if escalation is needed.
+
+---
+
+## Advanced: Minimal Patch to Remove Healthcheck
+
+Diff concept (do manually if editing live server):
+
+```diff
+ services:
+    zitadel:
+       image: ghcr.io/zitadel/zitadel:v2.65.1
+@@
+-    healthcheck:
+-      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8080/debug/healthz"]
+-      interval: 30s
+-      timeout: 10s
+-      retries: 3
+-      start_period: 60s
+```
+
+Apply, then:
+
+```bash
+docker compose up -d --force-recreate zitadel
+```
+
+---
+
+## Future Hardening Ideas
+
+- Build a tiny sidecar health probe (alpine + curl) if deeper layer 7 checks required.
+- Add watchtower or CI pipeline step for controlled image upgrades.
+- Implement automated nightly `pg_dump` to off-host storage.
+- Add structured log shipping (e.g., Vector + OpenSearch) for audit trails.
+
 ## Troubleshooting & Status Checking
 
 ### Quick Status Check
