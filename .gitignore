@@ -6,3 +6,24 @@ fresh-site
 .vercel
 ariane-astrowind/.vercel
 .DS_Store
+
+# Scan/cache outputs and SARIF reports
+.cache/
+*.sarif
+**/*.sarif
+trivy-results.sarif
+docker-config-results.sarif
+
+# Build artifacts
+site/.astro/
+site/dist/
+
+# Editor
+.vscode/
+
+# Env files
+.env
+.env.*
+
+# Logs
+*.log
