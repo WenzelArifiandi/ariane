@@ -40,37 +40,55 @@ jobs:
       - name: "🔍 Detect Changes"
         id: changes
         run: |
-          # Determine whether to deploy
+          # Determine whether to deploy using git-based and Oracle server state comparison
+          echo "🔍 Enhanced deployment change detection"
+          echo "======================================"
+
+          CURRENT_COMMIT=$(git rev-parse HEAD)
+          echo "📍 Current commit: $CURRENT_COMMIT"
+
           # 1) If manually dispatched with force=true, always deploy
           if [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ "${{ github.event.inputs.force }}" = "true" ]; then
             echo "zitadel_changed=true" >> $GITHUB_OUTPUT
-            echo "📝 Manual dispatch with force=true: will deploy"
+            echo "🚀 Manual dispatch with force=true: will deploy"
             exit 0
           fi
 
-          # 2) For push events, check for changes under zitadel/ between the previous and current commit
-          # Ensure we have sufficient history
-          git fetch --no-tags --depth=2 origin ${{ github.ref }}
+          # 2) Check git changes first (this is always reliable)
+          echo ""
+          echo "🔍 Checking git changes since last commit..."
+          git fetch --no-tags --depth=10 origin ${{ github.ref }}
 
           BASE="${{ github.event.before }}"
           if [ -z "$BASE" ] || ! git cat-file -e "$BASE^{commit}" 2>/dev/null; then
             BASE="HEAD~1"
           fi
-          # Use git path filtering to avoid grep variability
-          CHANGED_FILES=$(git diff --name-only "$BASE"...HEAD -- zitadel/ || true)
-          echo "📄 Files changed under zitadel/:"
-          echo "$CHANGED_FILES"
 
+          CHANGED_FILES=$(git diff --name-only "$BASE"...HEAD -- zitadel/ || true)
+          echo "📄 Git changes in zitadel/ since $BASE:"
           if [ -n "$CHANGED_FILES" ]; then
-            echo "zitadel_changed=true" >> $GITHUB_OUTPUT
-            echo "📝 Zitadel configuration changes detected"
+            echo "$CHANGED_FILES"
+            GIT_HAS_CHANGES=true
           else
-            echo "zitadel_changed=false" >> $GITHUB_OUTPUT
-            echo "ℹ️ No Zitadel changes detected"
+            echo "  (no changes)"
+            GIT_HAS_CHANGES=false
+          fi
+
+          # 3) Store state for Oracle comparison later (after SSH setup)
+          echo "git_has_changes=$GIT_HAS_CHANGES" >> $GITHUB_OUTPUT
+          echo "current_commit=$CURRENT_COMMIT" >> $GITHUB_OUTPUT
+
+          # For now, deploy if git has changes (Oracle comparison happens in SSH setup step)
+          if [ "$GIT_HAS_CHANGES" = "true" ]; then
+            echo "zitadel_changed=true" >> $GITHUB_OUTPUT
+            echo "✅ Git changes detected - proceeding with deployment pipeline"
+          else
+            echo "zitadel_changed=maybe" >> $GITHUB_OUTPUT
+            echo "🔍 No git changes - will check Oracle server state next"
           fi
 
       - name: "🔧 Setup SSH"
-        if: steps.changes.outputs.zitadel_changed == 'true'
+        if: steps.changes.outputs.zitadel_changed == 'true' || steps.changes.outputs.zitadel_changed == 'maybe'
         env:
           ORA_HOST: ${{ secrets.ORACLE_HOST }}
           ORA_SSH_KEY: ${{ secrets.ORACLE_SSH_KEY }}
@@ -187,15 +205,60 @@ jobs:
             exit 1
           fi
 
+          # Oracle state comparison (now that SSH is working)
+          if [ "${{ steps.changes.outputs.zitadel_changed }}" = "maybe" ]; then
+            echo ""
+            echo "🔍 Checking deployment state on Oracle server..."
+
+            CURRENT_COMMIT="${{ steps.changes.outputs.current_commit }}"
+            DEPLOYMENT_STATE_FILE="/home/$SSH_USER/zitadel/.deployment_state"
+
+            set +e
+            DEPLOYED_COMMIT=$(ssh -p "$SSH_PORT" $SSH_OPTS "$SSH_USER@$SSH_HOST" "if [ -f \"$DEPLOYMENT_STATE_FILE\" ]; then cat \"$DEPLOYMENT_STATE_FILE\"; else echo 'NONE'; fi" 2>/dev/null | tr -d '\r\n' || echo "FAILED")
+            set -e
+
+            if [ "$DEPLOYED_COMMIT" = "FAILED" ]; then
+              echo "⚠️ Could not read Oracle deployment state - will proceed with deployment"
+              FINAL_DECISION="deploy"
+              DECISION_REASON="Cannot verify Oracle state"
+            elif [ "$DEPLOYED_COMMIT" = "NONE" ]; then
+              echo "📭 No previous deployment found on Oracle"
+              FINAL_DECISION="deploy"
+              DECISION_REASON="Oracle server has never been deployed to"
+            elif [ "$DEPLOYED_COMMIT" = "$CURRENT_COMMIT" ]; then
+              echo "✅ Oracle server is up-to-date with current commit"
+              FINAL_DECISION="skip"
+              DECISION_REASON="Oracle matches current commit and no git changes"
+            else
+              echo "🔄 Oracle server has commit $DEPLOYED_COMMIT but current is $CURRENT_COMMIT"
+              FINAL_DECISION="deploy"
+              DECISION_REASON="Oracle server is out of sync with current commit"
+            fi
+
+            echo "📋 Final Decision: $DECISION_REASON"
+
+            # Update the deployment decision
+            if [ "$FINAL_DECISION" = "deploy" ]; then
+              echo "FINAL_DEPLOY=true" >> $GITHUB_ENV
+              echo "✅ Will proceed with deployment"
+            else
+              echo "FINAL_DEPLOY=false" >> $GITHUB_ENV
+              echo "⏭️ Skipping deployment"
+            fi
+          else
+            echo "FINAL_DEPLOY=true" >> $GITHUB_ENV
+            echo "✅ Git changes detected - proceeding with deployment"
+          fi
+
       - name: "📁 Ensure Remote Deployment Directory"
-        if: steps.changes.outputs.zitadel_changed == 'true'
+        if: env.FINAL_DEPLOY == 'true'
         run: |
           ssh -p "$SSH_PORT" $SSH_OPTS "$SSH_USER@$SSH_HOST" "
             sudo mkdir -p $DEPLOYMENT_PATH $BACKUP_PATH && sudo chown -R $SSH_USER:$SSH_USER $DEPLOYMENT_PATH $BACKUP_PATH
           "
 
       - name: "🏥 Health Check - Pre Deployment"
-        if: steps.changes.outputs.zitadel_changed == 'true'
+        if: env.FINAL_DEPLOY == 'true'
         run: |
           echo "🔍 Checking Zitadel health before deployment..."
           response=$(curl -s -o /dev/null -w "%{http_code}" https://auth.wenzelarifiandi.com/.well-known/openid-configuration || echo "000")
@@ -206,7 +269,7 @@ jobs:
           fi
 
       - name: "💾 Create Backup"
-        if: steps.changes.outputs.zitadel_changed == 'true'
+        if: env.FINAL_DEPLOY == 'true'
         run: |
           echo "📦 Creating backup of current deployment..."
           ssh -p "$SSH_PORT" $SSH_OPTS "$SSH_USER@$SSH_HOST" "
@@ -231,7 +294,7 @@ jobs:
           "
 
       - name: "🚀 Deploy Configuration"
-        if: steps.changes.outputs.zitadel_changed == 'true'
+        if: env.FINAL_DEPLOY == 'true'
         run: |
           echo "🚀 Deploying new configuration..."
 
@@ -264,7 +327,7 @@ jobs:
           "
 
       - name: "🏥 Health Check - Post Deployment"
-        if: steps.changes.outputs.zitadel_changed == 'true'
+        if: env.FINAL_DEPLOY == 'true'
         run: |
           echo "🔍 Checking Zitadel health after deployment..."
 
@@ -291,6 +354,8 @@ jobs:
                 echo "⚠️ Console returned HTTP $console_response"
               fi
 
+              # Record successful deployment state
+              DEPLOYMENT_SUCCESS=true
               exit 0
             fi
 
@@ -302,8 +367,36 @@ jobs:
           echo "💥 Health check failed after $max_attempts attempts"
           exit 1
 
+      - name: "📝 Record Deployment State"
+        if: env.FINAL_DEPLOY == 'true'
+        run: |
+          echo "📝 Recording deployment state on Oracle server..."
+
+          CURRENT_COMMIT=$(git rev-parse HEAD)
+          DEPLOYMENT_STATE_FILE="/home/$SSH_USER/zitadel/.deployment_state"
+          DEPLOYMENT_LOG_FILE="/home/$SSH_USER/zitadel/.deployment_log"
+
+          # Create deployment record with commit hash, timestamp, and workflow info
+          ssh -p "$SSH_PORT" $SSH_OPTS "$SSH_USER@$SSH_HOST" "
+            # Ensure zitadel directory exists
+            mkdir -p /home/$SSH_USER/zitadel
+
+            # Record current deployment state
+            echo '$CURRENT_COMMIT' > '$DEPLOYMENT_STATE_FILE'
+
+            # Append to deployment log for history
+            echo \"\$(date -Iseconds) - Deployed commit $CURRENT_COMMIT (GitHub Actions: \${{ github.run_id }})\" >> '$DEPLOYMENT_LOG_FILE'
+
+            # Keep only last 50 deployment log entries
+            tail -n 50 '$DEPLOYMENT_LOG_FILE' > '$DEPLOYMENT_LOG_FILE.tmp' && mv '$DEPLOYMENT_LOG_FILE.tmp' '$DEPLOYMENT_LOG_FILE'
+
+            echo '✅ Deployment state recorded successfully'
+            echo '📄 Current state file:'
+            cat '$DEPLOYMENT_STATE_FILE'
+          "
+
       - name: "🔔 Deployment Notification"
-        if: always() && steps.changes.outputs.zitadel_changed == 'true'
+        if: always() && env.FINAL_DEPLOY == 'true'
         run: |
           if [ "${{ job.status }}" = "success" ]; then
             echo "✅ Deployment completed successfully!"
