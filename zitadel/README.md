@@ -192,11 +192,89 @@ docker-compose exec caddy cat /var/log/caddy/zitadel-errors.log
 
 Current Zitadel version: v2.65.1
 
+## Troubleshooting & Status Checking
+
+### Quick Status Check
+
+Use the comprehensive status checker from the repository root:
+
+```bash
+./scripts/deployment-status.sh
+```
+
+This script will:
+- ✅ Check service health and endpoints
+- 📍 Show current deployment version
+- 💡 Provide specific troubleshooting guidance
+- 🛠️ Suggest immediate actions based on the issue
+
+### Common Issues & Solutions
+
+#### Service Not Responding (HTTP 000/timeout)
+
+**Possible Causes:**
+- Deployment in progress (wait 2-3 minutes)
+- Oracle Cloud instance issues
+- Docker services failed to start
+- Network connectivity problems
+
+**Quick Fixes:**
+1. Check GitHub Actions for failed deployments
+2. Wait a few minutes if deployment just triggered
+3. For immediate access: SSH to server and check `docker-compose ps`
+
+#### Browser Shows Old Error Messages
+
+**After a successful deployment fix:**
+1. **Hard refresh:** Ctrl+Shift+R (Windows) / Cmd+Shift+R (Mac)
+2. **Chrome/Edge:** DevTools (F12) → right-click refresh → "Empty Cache and Hard Reload"
+3. **Try incognito/private browsing window**
+4. **Clear browser cache** for auth.wenzelarifiandi.com
+
+#### Version Verification
+
+**Check what's deployed on server:**
+```bash
+ssh ubuntu@auth.wenzelarifiandi.com 'cat /home/ubuntu/zitadel/.deployment_state'
+```
+
+**Compare with current repository:**
+```bash
+git rev-parse HEAD
+```
+
+**Force deployment if out of sync:**
+```bash
+gh workflow run "Deploy Zitadel to Oracle Cloud" --field force=true
+```
+
+### Manual Server Commands
+
+**Check service status:**
+```bash
+ssh ubuntu@auth.wenzelarifiandi.com 'cd zitadel && docker-compose ps'
+```
+
+**View recent logs:**
+```bash
+ssh ubuntu@auth.wenzelarifiandi.com 'cd zitadel && docker-compose logs --tail=50'
+```
+
+**Restart all services:**
+```bash
+ssh ubuntu@auth.wenzelarifiandi.com 'cd zitadel && docker-compose restart'
+```
+
+**Check Caddy logs specifically:**
+```bash
+ssh ubuntu@auth.wenzelarifiandi.com 'cd zitadel && docker-compose logs caddy --tail=20'
+```
+
 ## Support
 
 For issues related to:
 
 - Zitadel configuration: Check [Zitadel Documentation](https://zitadel.com/docs)
 - Cloudflare integration: See `ops/zitadel-cloudflare-access-troubleshooting.md`
-- Deployment issues: Check the logs and this README
+- Deployment issues: Use `./scripts/deployment-status.sh` and check GitHub Actions
 - Error handling: Check `error-handler.js` for supported error codes
