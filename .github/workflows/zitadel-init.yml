@@ -1,0 +1,108 @@
+name: 🧰 Zitadel Initialize (Manual)
+
+on:
+  workflow_dispatch:
+    inputs:
+      acknowledge:
+        description: "Type YES to confirm you want to (re)initialize Zitadel admin user/grants on the remote host"
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+env:
+  DEPLOYMENT_PATH: /home/ubuntu/zitadel
+
+jobs:
+  init:
+    name: 🔐 Initialize Zitadel Admin
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📥 Checkout
+        uses: actions/checkout@v4
+
+      - name: 🔎 Validate Intent
+        run: |
+          if [ "${{ inputs.acknowledge }}" != "YES" ]; then
+            echo "❌ You must type YES to proceed. Received: '${{ inputs.acknowledge }}'"
+            exit 1
+          fi
+
+      - name: 🔧 Setup SSH
+        run: |
+          mkdir -p ~/.ssh
+          KEY_TMP=~/.ssh/oracle_key.tmp
+          KEY_PATH=~/.ssh/oracle_key
+          printf '%s' "${{ secrets.ORACLE_SSH_KEY }}" > "$KEY_TMP"
+          if grep -q '\\n' "$KEY_TMP"; then
+            sed -e 's/\\r//g' -e 's/\\n/\n/g' "$KEY_TMP" > "$KEY_PATH"
+          else
+            tr -d '\r' < "$KEY_TMP" > "$KEY_PATH"
+          fi
+          rm -f "$KEY_TMP"
+          if ! head -n1 "$KEY_PATH" | grep -q "BEGIN .*PRIVATE KEY"; then
+            if base64 -d "$KEY_PATH" > "$KEY_PATH.dec" 2>/dev/null; then
+              mv "$KEY_PATH.dec" "$KEY_PATH"
+            fi
+          fi
+          chmod 600 "$KEY_PATH"
+          if ! ssh-keygen -y -f "$KEY_PATH" >/dev/null 2>&1; then
+            echo "❌ SSH private key could not be parsed"
+            exit 1
+          fi
+          ssh-keyscan -H ${{ secrets.ORACLE_HOST }} >> ~/.ssh/known_hosts
+          echo "SSH_OPTS=-i ~/.ssh/oracle_key -o StrictHostKeyChecking=no -o IdentitiesOnly=yes -o UserKnownHostsFile=~/.ssh/known_hosts -o ConnectTimeout=20" >> "$GITHUB_ENV"
+          ssh $SSH_OPTS ubuntu@${{ secrets.ORACLE_HOST }} "echo 'SSH OK'"
+
+      - name: 🛠️ Run Zitadel Init (DB, User, Grant)
+        run: |
+          ssh $SSH_OPTS ubuntu@${{ secrets.ORACLE_HOST }} "
+            set -e
+            # Ensure deployment dir exists
+            sudo mkdir -p $DEPLOYMENT_PATH && sudo chown -R ubuntu:ubuntu $DEPLOYMENT_PATH
+
+            # Select docker compose
+            if command -v docker-compose >/dev/null 2>&1; then DC='docker-compose'; else DC='docker compose'; fi
+
+            # Basic diagnostics
+            echo '📦 Compose services:'
+            cd $DEPLOYMENT_PATH
+            \$DC ps || true
+
+            echo '⏳ Waiting for database health...'
+            for i in 1 2 3 4 5 6; do
+              if \$DC exec -T db pg_isready -d zitadel -U postgres >/dev/null 2>&1; then echo '✅ DB ready'; break; fi
+              sleep 5
+            done
+
+            echo '🔧 Running zitadel init database (safe to re-run)...'
+            \$DC exec -T zitadel zitadel init database --config /config/zitadel.yaml --masterkeyFromEnv || true
+
+            echo '🔧 Running zitadel init user (creates admin init token if needed)...'
+            INIT_USER_OUT=\$(\$DC exec -T zitadel zitadel init user --config /config/zitadel.yaml --masterkeyFromEnv 2>&1 || true)
+            echo "\$INIT_USER_OUT" | sed -e 's/\r//g'
+
+            echo '🔧 Running zitadel init grant (initial org & grants, safe to re-run)...'
+            \$DC exec -T zitadel zitadel init grant --config /config/zitadel.yaml --masterkeyFromEnv || true
+
+            echo '🔧 (Optional) Initialize projections (safe to re-run)...'
+            \$DC exec -T zitadel zitadel setup --init-projections --config /config/zitadel.yaml --masterkeyFromEnv || true
+
+            echo '🔗 Attempt to extract onboarding link (if printed by init user):'
+            echo "\$INIT_USER_OUT" | grep -Eo 'https?://[^ ]+' || true
+          "
+
+      - name: 📋 Next Steps
+        run: |
+          cat << 'EOF'
+          If the command 'zitadel init user' printed an initialization link above, open it in your browser to set the initial admin username/password.
+
+          If no link printed (because the user was already initialized), you can reset via Zitadel Console or CLI.
+
+          Common fixes:
+          - Ensure ZITADEL_MASTERKEY in docker-compose matches the value in zitadel.yaml.
+          - If you see 'User is not yet initialized', run this workflow once and complete the onboarding link.
+          - Rebuild projections if profile changes don’t take effect: `zitadel setup --init-projections`.
+          EOF
