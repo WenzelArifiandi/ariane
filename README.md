@@ -1,3 +1,4 @@
+[![CI](https://github.com/WenzelArifiandi/ariane/actions/workflows/ci.yml/badge.svg)](https://github.com/WenzelArifiandi/ariane/actions/workflows/ci.yml)
 ![Site Preview Deploy](https://github.com/WenzelArifiandi/ariane/actions/workflows/preview-deploy-site.yml/badge.svg?branch=main)
 ![Studio Deploy (Hook)](https://github.com/WenzelArifiandi/ariane/actions/workflows/studio-deploy.yml/badge.svg?branch=main)
 [![🔍 Security Scanning & Analysis](https://github.com/WenzelArifiandi/ariane/actions/workflows/security-scanning.yml/badge.svg)](https://github.com/WenzelArifiandi/ariane/actions/workflows/security-scanning.yml)
