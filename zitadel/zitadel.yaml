@@ -1,0 +1,28 @@
+Log:
+  Level: info
+
+MasterKey: MasterkeyNeedsToHave32Characters
+
+Database:
+  postgres:
+    Host: db
+    Port: 5432
+    Database: zitadel
+    MaxOpenConns: 25
+    MaxIdleConns: 10
+    MaxConnLifetime: 30m
+    MaxConnIdleTime: 5m
+    User:
+      Username: zitadel
+      Password: zitadel
+      SSL:
+        Mode: disable
+    Admin:
+      Username: postgres
+      Password: postgres
+      SSL:
+        Mode: disable
+
+ExternalSecure: true
+ExternalPort: 443
+ExternalDomain: auth.wenzelarifiandi.com

@@ -1,0 +1,11 @@
+{
+    email admin@wenzelarifiandi.com
+    acme_ca https://acme.zerossl.com/v2/DV90
+}
+
+auth.wenzelarifiandi.com {
+    tls {
+        ca https://acme.zerossl.com/v2/DV90
+    }
+    reverse_proxy zitadel:8080
+}

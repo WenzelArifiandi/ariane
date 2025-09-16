@@ -1,0 +1,57 @@
+version: "3.8"
+
+services:
+  zitadel:
+    restart: "always"
+    image: "ghcr.io/zitadel/zitadel:v2.65.1"
+    command: "start --config /config/zitadel.yaml --tlsMode external --masterkeyFromEnv"
+    environment:
+      - "ZITADEL_MASTERKEY=MasterkeyNeedsToHave32Characters"
+    volumes:
+      - ./zitadel.yaml:/config/zitadel.yaml:ro
+    depends_on:
+      db:
+        condition: "service_healthy"
+    ports:
+      - "8080:8080"
+    networks:
+      - "zitadel"
+
+  db:
+    restart: "always"
+    image: postgres:16
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=zitadel
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -d zitadel -U postgres"]
+      interval: "10s"
+      timeout: "30s"
+      retries: 5
+      start_period: "20s"
+    volumes:
+      - "data:/var/lib/postgresql/data:rw"
+    networks:
+      - "zitadel"
+
+  caddy:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile
+      - caddy_data:/data
+      - caddy_config:/config
+    networks:
+      - "zitadel"
+
+volumes:
+  data:
+  caddy_data:
+  caddy_config:
+
+networks:
+  zitadel:
