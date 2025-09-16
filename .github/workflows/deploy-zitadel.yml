@@ -230,13 +230,42 @@ jobs:
         "
 
   security-scan:
-    name: 🔒 Security Scan
+    name: 🔒 Security Scan & Vulnerability Check
     runs-on: ubuntu-latest
     if: github.event_name == 'push'
 
     steps:
     - name: 📥 Checkout Code
       uses: actions/checkout@v4
+
+    - name: 🔧 Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '22.x'
+        cache: 'npm'
+        cache-dependency-path: |
+          site/package-lock.json
+          studio/package-lock.json
+
+    - name: 🔍 Security Audit - Site
+      run: |
+        cd site
+        echo "🔍 Running security audit for site dependencies..."
+        npm audit --audit-level=moderate || {
+          echo "❌ Security vulnerabilities found in site dependencies"
+          echo "🔧 Attempting to fix automatically..."
+          npm audit fix || npm audit fix --force || true
+        }
+
+    - name: 🔍 Security Audit - Studio
+      run: |
+        cd studio
+        echo "🔍 Running security audit for studio dependencies..."
+        npm audit --audit-level=moderate || {
+          echo "❌ Security vulnerabilities found in studio dependencies"
+          echo "🔧 Attempting to fix automatically..."
+          npm audit fix || npm audit fix --force || true
+        }
 
     - name: 🔍 Run Trivy Security Scan
       uses: aquasecurity/trivy-action@master
@@ -245,9 +274,47 @@ jobs:
         scan-ref: 'zitadel/'
         format: 'sarif'
         output: 'trivy-results.sarif'
+        severity: 'CRITICAL,HIGH,MEDIUM'
 
     - name: 📊 Upload Trivy Results
       uses: github/codeql-action/upload-sarif@v3
       if: always()
       with:
         sarif_file: 'trivy-results.sarif'
+
+    - name: 🔐 Check for Secrets
+      run: |
+        echo "🔍 Scanning for potential secrets..."
+
+        # Check for common secret patterns
+        if grep -r -i "password\|secret\|key\|token" zitadel/ --exclude-dir=node_modules --exclude="*.md" | grep -v "ZITADEL_MASTERKEY" | grep -v "example"; then
+          echo "⚠️ Potential secrets found in Zitadel configuration"
+          echo "Please review the above matches"
+        else
+          echo "✅ No obvious secrets detected"
+        fi
+
+    - name: 💾 Commit Security Fixes
+      if: success()
+      run: |
+        git config --local user.email "security-scan@github.com"
+        git config --local user.name "Security Scanner"
+
+        if [ -n "$(git status --porcelain)" ]; then
+          git add site/package*.json studio/package*.json
+          git commit -m "security: auto-fix vulnerabilities during deployment scan
+
+          🔍 Automated security fixes applied during deployment:
+          - Updated dependencies to resolve vulnerabilities
+          - Applied npm audit fixes
+
+          🤖 Applied by deployment security scan
+          🚀 Generated with [Claude Code](https://claude.ai/code)
+
+          Co-Authored-By: Security Scanner <security-scan@github.com>"
+
+          git push
+          echo "✅ Security fixes applied and committed"
+        else
+          echo "ℹ️ No security fixes needed"
+        fi

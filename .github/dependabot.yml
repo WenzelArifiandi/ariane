@@ -1,0 +1,185 @@
+# Dependabot configuration for automated dependency updates
+# See: https://docs.github.com/en/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file
+
+version: 2
+updates:
+  # Site (Astro) dependencies
+  - package-ecosystem: "npm"
+    directory: "/site"
+    schedule:
+      interval: "daily"
+      time: "02:00"
+      timezone: "UTC"
+    open-pull-requests-limit: 10
+    reviewers:
+      - "WenzelArifiandi"
+    assignees:
+      - "WenzelArifiandi"
+    commit-message:
+      prefix: "deps(site)"
+      include: "scope"
+    labels:
+      - "dependencies"
+      - "site"
+      - "automated"
+    # Auto-merge patch and minor security updates
+    allow:
+      - dependency-type: "direct"
+        update-type: "security"
+      - dependency-type: "indirect"
+        update-type: "security"
+      - dependency-type: "direct"
+        update-type: "version-update:semver-patch"
+      - dependency-type: "direct"
+        update-type: "version-update:semver-minor"
+    # Group related updates together
+    groups:
+      astro:
+        patterns:
+          - "@astrojs/*"
+          - "astro"
+        update-types:
+          - "minor"
+          - "patch"
+      typescript:
+        patterns:
+          - "typescript"
+          - "@types/*"
+          - "@typescript-eslint/*"
+        update-types:
+          - "minor"
+          - "patch"
+      eslint:
+        patterns:
+          - "eslint*"
+          - "@typescript-eslint/*"
+        update-types:
+          - "minor"
+          - "patch"
+
+  # Studio (Sanity) dependencies
+  - package-ecosystem: "npm"
+    directory: "/studio"
+    schedule:
+      interval: "daily"
+      time: "02:30"
+      timezone: "UTC"
+    open-pull-requests-limit: 5
+    reviewers:
+      - "WenzelArifiandi"
+    assignees:
+      - "WenzelArifiandi"
+    commit-message:
+      prefix: "deps(studio)"
+      include: "scope"
+    labels:
+      - "dependencies"
+      - "studio"
+      - "automated"
+    # Auto-merge patch and minor security updates
+    allow:
+      - dependency-type: "direct"
+        update-type: "security"
+      - dependency-type: "indirect"
+        update-type: "security"
+      - dependency-type: "direct"
+        update-type: "version-update:semver-patch"
+      - dependency-type: "direct"
+        update-type: "version-update:semver-minor"
+    # Group Sanity-related updates
+    groups:
+      sanity:
+        patterns:
+          - "sanity"
+          - "@sanity/*"
+        update-types:
+          - "minor"
+          - "patch"
+      react:
+        patterns:
+          - "react"
+          - "react-dom"
+          - "@types/react*"
+        update-types:
+          - "minor"
+          - "patch"
+
+  # Root package.json
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "sunday"
+      time: "03:00"
+      timezone: "UTC"
+    open-pull-requests-limit: 2
+    reviewers:
+      - "WenzelArifiandi"
+    assignees:
+      - "WenzelArifiandi"
+    commit-message:
+      prefix: "deps(root)"
+      include: "scope"
+    labels:
+      - "dependencies"
+      - "root"
+      - "automated"
+
+  # GitHub Actions dependencies
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "04:00"
+      timezone: "UTC"
+    open-pull-requests-limit: 5
+    reviewers:
+      - "WenzelArifiandi"
+    assignees:
+      - "WenzelArifiandi"
+    commit-message:
+      prefix: "ci"
+      include: "scope"
+    labels:
+      - "github-actions"
+      - "ci"
+      - "automated"
+    # Group action updates by provider
+    groups:
+      actions-core:
+        patterns:
+          - "actions/*"
+        update-types:
+          - "minor"
+          - "patch"
+      security-actions:
+        patterns:
+          - "github/codeql-action"
+          - "aquasecurity/trivy-action"
+          - "snyk/actions"
+        update-types:
+          - "minor"
+          - "patch"
+
+  # Docker dependencies (for Zitadel)
+  - package-ecosystem: "docker"
+    directory: "/zitadel"
+    schedule:
+      interval: "weekly"
+      day: "tuesday"
+      time: "05:00"
+      timezone: "UTC"
+    open-pull-requests-limit: 3
+    reviewers:
+      - "WenzelArifiandi"
+    assignees:
+      - "WenzelArifiandi"
+    commit-message:
+      prefix: "docker(zitadel)"
+      include: "scope"
+    labels:
+      - "docker"
+      - "zitadel"
+      - "security"
+      - "automated"

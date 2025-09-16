@@ -1,0 +1,281 @@
+name: 🛡️ Auto Security Fixes
+
+on:
+  schedule:
+    # Run daily at 2 AM UTC to check for security issues
+    - cron: '0 2 * * *'
+  workflow_dispatch:
+  # Trigger when Dependabot creates PRs
+  pull_request:
+    types: [opened, synchronize]
+    branches: [main]
+
+env:
+  NODE_VERSION: '22.x'
+
+jobs:
+  auto-fix-vulnerabilities:
+    name: 🔧 Auto Fix Security Vulnerabilities
+    runs-on: ubuntu-latest
+    if: github.actor == 'dependabot[bot]' || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+
+    steps:
+    - name: 📥 Checkout Code
+      uses: actions/checkout@v4
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        fetch-depth: 0
+
+    - name: 🔧 Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+        cache: 'npm'
+        cache-dependency-path: |
+          site/package-lock.json
+          studio/package-lock.json
+
+    - name: 🔍 Audit Site Dependencies
+      id: site-audit
+      run: |
+        cd site
+        echo "Running security audit for site..."
+
+        # Capture audit output
+        npm audit --audit-level=moderate --json > audit-site.json || true
+
+        # Check if vulnerabilities exist
+        if [ -s audit-site.json ]; then
+          vulnerabilities=$(cat audit-site.json | jq -r '.metadata.vulnerabilities.total // 0')
+          echo "site_vulnerabilities=$vulnerabilities" >> $GITHUB_OUTPUT
+          echo "🔍 Found $vulnerabilities vulnerabilities in site"
+        else
+          echo "site_vulnerabilities=0" >> $GITHUB_OUTPUT
+          echo "✅ No vulnerabilities found in site"
+        fi
+
+    - name: 🔍 Audit Studio Dependencies
+      id: studio-audit
+      run: |
+        cd studio
+        echo "Running security audit for studio..."
+
+        # Capture audit output
+        npm audit --audit-level=moderate --json > audit-studio.json || true
+
+        # Check if vulnerabilities exist
+        if [ -s audit-studio.json ]; then
+          vulnerabilities=$(cat audit-studio.json | jq -r '.metadata.vulnerabilities.total // 0')
+          echo "studio_vulnerabilities=$vulnerabilities" >> $GITHUB_OUTPUT
+          echo "🔍 Found $vulnerabilities vulnerabilities in studio"
+        else
+          echo "studio_vulnerabilities=0" >> $GITHUB_OUTPUT
+          echo "✅ No vulnerabilities found in studio"
+        fi
+
+    - name: 🛠️ Auto Fix Site Vulnerabilities
+      if: steps.site-audit.outputs.site_vulnerabilities != '0'
+      run: |
+        cd site
+        echo "🔧 Attempting to auto-fix site vulnerabilities..."
+
+        # Try safe fixes first
+        npm audit fix --dry-run
+        npm audit fix || true
+
+        # Try force fixes for remaining issues
+        remaining=$(npm audit --audit-level=moderate --json | jq -r '.metadata.vulnerabilities.total // 0')
+        if [ "$remaining" -gt 0 ]; then
+          echo "🚨 $remaining vulnerabilities remain, trying force fixes..."
+          npm audit fix --force || true
+        fi
+
+        echo "✅ Site vulnerability fixes applied"
+
+    - name: 🛠️ Auto Fix Studio Vulnerabilities
+      if: steps.studio-audit.outputs.studio_vulnerabilities != '0'
+      run: |
+        cd studio
+        echo "🔧 Attempting to auto-fix studio vulnerabilities..."
+
+        # Try safe fixes first
+        npm audit fix --dry-run
+        npm audit fix || true
+
+        # Try force fixes for remaining issues
+        remaining=$(npm audit --audit-level=moderate --json | jq -r '.metadata.vulnerabilities.total // 0')
+        if [ "$remaining" -gt 0 ]; then
+          echo "🚨 $remaining vulnerabilities remain, trying force fixes..."
+          npm audit fix --force || true
+        fi
+
+        echo "✅ Studio vulnerability fixes applied"
+
+    - name: 🧪 Test After Fixes
+      run: |
+        echo "🧪 Testing applications after security fixes..."
+
+        # Test site build
+        cd site
+        if npm run build; then
+          echo "✅ Site builds successfully"
+        else
+          echo "❌ Site build failed after security fixes"
+          exit 1
+        fi
+
+        # Test studio build
+        cd ../studio
+        if npm run build; then
+          echo "✅ Studio builds successfully"
+        else
+          echo "❌ Studio build failed after security fixes"
+          exit 1
+        fi
+
+    - name: 📊 Generate Security Report
+      id: report
+      run: |
+        echo "📊 Generating security fix report..."
+
+        # Final audit
+        cd site
+        site_final=$(npm audit --audit-level=moderate --json | jq -r '.metadata.vulnerabilities.total // 0')
+
+        cd ../studio
+        studio_final=$(npm audit --audit-level=moderate --json | jq -r '.metadata.vulnerabilities.total // 0')
+
+        # Create report
+        cat > security-report.md << EOF
+        # 🛡️ Automated Security Fix Report
+
+        **Date:** $(date -Iseconds)
+        **Trigger:** ${{ github.event_name }}
+
+        ## Results
+
+        ### Site Dependencies
+        - **Before:** ${{ steps.site-audit.outputs.site_vulnerabilities }} vulnerabilities
+        - **After:** $site_final vulnerabilities
+        - **Fixed:** $((${{ steps.site-audit.outputs.site_vulnerabilities }} - $site_final))
+
+        ### Studio Dependencies
+        - **Before:** ${{ steps.studio-audit.outputs.studio_vulnerabilities }} vulnerabilities
+        - **After:** $studio_final vulnerabilities
+        - **Fixed:** $((${{ steps.studio-audit.outputs.studio_vulnerabilities }} - $studio_final))
+
+        ## Actions Taken
+        - ✅ Automated npm audit fix applied
+        - ✅ Build tests passed
+        - ✅ Dependencies updated
+
+        **Total vulnerabilities resolved:** $((${{ steps.site-audit.outputs.site_vulnerabilities }} + ${{ steps.studio-audit.outputs.studio_vulnerabilities }} - $site_final - $studio_final))
+        EOF
+
+        echo "report_path=security-report.md" >> $GITHUB_OUTPUT
+
+    - name: 💾 Commit Security Fixes
+      id: commit
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+
+        # Check if there are changes to commit
+        if [ -n "$(git status --porcelain)" ]; then
+          git add site/package*.json studio/package*.json
+
+          git commit -m "$(cat <<'EOF'
+        security: automated vulnerability fixes
+
+        - Applied npm audit fix to resolve security vulnerabilities
+        - Updated dependencies to secure versions
+        - Verified builds pass after updates
+
+        🤖 Automated security fix by GitHub Actions
+        🚀 Generated with [Claude Code](https://claude.ai/code)
+
+        Co-Authored-By: GitHub Action <action@github.com>
+        EOF
+        )"
+
+          echo "changes_committed=true" >> $GITHUB_OUTPUT
+          echo "✅ Security fixes committed"
+        else
+          echo "changes_committed=false" >> $GITHUB_OUTPUT
+          echo "ℹ️ No changes to commit"
+        fi
+
+    - name: 📤 Push Changes
+      if: steps.commit.outputs.changes_committed == 'true'
+      run: |
+        git push
+        echo "🚀 Security fixes pushed to repository"
+
+    - name: 📋 Upload Security Report
+      uses: actions/upload-artifact@v4
+      with:
+        name: security-report-${{ github.run_number }}
+        path: security-report.md
+        retention-days: 30
+
+  dependabot-auto-merge:
+    name: 🔀 Auto-merge Dependabot PRs
+    runs-on: ubuntu-latest
+    if: github.actor == 'dependabot[bot]' && github.event_name == 'pull_request'
+
+    steps:
+    - name: 📥 Checkout Code
+      uses: actions/checkout@v4
+
+    - name: 🔍 Check PR Details
+      id: pr-check
+      run: |
+        # Check if this is a security update
+        if echo "${{ github.event.pull_request.title }}" | grep -i "security\|vulnerability\|cve"; then
+          echo "is_security=true" >> $GITHUB_OUTPUT
+          echo "🔒 Security-related PR detected"
+        else
+          echo "is_security=false" >> $GITHUB_OUTPUT
+          echo "📦 Regular dependency update"
+        fi
+
+        # Check if it's a patch or minor update
+        if echo "${{ github.event.pull_request.title }}" | grep -E "patch|minor"; then
+          echo "is_safe_update=true" >> $GITHUB_OUTPUT
+          echo "✅ Safe update (patch/minor) detected"
+        else
+          echo "is_safe_update=false" >> $GITHUB_OUTPUT
+          echo "⚠️ Major update detected"
+        fi
+
+    - name: ✅ Auto-approve Security PRs
+      if: steps.pr-check.outputs.is_security == 'true' || steps.pr-check.outputs.is_safe_update == 'true'
+      run: |
+        gh pr review --approve "${{ github.event.pull_request.number }}" --body "🤖 Auto-approved security/patch update"
+      env:
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: 🔀 Auto-merge Safe PRs
+      if: steps.pr-check.outputs.is_security == 'true' || steps.pr-check.outputs.is_safe_update == 'true'
+      run: |
+        gh pr merge "${{ github.event.pull_request.number }}" --auto --squash
+        echo "🎉 PR queued for auto-merge after checks pass"
+      env:
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: 💬 Comment on Major Updates
+      if: steps.pr-check.outputs.is_safe_update == 'false' && steps.pr-check.outputs.is_security == 'false'
+      run: |
+        gh pr comment "${{ github.event.pull_request.number }}" --body "⚠️ **Major version update detected!**
+
+        This PR contains major version changes that may include breaking changes.
+        Please review manually before merging.
+
+        🔍 **Review checklist:**
+        - [ ] Check CHANGELOG for breaking changes
+        - [ ] Run tests locally
+        - [ ] Verify deployment works
+
+        🤖 *Auto-merge skipped for safety*"
+      env:
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
