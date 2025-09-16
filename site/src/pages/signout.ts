@@ -51,8 +51,12 @@ export const GET: APIRoute = async ({ request }) => {
     cfLogout.searchParams.set("returnTo", new URL("/", origin).toString());
     const endSession = new URL(OIDC_END_SESSION);
     // RP-initiated logout: at minimum supply post_logout_redirect_uri
-    endSession.searchParams.set("post_logout_redirect_uri", cfLogout.toString());
-    if (OIDC_CLIENT_ID) endSession.searchParams.set("client_id", OIDC_CLIENT_ID);
+    endSession.searchParams.set(
+      "post_logout_redirect_uri",
+      cfLogout.toString(),
+    );
+    if (OIDC_CLIENT_ID)
+      endSession.searchParams.set("client_id", OIDC_CLIENT_ID);
     return new Response(null, {
       status: 302,
       headers: { Location: endSession.toString() },

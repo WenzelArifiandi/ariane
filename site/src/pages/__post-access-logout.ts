@@ -40,8 +40,12 @@ export const GET: APIRoute = async ({ request }) => {
 
   if (OIDC_END_SESSION) {
     const endSession = new URL(OIDC_END_SESSION);
-    endSession.searchParams.set("post_logout_redirect_uri", new URL("/", origin).toString());
-    if (OIDC_CLIENT_ID) endSession.searchParams.set("client_id", OIDC_CLIENT_ID);
+    endSession.searchParams.set(
+      "post_logout_redirect_uri",
+      new URL("/", origin).toString(),
+    );
+    if (OIDC_CLIENT_ID)
+      endSession.searchParams.set("client_id", OIDC_CLIENT_ID);
     return new Response(null, {
       status: 302,
       headers: { Location: endSession.toString() },
