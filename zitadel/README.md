@@ -2,7 +2,7 @@
 
 This directory contains the configuration for the Zitadel authentication server used by the Ariane project.
 
-**🚀 GitOps Test Deployment** - Testing change detection fix at 2025-09-16 15:32 UTC
+**🚀 SSH Secret Update Test** - Testing with updated Oracle SSH key at 2025-09-16 16:03 UTC
 
 ## Overview
 
