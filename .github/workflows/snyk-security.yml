@@ -2,11 +2,11 @@ name: 🧪 Snyk Security Scan (Optional)
 
 on:
   schedule:
-    - cron: '0 4 * * 0' # Weekly on Sundays at 04:00 UTC
+    - cron: "0 4 * * 0" # Weekly on Sundays at 04:00 UTC
   workflow_dispatch:
     inputs:
       snyk_token:
-        description: 'Snyk API token (optional, for manual runs)'
+        description: "Snyk API token (optional, for manual runs)"
         required: false
         type: string
 
@@ -25,7 +25,7 @@ jobs:
       - name: 🔧 Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '22.x'
+          node-version: "22.x"
 
       - name: 🧪 Run Snyk if token present
         env:

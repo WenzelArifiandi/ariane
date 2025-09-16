@@ -45,7 +45,9 @@ jobs:
             try {
               // Enable vulnerability alerts
               console.log('📢 Enabling vulnerability alerts...');
-              await github.rest.repos.enableVulnerabilityAlerts({
+              const octokit = github.getOctokit(core.getInput('github-token'));
+
+              await octokit.rest.repos.enableVulnerabilityAlerts({
                 owner,
                 repo
               });
@@ -53,7 +55,7 @@ jobs:
 
               // Enable automated security fixes (Dependabot security updates)
               console.log('🤖 Enabling automated security fixes...');
-              await github.rest.repos.enableAutomatedSecurityFixes({
+              await octokit.rest.repos.enableAutomatedSecurityFixes({
                 owner,
                 repo
               });
@@ -61,14 +63,14 @@ jobs:
 
               // Get current repository settings
               console.log('🔍 Checking current security settings...');
-              const repoData = await github.rest.repos.get({
+              const repoData = await octokit.rest.repos.get({
                 owner,
                 repo
               });
 
               // Enable private vulnerability reporting if not already enabled
               console.log('🔒 Configuring private vulnerability reporting...');
-              await github.rest.repos.update({
+              await octokit.rest.repos.update({
                 owner,
                 repo,
                 security_and_analysis: {
@@ -84,8 +86,8 @@ jobs:
 
             } catch (error) {
               console.error('❌ Error configuring security features:', error.message);
-              // Don't fail the workflow for permission issues
-              if (!error.message.includes('403')) {
+              // Don't fail the workflow for permission issues or resource access limits
+              if (!error.message.includes('403') && !error.message.includes('Resource not accessible')) {
                 throw error;
               }
             }
