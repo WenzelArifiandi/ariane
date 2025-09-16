@@ -1,0 +1,193 @@
+name: 🔧 SSH Connection Diagnostic
+
+on:
+  workflow_dispatch:
+    inputs:
+      ssh_user:
+        description: 'SSH user to test (leave empty to test both ubuntu and opc)'
+        required: false
+        type: string
+      ssh_port:
+        description: 'SSH port'
+        required: false
+        default: '22'
+        type: string
+      verbose:
+        description: 'Enable extra verbose output'
+        required: false
+        default: false
+        type: boolean
+
+permissions:
+  contents: read
+
+jobs:
+  ssh-diagnostic:
+    name: 🔍 SSH Connection Test
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📥 Checkout Code
+        uses: actions/checkout@v4
+
+      - name: 🔧 SSH Key Diagnostic & Connection Test
+        env:
+          ORA_HOST: ${{ secrets.ORACLE_HOST }}
+          ORA_SSH_KEY: ${{ secrets.ORACLE_SSH_KEY }}
+          INPUT_SSH_USER: ${{ inputs.ssh_user }}
+          INPUT_SSH_PORT: ${{ inputs.ssh_port }}
+          VERBOSE: ${{ inputs.verbose }}
+        run: |
+          echo "🔍 SSH Diagnostic Tool"
+          echo "======================"
+          echo ""
+
+          # Check if secrets are available
+          if [ -z "$ORA_HOST" ]; then
+            echo "❌ ORACLE_HOST secret is not set"
+            exit 1
+          fi
+          if [ -z "$ORA_SSH_KEY" ]; then
+            echo "❌ ORACLE_SSH_KEY secret is not set"
+            exit 1
+          fi
+
+          echo "✅ Required secrets are available"
+          echo "🏠 Host: $ORA_HOST"
+          echo "🔑 SSH Key: [REDACTED - $(echo -n "$ORA_SSH_KEY" | wc -c) characters]"
+          echo ""
+
+          # Setup variables
+          SSH_HOST="${ORA_HOST}"
+          SSH_PORT="${INPUT_SSH_PORT:-22}"
+
+          mkdir -p ~/.ssh
+          KEY_TMP=~/.ssh/oracle_key.tmp
+          KEY_PATH=~/.ssh/oracle_key
+
+          # Process SSH key (same logic as deployment workflow)
+          echo "🔧 Processing SSH Key..."
+          printf '%s' "${ORA_SSH_KEY}" > "$KEY_TMP"
+          if grep -q '\\n' "$KEY_TMP"; then
+            sed -e 's/\\r//g' -e 's/\\n/\n/g' "$KEY_TMP" > "$KEY_PATH"
+          else
+            tr -d '\r' < "$KEY_TMP" > "$KEY_PATH"
+          fi
+          rm -f "$KEY_TMP"
+
+          # Try base64 decode if needed
+          if ! head -n1 "$KEY_PATH" | grep -q "BEGIN .*PRIVATE KEY"; then
+            if base64 -d "$KEY_PATH" > "$KEY_PATH.dec" 2>/dev/null; then
+              echo "🔄 Decoded base64-encoded key"
+              mv "$KEY_PATH.dec" "$KEY_PATH"
+            fi
+          fi
+          chmod 600 "$KEY_PATH"
+
+          # Key analysis
+          echo ""
+          echo "🔍 SSH Key Analysis:"
+          echo "-------------------"
+          echo "Key file size: $(stat -c%s "$KEY_PATH" 2>/dev/null || stat -f%z "$KEY_PATH") bytes"
+          echo "Total lines: $(wc -l < "$KEY_PATH")"
+          echo ""
+
+          FIRST_LINE=$(head -n1 "$KEY_PATH")
+          LAST_LINE=$(tail -n1 "$KEY_PATH")
+
+          echo "First line: $FIRST_LINE"
+          echo "Last line: $LAST_LINE"
+          echo ""
+
+          # Key format validation
+          if ssh-keygen -y -f "$KEY_PATH" >/dev/null 2>&1; then
+            echo "✅ SSH private key format is VALID"
+            PUB_KEY=$(ssh-keygen -y -f "$KEY_PATH")
+            PUB_KEY_TYPE=$(echo "$PUB_KEY" | cut -d' ' -f1)
+            echo "🔑 Key type: $PUB_KEY_TYPE"
+            echo "📋 Public key fingerprint: $(echo "$PUB_KEY" | ssh-keygen -lf -)"
+            echo "📄 Public key (first 50 chars): $(echo "$PUB_KEY" | cut -c1-50)..."
+          else
+            echo "❌ SSH private key format is INVALID"
+            echo ""
+            echo "🔍 Detailed ssh-keygen error:"
+            ssh-keygen -y -f "$KEY_PATH" 2>&1 || true
+            echo ""
+            echo "🔧 Key format troubleshooting:"
+            if [[ "$FIRST_LINE" != *"BEGIN"*"PRIVATE KEY"* ]]; then
+              echo "  ❌ Missing private key header"
+            fi
+            if [[ "$LAST_LINE" != *"END"*"PRIVATE KEY"* ]]; then
+              echo "  ❌ Missing private key footer"
+            fi
+            if [ $(wc -l < "$KEY_PATH") -lt 10 ]; then
+              echo "  ❌ Key appears too short (< 10 lines)"
+            fi
+          fi
+
+          # SSH options
+          SSH_OPTS="-i ~/.ssh/oracle_key -o StrictHostKeyChecking=no -o IdentitiesOnly=yes -o BatchMode=yes -o ConnectTimeout=10"
+          if [ "$VERBOSE" = "true" ]; then
+            SSH_OPTS="$SSH_OPTS -vvv"
+          else
+            SSH_OPTS="$SSH_OPTS -v"
+          fi
+
+          # Add known hosts
+          echo ""
+          echo "🔗 Adding known hosts for $SSH_HOST:$SSH_PORT..."
+          ssh-keyscan -p "$SSH_PORT" -H "$SSH_HOST" >> ~/.ssh/known_hosts 2>/dev/null || true
+
+          # Test connection function
+          test_ssh_user() {
+            local user=$1
+            echo ""
+            echo "🔗 Testing SSH connection: $user@$SSH_HOST:$SSH_PORT"
+            echo "---------------------------------------------------"
+
+            set +e
+            if [ "$VERBOSE" = "true" ]; then
+              ssh -p "$SSH_PORT" $SSH_OPTS "$user@$SSH_HOST" "echo 'SSH connection successful for user: $user'" 2>&1
+            else
+              ssh -p "$SSH_PORT" $SSH_OPTS "$user@$SSH_HOST" "echo 'SSH connection successful for user: $user'" 2>&1 | head -30
+            fi
+            local status=$?
+            set -e
+
+            if [ $status -eq 0 ]; then
+              echo ""
+              echo "✅ SSH connection successful for user: $user"
+              return 0
+            else
+              echo ""
+              echo "❌ SSH connection failed for user: $user (exit code: $status)"
+              return $status
+            fi
+          }
+
+          # Test specified user or both default users
+          if [ -n "$INPUT_SSH_USER" ]; then
+            test_ssh_user "$INPUT_SSH_USER"
+          else
+            echo ""
+            echo "🎯 Testing default users (ubuntu and opc)..."
+
+            if test_ssh_user "ubuntu"; then
+              echo "✅ Recommended user: ubuntu"
+            elif test_ssh_user "opc"; then
+              echo "✅ Recommended user: opc"
+            else
+              echo ""
+              echo "❌ Both ubuntu and opc users failed"
+              echo ""
+              echo "🔧 Troubleshooting Steps:"
+              echo "1. Verify the public key is in ~/.ssh/authorized_keys on the server"
+              echo "2. Check SSH server configuration allows key authentication"
+              echo "3. Ensure Oracle Cloud security rules allow port $SSH_PORT"
+              echo "4. Try connecting manually with: ssh -i your_key $INPUT_SSH_USER@$SSH_HOST"
+              exit 1
+            fi
+          fi
+
+          echo ""
+          echo "🎉 SSH diagnostic complete!"

@@ -108,9 +108,28 @@ jobs:
           fi
           chmod 600 "$KEY_PATH"
 
-          # Validate key can be parsed by ssh-keygen (informational)
-          if ! ssh-keygen -y -f "$KEY_PATH" >/dev/null 2>&1; then
-            echo "⚠️ SSH private key could not be parsed by ssh-keygen; continuing to attempt connection"
+          # Enhanced SSH key validation and diagnostics
+          echo "🔍 SSH Key Diagnostics:"
+          echo "Key file size: $(stat -c%s "$KEY_PATH" 2>/dev/null || stat -f%z "$KEY_PATH") bytes"
+          echo "First line: $(head -n1 "$KEY_PATH")"
+          echo "Last line: $(tail -n1 "$KEY_PATH")"
+          echo "Total lines: $(wc -l < "$KEY_PATH")"
+
+          # Test key format
+          if ssh-keygen -y -f "$KEY_PATH" >/dev/null 2>&1; then
+            echo "✅ SSH private key format is valid"
+            PUB_KEY=$(ssh-keygen -y -f "$KEY_PATH")
+            echo "📋 Public key fingerprint: $(echo "$PUB_KEY" | ssh-keygen -lf -)"
+          else
+            echo "❌ SSH private key validation failed"
+            echo "🔍 Detailed ssh-keygen error:"
+            ssh-keygen -y -f "$KEY_PATH" 2>&1 || true
+            echo ""
+            echo "🔧 Troubleshooting suggestions:"
+            echo "1. Ensure ORACLE_SSH_KEY contains complete private key with headers/footers"
+            echo "2. Verify key is not password-protected"
+            echo "3. Check if key was copied correctly (no missing characters)"
+            echo "4. Ensure the key format matches what was generated (RSA, ED25519, etc.)"
           fi
 
           # Add known hosts (respect port)
@@ -126,24 +145,45 @@ jobs:
           echo "DEPLOYMENT_PATH=/home/$SSH_USER/zitadel" >> "$GITHUB_ENV"
           echo "BACKUP_PATH=/home/$SSH_USER/zitadel-backups" >> "$GITHUB_ENV"
 
-          # Test SSH connection; if explicit user not provided, try opc fallback once
+          # Test SSH connection with detailed diagnostics
           set +e
           echo "🔗 Testing SSH connection to $SSH_USER@$SSH_HOST:$SSH_PORT ..."
-          ssh -p "$SSH_PORT" $SSH_OPTS "$SSH_USER@$SSH_HOST" "echo 'SSH connection successful'"
+          echo "SSH options: $SSH_OPTS"
+
+          # Test connection with verbose output for debugging
+          echo "🔍 Detailed SSH connection attempt:"
+          ssh -p "$SSH_PORT" $SSH_OPTS -v "$SSH_USER@$SSH_HOST" "echo 'SSH connection successful'" 2>&1 | head -20
           SSH_STATUS=$?
+
           if [ "$SSH_STATUS" -ne 0 ] && [ -z "${INPUT_SSH_USER}" ]; then
-            echo "⚠️ SSH failed for user 'ubuntu'. Trying fallback user 'opc'..."
+            echo ""
+            echo "⚠️ SSH failed for user 'ubuntu' (exit code: $SSH_STATUS). Trying fallback user 'opc'..."
             SSH_USER="opc"
             echo "SSH_USER=$SSH_USER" >> "$GITHUB_ENV"
             # Update paths for opc
             echo "DEPLOYMENT_PATH=/home/$SSH_USER/zitadel" >> "$GITHUB_ENV"
             echo "BACKUP_PATH=/home/$SSH_USER/zitadel-backups" >> "$GITHUB_ENV"
-            ssh -p "$SSH_PORT" $SSH_OPTS "$SSH_USER@$SSH_HOST" "echo 'SSH connection successful'"
+
+            echo "🔍 Detailed SSH connection attempt (opc):"
+            ssh -p "$SSH_PORT" $SSH_OPTS -v "$SSH_USER@$SSH_HOST" "echo 'SSH connection successful'" 2>&1 | head -20
             SSH_STATUS=$?
           fi
           set -e
+
           if [ "$SSH_STATUS" -ne 0 ]; then
-            echo "❌ SSH connection failed. Please verify that ORACLE_SSH_KEY is an unencrypted private key matching ~/.ssh/authorized_keys on the server."
+            echo ""
+            echo "❌ SSH connection failed for both ubuntu and opc users (final exit code: $SSH_STATUS)"
+            echo ""
+            echo "🔧 Common solutions:"
+            echo "1. Verify ORACLE_SSH_KEY secret contains the correct private key"
+            echo "2. Check that the corresponding public key is in ~/.ssh/authorized_keys on the server"
+            echo "3. Ensure the server allows SSH key authentication (PubkeyAuthentication yes)"
+            echo "4. Verify the server is accessible on port $SSH_PORT"
+            echo "5. Check Oracle Cloud security rules allow SSH (port $SSH_PORT) from GitHub Actions IPs"
+            echo ""
+            echo "🔍 To debug manually:"
+            echo "  ssh-keygen -y -f your_private_key_file  # Extract public key"
+            echo "  ssh -v $SSH_USER@$SSH_HOST  # Test connection with verbose output"
             exit 1
           fi
 
