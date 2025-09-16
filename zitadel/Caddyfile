@@ -1,25 +1,25 @@
 {
-    email admin@wenzelarifiandi.com
-    acme_ca https://acme.zerossl.com/v2/DV90
+email admin@wenzelarifiandi.com
+acme_ca https://acme.zerossl.com/v2/DV90
 }
 
 auth.wenzelarifiandi.com {
-    tls {
-        ca https://acme.zerossl.com/v2/DV90
-    }
+tls {
+ca https://acme.zerossl.com/v2/DV90
+}
 
-    # Serve custom error pages
-    route /errors/* {
-        root * /var/www/errors
-        file_server
-    }
+# Serve custom error pages
+route /errors/* {
+root * /var/www/errors
+file_server
+}
 
-    # Log all requests for debugging
-    log {
-        output file /var/log/caddy/zitadel-errors.log
-        format json
-    }
+# Log all requests for debugging
+log {
+output file /var/log/caddy/zitadel-errors.log
+format json
+}
 
-    # Basic reverse proxy to Zitadel (removing complex error handling for now)
-    reverse_proxy zitadel:8080
+# Basic reverse proxy to Zitadel (removing complex error handling for now)
+reverse_proxy zitadel:8080
 }

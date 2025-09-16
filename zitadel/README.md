@@ -18,17 +18,20 @@ Zitadel provides OIDC/OAuth2 authentication services for:
 This deployment includes enhanced error handling to translate cryptic Zitadel error codes into user-friendly messages:
 
 ### Error Code Translations
+
 - `COMMAND-2M0fs` → "No changes detected - please modify at least one field"
 - `COMMAND-J8dsk` → "User initialization required - complete setup process"
 - `QUERY-d3fas` → "Database connection issue - try again in a moment"
 
 ### Features
+
 - **Custom Error Pages**: Beautiful, actionable error messages instead of raw HTTP codes
 - **Contextual Help**: Specific suggestions for each error type
 - **Technical Details**: Expandable technical information for debugging
 - **Smart Error Detection**: Automatic pattern matching and translation
 
 ### Files
+
 - `error-handler.js` - JavaScript error translation library
 - `custom-error-page.html` - Styled error page template
 - `Caddyfile` - Enhanced with error interception and custom responses
@@ -203,6 +206,7 @@ Use the comprehensive status checker from the repository root:
 ```
 
 This script will:
+
 - ✅ Check service health and endpoints
 - 📍 Show current deployment version
 - 💡 Provide specific troubleshooting guidance
@@ -213,12 +217,14 @@ This script will:
 #### Service Not Responding (HTTP 000/timeout)
 
 **Possible Causes:**
+
 - Deployment in progress (wait 2-3 minutes)
 - Oracle Cloud instance issues
 - Docker services failed to start
 - Network connectivity problems
 
 **Quick Fixes:**
+
 1. Check GitHub Actions for failed deployments
 2. Wait a few minutes if deployment just triggered
 3. For immediate access: SSH to server and check `docker-compose ps`
@@ -226,6 +232,7 @@ This script will:
 #### Browser Shows Old Error Messages
 
 **After a successful deployment fix:**
+
 1. **Hard refresh:** Ctrl+Shift+R (Windows) / Cmd+Shift+R (Mac)
 2. **Chrome/Edge:** DevTools (F12) → right-click refresh → "Empty Cache and Hard Reload"
 3. **Try incognito/private browsing window**
@@ -234,16 +241,19 @@ This script will:
 #### Version Verification
 
 **Check what's deployed on server:**
+
 ```bash
 ssh ubuntu@auth.wenzelarifiandi.com 'cat /home/ubuntu/zitadel/.deployment_state'
 ```
 
 **Compare with current repository:**
+
 ```bash
 git rev-parse HEAD
 ```
 
 **Force deployment if out of sync:**
+
 ```bash
 gh workflow run "Deploy Zitadel to Oracle Cloud" --field force=true
 ```
@@ -251,21 +261,25 @@ gh workflow run "Deploy Zitadel to Oracle Cloud" --field force=true
 ### Manual Server Commands
 
 **Check service status:**
+
 ```bash
 ssh ubuntu@auth.wenzelarifiandi.com 'cd zitadel && docker-compose ps'
 ```
 
 **View recent logs:**
+
 ```bash
 ssh ubuntu@auth.wenzelarifiandi.com 'cd zitadel && docker-compose logs --tail=50'
 ```
 
 **Restart all services:**
+
 ```bash
 ssh ubuntu@auth.wenzelarifiandi.com 'cd zitadel && docker-compose restart'
 ```
 
 **Check Caddy logs specifically:**
+
 ```bash
 ssh ubuntu@auth.wenzelarifiandi.com 'cd zitadel && docker-compose logs caddy --tail=20'
 ```
