@@ -2,7 +2,7 @@
 
 This directory contains the configuration for the Zitadel authentication server used by the Ariane project.
 
-**🎯 Fixed PostgreSQL Configuration** - Resolved profile update issues and database projections at 2025-09-16 17:30 UTC
+**🎯 Configuration Synced** - Oracle deployment now matches repository version at 2025-09-16 17:45 UTC
 
 ## Overview
 
