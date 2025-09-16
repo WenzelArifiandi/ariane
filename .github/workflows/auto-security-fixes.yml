@@ -250,16 +250,28 @@ jobs:
 
     - name: ✅ Auto-approve Security PRs
       if: steps.pr-check.outputs.is_security == 'true' || steps.pr-check.outputs.is_safe_update == 'true'
+      continue-on-error: true
       run: |
-        gh pr review --approve "${{ github.event.pull_request.number }}" --body "🤖 Auto-approved security/patch update"
+        gh pr review --approve "${{ github.event.pull_request.number }}" --body "🤖 Auto-approved security/patch update" || {
+          echo "⚠️ Failed to auto-approve PR - may require manual approval"
+          echo "This could be due to branch protection rules or permissions"
+        }
       env:
         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     - name: 🔀 Auto-merge Safe PRs
       if: steps.pr-check.outputs.is_security == 'true' || steps.pr-check.outputs.is_safe_update == 'true'
+      continue-on-error: true
       run: |
-        gh pr merge "${{ github.event.pull_request.number }}" --auto --squash
-        echo "🎉 PR queued for auto-merge after checks pass"
+        if gh pr merge "${{ github.event.pull_request.number }}" --auto --squash; then
+          echo "🎉 PR queued for auto-merge after checks pass"
+        else
+          echo "⚠️ Auto-merge failed - may require manual merge"
+          echo "Possible reasons:"
+          echo "  - Branch protection rules prevent auto-merge"
+          echo "  - Required status checks not passed"
+          echo "  - Insufficient permissions"
+        fi
       env:
         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
