@@ -1,0 +1,354 @@
+name: 🐧 Automated System Updates
+
+on:
+  schedule:
+    # Run weekly on Sundays at 3 AM UTC (safe time for maintenance)
+    - cron: "0 3 * * 0"
+  workflow_dispatch:
+    inputs:
+      include_reboot:
+        description: "Allow automatic reboot if required"
+        required: false
+        default: false
+        type: boolean
+      update_type:
+        description: "Type of updates to apply"
+        required: false
+        default: "security"
+        type: choice
+        options:
+          - security
+          - all
+          - kernel-only
+
+permissions:
+  contents: read
+  actions: write
+
+env:
+  SSH_OPTS: -o StrictHostKeyChecking=no -o IdentitiesOnly=yes -o BatchMode=yes -o UserKnownHostsFile=/dev/null -o ConnectTimeout=20
+
+jobs:
+  system-updates:
+    name: 🔧 Apply System Updates
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📥 Checkout Code
+        uses: actions/checkout@v4
+
+      - name: 🔑 Setup SSH Key
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.ORACLE_SSH_KEY }}" > ~/.ssh/oracle_key
+          chmod 600 ~/.ssh/oracle_key
+
+          # Add Oracle host to known hosts
+          ssh-keyscan -H ${{ secrets.ORACLE_HOST }} >> ~/.ssh/known_hosts 2>/dev/null || true
+
+      - name: 🔍 Check System Status
+        id: system-check
+        run: |
+          echo "🔍 Checking current system status..."
+
+          # Get system info
+          SYSTEM_INFO=$(ssh -i ~/.ssh/oracle_key ${{ env.SSH_OPTS }} ubuntu@${{ secrets.ORACLE_HOST }} "
+            echo 'HOSTNAME='$(hostname)
+            echo 'UPTIME='$(uptime -p)
+            echo 'LOAD='$(uptime | awk -F'load average:' '{print \$2}' | awk '{print \$1}' | sed 's/,//')
+            echo 'MEMORY='$(free | grep Mem | awk '{printf \"%.1f\", \$3/\$2 * 100.0}')
+            echo 'DISK='$(df -h / | tail -1 | awk '{print \$5}' | sed 's/%//')
+          ")
+
+          echo "$SYSTEM_INFO"
+          echo "$SYSTEM_INFO" | while IFS='=' read -r key value; do
+            echo "${key,,}=$value" >> $GITHUB_OUTPUT
+          done
+
+      - name: 📊 Check Available Updates
+        id: update-check
+        run: |
+          echo "📊 Checking for available updates..."
+
+          UPDATE_INFO=$(ssh -i ~/.ssh/oracle_key ${{ env.SSH_OPTS }} ubuntu@${{ secrets.ORACLE_HOST }} "
+            sudo apt update -qq
+            
+            # Count different types of updates
+            SECURITY_UPDATES=\$(apt list --upgradable 2>/dev/null | grep -i security | wc -l)
+            TOTAL_UPDATES=\$(apt list --upgradable 2>/dev/null | grep -v WARNING | tail -n +2 | wc -l)
+            KERNEL_UPDATES=\$(apt list --upgradable 2>/dev/null | grep -E 'linux-image|linux-headers|linux-modules' | wc -l)
+            
+            echo \"SECURITY_COUNT=\$SECURITY_UPDATES\"
+            echo \"TOTAL_COUNT=\$TOTAL_UPDATES\" 
+            echo \"KERNEL_COUNT=\$KERNEL_UPDATES\"
+            echo \"REBOOT_REQUIRED=\$([ -f /var/run/reboot-required ] && echo 'true' || echo 'false')\"
+            
+            # Show what updates are available
+            echo \"AVAILABLE_UPDATES<<EOF\"
+            apt list --upgradable 2>/dev/null | grep -v WARNING | head -20
+            echo \"EOF\"
+          ")
+
+          echo "$UPDATE_INFO"
+          echo "$UPDATE_INFO" | while IFS='=' read -r key value; do
+            if [ "$key" = "AVAILABLE_UPDATES" ]; then
+              break
+            fi
+            echo "$key=$value" >> $GITHUB_OUTPUT
+          done
+
+          # Extract the multiline updates list
+          UPDATES_LIST=$(echo "$UPDATE_INFO" | sed -n '/AVAILABLE_UPDATES<<EOF/,/EOF/p' | sed '1d;$d')
+          echo "available_updates<<EOF" >> $GITHUB_OUTPUT
+          echo "$UPDATES_LIST" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+      - name: 🔒 Apply Security Updates
+        if: steps.update-check.outputs.SECURITY_COUNT > 0 && (github.event.inputs.update_type == 'security' || github.event.inputs.update_type == 'all')
+        run: |
+          echo "🔒 Applying ${{ steps.update-check.outputs.SECURITY_COUNT }} security updates..."
+
+          ssh -i ~/.ssh/oracle_key ${{ env.SSH_OPTS }} ubuntu@${{ secrets.ORACLE_HOST }} "
+            # Apply security updates with automatic yes
+            sudo DEBIAN_FRONTEND=noninteractive apt-get -y upgrade -o Dpkg::Options::='--force-confdef' -o Dpkg::Options::='--force-confold'
+            
+            # Clean up
+            sudo apt-get -y autoremove
+            sudo apt-get -y autoclean
+            
+            echo '✅ Security updates applied successfully'
+          "
+
+      - name: 📦 Apply All Updates
+        if: steps.update-check.outputs.TOTAL_COUNT > 0 && github.event.inputs.update_type == 'all'
+        run: |
+          echo "📦 Applying all ${{ steps.update-check.outputs.TOTAL_COUNT }} updates..."
+
+          ssh -i ~/.ssh/oracle_key ${{ env.SSH_OPTS }} ubuntu@${{ secrets.ORACLE_HOST }} "
+            # Apply all updates
+            sudo DEBIAN_FRONTEND=noninteractive apt-get -y dist-upgrade -o Dpkg::Options::='--force-confdef' -o Dpkg::Options::='--force-confold'
+            
+            # Clean up
+            sudo apt-get -y autoremove
+            sudo apt-get -y autoclean
+            
+            echo '✅ All updates applied successfully'
+          "
+
+      - name: 🐧 Apply Kernel Updates Only
+        if: steps.update-check.outputs.KERNEL_COUNT > 0 && github.event.inputs.update_type == 'kernel-only'
+        run: |
+          echo "🐧 Applying ${{ steps.update-check.outputs.KERNEL_COUNT }} kernel updates..."
+
+          ssh -i ~/.ssh/oracle_key ${{ env.SSH_OPTS }} ubuntu@${{ secrets.ORACLE_HOST }} "
+            # Apply only kernel updates
+            sudo DEBIAN_FRONTEND=noninteractive apt-get -y install --only-upgrade linux-image* linux-headers* linux-modules*
+            
+            echo '✅ Kernel updates applied successfully'
+          "
+
+      - name: 🔄 Handle Reboot Requirement
+        id: reboot-check
+        if: steps.update-check.outputs.REBOOT_REQUIRED == 'true' || github.event.inputs.include_reboot == 'true'
+        run: |
+          echo "🔄 System reboot is required or requested..."
+
+          if [ "${{ github.event.inputs.include_reboot }}" = "true" ]; then
+            echo "🔄 Performing automatic reboot..."
+            
+            # Create a background job to reboot after a delay
+            ssh -i ~/.ssh/oracle_key ${{ env.SSH_OPTS }} ubuntu@${{ secrets.ORACLE_HOST }} "
+              echo '⚠️ Scheduling reboot in 60 seconds...'
+              echo '🔄 System will be back online in approximately 2-3 minutes'
+              sudo shutdown -r +1 'Automated system reboot for updates' &
+            " || true
+            
+            echo "reboot_initiated=true" >> $GITHUB_OUTPUT
+            
+            # Wait for the system to go down
+            echo "⏳ Waiting for system shutdown..."
+            sleep 90
+            
+          else
+            echo "⚠️ Reboot required but not requested. Manual reboot needed."
+            echo "reboot_required=true" >> $GITHUB_OUTPUT
+          fi
+
+      - name: 🏥 Wait for System Recovery
+        if: steps.reboot-check.outputs.reboot_initiated == 'true'
+        run: |
+          echo "🏥 Waiting for system to come back online..."
+
+          # Wait up to 5 minutes for system to recover
+          for i in {1..30}; do
+            echo "Attempt $i/30: Checking if system is back online..."
+            
+            if ssh -i ~/.ssh/oracle_key ${{ env.SSH_OPTS }} -o ConnectTimeout=10 ubuntu@${{ secrets.ORACLE_HOST }} "echo 'System is back online'" 2>/dev/null; then
+              echo "✅ System recovered successfully after $(($i * 10)) seconds"
+              break
+            fi
+            
+            if [ $i -eq 30 ]; then
+              echo "❌ System did not recover within 5 minutes"
+              exit 1
+            fi
+            
+            sleep 10
+          done
+
+      - name: 🩺 Post-Update Health Check
+        id: health-check
+        run: |
+          echo "🩺 Running post-update health checks..."
+
+          HEALTH_STATUS=$(ssh -i ~/.ssh/oracle_key ${{ env.SSH_OPTS }} ubuntu@${{ secrets.ORACLE_HOST }} "
+            echo 'UPTIME_NEW='$(uptime -p)
+            echo 'LOAD_NEW='$(uptime | awk -F'load average:' '{print \$2}' | awk '{print \$1}' | sed 's/,//')
+            echo 'MEMORY_NEW='$(free | grep Mem | awk '{printf \"%.1f\", \$3/\$2 * 100.0}')
+            echo 'DISK_NEW='$(df -h / | tail -1 | awk '{print \$5}' | sed 's/%//')
+            echo 'REBOOT_STILL_REQUIRED='$([ -f /var/run/reboot-required ] && echo 'true' || echo 'false')
+            
+            # Check critical services
+            echo 'DOCKER_STATUS='$(systemctl is-active docker || echo 'inactive')
+            
+            # Check if Zitadel is running (if docker-compose exists)
+            if [ -f ~/zitadel/docker-compose.yml ]; then
+              cd ~/zitadel
+              ZITADEL_STATUS=\$(docker-compose ps --services --filter 'status=running' | wc -l)
+              echo 'ZITADEL_RUNNING='\$ZITADEL_STATUS
+            else
+              echo 'ZITADEL_RUNNING=0'
+            fi
+            
+            # Final update check
+            REMAINING_UPDATES=\$(apt list --upgradable 2>/dev/null | grep -v WARNING | tail -n +2 | wc -l)
+            echo 'REMAINING_UPDATES='\$REMAINING_UPDATES
+          ")
+
+          echo "$HEALTH_STATUS"
+          echo "$HEALTH_STATUS" | while IFS='=' read -r key value; do
+            echo "$key=$value" >> $GITHUB_OUTPUT
+          done
+
+      - name: 📋 Generate Update Report
+        run: |
+          echo "📋 Generating system update report..."
+
+          cat > system-update-report.md << EOF
+          # 🐧 System Update Report
+
+          **Date:** $(date -Iseconds)
+          **Server:** ${{ steps.system-check.outputs.hostname }}
+          **Update Type:** ${{ github.event.inputs.update_type || 'security' }}
+
+          ## System Status
+
+          ### Before Updates
+          - **Uptime:** ${{ steps.system-check.outputs.uptime }}
+          - **Load:** ${{ steps.system-check.outputs.load }}
+          - **Memory Usage:** ${{ steps.system-check.outputs.memory }}%
+          - **Disk Usage:** ${{ steps.system-check.outputs.disk }}%
+
+          ### After Updates  
+          - **Uptime:** ${{ steps.health-check.outputs.uptime_new }}
+          - **Load:** ${{ steps.health-check.outputs.load_new }}
+          - **Memory Usage:** ${{ steps.health-check.outputs.memory_new }}%
+          - **Disk Usage:** ${{ steps.health-check.outputs.disk_new }}%
+
+          ## Updates Applied
+          - **Security Updates:** ${{ steps.update-check.outputs.SECURITY_COUNT }}
+          - **Total Updates:** ${{ steps.update-check.outputs.TOTAL_COUNT }}
+          - **Kernel Updates:** ${{ steps.update-check.outputs.KERNEL_COUNT }}
+          - **Remaining Updates:** ${{ steps.health-check.outputs.remaining_updates }}
+
+          ## System Actions
+          - **Reboot Required Initially:** ${{ steps.update-check.outputs.reboot_required }}
+          - **Reboot Performed:** ${{ steps.reboot-check.outputs.reboot_initiated || 'false' }}
+          - **Reboot Still Required:** ${{ steps.health-check.outputs.reboot_still_required }}
+
+          ## Service Status
+          - **Docker:** ${{ steps.health-check.outputs.docker_status }}
+          - **Zitadel Services:** ${{ steps.health-check.outputs.zitadel_running }} running
+
+          ## Available Updates Applied
+          \`\`\`
+          ${{ steps.update-check.outputs.available_updates }}
+          \`\`\`
+
+          ---
+          🤖 *Automated by System Updates workflow*
+          🚀 *Generated with [Claude Code](https://claude.ai/code)*
+          EOF
+
+          cat system-update-report.md
+
+      - name: 📤 Upload Update Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: system-update-report-${{ github.run_number }}
+          path: system-update-report.md
+          retention-days: 90
+
+      - name: ⚠️ Create Issue for Manual Reboot
+        if: steps.health-check.outputs.reboot_still_required == 'true' && steps.reboot-check.outputs.reboot_initiated != 'true'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const title = '🔄 Manual Reboot Required - System Updates Applied';
+            const body = `## System Reboot Required
+
+            System updates have been applied successfully, but a **manual reboot is required** to complete the process.
+
+            ### Current Status
+            - ✅ **${{ steps.update-check.outputs.TOTAL_COUNT }} updates applied**
+            - ⚠️ **Reboot required to activate changes**
+            - 📊 **Services Status:** Docker: ${{ steps.health-check.outputs.docker_status }}, Zitadel: ${{ steps.health-check.outputs.zitadel_running }} services
+
+            ### Manual Reboot Steps
+            1. SSH to server: \`ssh -i ~/.ssh/oracle_key_correct ubuntu@${{ secrets.ORACLE_HOST }}\`
+            2. Check running processes: \`sudo fuser -v /var/lib/dpkg/lock-frontend\`
+            3. Reboot when safe: \`sudo reboot\`
+            4. Wait 2-3 minutes for services to restart
+            5. Verify: \`systemctl is-active docker\` and check Zitadel status
+
+            ### Automation Options
+            - **Next time:** Enable automatic reboot by setting \`include_reboot: true\` when running the workflow
+            - **Schedule:** This runs weekly on Sundays at 3 AM UTC
+
+            ---
+            📊 **Full report:** Check workflow artifacts for detailed update report
+            🤖 **Auto-generated** by System Updates workflow
+            `;
+
+            github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: title,
+              body: body,
+              labels: ['maintenance', 'system-updates', 'reboot-required']
+            });
+
+      - name: 🎉 Success Summary
+        if: success()
+        run: |
+          echo "🎉 System Update Summary"
+          echo "======================="
+          echo "✅ Security updates: ${{ steps.update-check.outputs.SECURITY_COUNT }}"
+          echo "✅ Total updates: ${{ steps.update-check.outputs.TOTAL_COUNT }}"
+          echo "✅ Docker status: ${{ steps.health-check.outputs.docker_status }}"
+          echo "✅ Zitadel services: ${{ steps.health-check.outputs.zitadel_running }}"
+          echo "✅ Remaining updates: ${{ steps.health-check.outputs.remaining_updates }}"
+
+          if [ "${{ steps.health-check.outputs.reboot_still_required }}" = "true" ]; then
+            echo "⚠️ Manual reboot required - issue created"
+          else
+            echo "✅ No reboot required"
+          fi
+
+          echo ""
+          echo "🤖 System updates completed successfully!"
+
+      - name: 🧹 Cleanup
+        if: always()
+        run: |
+          rm -f ~/.ssh/oracle_key
