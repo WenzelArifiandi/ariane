@@ -13,12 +13,20 @@ function getOrigin(headers: Headers): string {
 
 export const GET: APIRoute = async ({ request }) => {
   const origin = getOrigin(request.headers);
+  // Auth0 (legacy)
   const AUTH0_DOMAIN =
     process.env.PUBLIC_AUTH0_DOMAIN ||
     (import.meta as any).env?.PUBLIC_AUTH0_DOMAIN;
   const AUTH0_CLIENT_ID =
     process.env.PUBLIC_AUTH0_CLIENT_ID ||
     (import.meta as any).env?.PUBLIC_AUTH0_CLIENT_ID;
+  // Generic OIDC (e.g., Zitadel) end-session support
+  const OIDC_END_SESSION =
+    process.env.PUBLIC_OIDC_END_SESSION_ENDPOINT ||
+    (import.meta as any).env?.PUBLIC_OIDC_END_SESSION_ENDPOINT;
+  const OIDC_CLIENT_ID =
+    process.env.PUBLIC_OIDC_CLIENT_ID ||
+    (import.meta as any).env?.PUBLIC_OIDC_CLIENT_ID;
   const host = new URL(origin).host;
   const isLocal = host.includes("127.0.0.1") || host.includes("localhost");
   // We'll return to site root, letting Access trigger the correct login flow
@@ -34,6 +42,20 @@ export const GET: APIRoute = async ({ request }) => {
     return new Response(null, {
       status: 302,
       headers: { Location: auth0Logout.toString() },
+    });
+  }
+
+  // If generic OIDC end-session is configured (e.g., Zitadel), prefer that
+  if (!isLocal && OIDC_END_SESSION) {
+    const cfLogout = new URL("/cdn-cgi/access/logout", origin);
+    cfLogout.searchParams.set("returnTo", new URL("/", origin).toString());
+    const endSession = new URL(OIDC_END_SESSION);
+    // RP-initiated logout: at minimum supply post_logout_redirect_uri
+    endSession.searchParams.set("post_logout_redirect_uri", cfLogout.toString());
+    if (OIDC_CLIENT_ID) endSession.searchParams.set("client_id", OIDC_CLIENT_ID);
+    return new Response(null, {
+      status: 302,
+      headers: { Location: endSession.toString() },
     });
   }
 

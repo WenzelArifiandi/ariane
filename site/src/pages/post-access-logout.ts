@@ -19,6 +19,12 @@ export const GET: APIRoute = async ({ request }) => {
   const AUTH0_CLIENT_ID =
     process.env.PUBLIC_AUTH0_CLIENT_ID ||
     (import.meta as any).env?.PUBLIC_AUTH0_CLIENT_ID;
+  const OIDC_END_SESSION =
+    process.env.PUBLIC_OIDC_END_SESSION_ENDPOINT ||
+    (import.meta as any).env?.PUBLIC_OIDC_END_SESSION_ENDPOINT;
+  const OIDC_CLIENT_ID =
+    process.env.PUBLIC_OIDC_CLIENT_ID ||
+    (import.meta as any).env?.PUBLIC_OIDC_CLIENT_ID;
 
   if (AUTH0_DOMAIN && AUTH0_CLIENT_ID) {
     const auth0Logout = new URL(`https://${AUTH0_DOMAIN}/v2/logout`);
@@ -27,6 +33,16 @@ export const GET: APIRoute = async ({ request }) => {
     return new Response(null, {
       status: 302,
       headers: { Location: auth0Logout.toString() },
+    });
+  }
+
+  if (OIDC_END_SESSION) {
+    const endSession = new URL(OIDC_END_SESSION);
+    endSession.searchParams.set("post_logout_redirect_uri", new URL("/", origin).toString());
+    if (OIDC_CLIENT_ID) endSession.searchParams.set("client_id", OIDC_CLIENT_ID);
+    return new Response(null, {
+      status: 302,
+      headers: { Location: endSession.toString() },
     });
   }
 

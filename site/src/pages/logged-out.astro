@@ -1,6 +1,8 @@
 ---
 const AUTH0_DOMAIN = (import.meta as any).env?.PUBLIC_AUTH0_DOMAIN || process.env.PUBLIC_AUTH0_DOMAIN;
 const AUTH0_CLIENT_ID = (import.meta as any).env?.PUBLIC_AUTH0_CLIENT_ID || process.env.PUBLIC_AUTH0_CLIENT_ID;
+const OIDC_END_SESSION = (import.meta as any).env?.PUBLIC_OIDC_END_SESSION_ENDPOINT || process.env.PUBLIC_OIDC_END_SESSION_ENDPOINT;
+const OIDC_CLIENT_ID = (import.meta as any).env?.PUBLIC_OIDC_CLIENT_ID || process.env.PUBLIC_OIDC_CLIENT_ID;
 const here = (Astro as any).url as URL | undefined;
 const next = here?.searchParams.get('next') || '/';
 // Build absolute origin for return links
@@ -10,13 +12,18 @@ const proto = headers.get('x-forwarded-proto') || (host.includes('127.0.0.1') ||
 const origin = `${proto}://${host}`;
 const homeHref = new URL('/', origin).toString();
 // Optional Auth0 logout link (clears IdP SSO to prevent silent re-login)
-let auth0LogoutHref: string | undefined;
+let idpLogoutHref: string | undefined;
 if (AUTH0_DOMAIN && AUTH0_CLIENT_ID) {
   const u = new URL(`https://${AUTH0_DOMAIN}/v2/logout`);
   u.searchParams.set('client_id', AUTH0_CLIENT_ID);
   // After IdP logout, land back on this logged-out page
   u.searchParams.set('returnTo', new URL('/logged-out', origin).toString());
-  auth0LogoutHref = u.toString();
+  idpLogoutHref = u.toString();
+} else if (OIDC_END_SESSION) {
+  const u = new URL(OIDC_END_SESSION);
+  u.searchParams.set('post_logout_redirect_uri', new URL('/logged-out', origin).toString());
+  if (OIDC_CLIENT_ID) u.searchParams.set('client_id', OIDC_CLIENT_ID);
+  idpLogoutHref = u.toString();
 }
 ---
 
@@ -34,8 +41,8 @@ if (AUTH0_DOMAIN && AUTH0_CLIENT_ID) {
       <p style="margin: 0 0 16px; opacity: .8;">Your Cloudflare Access session has ended.</p>
       <div style="display:flex; gap:.5rem; justify-content:center; flex-wrap:wrap; margin-top: 16px;">
         <a href={homeHref} style="display:inline-flex; align-items:center; gap:.5rem; background:#2563eb; color:#fff; padding:.7rem 1rem; border-radius:10px; text-decoration:none; font-weight:600; white-space:nowrap;">Go to homepage</a>
-        {auth0LogoutHref && (
-          <a href={auth0LogoutHref} style="display:inline-flex; align-items:center; gap:.5rem; background:#111827; color:#fff; padding:.7rem 1rem; border-radius:10px; text-decoration:none; font-weight:600; white-space:nowrap;">Sign out of Auth0 too</a>
+        {idpLogoutHref && (
+          <a href={idpLogoutHref} style="display:inline-flex; align-items:center; gap:.5rem; background:#111827; color:#fff; padding:.7rem 1rem; border-radius:10px; text-decoration:none; font-weight:600; white-space:nowrap;">Sign out of Identity Provider</a>
         )}
       </div>
       <p style="margin-top:12px; font-size:.9rem; opacity:.7;">Next page: <code>{next}</code></p>
