@@ -2,7 +2,7 @@
 
 This directory contains the configuration for the Zitadel authentication server used by the Ariane project.
 
-**🎯 Oracle State-Aware Deployment Test** - Testing RSA format SSH key + Oracle deployment at 2025-09-16 17:00 UTC
+**🎯 Fixed PostgreSQL Configuration** - Resolved profile update issues and database projections at 2025-09-16 17:30 UTC
 
 ## Overview
 
