@@ -1,0 +1,130 @@
+name: "🏥 Zitadel Health Monitor"
+
+on:
+  schedule:
+    # Run every 15 minutes
+    - cron: '*/15 * * * *'
+  workflow_dispatch:
+    inputs:
+      force_recovery:
+        description: 'Force service recovery even if services appear healthy'
+        required: false
+        type: boolean
+        default: false
+
+jobs:
+  health-check:
+    name: "🔍 Check Zitadel Health"
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: "📥 Checkout Code"
+        uses: actions/checkout@v4
+
+      - name: "🔧 Setup SSH Key"
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.ORACLE_SSH_KEY }}" > ~/.ssh/oracle_key
+          chmod 600 ~/.ssh/oracle_key
+          ssh-keyscan -H auth.wenzelarifiandi.com >> ~/.ssh/known_hosts
+
+      - name: "🏥 Health Check & Recovery"
+        run: |
+          echo "🔍 Starting health check..."
+
+          # Test external accessibility
+          echo "Testing external accessibility..."
+          if ! curl -f -s --max-time 10 https://auth.wenzelarifiandi.com/debug/healthz; then
+            echo "❌ External health check failed"
+            EXTERNAL_HEALTHY=false
+          else
+            echo "✅ External health check passed"
+            EXTERNAL_HEALTHY=true
+          fi
+
+          # Test SSH connectivity
+          echo "Testing SSH connectivity..."
+          if ! ssh -i ~/.ssh/oracle_key -o ConnectTimeout=10 ubuntu@auth.wenzelarifiandi.com 'echo "SSH OK"'; then
+            echo "❌ SSH connectivity failed"
+            exit 1
+          fi
+          echo "✅ SSH connectivity passed"
+
+          # Check service status on server
+          echo "Checking service status on server..."
+          ssh -i ~/.ssh/oracle_key ubuntu@auth.wenzelarifiandi.com '
+            cd zitadel
+
+            echo "🔍 Current service status:"
+            docker-compose ps
+
+            # Count healthy services
+            RUNNING_SERVICES=$(docker-compose ps --services --filter status=running | wc -l)
+            TOTAL_SERVICES=$(docker-compose ps --services | wc -l)
+
+            echo "Running services: $RUNNING_SERVICES/$TOTAL_SERVICES"
+
+            if [ "$RUNNING_SERVICES" -ne "$TOTAL_SERVICES" ] || [ "${{ inputs.force_recovery }}" = "true" ]; then
+              echo "🚨 Service recovery needed"
+
+              # Stop all services
+              echo "🛑 Stopping all services..."
+              docker-compose down
+
+              # Wait a moment
+              sleep 10
+
+              # Start services in order
+              echo "🚀 Starting database..."
+              docker-compose up -d db
+
+              # Wait for database to be healthy
+              echo "⏳ Waiting for database..."
+              for i in {1..30}; do
+                if docker-compose exec -T db pg_isready -U postgres -d zitadel; then
+                  echo "✅ Database is ready"
+                  break
+                fi
+                echo "Waiting for database... ($i/30)"
+                sleep 5
+              done
+
+              # Start all services
+              echo "🚀 Starting all services..."
+              docker-compose up -d
+
+              # Wait for services to stabilize
+              echo "⏳ Waiting for services to stabilize..."
+              sleep 30
+
+              echo "🔍 Final service status:"
+              docker-compose ps
+            else
+              echo "✅ All services are running normally"
+            fi
+          '
+
+          # Final external health check
+          echo "⏳ Waiting for final health check..."
+          sleep 15
+
+          for i in {1..12}; do
+            if curl -f -s --max-time 10 https://auth.wenzelarifiandi.com/debug/healthz; then
+              echo "✅ Final health check passed"
+              exit 0
+            fi
+            echo "Waiting for health check... ($i/12)"
+            sleep 5
+          done
+
+          echo "❌ Final health check failed"
+          exit 1
+
+      - name: "📊 Report Status"
+        if: always()
+        run: |
+          if [ $? -eq 0 ]; then
+            echo "🎉 Health check completed successfully"
+          else
+            echo "❌ Health check failed - manual intervention may be required"
+          fi
