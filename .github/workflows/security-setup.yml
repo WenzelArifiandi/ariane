@@ -1,6 +1,10 @@
 name: 🔐 Security Setup & Configuration
 
 on:
+  push:
+    branches: [ main ]
+    paths:
+      - '.github/workflows/security-setup.yml'
   workflow_dispatch:
     inputs:
       enable_features:
@@ -17,7 +21,6 @@ permissions:
   security-events: write
   actions: write
   issues: write
-  administration: write
 
 jobs:
   security-configuration:
