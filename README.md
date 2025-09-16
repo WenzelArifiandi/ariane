@@ -14,6 +14,7 @@
 [![🔍 Security Scanning & Analysis](https://github.com/WenzelArifiandi/ariane/actions/workflows/security-scanning.yml/badge.svg)](https://github.com/WenzelArifiandi/ariane/actions/workflows/security-scanning.yml)
 [![🛡️ Auto Security Fixes](https://github.com/WenzelArifiandi/ariane/actions/workflows/auto-security-fixes.yml/badge.svg)](https://github.com/WenzelArifiandi/ariane/actions/workflows/auto-security-fixes.yml)
 [![🔐 Security Setup & Configuration](https://github.com/WenzelArifiandi/ariane/actions/workflows/security-setup.yml/badge.svg)](https://github.com/WenzelArifiandi/ariane/actions/workflows/security-setup.yml)
+[![📊 Update Status Badges](https://github.com/WenzelArifiandi/ariane/actions/workflows/update-status-badges.yml/badge.svg)](https://github.com/WenzelArifiandi/ariane/actions/workflows/update-status-badges.yml)
 
 ### 📈 Service Health
 [![Zitadel Status](https://img.shields.io/website?url=https%3A%2F%2Fauth.wenzelarifiandi.com%2F.well-known%2Fopenid-configuration&label=Zitadel&style=flat-square)](https://auth.wenzelarifiandi.com/.well-known/openid-configuration)
@@ -21,6 +22,7 @@
 
 ### 🔒 Security Metrics
 [![Known Vulnerabilities](https://snyk.io/test/github/WenzelArifiandi/ariane/badge.svg)](https://snyk.io/test/github/WenzelArifiandi/ariane)
+(Enable Snyk in Actions by adding repo secret `SNYK_TOKEN` if you want CI-integrated scans.)
 [![Dependabot Status](https://img.shields.io/badge/Dependabot-enabled-brightgreen?style=flat-square&logo=dependabot)](https://github.com/WenzelArifiandi/ariane/security/dependabot)
 [![Security Policy](https://img.shields.io/badge/Security-Policy-blue?style=flat-square&logo=shield)](.github/SECURITY_AUTOMATION.md)
 

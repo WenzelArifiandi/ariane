@@ -2,19 +2,19 @@ name: 🔐 Security Setup & Configuration
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
     paths:
-      - '.github/workflows/security-setup.yml'
+      - ".github/workflows/security-setup.yml"
   workflow_dispatch:
     inputs:
       enable_features:
-        description: 'Enable GitHub security features'
+        description: "Enable GitHub security features"
         required: true
         default: true
         type: boolean
   schedule:
     # Run monthly to ensure security features stay enabled
-    - cron: '0 6 1 * *'
+    - cron: "0 6 1 * *"
 
 permissions:
   contents: read
@@ -28,131 +28,131 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: 📥 Checkout Code
-      uses: actions/checkout@v4
+      - name: 📥 Checkout Code
+        uses: actions/checkout@v4
 
-    - name: 🔐 Configure Security Features
-      uses: actions/github-script@v7
-      with:
-        github-token: ${{ secrets.GITHUB_TOKEN }}
-        script: |
-          const owner = context.repo.owner;
-          const repo = context.repo.repo;
+      - name: 🔐 Configure Security Features
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
 
-          console.log('🔧 Configuring security features for', `${owner}/${repo}`);
+            console.log('🔧 Configuring security features for', `${owner}/${repo}`);
 
-          try {
-            // Enable vulnerability alerts
-            console.log('📢 Enabling vulnerability alerts...');
-            await github.rest.repos.enableVulnerabilityAlerts({
-              owner,
-              repo
-            });
-            console.log('✅ Vulnerability alerts enabled');
+            try {
+              // Enable vulnerability alerts
+              console.log('📢 Enabling vulnerability alerts...');
+              await github.rest.repos.enableVulnerabilityAlerts({
+                owner,
+                repo
+              });
+              console.log('✅ Vulnerability alerts enabled');
 
-            // Enable automated security fixes (Dependabot security updates)
-            console.log('🤖 Enabling automated security fixes...');
-            await github.rest.repos.enableAutomatedSecurityFixes({
-              owner,
-              repo
-            });
-            console.log('✅ Automated security fixes enabled');
+              // Enable automated security fixes (Dependabot security updates)
+              console.log('🤖 Enabling automated security fixes...');
+              await github.rest.repos.enableAutomatedSecurityFixes({
+                owner,
+                repo
+              });
+              console.log('✅ Automated security fixes enabled');
 
-            // Get current repository settings
-            console.log('🔍 Checking current security settings...');
-            const repoData = await github.rest.repos.get({
-              owner,
-              repo
-            });
+              // Get current repository settings
+              console.log('🔍 Checking current security settings...');
+              const repoData = await github.rest.repos.get({
+                owner,
+                repo
+              });
 
-            // Enable private vulnerability reporting if not already enabled
-            console.log('🔒 Configuring private vulnerability reporting...');
-            await github.rest.repos.update({
-              owner,
-              repo,
-              security_and_analysis: {
-                secret_scanning: {
-                  status: 'enabled'
-                },
-                secret_scanning_push_protection: {
-                  status: 'enabled'
+              // Enable private vulnerability reporting if not already enabled
+              console.log('🔒 Configuring private vulnerability reporting...');
+              await github.rest.repos.update({
+                owner,
+                repo,
+                security_and_analysis: {
+                  secret_scanning: {
+                    status: 'enabled'
+                  },
+                  secret_scanning_push_protection: {
+                    status: 'enabled'
+                  }
                 }
+              });
+              console.log('✅ Secret scanning and push protection enabled');
+
+            } catch (error) {
+              console.error('❌ Error configuring security features:', error.message);
+              // Don't fail the workflow for permission issues
+              if (!error.message.includes('403')) {
+                throw error;
               }
-            });
-            console.log('✅ Secret scanning and push protection enabled');
-
-          } catch (error) {
-            console.error('❌ Error configuring security features:', error.message);
-            // Don't fail the workflow for permission issues
-            if (!error.message.includes('403')) {
-              throw error;
             }
-          }
 
-    - name: 📋 Generate Security Configuration Report
-      run: |
-        cat > security-config-report.md << 'EOF'
-        # 🛡️ Security Configuration Report
+      - name: 📋 Generate Security Configuration Report
+        run: |
+          cat > security-config-report.md << 'EOF'
+          # 🛡️ Security Configuration Report
 
-        **Date:** $(date -Iseconds)
-        **Repository:** ${{ github.repository }}
+          **Date:** $(date -Iseconds)
+          **Repository:** ${{ github.repository }}
 
-        ## Enabled Security Features
+          ## Enabled Security Features
 
-        ### ✅ Dependabot
-        - **Vulnerability Alerts:** Enabled
-        - **Security Updates:** Enabled
-        - **Version Updates:** Configured via dependabot.yml
-        - **Auto-merge:** Configured for patch/minor/security updates
+          ### ✅ Dependabot
+          - **Vulnerability Alerts:** Enabled
+          - **Security Updates:** Enabled
+          - **Version Updates:** Configured via dependabot.yml
+          - **Auto-merge:** Configured for patch/minor/security updates
 
-        ### ✅ Code Scanning
-        - **CodeQL:** Enabled (JavaScript/TypeScript)
-        - **Trivy:** Enabled (Dependencies & Docker)
-        - **Custom Workflows:** Security scanning on push/PR
+          ### ✅ Code Scanning
+          - **CodeQL:** Enabled (JavaScript/TypeScript)
+          - **Trivy:** Enabled (Dependencies & Docker)
+          - **Custom Workflows:** Security scanning on push/PR
 
-        ### ✅ Secret Scanning
-        - **Secret Detection:** Enabled
-        - **Push Protection:** Enabled
-        - **Custom Patterns:** TruffleHog & GitLeaks
+          ### ✅ Secret Scanning
+          - **Secret Detection:** Enabled
+          - **Push Protection:** Enabled
+          - **Custom Patterns:** TruffleHog & GitLeaks
 
-        ### ✅ Automated Workflows
-        - **Daily Vulnerability Scans:** Enabled
-        - **Weekly Security Analysis:** Enabled
-        - **Monthly Security Review:** Enabled
-        - **Auto-fix Deployment:** Enabled
+          ### ✅ Automated Workflows
+          - **Daily Vulnerability Scans:** Enabled
+          - **Weekly Security Analysis:** Enabled
+          - **Monthly Security Review:** Enabled
+          - **Auto-fix Deployment:** Enabled
 
-        ## Security Policies
+          ## Security Policies
 
-        ### Branch Protection
-        - Main branch protection recommended
-        - Require status checks before merging
-        - Require up-to-date branches
+          ### Branch Protection
+          - Main branch protection recommended
+          - Require status checks before merging
+          - Require up-to-date branches
 
-        ### Access Control
-        - Review and limit repository access
-        - Enable 2FA for all contributors
-        - Use least-privilege access
+          ### Access Control
+          - Review and limit repository access
+          - Enable 2FA for all contributors
+          - Use least-privilege access
 
-        ## Monitoring
+          ## Monitoring
 
-        The following will be monitored automatically:
-        - New vulnerability disclosures
-        - Dependency updates
-        - Security scan results
-        - Secret detection alerts
+          The following will be monitored automatically:
+          - New vulnerability disclosures
+          - Dependency updates
+          - Security scan results
+          - Secret detection alerts
 
-        ---
-        🤖 *This report was generated automatically*
-        EOF
+          ---
+          🤖 *This report was generated automatically*
+          EOF
 
-        cat security-config-report.md
+          cat security-config-report.md
 
-    - name: 📊 Upload Security Configuration Report
-      uses: actions/upload-artifact@v4
-      with:
-        name: security-config-report-${{ github.run_number }}
-        path: security-config-report.md
-        retention-days: 90
+      - name: 📊 Upload Security Configuration Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: security-config-report-${{ github.run_number }}
+          path: security-config-report.md
+          retention-days: 90
 
   create-security-issue:
     name: 📝 Create Security Tracking Issue
@@ -161,61 +161,61 @@ jobs:
     if: github.event_name == 'workflow_dispatch'
 
     steps:
-    - name: 📝 Create Security Setup Issue
-      uses: actions/github-script@v7
-      with:
-        github-token: ${{ secrets.GITHUB_TOKEN }}
-        script: |
-          const title = '🛡️ Security Configuration Complete';
-          const body = `# Security Automation Setup Complete
+      - name: 📝 Create Security Setup Issue
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const title = '🛡️ Security Configuration Complete';
+            const body = `# Security Automation Setup Complete
 
-          The automated security system has been configured for this repository.
+            The automated security system has been configured for this repository.
 
-          ## ✅ What's Enabled
+            ## ✅ What's Enabled
 
-          ### Automated Dependency Management
-          - **Dependabot** for daily dependency updates
-          - **Auto-merge** for patch/minor/security updates
-          - **Grouped updates** for related packages
+            ### Automated Dependency Management
+            - **Dependabot** for daily dependency updates
+            - **Auto-merge** for patch/minor/security updates
+            - **Grouped updates** for related packages
 
-          ### Security Scanning
-          - **CodeQL** analysis for code vulnerabilities
-          - **Trivy** scanning for dependencies and Docker
-          - **Secret detection** with push protection
-          - **Weekly security reports**
+            ### Security Scanning
+            - **CodeQL** analysis for code vulnerabilities
+            - **Trivy** scanning for dependencies and Docker
+            - **Secret detection** with push protection
+            - **Weekly security reports**
 
-          ### Automated Fixes
-          - **Daily vulnerability fixes** applied automatically
-          - **Security patches** auto-committed
-          - **Build verification** after fixes
+            ### Automated Fixes
+            - **Daily vulnerability fixes** applied automatically
+            - **Security patches** auto-committed
+            - **Build verification** after fixes
 
-          ## 🔍 Monitoring
+            ## 🔍 Monitoring
 
-          Check these locations for security information:
-          - [Security tab](/${context.repo.owner}/${context.repo.repo}/security) - Vulnerability alerts
-          - [Actions tab](/${context.repo.owner}/${context.repo.repo}/actions) - Automated scans
-          - [Pull requests](/${context.repo.owner}/${context.repo.repo}/pulls) - Dependabot updates
+            Check these locations for security information:
+            - [Security tab](/${context.repo.owner}/${context.repo.repo}/security) - Vulnerability alerts
+            - [Actions tab](/${context.repo.owner}/${context.repo.repo}/actions) - Automated scans
+            - [Pull requests](/${context.repo.owner}/${context.repo.repo}/pulls) - Dependabot updates
 
-          ## 📋 Next Steps
+            ## 📋 Next Steps
 
-          - [ ] Review and approve pending Dependabot PRs
-          - [ ] Check Security tab for any existing alerts
-          - [ ] Enable branch protection rules (recommended)
-          - [ ] Set up notifications for security alerts
+            - [ ] Review and approve pending Dependabot PRs
+            - [ ] Check Security tab for any existing alerts
+            - [ ] Enable branch protection rules (recommended)
+            - [ ] Set up notifications for security alerts
 
-          ---
-          🤖 *This issue was created automatically by the security setup workflow*
-          `;
+            ---
+            🤖 *This issue was created automatically by the security setup workflow*
+            `;
 
-          await github.rest.issues.create({
-            owner: context.repo.owner,
-            repo: context.repo.repo,
-            title: title,
-            body: body,
-            labels: ['security', 'automation', 'setup']
-          });
+            await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: title,
+              body: body,
+              labels: ['security', 'automation', 'setup']
+            });
 
-          console.log('📝 Security tracking issue created');
+            console.log('📝 Security tracking issue created');
 
   validate-security-setup:
     name: ✅ Validate Security Setup
@@ -223,66 +223,66 @@ jobs:
     needs: security-configuration
 
     steps:
-    - name: 📥 Checkout Code
-      uses: actions/checkout@v4
+      - name: 📥 Checkout Code
+        uses: actions/checkout@v4
 
-    - name: 🔍 Validate Workflows
-      run: |
-        echo "🔍 Validating security workflow files..."
+      - name: 🔍 Validate Workflows
+        run: |
+          echo "🔍 Validating security workflow files..."
 
-        # Check required workflow files exist
-        required_files=(
-          ".github/workflows/auto-security-fixes.yml"
-          ".github/workflows/security-scanning.yml"
-          ".github/workflows/security-setup.yml"
-          ".github/dependabot.yml"
-        )
+          # Check required workflow files exist
+          required_files=(
+            ".github/workflows/auto-security-fixes.yml"
+            ".github/workflows/security-scanning.yml"
+            ".github/workflows/security-setup.yml"
+            ".github/dependabot.yml"
+          )
 
-        for file in "${required_files[@]}"; do
-          if [ -f "$file" ]; then
-            echo "✅ $file exists"
-          else
-            echo "❌ $file missing"
-            exit 1
-          fi
-        done
-
-    - name: 🧪 Test Workflow Syntax
-      run: |
-        echo "🧪 Testing workflow syntax..."
-
-        # Basic YAML syntax validation using yq (available in GitHub Actions)
-        if command -v yq >/dev/null 2>&1; then
-          for workflow in .github/workflows/*.yml; do
-            echo "Checking $workflow..."
-            if yq eval . "$workflow" >/dev/null 2>&1; then
-              echo "✅ $workflow syntax valid"
+          for file in "${required_files[@]}"; do
+            if [ -f "$file" ]; then
+              echo "✅ $file exists"
             else
-              echo "❌ Invalid YAML in $workflow"
+              echo "❌ $file missing"
               exit 1
             fi
           done
-        else
-          echo "ℹ️ YAML validation skipped (yq not available)"
-          for workflow in .github/workflows/*.yml; do
-            echo "✅ $workflow exists"
-          done
-        fi
 
-    - name: 📊 Security Setup Summary
-      run: |
-        echo "🎉 Security automation setup complete!"
-        echo ""
-        echo "📋 Summary of configured features:"
-        echo "  ✅ Automated dependency updates (Dependabot)"
-        echo "  ✅ Auto-merge for safe updates"
-        echo "  ✅ Daily vulnerability scanning"
-        echo "  ✅ CodeQL security analysis"
-        echo "  ✅ Secret detection with push protection"
-        echo "  ✅ Automated vulnerability fixes"
-        echo "  ✅ Security reporting and tracking"
-        echo ""
-        echo "🔍 Monitor security status at:"
-        echo "  - Repository Security tab"
-        echo "  - GitHub Actions for scan results"
-        echo "  - Dependabot PRs for updates"
+      - name: 🧪 Test Workflow Syntax
+        run: |
+          echo "🧪 Testing workflow syntax..."
+
+          # Basic YAML syntax validation using yq (available in GitHub Actions)
+          if command -v yq >/dev/null 2>&1; then
+            for workflow in .github/workflows/*.yml; do
+              echo "Checking $workflow..."
+              if yq eval . "$workflow" >/dev/null 2>&1; then
+                echo "✅ $workflow syntax valid"
+              else
+                echo "❌ Invalid YAML in $workflow"
+                exit 1
+              fi
+            done
+          else
+            echo "ℹ️ YAML validation skipped (yq not available)"
+            for workflow in .github/workflows/*.yml; do
+              echo "✅ $workflow exists"
+            done
+          fi
+
+      - name: 📊 Security Setup Summary
+        run: |
+          echo "🎉 Security automation setup complete!"
+          echo ""
+          echo "📋 Summary of configured features:"
+          echo "  ✅ Automated dependency updates (Dependabot)"
+          echo "  ✅ Auto-merge for safe updates"
+          echo "  ✅ Daily vulnerability scanning"
+          echo "  ✅ CodeQL security analysis"
+          echo "  ✅ Secret detection with push protection"
+          echo "  ✅ Automated vulnerability fixes"
+          echo "  ✅ Security reporting and tracking"
+          echo ""
+          echo "🔍 Monitor security status at:"
+          echo "  - Repository Security tab"
+          echo "  - GitHub Actions for scan results"
+          echo "  - Dependabot PRs for updates"
