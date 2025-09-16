@@ -3,7 +3,7 @@ name: 🚀 Deploy Zitadel to Oracle Cloud
 on:
   push:
     branches: [main]
-    paths: ['zitadel/**']
+    paths: ["zitadel/**"]
   workflow_dispatch:
 
 permissions:
@@ -21,218 +21,236 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: 📥 Checkout Code
-      uses: actions/checkout@v4
-      with:
-        fetch-depth: 2
+      - name: 📥 Checkout Code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
 
-    - name: 🔍 Detect Changes
-      id: changes
-      run: |
-        if git diff --name-only HEAD~1 HEAD | grep -q "^zitadel/"; then
-          echo "zitadel_changed=true" >> $GITHUB_OUTPUT
-          echo "📝 Zitadel configuration changes detected"
-        else
-          echo "zitadel_changed=false" >> $GITHUB_OUTPUT
-          echo "ℹ️ No Zitadel changes detected"
-        fi
+      - name: 🔍 Detect Changes
+        id: changes
+        run: |
+          if git diff --name-only HEAD~1 HEAD | grep -q "^zitadel/"; then
+            echo "zitadel_changed=true" >> $GITHUB_OUTPUT
+            echo "📝 Zitadel configuration changes detected"
+          else
+            echo "zitadel_changed=false" >> $GITHUB_OUTPUT
+            echo "ℹ️ No Zitadel changes detected"
+          fi
 
-    - name: 🔧 Setup SSH
-      if: steps.changes.outputs.zitadel_changed == 'true'
-      run: |
-        mkdir -p ~/.ssh
-        # Write SSH key with proper line endings
-        printf '%s\n' "${{ secrets.ORACLE_SSH_KEY }}" > ~/.ssh/oracle_key
-        chmod 600 ~/.ssh/oracle_key
+      - name: 🔧 Setup SSH
+        if: steps.changes.outputs.zitadel_changed == 'true'
+        run: |
+          mkdir -p ~/.ssh
+          # Write SSH key with proper line endings
+          printf '%s\n' "${{ secrets.ORACLE_SSH_KEY }}" > ~/.ssh/oracle_key
+          # Normalize CRLF to LF just in case the secret has Windows newlines
+          tr -d '\r' < ~/.ssh/oracle_key > ~/.ssh/oracle_key.tmp && mv ~/.ssh/oracle_key.tmp ~/.ssh/oracle_key
+          chmod 600 ~/.ssh/oracle_key
 
-        # Verify key format
-        echo "🔍 Verifying SSH key format..."
-        head -n1 ~/.ssh/oracle_key
-        tail -n1 ~/.ssh/oracle_key
+          # Verify key format
+          echo "🔍 Verifying SSH key format..."
+          head -n1 ~/.ssh/oracle_key
+          tail -n1 ~/.ssh/oracle_key
 
-        # Add known hosts
-        ssh-keyscan -H ${{ secrets.ORACLE_HOST }} >> ~/.ssh/known_hosts
+          # Add known hosts
+          ssh-keyscan -H ${{ secrets.ORACLE_HOST }} >> ~/.ssh/known_hosts
 
-        # Test SSH connection
-        echo "🔗 Testing SSH connection..."
-        if ! ssh -i ~/.ssh/oracle_key -o StrictHostKeyChecking=no -o ConnectTimeout=10 ubuntu@${{ secrets.ORACLE_HOST }} "echo 'SSH connection successful'"; then
-          echo "❌ SSH connection failed. Troubleshooting info:"
-          echo "🔍 Key file size: $(wc -c < ~/.ssh/oracle_key) bytes"
-          echo "🔍 Key permissions: $(stat -c '%a' ~/.ssh/oracle_key)"
-          echo "🔍 First line starts with: $(head -c 20 ~/.ssh/oracle_key)"
-          echo "🔍 Last line ends with: $(tail -c 20 ~/.ssh/oracle_key)"
+          # Test SSH connection
+          echo "🔗 Testing SSH connection..."
+          if ! ssh -i ~/.ssh/oracle_key -o StrictHostKeyChecking=no -o ConnectTimeout=10 ubuntu@${{ secrets.ORACLE_HOST }} "echo 'SSH connection successful'"; then
+            echo "❌ SSH connection failed. Troubleshooting info:"
+            echo "🔍 Key file size: $(wc -c < ~/.ssh/oracle_key) bytes"
+            echo "🔍 Key permissions: $(stat -c '%a' ~/.ssh/oracle_key)"
+            echo "🔍 First line starts with: $(head -c 20 ~/.ssh/oracle_key)"
+            echo "🔍 Last line ends with: $(tail -c 20 ~/.ssh/oracle_key)"
 
-          echo ""
-          echo "💡 Common fixes:"
-          echo "  1. Ensure ORACLE_SSH_KEY contains the complete private key"
-          echo "  2. Check key format (should start with -----BEGIN and end with -----END)"
-          echo "  3. Verify ORACLE_HOST IP is correct: ${{ secrets.ORACLE_HOST }}"
-          echo "  4. Ensure Oracle Cloud security rules allow SSH from GitHub Actions IPs"
+            echo ""
+            echo "💡 Common fixes:"
+            echo "  1. Ensure ORACLE_SSH_KEY contains the complete private key"
+            echo "  2. Check key format (should start with -----BEGIN and end with -----END)"
+            echo "  3. Verify ORACLE_HOST IP is correct: ${{ secrets.ORACLE_HOST }}"
+            echo "  4. Ensure Oracle Cloud security rules allow SSH from GitHub Actions IPs"
 
-          exit 1
-        fi
+            exit 1
+          fi
 
-    - name: 🏥 Health Check - Pre Deployment
-      if: steps.changes.outputs.zitadel_changed == 'true'
-      run: |
-        echo "🔍 Checking Zitadel health before deployment..."
-        response=$(curl -s -o /dev/null -w "%{http_code}" https://auth.wenzelarifiandi.com/.well-known/openid-configuration || echo "000")
-        if [ "$response" != "200" ]; then
-          echo "⚠️ Zitadel is not healthy (HTTP $response), but proceeding with deployment"
-        else
-          echo "✅ Zitadel is healthy (HTTP $response)"
-        fi
+      - name: 📁 Ensure Remote Deployment Directory
+        if: steps.changes.outputs.zitadel_changed == 'true'
+        run: |
+          ssh -i ~/.ssh/oracle_key -o StrictHostKeyChecking=no ubuntu@${{ secrets.ORACLE_HOST }} "
+            sudo mkdir -p $DEPLOYMENT_PATH && sudo chown -R ubuntu:ubuntu $DEPLOYMENT_PATH
+          "
 
-    - name: 💾 Create Backup
-      if: steps.changes.outputs.zitadel_changed == 'true'
-      run: |
-        echo "📦 Creating backup of current deployment..."
-        ssh -i ~/.ssh/oracle_key -o StrictHostKeyChecking=no ubuntu@${{ secrets.ORACLE_HOST }} "
-          # Create backup directory with timestamp
-          BACKUP_DIR=\"$BACKUP_PATH/backup-$(date +%Y%m%d-%H%M%S)\"
-          mkdir -p \"\$BACKUP_DIR\"
+      - name: 🏥 Health Check - Pre Deployment
+        if: steps.changes.outputs.zitadel_changed == 'true'
+        run: |
+          echo "🔍 Checking Zitadel health before deployment..."
+          response=$(curl -s -o /dev/null -w "%{http_code}" https://auth.wenzelarifiandi.com/.well-known/openid-configuration || echo "000")
+          if [ "$response" != "200" ]; then
+            echo "⚠️ Zitadel is not healthy (HTTP $response), but proceeding with deployment"
+          else
+            echo "✅ Zitadel is healthy (HTTP $response)"
+          fi
 
-          # Backup configuration files
-          cp -r $DEPLOYMENT_PATH/* \"\$BACKUP_DIR/\" 2>/dev/null || true
+      - name: 💾 Create Backup
+        if: steps.changes.outputs.zitadel_changed == 'true'
+        run: |
+          echo "📦 Creating backup of current deployment..."
+          ssh -i ~/.ssh/oracle_key -o StrictHostKeyChecking=no ubuntu@${{ secrets.ORACLE_HOST }} "
+            # Select docker compose command
+            if command -v docker-compose >/dev/null 2>&1; then DC='docker-compose'; else DC='docker compose'; fi
 
-          # Backup database
-          cd $DEPLOYMENT_PATH
-          docker-compose exec -T db pg_dump -U postgres zitadel > \"\$BACKUP_DIR/database.sql\" 2>/dev/null || true
+            # Create backup directory with timestamp
+            BACKUP_DIR=\"$BACKUP_PATH/backup-$(date +%Y%m%d-%H%M%S)\"
+            mkdir -p \"\$BACKUP_DIR\"
 
-          # Keep only last 5 backups
-          ls -dt $BACKUP_PATH/backup-* | tail -n +6 | xargs rm -rf 2>/dev/null || true
+            # Backup configuration files
+            cp -r $DEPLOYMENT_PATH/* \"\$BACKUP_DIR/\" 2>/dev/null || true
 
-          echo \"✅ Backup created at \$BACKUP_DIR\"
-        "
+            # Backup database
+            cd $DEPLOYMENT_PATH
+            $DC exec -T db pg_dump -U postgres zitadel > \"$BACKUP_DIR/database.sql\" 2>/dev/null || true
 
-    - name: 🚀 Deploy Configuration
-      if: steps.changes.outputs.zitadel_changed == 'true'
-      run: |
-        echo "🚀 Deploying new configuration..."
+            # Keep only last 5 backups
+            ls -dt $BACKUP_PATH/backup-* | tail -n +6 | xargs rm -rf 2>/dev/null || true
 
-        # Copy new configuration files
-        scp -i ~/.ssh/oracle_key -o StrictHostKeyChecking=no -r zitadel/* ubuntu@${{ secrets.ORACLE_HOST }}:$DEPLOYMENT_PATH/
+            echo \"✅ Backup created at \$BACKUP_DIR\"
+          "
 
-        # Execute deployment on remote server
-        ssh -i ~/.ssh/oracle_key -o StrictHostKeyChecking=no ubuntu@${{ secrets.ORACLE_HOST }} "
-          cd $DEPLOYMENT_PATH
+      - name: 🚀 Deploy Configuration
+        if: steps.changes.outputs.zitadel_changed == 'true'
+        run: |
+          echo "🚀 Deploying new configuration..."
 
-          echo \"📋 Current status:\"
-          docker-compose ps
+          # Copy new configuration files
+          scp -i ~/.ssh/oracle_key -o StrictHostKeyChecking=no -r zitadel/* ubuntu@${{ secrets.ORACLE_HOST }}:$DEPLOYMENT_PATH/
 
-          echo \"🔄 Performing rolling update...\"
+          # Execute deployment on remote server
+          ssh -i ~/.ssh/oracle_key -o StrictHostKeyChecking=no ubuntu@${{ secrets.ORACLE_HOST }} "
+            cd $DEPLOYMENT_PATH
 
-          # Pull latest images if needed
-          docker-compose pull
+            # Select docker compose command
+            if command -v docker-compose >/dev/null 2>&1; then DC='docker-compose'; else DC='docker compose'; fi
 
-          # Restart services with zero downtime
-          docker-compose up -d --remove-orphans
+            echo \"📋 Current status:\"
+            $DC ps
 
-          echo \"⏳ Waiting for services to be ready...\"
+            echo \"🔄 Performing rolling update...\"
+
+            # Pull latest images if needed
+            $DC pull
+
+            # Restart services with zero downtime
+            $DC up -d --remove-orphans
+
+            echo \"⏳ Waiting for services to be ready...\"
+            sleep 30
+
+            echo \"📊 New status:\"
+            $DC ps
+          "
+
+      - name: 🏥 Health Check - Post Deployment
+        if: steps.changes.outputs.zitadel_changed == 'true'
+        run: |
+          echo "🔍 Checking Zitadel health after deployment..."
+
+          # Wait a bit more for services to stabilize
           sleep 30
 
-          echo \"📊 New status:\"
-          docker-compose ps
-        "
+          # Check OIDC endpoint
+          max_attempts=10
+          attempt=1
 
-    - name: 🏥 Health Check - Post Deployment
-      if: steps.changes.outputs.zitadel_changed == 'true'
-      run: |
-        echo "🔍 Checking Zitadel health after deployment..."
+          while [ $attempt -le $max_attempts ]; do
+            echo "🔍 Health check attempt $attempt/$max_attempts..."
 
-        # Wait a bit more for services to stabilize
-        sleep 30
+            response=$(curl -s -o /dev/null -w "%{http_code}" https://auth.wenzelarifiandi.com/.well-known/openid-configuration || echo "000")
 
-        # Check OIDC endpoint
-        max_attempts=10
-        attempt=1
+            if [ "$response" = "200" ]; then
+              echo "✅ Zitadel is healthy! Deployment successful."
 
-        while [ $attempt -le $max_attempts ]; do
-          echo "🔍 Health check attempt $attempt/$max_attempts..."
+              # Test console access
+              console_response=$(curl -s -o /dev/null -w "%{http_code}" https://auth.wenzelarifiandi.com/ui/console || echo "000")
+              if [ "$console_response" = "200" ]; then
+                echo "✅ Console is accessible"
+              else
+                echo "⚠️ Console returned HTTP $console_response"
+              fi
 
-          response=$(curl -s -o /dev/null -w "%{http_code}" https://auth.wenzelarifiandi.com/.well-known/openid-configuration || echo "000")
-
-          if [ "$response" = "200" ]; then
-            echo "✅ Zitadel is healthy! Deployment successful."
-
-            # Test console access
-            console_response=$(curl -s -o /dev/null -w "%{http_code}" https://auth.wenzelarifiandi.com/ui/console || echo "000")
-            if [ "$console_response" = "200" ]; then
-              echo "✅ Console is accessible"
-            else
-              echo "⚠️ Console returned HTTP $console_response"
+              exit 0
             fi
 
-            exit 0
-          fi
+            echo "❌ Health check failed (HTTP $response), retrying in 10 seconds..."
+            sleep 10
+            attempt=$((attempt + 1))
+          done
 
-          echo "❌ Health check failed (HTTP $response), retrying in 10 seconds..."
-          sleep 10
-          attempt=$((attempt + 1))
-        done
+          echo "💥 Health check failed after $max_attempts attempts"
+          exit 1
 
-        echo "💥 Health check failed after $max_attempts attempts"
-        exit 1
-
-    - name: 🔔 Deployment Notification
-      if: always() && steps.changes.outputs.zitadel_changed == 'true'
-      run: |
-        if [ "${{ job.status }}" = "success" ]; then
-          echo "✅ Deployment completed successfully!"
-          echo "🌐 Zitadel: https://auth.wenzelarifiandi.com"
-          echo "🖥️ Console: https://auth.wenzelarifiandi.com/ui/console"
-        else
-          echo "❌ Deployment failed!"
-          echo "🔍 Check the logs above for details"
-          echo "💾 Automatic backup was created before deployment"
-        fi
-
-    - name: 🆘 Rollback on Failure
-      if: failure() && steps.changes.outputs.zitadel_changed == 'true'
-      run: |
-        echo "🆘 Deployment failed, initiating automatic rollback..."
-
-        # Verify SSH key is still available
-        if [ ! -f ~/.ssh/oracle_key ]; then
-          echo "❌ SSH key not found, recreating..."
-          mkdir -p ~/.ssh
-          printf '%s\n' "${{ secrets.ORACLE_SSH_KEY }}" > ~/.ssh/oracle_key
-          chmod 600 ~/.ssh/oracle_key
-        fi
-
-        ssh -i ~/.ssh/oracle_key -o StrictHostKeyChecking=no -o ConnectTimeout=30 ubuntu@${{ secrets.ORACLE_HOST }} "
-          cd $DEPLOYMENT_PATH
-
-          # Get latest backup
-          LATEST_BACKUP=\$(ls -dt $BACKUP_PATH/backup-* | head -n 1)
-
-          if [ -d \"\$LATEST_BACKUP\" ]; then
-            echo \"📦 Rolling back to: \$LATEST_BACKUP\"
-
-            # Stop services
-            docker-compose down
-
-            # Restore configuration
-            cp -r \"\$LATEST_BACKUP\"/* ./
-
-            # Restore database if backup exists
-            if [ -f \"\$LATEST_BACKUP/database.sql\" ]; then
-              echo \"🗄️ Restoring database...\"
-              docker-compose up -d db
-              sleep 20
-              docker-compose exec -T db psql -U postgres -c 'DROP DATABASE IF EXISTS zitadel;'
-              docker-compose exec -T db psql -U postgres -c 'CREATE DATABASE zitadel;'
-              docker-compose exec -T db psql -U postgres zitadel < \"\$LATEST_BACKUP/database.sql\"
-            fi
-
-            # Start all services
-            docker-compose up -d
-
-            echo \"✅ Rollback completed\"
+      - name: 🔔 Deployment Notification
+        if: always() && steps.changes.outputs.zitadel_changed == 'true'
+        run: |
+          if [ "${{ job.status }}" = "success" ]; then
+            echo "✅ Deployment completed successfully!"
+            echo "🌐 Zitadel: https://auth.wenzelarifiandi.com"
+            echo "🖥️ Console: https://auth.wenzelarifiandi.com/ui/console"
           else
-            echo \"❌ No backup found for rollback\"
+            echo "❌ Deployment failed!"
+            echo "🔍 Check the logs above for details"
+            echo "💾 Automatic backup was created before deployment"
           fi
-        "
+
+      - name: 🆘 Rollback on Failure
+        if: failure() && steps.changes.outputs.zitadel_changed == 'true'
+        run: |
+          echo "🆘 Deployment failed, initiating automatic rollback..."
+
+          # Verify SSH key is still available
+          if [ ! -f ~/.ssh/oracle_key ]; then
+            echo "❌ SSH key not found, recreating..."
+            mkdir -p ~/.ssh
+            printf '%s\n' "${{ secrets.ORACLE_SSH_KEY }}" > ~/.ssh/oracle_key
+            chmod 600 ~/.ssh/oracle_key
+          fi
+
+          ssh -i ~/.ssh/oracle_key -o StrictHostKeyChecking=no -o ConnectTimeout=30 ubuntu@${{ secrets.ORACLE_HOST }} "
+            cd $DEPLOYMENT_PATH
+
+            # Select docker compose command
+            if command -v docker-compose >/dev/null 2>&1; then DC='docker-compose'; else DC='docker compose'; fi
+
+            # Get latest backup
+            LATEST_BACKUP=\$(ls -dt $BACKUP_PATH/backup-* | head -n 1)
+
+            if [ -d \"\$LATEST_BACKUP\" ]; then
+              echo \"📦 Rolling back to: \$LATEST_BACKUP\"
+
+              # Stop services
+              $DC down
+
+              # Restore configuration
+              cp -r \"\$LATEST_BACKUP\"/* ./
+
+              # Restore database if backup exists
+              if [ -f \"\$LATEST_BACKUP/database.sql\" ]; then
+                echo \"🗄️ Restoring database...\"
+                $DC up -d db
+                sleep 20
+                $DC exec -T db psql -U postgres -c 'DROP DATABASE IF EXISTS zitadel;'
+                $DC exec -T db psql -U postgres -c 'CREATE DATABASE zitadel;'
+                $DC exec -T db psql -U postgres zitadel < \"$LATEST_BACKUP/database.sql\"
+              fi
+
+              # Start all services
+              $DC up -d
+
+              echo \"✅ Rollback completed\"
+            else
+              echo \"❌ No backup found for rollback\"
+            fi
+          "
 
   security-scan:
     name: 🔒 Security Scan & Vulnerability Check
@@ -240,86 +258,86 @@ jobs:
     if: github.event_name == 'push'
 
     steps:
-    - name: 📥 Checkout Code
-      uses: actions/checkout@v4
+      - name: 📥 Checkout Code
+        uses: actions/checkout@v4
 
-    - name: 🔧 Setup Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: '22.x'
-        cache: 'npm'
-        cache-dependency-path: |
-          site/package-lock.json
-          studio/package-lock.json
+      - name: 🔧 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22.x"
+          cache: "npm"
+          cache-dependency-path: |
+            site/package-lock.json
+            studio/package-lock.json
 
-    - name: 🔍 Security Audit - Site
-      run: |
-        cd site
-        echo "🔍 Running security audit for site dependencies..."
-        npm audit --audit-level=moderate || {
-          echo "❌ Security vulnerabilities found in site dependencies"
-          echo "🔧 Attempting to fix automatically..."
-          npm audit fix || npm audit fix --force || true
-        }
+      - name: 🔍 Security Audit - Site
+        run: |
+          cd site
+          echo "🔍 Running security audit for site dependencies..."
+          npm audit --audit-level=moderate || {
+            echo "❌ Security vulnerabilities found in site dependencies"
+            echo "🔧 Attempting to fix automatically..."
+            npm audit fix || npm audit fix --force || true
+          }
 
-    - name: 🔍 Security Audit - Studio
-      run: |
-        cd studio
-        echo "🔍 Running security audit for studio dependencies..."
-        npm audit --audit-level=moderate || {
-          echo "❌ Security vulnerabilities found in studio dependencies"
-          echo "🔧 Attempting to fix automatically..."
-          npm audit fix || npm audit fix --force || true
-        }
+      - name: 🔍 Security Audit - Studio
+        run: |
+          cd studio
+          echo "🔍 Running security audit for studio dependencies..."
+          npm audit --audit-level=moderate || {
+            echo "❌ Security vulnerabilities found in studio dependencies"
+            echo "🔧 Attempting to fix automatically..."
+            npm audit fix || npm audit fix --force || true
+          }
 
-    - name: 🔍 Run Trivy Security Scan
-      uses: aquasecurity/trivy-action@master
-      with:
-        scan-type: 'fs'
-        scan-ref: 'zitadel/'
-        format: 'sarif'
-        output: 'trivy-results.sarif'
-        severity: 'CRITICAL,HIGH,MEDIUM'
+      - name: 🔍 Run Trivy Security Scan
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: "fs"
+          scan-ref: "zitadel/"
+          format: "sarif"
+          output: "trivy-results.sarif"
+          severity: "CRITICAL,HIGH,MEDIUM"
 
-    - name: 📊 Upload Trivy Results
-      uses: github/codeql-action/upload-sarif@v3
-      if: always()
-      with:
-        sarif_file: 'trivy-results.sarif'
+      - name: 📊 Upload Trivy Results
+        uses: github/codeql-action/upload-sarif@v3
+        if: always()
+        with:
+          sarif_file: "trivy-results.sarif"
 
-    - name: 🔐 Check for Secrets
-      run: |
-        echo "🔍 Scanning for potential secrets..."
+      - name: 🔐 Check for Secrets
+        run: |
+          echo "🔍 Scanning for potential secrets..."
 
-        # Check for common secret patterns
-        if grep -r -i "password\|secret\|key\|token" zitadel/ --exclude-dir=node_modules --exclude="*.md" | grep -v "ZITADEL_MASTERKEY" | grep -v "example"; then
-          echo "⚠️ Potential secrets found in Zitadel configuration"
-          echo "Please review the above matches"
-        else
-          echo "✅ No obvious secrets detected"
-        fi
+          # Check for common secret patterns
+          if grep -r -i "password\|secret\|key\|token" zitadel/ --exclude-dir=node_modules --exclude="*.md" | grep -v "ZITADEL_MASTERKEY" | grep -v "example"; then
+            echo "⚠️ Potential secrets found in Zitadel configuration"
+            echo "Please review the above matches"
+          else
+            echo "✅ No obvious secrets detected"
+          fi
 
-    - name: 💾 Commit Security Fixes
-      if: success()
-      run: |
-        git config --local user.email "security-scan@github.com"
-        git config --local user.name "Security Scanner"
+      - name: 💾 Commit Security Fixes
+        if: success()
+        run: |
+          git config --local user.email "security-scan@github.com"
+          git config --local user.name "Security Scanner"
 
-        if [ -n "$(git status --porcelain)" ]; then
-          git add site/package*.json studio/package*.json
-          git commit -m "security: auto-fix vulnerabilities during deployment scan
+          if [ -n "$(git status --porcelain)" ]; then
+            git add site/package*.json studio/package*.json
+            git commit -m "security: auto-fix vulnerabilities during deployment scan
 
-          🔍 Automated security fixes applied during deployment:
-          - Updated dependencies to resolve vulnerabilities
-          - Applied npm audit fixes
+            🔍 Automated security fixes applied during deployment:
+            - Updated dependencies to resolve vulnerabilities
+            - Applied npm audit fixes
 
-          🤖 Applied by deployment security scan
-          🚀 Generated with [Claude Code](https://claude.ai/code)
+            🤖 Applied by deployment security scan
+            🚀 Generated with [Claude Code](https://claude.ai/code)
 
-          Co-Authored-By: Security Scanner <security-scan@github.com>"
+            Co-Authored-By: Security Scanner <security-scan@github.com>"
 
-          git push
-          echo "✅ Security fixes applied and committed"
-        else
-          echo "ℹ️ No security fixes needed"
-        fi
+            git push
+            echo "✅ Security fixes applied and committed"
+          else
+            echo "ℹ️ No security fixes needed"
+          fi
