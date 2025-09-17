@@ -13,7 +13,8 @@
 
 ### 🛡️ Security & Quality
 
-[![🔍 Security Scanning & Analysis](https://github.com/WenzelArifiandi/ariane/actions/workflows/security-scanning.yml/badge.svg)](https://github.com/WenzelArifiandi/ariane/actions/workflows/security-scanning.yml)
+[![�️ Security Scan Suite](https://github.com/WenzelArifiandi/ariane/actions/workflows/security-comprehensive.yml/badge.svg)](https://github.com/WenzelArifiandi/ariane/actions/workflows/security-comprehensive.yml)
+[![�🔍 Security Scanning & Analysis](https://github.com/WenzelArifiandi/ariane/actions/workflows/security-scanning.yml/badge.svg)](https://github.com/WenzelArifiandi/ariane/actions/workflows/security-scanning.yml)
 [![🛡️ Auto Security Fixes](https://github.com/WenzelArifiandi/ariane/actions/workflows/auto-security-fixes.yml/badge.svg)](https://github.com/WenzelArifiandi/ariane/actions/workflows/auto-security-fixes.yml)
 [![🔐 Security Setup & Configuration](https://github.com/WenzelArifiandi/ariane/actions/workflows/security-setup.yml/badge.svg)](https://github.com/WenzelArifiandi/ariane/actions/workflows/security-setup.yml)
 [![📊 Update Status Badges](https://github.com/WenzelArifiandi/ariane/actions/workflows/update-status-badges.yml/badge.svg)](https://github.com/WenzelArifiandi/ariane/actions/workflows/update-status-badges.yml)
@@ -26,9 +27,13 @@
 
 ### 🔒 Security Metrics
 
+[![🛡️ Security Scan Suite](https://github.com/WenzelArifiandi/ariane/actions/workflows/security-comprehensive.yml/badge.svg?branch=main)](https://github.com/WenzelArifiandi/ariane/actions/workflows/security-comprehensive.yml)
+[![CodeQL](https://github.com/WenzelArifiandi/ariane/actions/workflows/security-comprehensive.yml/badge.svg?job=codeql)](https://github.com/WenzelArifiandi/ariane/security/code-scanning)
+[![Trivy](https://github.com/WenzelArifiandi/ariane/actions/workflows/security-comprehensive.yml/badge.svg?job=trivy)](https://github.com/WenzelArifiandi/ariane/security/code-scanning)
+[![Semgrep](https://github.com/WenzelArifiandi/ariane/actions/workflows/security-comprehensive.yml/badge.svg?job=semgrep)](https://github.com/WenzelArifiandi/ariane/security/code-scanning)
 [![Known Vulnerabilities](https://snyk.io/test/github/WenzelArifiandi/ariane/badge.svg)](https://snyk.io/test/github/WenzelArifiandi/ariane)
-(Enable Snyk in Actions by adding repo secret `SNYK_TOKEN` if you want CI-integrated scans.)
 [![Dependabot Status](https://img.shields.io/badge/Dependabot-enabled-brightgreen?style=flat-square&logo=dependabot)](https://github.com/WenzelArifiandi/ariane/security/dependabot)
+[![Security Alerts](https://img.shields.io/github/issues-search/WenzelArifiandi/ariane?query=is%3Aopen%20label%3A%22security%22&label=Security%20Alerts&style=flat-square&color=red)](https://github.com/WenzelArifiandi/ariane/security/advisories)
 [![Security Policy](https://img.shields.io/badge/Security-Policy-blue?style=flat-square&logo=shield)](.github/SECURITY_AUTOMATION.md)
 
 ### 📊 Project Info
