@@ -1,0 +1,77 @@
+{
+  "user": {
+    "_id": "user-test-id",
+    "_type": "approvedUser",
+    "email": "test@example.com",
+    "name": "Test User",
+    "githubUsername": "testuser",
+    "isApproved": true,
+    "approvedAt": "2024-01-15T10:00:00Z",
+    "accessLevel": "developer"
+  },
+  "project": {
+    "_id": "project-test-id",
+    "_type": "project",
+    "title": "Test Project",
+    "description": "A test project for unit testing",
+    "slug": {
+      "current": "test-project"
+    },
+    "technologies": ["React", "TypeScript", "Astro"],
+    "links": [
+      {
+        "_key": "github",
+        "title": "GitHub",
+        "url": "https://github.com/test/test-project"
+      }
+    ],
+    "isPublic": true,
+    "publishedAt": "2024-01-15T10:00:00Z"
+  },
+  "accessRequest": {
+    "_id": "access-request-test-id",
+    "_type": "accessRequest",
+    "email": "newuser@example.com",
+    "name": "New User",
+    "githubUsername": "newuser",
+    "reason": "I would like to contribute to the project",
+    "status": "pending",
+    "submittedAt": "2024-01-15T10:00:00Z"
+  },
+  "session": {
+    "userId": "user-test-id",
+    "sessionId": "session-test-id",
+    "isAuthenticated": true,
+    "expiresAt": "2024-01-16T10:00:00Z",
+    "createdAt": "2024-01-15T10:00:00Z",
+    "lastActivityAt": "2024-01-15T12:00:00Z"
+  },
+  "cfAccessPayload": {
+    "aud": ["test-audience"],
+    "email": "test@example.com",
+    "exp": 1705492800,
+    "iat": 1705406400,
+    "iss": "https://test.cloudflareaccess.com",
+    "sub": "test-sub-id",
+    "custom": {
+      "groups": ["developers", "contributors"]
+    }
+  },
+  "githubUser": {
+    "id": 12345,
+    "login": "testuser",
+    "name": "Test User",
+    "email": "test@example.com",
+    "avatar_url": "https://github.com/images/error/testuser_happy.gif",
+    "html_url": "https://github.com/testuser"
+  },
+  "webauthnCredential": {
+    "id": "credential-test-id",
+    "rawId": new ArrayBuffer(32),
+    "type": "public-key",
+    "response": {
+      "clientDataJSON": new ArrayBuffer(128),
+      "attestationObject": new ArrayBuffer(256)
+    }
+  }
+}
