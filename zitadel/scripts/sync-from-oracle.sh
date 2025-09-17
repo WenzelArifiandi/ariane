@@ -160,6 +160,21 @@ if cat "$TEMP_BACKUP" | docker compose exec -T db psql -U postgres -d zitadel >/
         \$\$;
     " >/dev/null 2>&1 || echo "⚠️ Domain compatibility fix may have failed"
     
+    # Fix OIDC application settings for local development
+    echo "🔧 Enabling dev mode and adding localhost redirect URIs for console app..."
+    docker compose exec -T db psql -U postgres -d zitadel -c "
+        -- Enable dev mode for all OIDC apps (allows HTTP redirects in development)
+        UPDATE projections.apps7_oidc_configs 
+        SET is_dev_mode = true 
+        WHERE instance_id IN (SELECT id FROM projections.instances);
+        
+        -- Add localhost redirect URIs to console app
+        UPDATE projections.apps7_oidc_configs 
+        SET redirect_uris = array_append(redirect_uris, 'http://localhost:8080/ui/console/auth/callback')
+        WHERE instance_id IN (SELECT id FROM projections.instances) 
+        AND 'http://localhost:8080/ui/console/auth/callback' != ALL(redirect_uris);
+    " >/dev/null 2>&1 || echo "⚠️ OIDC application compatibility fix may have failed"
+    
 else
     echo "❌ Database import failed"
     echo "🔄 Attempting to restore local backup..."
