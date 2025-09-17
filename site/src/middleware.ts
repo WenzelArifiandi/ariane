@@ -168,3 +168,13 @@ export const onRequest: MiddlewareHandler = async (context, next) => {
   const absolute = `${absoluteOrigin}/access-required?next=${redirect}`;
   return Response.redirect(absolute, 302);
 };
+
+// Security headers (auto-added by security bot)
+export function addSecurityHeaders(response: Response): Response {
+  response.headers.set('X-Frame-Options', 'DENY');
+  response.headers.set('X-Content-Type-Options', 'nosniff');
+  response.headers.set('X-XSS-Protection', '1; mode=block');
+  response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
+  response.headers.set('Permissions-Policy', 'camera=(), microphone=(), geolocation=()');
+  return response;
+}
