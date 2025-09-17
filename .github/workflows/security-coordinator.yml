@@ -20,6 +20,7 @@ permissions:
   contents: write
   actions: write
   pull-requests: write
+  security-events: read
 
 # Only one security coordinator can run at a time
 concurrency:
@@ -52,12 +53,12 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          echo "📊 Checking current vulnerability count..."
+          echo "📊 Starting security fix process..."
 
-          # Use GitHub API to get current alert count
-          ALERT_COUNT=$(gh api repos/${{ github.repository }}/code-scanning/alerts --paginate | jq '[.[] | select(.state == "open")] | length')
+          # Try to get alert count, but don't fail if permissions are insufficient
+          ALERT_COUNT=$(gh api repos/${{ github.repository }}/code-scanning/alerts --paginate 2>/dev/null | jq '[.[] | select(.state == "open")] | length' 2>/dev/null || echo "unknown")
           echo "current_alerts=$ALERT_COUNT" >> $GITHUB_OUTPUT
-          echo "📈 Current open security alerts: $ALERT_COUNT"
+          echo "📈 Security alerts before fixes: $ALERT_COUNT"
 
       - name: "🎯 Execute Security Fix Strategy"
         env:
@@ -118,17 +119,23 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          echo "📊 Checking post-fix vulnerability count..."
+          echo "📊 Security fixes completed!"
 
-          ALERT_COUNT=$(gh api repos/${{ github.repository }}/code-scanning/alerts --paginate | jq '[.[] | select(.state == "open")] | length')
+          # Try to get final alert count, but don't fail if permissions are insufficient
+          ALERT_COUNT=$(gh api repos/${{ github.repository }}/code-scanning/alerts --paginate 2>/dev/null | jq '[.[] | select(.state == "open")] | length' 2>/dev/null || echo "unknown")
           echo "final_alerts=$ALERT_COUNT" >> $GITHUB_OUTPUT
-          echo "📈 Final open security alerts: $ALERT_COUNT"
+          echo "📈 Security alerts after fixes: $ALERT_COUNT"
 
-          # Calculate improvement
-          INITIAL_COUNT=${{ steps.pre_scan.outputs.current_alerts }}
-          IMPROVEMENT=$((INITIAL_COUNT - ALERT_COUNT))
-          echo "improvement=$IMPROVEMENT" >> $GITHUB_OUTPUT
-          echo "📉 Security improvement: $IMPROVEMENT alerts resolved"
+          # Calculate improvement if both counts are available
+          INITIAL_COUNT="${{ steps.pre_scan.outputs.current_alerts }}"
+          if [ "$INITIAL_COUNT" != "unknown" ] && [ "$ALERT_COUNT" != "unknown" ]; then
+            IMPROVEMENT=$((INITIAL_COUNT - ALERT_COUNT))
+            echo "improvement=$IMPROVEMENT" >> $GITHUB_OUTPUT
+            echo "📉 Security improvement: $IMPROVEMENT alerts resolved"
+          else
+            echo "improvement=unknown" >> $GITHUB_OUTPUT
+            echo "📉 Security improvement: Check repository security tab for latest counts"
+          fi
 
       - name: "📈 Create Coordination Report"
         run: |

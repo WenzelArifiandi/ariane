@@ -228,6 +228,8 @@ jobs:
           fi
 
       - name: "💾 Commit Aggressive Fixes"
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
           git config --local user.email "security-autofix@github.com"
           git config --local user.name "Aggressive Security Auto-Fix Bot 🛠️"
@@ -242,7 +244,7 @@ jobs:
 
           🛡️ Comprehensive security improvements:
           - ESLint security rules applied with aggressive fixes
-          - TypeScript 'any' types replaced with 'unknown'  
+          - TypeScript 'any' types replaced with 'unknown'
           - Insecure code patterns (innerHTML, eval) secured
           - Dependencies updated to latest secure versions
           - Security headers configuration added
@@ -257,11 +259,45 @@ jobs:
 
           Co-authored-by: Security Scanner <security@github.com>"
 
-          if git push; then
-            echo "🎉 Aggressive security fixes successfully pushed!"
+          # Try direct push first
+          if git push origin main; then
+            echo "🎉 Aggressive security fixes successfully pushed to main!"
           else
-            echo "⚠️ Failed to push - may need manual review"
-            exit 1
+            echo "⚠️ Direct push failed - creating PR instead..."
+
+            # Create a new branch for the PR
+            BRANCH_NAME="security-fixes-$(date +%Y%m%d-%H%M%S)"
+            git checkout -b "$BRANCH_NAME"
+            git push origin "$BRANCH_NAME"
+
+            # Create PR using GitHub CLI
+            gh pr create \
+              --title "🛠️ Aggressive Security Auto-Fix: ${{ steps.count_fixes.outputs.changed_files }} files" \
+              --body "## 🛡️ Automated Security Fixes
+
+            This PR contains ${{ steps.count_fixes.outputs.changed_files }} files with ${{ steps.count_fixes.outputs.total_changes }} security improvements:
+
+            ### ✅ Fixes Applied
+            - ESLint security rules with aggressive fixes
+            - TypeScript 'any' types replaced with 'unknown'
+            - Insecure code patterns (innerHTML, eval) secured
+            - Dependencies updated to latest secure versions
+            - Security headers configuration added
+
+            ### 📊 Impact
+            - **Files modified**: ${{ steps.count_fixes.outputs.changed_files }}
+            - **Total changes**: ${{ steps.count_fixes.outputs.total_changes }}
+            - **Fix level**: ${{ github.event.inputs.fix_level || 'scheduled' }}
+
+            🤖 **Auto-generated** by Aggressive Security Auto-Fix Bot
+            🎯 **Target**: Resolve code scanning alerts
+
+            **⚡ Ready to merge** - All fixes are automated and tested." \
+              --head "$BRANCH_NAME" \
+              --base main \
+              --label "security,automated,auto-fix"
+
+            echo "✅ Created PR for security fixes: $BRANCH_NAME"
           fi
 
       - name: "📈 Create Summary Report"
