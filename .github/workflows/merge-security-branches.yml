@@ -34,8 +34,9 @@ jobs:
       - name: "🔍 Find Security Fix Branches"
         id: find_branches
         run: |
+          set -x
           echo "🔍 Finding security fix branches..."
-          BRANCHES=$(git branch -r | grep -E "origin/security-fixes-[0-9]{8}-[0-9]{6}" | sed 's/origin\///' | sort)
+          BRANCHES=$(git branch -r | grep -E "origin/security-fixes-[0-9]{8}-[0-9]{6}" | sed 's,.*origin/,,g' | sort)
 
           echo "📋 Found branches:"
           echo "$BRANCHES"
