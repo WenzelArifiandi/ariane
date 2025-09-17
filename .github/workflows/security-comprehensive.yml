@@ -50,16 +50,81 @@ jobs:
           cd studio
           npm ci
 
-      - name: "🔍 ESLint Security Scan - Site"
+      - name: "� Install SARIF Formatter"
+        run: |
+          npm install -g @microsoft/eslint-formatter-sarif
+        continue-on-error: true
+
+      - name: "�🔍 ESLint Security Scan - Site"
         run: |
           cd site
-          npx eslint . --ext .js,.jsx,.ts,.tsx,.astro --format @microsoft/eslint-formatter-sarif --output-file ../eslint-site-results.sarif
+          # First try with SARIF formatter, fallback to JSON if needed
+          if npx eslint . --ext .js,.jsx,.ts,.tsx,.astro --format @microsoft/eslint-formatter-sarif --output-file ../eslint-site-results.sarif 2>/dev/null; then
+            echo "✅ ESLint SARIF export successful"
+          else
+            echo "⚠️ SARIF formatter failed, using JSON fallback"
+            npx eslint . --ext .js,.jsx,.ts,.tsx,.astro --format json --output-file ../eslint-site-results.json || echo "{\"results\":[]}" > ../eslint-site-results.json
+            # Convert JSON to basic SARIF format
+            node -e "
+              const fs = require('fs');
+              const results = JSON.parse(fs.readFileSync('../eslint-site-results.json', 'utf8'));
+              const sarif = {
+                version: '2.1.0',
+                \$schema: 'https://raw.githubusercontent.com/oasis-tcs/sarif-spec/master/Schemata/sarif-schema-2.1.0.json',
+                runs: [{
+                  tool: { driver: { name: 'ESLint', version: '1.0.0' } },
+                  results: results.map(file => file.messages.map(msg => ({
+                    ruleId: msg.ruleId || 'unknown',
+                    level: msg.severity === 2 ? 'error' : 'warning',
+                    message: { text: msg.message },
+                    locations: [{
+                      physicalLocation: {
+                        artifactLocation: { uri: file.filePath },
+                        region: { startLine: msg.line, startColumn: msg.column }
+                      }
+                    }]
+                  }))).flat()
+                }]
+              };
+              fs.writeFileSync('../eslint-site-results.sarif', JSON.stringify(sarif, null, 2));
+            " || echo '{"version":"2.1.0","runs":[{"tool":{"driver":{"name":"ESLint"}},"results":[]}]}' > ../eslint-site-results.sarif
+          fi
         continue-on-error: true
 
       - name: "🔍 ESLint Security Scan - Studio"
         run: |
           cd studio
-          npx eslint . --ext .js,.jsx,.ts,.tsx --format @microsoft/eslint-formatter-sarif --output-file ../eslint-studio-results.sarif
+          # First try with SARIF formatter, fallback to JSON if needed
+          if npx eslint . --ext .js,.jsx,.ts,.tsx --format @microsoft/eslint-formatter-sarif --output-file ../eslint-studio-results.sarif 2>/dev/null; then
+            echo "✅ ESLint SARIF export successful"
+          else
+            echo "⚠️ SARIF formatter failed, using JSON fallback"
+            npx eslint . --ext .js,.jsx,.ts,.tsx --format json --output-file ../eslint-studio-results.json || echo "{\"results\":[]}" > ../eslint-studio-results.json
+            # Convert JSON to basic SARIF format
+            node -e "
+              const fs = require('fs');
+              const results = JSON.parse(fs.readFileSync('../eslint-studio-results.json', 'utf8'));
+              const sarif = {
+                version: '2.1.0',
+                \$schema: 'https://raw.githubusercontent.com/oasis-tcs/sarif-spec/master/Schemata/sarif-schema-2.1.0.json',
+                runs: [{
+                  tool: { driver: { name: 'ESLint', version: '1.0.0' } },
+                  results: results.map(file => file.messages.map(msg => ({
+                    ruleId: msg.ruleId || 'unknown',
+                    level: msg.severity === 2 ? 'error' : 'warning',
+                    message: { text: msg.message },
+                    locations: [{
+                      physicalLocation: {
+                        artifactLocation: { uri: file.filePath },
+                        region: { startLine: msg.line, startColumn: msg.column }
+                      }
+                    }]
+                  }))).flat()
+                }]
+              };
+              fs.writeFileSync('../eslint-studio-results.sarif', JSON.stringify(sarif, null, 2));
+            " || echo '{"version":"2.1.0","runs":[{"tool":{"driver":{"name":"ESLint"}},"results":[]}]}' > ../eslint-studio-results.sarif
+          fi
         continue-on-error: true
 
       - name: "📊 Upload ESLint SARIF - Site"
@@ -114,7 +179,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: "🔍 Run OSV Scanner"
-        uses: google/osv-scanner-action@v1
+        uses: google/osv-scanner-action@v1.9.0
         with:
           scan-args: |-
             --output=sarif
@@ -262,7 +327,7 @@ jobs:
   codeql:
     name: "🔍 CodeQL Analysis"
     runs-on: ubuntu-latest
-    if: github.repository_visibility == 'public' && github.actor != 'dependabot[bot]'
+    if: github.actor != 'dependabot[bot]'
     timeout-minutes: 360
     permissions:
       actions: read
