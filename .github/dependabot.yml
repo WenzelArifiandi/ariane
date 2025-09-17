@@ -9,10 +9,8 @@ updates:
     schedule:
       interval: "daily"
       time: "02:00"
-      timezone: "UTC"
+      timezone: "Etc/UTC"
     open-pull-requests-limit: 10
-    reviewers:
-      - "WenzelArifiandi"
     assignees:
       - "WenzelArifiandi"
     commit-message:
@@ -57,10 +55,8 @@ updates:
     schedule:
       interval: "daily"
       time: "02:30"
-      timezone: "UTC"
+      timezone: "Etc/UTC"
     open-pull-requests-limit: 5
-    reviewers:
-      - "WenzelArifiandi"
     assignees:
       - "WenzelArifiandi"
     commit-message:
@@ -99,10 +95,8 @@ updates:
       interval: "weekly"
       day: "sunday"
       time: "03:00"
-      timezone: "UTC"
+      timezone: "Etc/UTC"
     open-pull-requests-limit: 2
-    reviewers:
-      - "WenzelArifiandi"
     assignees:
       - "WenzelArifiandi"
     commit-message:
@@ -120,10 +114,8 @@ updates:
       interval: "weekly"
       day: "monday"
       time: "04:00"
-      timezone: "UTC"
+      timezone: "Etc/UTC"
     open-pull-requests-limit: 5
-    reviewers:
-      - "WenzelArifiandi"
     assignees:
       - "WenzelArifiandi"
     commit-message:
@@ -157,10 +149,8 @@ updates:
       interval: "weekly"
       day: "tuesday"
       time: "05:00"
-      timezone: "UTC"
+      timezone: "Etc/UTC"
     open-pull-requests-limit: 3
-    reviewers:
-      - "WenzelArifiandi"
     assignees:
       - "WenzelArifiandi"
     commit-message:

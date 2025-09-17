@@ -3,22 +3,22 @@ name: Security Auto-Fix
 on:
   # Run weekly on Monday at 2 AM UTC
   schedule:
-    - cron: '0 2 * * 1'
+    - cron: "0 2 * * 1"
 
   # Allow manual triggering
   workflow_dispatch:
     inputs:
       mode:
-        description: 'Fix mode'
+        description: "Fix mode"
         required: true
-        default: 'conservative'
+        default: "conservative"
         type: choice
         options:
           - conservative
           - advanced
           - aggressive
       dry_run:
-        description: 'Dry run (preview changes only)'
+        description: "Dry run (preview changes only)"
         required: false
         default: true
         type: boolean
@@ -31,6 +31,8 @@ env:
 jobs:
   security-autofix:
     runs-on: ubuntu-latest
+    outputs:
+      has_changes: ${{ steps.changes.outputs.has_changes }}
     permissions:
       contents: write
       pull-requests: write
@@ -46,8 +48,8 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@1e60f620b9541d16bece96c5465dc8ee9832be0b # v4.0.3
         with:
-          node-version: '22'
-          cache: 'npm'
+          node-version: "22"
+          cache: "npm"
 
       - name: Install dependencies
         run: |
@@ -64,7 +66,7 @@ jobs:
         env:
           DRY_RUN: ${{ github.event.inputs.dry_run }}
         run: |
-          if [[ "$DRY_RUN" == "true" ]]; then
+          if [[ "${DRY_RUN}" == "true" ]]; then
             npm run security:autofix:dry-run
           else
             npm run security:autofix
@@ -75,7 +77,7 @@ jobs:
         env:
           DRY_RUN: ${{ github.event.inputs.dry_run }}
         run: |
-          if [[ "$DRY_RUN" == "true" ]]; then
+          if [[ "${DRY_RUN}" == "true" ]]; then
             npm run security:autofix:advanced:dry-run
           else
             npm run security:autofix:advanced
@@ -86,7 +88,7 @@ jobs:
         env:
           DRY_RUN: ${{ github.event.inputs.dry_run }}
         run: |
-          if [[ "$DRY_RUN" == "true" ]]; then
+          if [[ "${DRY_RUN}" == "true" ]]; then
             npm run security:autofix:advanced:dry-run
           else
             npm run security:autofix:advanced:aggressive
@@ -123,8 +125,8 @@ jobs:
           git commit -m "🛡️ Security auto-fix: resolve CodeQL alerts
 
           - Applied automated fixes for security vulnerabilities
-          - Mode: $MODE
-          - Files changed: $FILES_CHANGED
+          - Mode: ${MODE}
+          - Files changed: ${FILES_CHANGED}
 
           🤖 Generated with security auto-fix script
           Co-Authored-By: GitHub Action <action@github.com>"
@@ -135,7 +137,7 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           branch: security-fixes-${{ github.run_id }}
-          title: '🛡️ Security Auto-Fix: CodeQL Vulnerability Fixes'
+          title: "🛡️ Security Auto-Fix: CodeQL Vulnerability Fixes"
           body: |
             ## Security Auto-Fix Report
 
@@ -194,8 +196,8 @@ jobs:
           echo "## 🔍 Dry Run Results"
           echo ""
           echo "The security auto-fix script found potential fixes:"
-          echo "- Files that would be changed: $FILES_CHANGED"
-          echo "- Mode: $MODE"
+          echo "- Files that would be changed: ${FILES_CHANGED}"
+          echo "- Mode: ${MODE}"
           echo ""
           echo "To apply these fixes, re-run this workflow with 'Dry run' set to false."
           echo ""
@@ -211,11 +213,11 @@ jobs:
         run: |
           echo "## Security Auto-Fix Summary" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "- **Mode**: $MODE" >> $GITHUB_STEP_SUMMARY
-          echo "- **Dry Run**: $DRY_RUN" >> $GITHUB_STEP_SUMMARY
-          echo "- **Changes Found**: $HAS_CHANGES" >> $GITHUB_STEP_SUMMARY
-          if [[ "$HAS_CHANGES" == "true" ]]; then
-            echo "- **Files Changed**: $FILES_CHANGED" >> $GITHUB_STEP_SUMMARY
+          echo "- **Mode**: ${MODE}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Dry Run**: ${DRY_RUN}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Changes Found**: ${HAS_CHANGES}" >> $GITHUB_STEP_SUMMARY
+          if [[ "${HAS_CHANGES}" == "true" ]]; then
+            echo "- **Files Changed**: ${FILES_CHANGED}" >> $GITHUB_STEP_SUMMARY
           fi
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "Check the uploaded artifacts for detailed reports." >> $GITHUB_STEP_SUMMARY
@@ -235,8 +237,8 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@1e60f620b9541d16bece96c5465dc8ee9832be0b # v4.0.3
         with:
-          node-version: '22'
-          cache: 'npm'
+          node-version: "22"
+          cache: "npm"
 
       - name: Install dependencies
         run: |

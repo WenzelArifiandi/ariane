@@ -8,10 +8,10 @@ on:
   # Also run on pushes to main to fix issues immediately
   push:
     branches: [main]
-  # Trigger when Dependabot creates PRs
-  pull_request:
-    types: [opened, synchronize]
-    branches: [main]
+  # Disabled: Trigger when Dependabot creates PRs (causing issues with gh commands)
+  # pull_request:
+  #   types: [opened, synchronize]
+  #   branches: [main]
 
 permissions:
   contents: write
@@ -232,85 +232,86 @@ jobs:
             echo "📝 Security fixes ready for manual PR creation"
           fi
 
-  # Safe PR handling job (no script injection vulnerabilities)
-  handle-dependency-prs:
-    name: 🤖 Handle Dependency PRs (Safe)
-    runs-on: ubuntu-latest
-    if: github.event_name == 'pull_request' && github.actor == 'dependabot[bot]'
-
-    steps:
-      - name: 🔍 Check PR Details (Safe)
-        id: pr-check
-        env:
-          # Use environment variables to prevent script injection
-          PR_TITLE: ${{ github.event.pull_request.title }}
-          PR_BODY: ${{ github.event.pull_request.body }}
-          PR_NUMBER: ${{ github.event.pull_request.number }}
-        run: |
-          echo "🔍 Analyzing PR: $PR_NUMBER"
-          echo "Title: $PR_TITLE"
-
-          # Check if this is a security update
-          if echo "$PR_TITLE" | grep -i "security\|vulnerability\|cve"; then
-            echo "is_security=true" >> $GITHUB_OUTPUT
-            echo "🔒 Security-related PR detected"
-          else
-            echo "is_security=false" >> $GITHUB_OUTPUT
-            echo "📦 Regular dependency update"
-          fi
-
-          # Check if it's a patch or minor update
-          if echo "$PR_TITLE" | grep -E "patch|minor"; then
-            echo "is_safe_update=true" >> $GITHUB_OUTPUT
-            echo "✅ Safe update (patch/minor) detected"
-          else
-            echo "is_safe_update=false" >> $GITHUB_OUTPUT
-            echo "⚠️ Major update detected"
-          fi
-
-      - name: ✅ Auto-approve Security PRs
-        if: steps.pr-check.outputs.is_security == 'true' || steps.pr-check.outputs.is_safe_update == 'true'
-        continue-on-error: true
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          PR_NUMBER: ${{ github.event.pull_request.number }}
-        run: |
-          gh pr review --approve "$PR_NUMBER" --body "🤖 Auto-approved security/patch update" || {
-            echo "⚠️ Failed to auto-approve PR - may require manual approval"
-            echo "This could be due to branch protection rules or permissions"
-          }
-
-      - name: 🔀 Auto-merge Safe PRs
-        if: steps.pr-check.outputs.is_security == 'true' || steps.pr-check.outputs.is_safe_update == 'true'
-        continue-on-error: true
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          PR_NUMBER: ${{ github.event.pull_request.number }}
-        run: |
-          if gh pr merge "$PR_NUMBER" --auto --squash; then
-            echo "🎉 PR queued for auto-merge after checks pass"
-          else
-            echo "⚠️ Auto-merge failed - may require manual merge"
-            echo "Possible reasons:"
-            echo "  - Branch protection rules prevent auto-merge"
-            echo "  - Required status checks not passed"
-            echo "  - Insufficient permissions"
-          fi
-
-      - name: 💬 Comment on Major Updates
-        if: steps.pr-check.outputs.is_safe_update == 'false' && steps.pr-check.outputs.is_security == 'false'
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          PR_NUMBER: ${{ github.event.pull_request.number }}
-        run: |
-          gh pr comment "$PR_NUMBER" --body "⚠️ **Major version update detected!**
-
-          This PR contains major version changes that may include breaking changes.
-          Please review manually before merging.
-
-          🔍 **Review checklist:**
-          - [ ] Check CHANGELOG for breaking changes
-          - [ ] Run tests locally
-          - [ ] Verify deployment works
-
-          🤖 *Auto-merge skipped for safety*"
+  # Disabled: Safe PR handling job (causing gh command failures)
+  # Dependabot PRs are now handled by standard CI + manual review per user preference
+  # handle-dependency-prs:
+  #   name: 🤖 Handle Dependency PRs (Safe)
+  #   runs-on: ubuntu-latest
+  #   if: github.event_name == 'pull_request' && github.actor == 'dependabot[bot]'
+  #
+  #   steps:
+  #     - name: 🔍 Check PR Details (Safe)
+  #       id: pr-check
+  #       env:
+  #         # Use environment variables to prevent script injection
+  #         PR_TITLE: ${{ github.event.pull_request.title }}
+  #         PR_BODY: ${{ github.event.pull_request.body }}
+  #         PR_NUMBER: ${{ github.event.pull_request.number }}
+  #       run: |
+  #         echo "🔍 Analyzing PR: $PR_NUMBER"
+  #         echo "Title: $PR_TITLE"
+  #
+  #         # Check if this is a security update
+  #         if echo "$PR_TITLE" | grep -i "security\|vulnerability\|cve"; then
+  #           echo "is_security=true" >> $GITHUB_OUTPUT
+  #           echo "🔒 Security-related PR detected"
+  #         else
+  #           echo "is_security=false" >> $GITHUB_OUTPUT
+  #           echo "📦 Regular dependency update"
+  #         fi
+  #
+  #         # Check if it's a patch or minor update
+  #         if echo "$PR_TITLE" | grep -E "patch|minor"; then
+  #           echo "is_safe_update=true" >> $GITHUB_OUTPUT
+  #           echo "✅ Safe update (patch/minor) detected"
+  #         else
+  #           echo "is_safe_update=false" >> $GITHUB_OUTPUT
+  #           echo "⚠️ Major update detected"
+  #         fi
+  #
+  #     - name: ✅ Auto-approve Security PRs
+  #       if: steps.pr-check.outputs.is_security == 'true' || steps.pr-check.outputs.is_safe_update == 'true'
+  #       continue-on-error: true
+  #       env:
+  #         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  #         PR_NUMBER: ${{ github.event.pull_request.number }}
+  #       run: |
+  #         gh pr review --approve "$PR_NUMBER" --body "🤖 Auto-approved security/patch update" || {
+  #           echo "⚠️ Failed to auto-approve PR - may require manual approval"
+  #           echo "This could be due to branch protection rules or permissions"
+  #         }
+  #
+  #     - name: 🔀 Auto-merge Safe PRs
+  #       if: steps.pr-check.outputs.is_security == 'true' || steps.pr-check.outputs.is_safe_update == 'true'
+  #       continue-on-error: true
+  #       env:
+  #         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  #         PR_NUMBER: ${{ github.event.pull_request.number }}
+  #       run: |
+  #         if gh pr merge "$PR_NUMBER" --auto --squash; then
+  #           echo "🎉 PR queued for auto-merge after checks pass"
+  #         else
+  #           echo "⚠️ Auto-merge failed - may require manual merge"
+  #           echo "Possible reasons:"
+  #           echo "  - Branch protection rules prevent auto-merge"
+  #           echo "  - Required status checks not passed"
+  #           echo "  - Insufficient permissions"
+  #         fi
+  #
+  #     - name: 💬 Comment on Major Updates
+  #       if: steps.pr-check.outputs.is_safe_update == 'false' && steps.pr-check.outputs.is_security == 'false'
+  #       env:
+  #         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  #         PR_NUMBER: ${{ github.event.pull_request.number }}
+  #       run: |
+  #         gh pr comment "$PR_NUMBER" --body "⚠️ **Major version update detected!**
+  #
+  #         This PR contains major version changes that may include breaking changes.
+  #         Please review manually before merging.
+  #
+  #         🔍 **Review checklist:**
+  #         - [ ] Check CHANGELOG for breaking changes
+  #         - [ ] Run tests locally
+  #         - [ ] Verify deployment works
+  #
+  #         🤖 *Auto-merge skipped for safety*"

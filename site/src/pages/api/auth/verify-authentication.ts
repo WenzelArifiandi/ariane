@@ -42,9 +42,9 @@ export const POST: APIRoute = async ({ request }) => {
     expectedOrigin: origin,
     expectedRPID: rpID,
     requireUserVerification: true,
-    authenticator: {
-      credentialID: stored.id, // already base64url string
-      credentialPublicKey: Buffer.from(stored.publicKey, "base64url"),
+    credential: {
+      id: stored.id, // already base64url string
+      publicKey: Buffer.from(stored.publicKey, "base64url"),
       counter: stored.counter,
       // transports: stored.transports, // omit if not matching type
     },

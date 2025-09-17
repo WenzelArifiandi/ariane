@@ -1,0 +1,134 @@
+name: Branch Protection Enforcement
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+  pull_request_review:
+    types: [submitted]
+
+permissions:
+  contents: read
+  checks: write
+  pull-requests: write
+  statuses: write
+
+jobs:
+  enforce-ci-requirements:
+    runs-on: ubuntu-latest
+    if: github.base_ref == 'main'
+    steps:
+      - name: Check CI Status
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { owner, repo } = context.repo;
+            const pullNumber = context.payload.pull_request?.number;
+
+            if (!pullNumber) {
+              console.log('No pull request number found');
+              return;
+            }
+
+            // Get PR details
+            const pr = await github.rest.pulls.get({
+              owner,
+              repo,
+              pull_number: pullNumber
+            });
+
+            const sha = pr.data.head.sha;
+
+            # Wait for CI checks to complete
+            let attempts = 0;
+            const maxAttempts = 30;
+            let allChecksPassed = false;
+
+            while (attempts < maxAttempts && !allChecksPassed) {
+              attempts++;
+              
+              // Get check runs for this commit
+              const checkRuns = await github.rest.checks.listForRef({
+                owner,
+                repo,
+                ref: sha
+              });
+              
+              // Get commit statuses
+              const statuses = await github.rest.repos.listCommitStatusesForRef({
+                owner,
+                repo,
+                ref: sha
+              });
+              
+              console.log(`Attempt ${attempts}: Found ${checkRuns.data.check_runs.length} check runs and ${statuses.data.length} statuses`);
+              
+              // Check if we have any checks/statuses
+              const hasChecks = checkRuns.data.check_runs.length > 0 || statuses.data.length > 0;
+              
+              if (!hasChecks) {
+                console.log('No CI checks found yet, waiting...');
+                await new Promise(resolve => setTimeout(resolve, 30000)); // Wait 30 seconds
+                continue;
+              }
+              
+              // Check if all checks are completed and successful
+              const pendingCheckRuns = checkRuns.data.check_runs.filter(
+                check => check.status !== 'completed'
+              );
+              
+              const failedCheckRuns = checkRuns.data.check_runs.filter(
+                check => check.status === 'completed' && check.conclusion !== 'success'
+              );
+              
+              const pendingStatuses = statuses.data.filter(
+                status => status.state === 'pending'
+              );
+              
+              const failedStatuses = statuses.data.filter(
+                status => status.state === 'failure' || status.state === 'error'
+              );
+              
+              if (pendingCheckRuns.length > 0 || pendingStatuses.length > 0) {
+                console.log(`Still waiting for ${pendingCheckRuns.length} check runs and ${pendingStatuses.length} statuses to complete`);
+                await new Promise(resolve => setTimeout(resolve, 30000)); // Wait 30 seconds
+                continue;
+              }
+              
+              if (failedCheckRuns.length > 0 || failedStatuses.length > 0) {
+                const failedChecks = [
+                  ...failedCheckRuns.map(c => c.name),
+                  ...failedStatuses.map(s => s.context)
+                ];
+                
+                core.setFailed(`CI checks failed: ${failedChecks.join(', ')}`);
+                return;
+              }
+              
+              allChecksPassed = true;
+              console.log('All CI checks passed successfully!');
+            }
+
+            if (!allChecksPassed) {
+              core.setFailed('Timeout waiting for CI checks to complete');
+              return;
+            }
+
+            // Set a success status
+            await github.rest.repos.createCommitStatus({
+              owner,
+              repo,
+              sha,
+              state: 'success',
+              context: 'branch-protection/ci-requirements',
+              description: 'All required CI checks passed'
+            });
+
+  block-force-push:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    steps:
+      - name: Block Direct Push to Main
+        uses: actions/github-script@v7
+        with:
+          script: |
+            core.setFailed('Direct pushes to main branch are not allowed. Please use pull requests.');
