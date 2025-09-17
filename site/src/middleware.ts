@@ -51,7 +51,7 @@ interface AuthResult {
   response?: Response;
 }
 
-function getRequestContext(context: any): RequestContext {
+function getRequestContext(context: unknown): RequestContext {
   const { url } = context;
   const path = url.pathname;
   const headers = context.request.headers;

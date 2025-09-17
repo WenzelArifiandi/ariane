@@ -24,12 +24,12 @@ export interface SanityProject {
     };
     alt?: string;
   }>;
-  body?: any; // Portable text content
+  body?: unknown; // Portable text content
 }
 
 export interface SanityAbout {
   _id: string;
-  bio?: any; // Portable text content
+  bio?: unknown; // Portable text content
   headshot?: {
     _type: "image";
     asset: {
