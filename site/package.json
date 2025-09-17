@@ -33,7 +33,7 @@
     "check": "astro check"
   },
   "dependencies": {
-    "@fontsource-variable/inter": "^5.2.7",
+    "@fontsource-variable/inter": "^5.2.8",
     "@material/web": "^1.5.1",
     "@portabletext/to-html": "^3.0.0",
     "@sanity/client": "^7.11.1",
