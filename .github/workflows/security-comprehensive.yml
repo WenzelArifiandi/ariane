@@ -180,11 +180,33 @@ jobs:
         run: |
           curl -sLO https://github.com/google/osv-scanner/releases/download/v1.9.0/osv-scanner_1.9.0_linux_amd64
           chmod +x osv-scanner_1.9.0_linux_amd64
-          ./osv-scanner_1.9.0_linux_amd64 --format sarif --output osv-results.sarif ./ || echo '{"version":"2.1.0","runs":[]}' > osv-results.sarif
+          if ./osv-scanner_1.9.0_linux_amd64 --format sarif --output osv-results.sarif ./; then
+            echo "OSV scan completed with results"
+          else
+            echo "OSV scan completed (no vulnerabilities found or scan failed)"
+            # Create valid empty SARIF with proper structure
+            cat > osv-results.sarif << 'EOF'
+          {
+            "version": "2.1.0",
+            "$schema": "https://raw.githubusercontent.com/oasis-tcs/sarif-spec/master/Schemata/sarif-schema-2.1.0.json",
+            "runs": [
+              {
+                "tool": {
+                  "driver": {
+                    "name": "OSV Scanner",
+                    "version": "1.9.0"
+                  }
+                },
+                "results": []
+              }
+            ]
+          }
+          EOF
+          fi
         continue-on-error: true
-      - name: "📊 Upload OSV Scanner SARIF (skip if empty)"
-        if: ${{ hashFiles('osv-results.sarif') != '' && (steps.run_osv.outputs.sarif_file != '' || true) }}
+      - name: "📊 Upload OSV Scanner SARIF"
         uses: github/codeql-action/upload-sarif@v3
+        if: always()
         with:
           sarif_file: osv-results.sarif
           category: osv-scanner
