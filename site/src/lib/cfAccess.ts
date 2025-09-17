@@ -68,10 +68,10 @@ export function isApprovedFromClaims(claims: Record<string, unknown>): boolean {
   // Some IdPs nest custom claims; allow simple dot-path fallback
   if (claim.includes(".")) {
     const parts = claim.split(".");
-    let cur: any = claims;
+    let cur: unknown = claims;
     for (const p of parts) {
       if (!cur || typeof cur !== "object") return false;
-      cur = cur[p];
+      cur = (cur as Record<string, unknown>)[p];
     }
     if (typeof cur === "boolean") return String(cur).toLowerCase() === expected;
     if (typeof cur === "string") return cur.toLowerCase() === expected;

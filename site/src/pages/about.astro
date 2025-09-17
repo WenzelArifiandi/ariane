@@ -5,7 +5,7 @@ import groq from 'groq'
 import { toHTML } from '@portabletext/to-html'
 
 const aboutQuery = groq`*[_type == "about"][0]{ bio, headshot, skills, "headshotUrl": headshot.asset->url }`
-let about: any = null
+let about: Record<string, unknown> | null = null
 try { about = await client.fetch(aboutQuery) } catch { about = null }
 const html = about?.bio ? toHTML(about.bio as any) : ''
 ---
@@ -28,9 +28,9 @@ const html = about?.bio ? toHTML(about.bio as any) : ''
         <p class="mt-6 text-neutral-500">Add your bio in the <code>About</code> document.</p>
       )}
 
-      {about.skills?.length > 0 && (
+      {(about.skills as string[])?.length > 0 && (
         <ul class="mt-6 flex flex-wrap gap-2 text-sm text-neutral-600">
-          {about.skills.map((s: string) => (
+          {(about.skills as string[]).map((s: string) => (
             <li class="rounded-full border px-3 py-1">{s}</li>
           ))}
         </ul>

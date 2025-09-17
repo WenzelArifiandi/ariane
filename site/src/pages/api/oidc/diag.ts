@@ -14,17 +14,20 @@ export const GET: APIRoute = async ({ request }) => {
 
   const discoveryUrl =
     "https://auth.wenzelarifiandi.com/.well-known/openid-configuration";
-  let discovery: any = null;
+  let discovery: unknown = null;
   let endSession: string | undefined;
   let authorizationEndpoint: string | undefined;
-  let error: any = null;
+  let error: { message: string } | null = null;
 
   try {
     const res = await fetch(discoveryUrl);
     discovery = await res.json();
-    endSession = discovery?.end_session_endpoint;
-    authorizationEndpoint = discovery?.authorization_endpoint;
-  } catch (e: any) {
+    const discoveryData = discovery as Record<string, unknown>;
+    endSession = discoveryData?.end_session_endpoint as string | undefined;
+    authorizationEndpoint = discoveryData?.authorization_endpoint as
+      | string
+      | undefined;
+  } catch (e: unknown) {
     // Log detailed error server-side for diagnostics, but do not expose details to clients
     console.error("OIDC discovery fetch failed", e);
     error = { message: "Failed to fetch OIDC discovery document" };
@@ -101,7 +104,7 @@ export const GET: APIRoute = async ({ request }) => {
       }
 
       authTest = { url: u.toString(), status, location, bodyPreview, hint };
-    } catch (e: any) {
+    } catch (e: unknown) {
       // Avoid exposing sensitive error details in stack traces
       authTest = {
         hint: "Auth test failed: Unable to complete authorization request",

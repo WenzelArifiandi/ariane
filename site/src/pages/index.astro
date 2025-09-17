@@ -15,7 +15,7 @@ const page = {
   image: '/og.jpg',
 }
 const email = 'hello@wenzelarifiandi.com'
-let projects: any[] = []
+let projects: Array<Record<string, unknown>> = []
 try { projects = await client.fetch(allProjects) } catch { projects = [] }
 ---
 
@@ -32,18 +32,18 @@ try { projects = await client.fetch(allProjects) } catch { projects = [] }
         <ul class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 mt-4">
           {projects.slice(0, 3).map((p) => (
             <li class="rounded-xl border overflow-hidden hover:shadow-sm transition-shadow">
-              <a href={`/work/${p.slug}`} class="block">
+              <a href={`/work/${p.slug as string}`} class="block">
                 {p.hero && (
                   <img
-                    src={urlFor(p.hero).width(800).height(500).fit('crop').auto('format').url()}
-                    alt={p.hero.alt}
+                    src={urlFor(p.hero as Record<string, unknown>).width(800).height(500).fit('crop').auto('format').url()}
+                    alt={(p.hero as Record<string, unknown>).alt as string}
                     class="aspect-[16/10] w-full object-cover"
                     loading="lazy"
                   />
                 )}
                 <div class="p-4">
-                  <h3 class="font-semibold">{p.title}</h3>
-                  {p.year && <p class="text-sm text-neutral-500 mt-1">{p.year}</p>}
+                  <h3 class="font-semibold">{p.title as string}</h3>
+                  {p.year && <p class="text-sm text-neutral-500 mt-1">{p.year as string}</p>}
                 </div>
               </a>
             </li>

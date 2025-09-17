@@ -1,12 +1,12 @@
 // WebAuthn and Material Web are imported lazily to keep initial bundle light
-let startRegistration: any;
-let startAuthentication: any;
+let startRegistration: unknown;
+let startAuthentication: unknown;
 
 async function ensureWebAuthn() {
   if (startRegistration && startAuthentication) return;
   const mod = await import("@simplewebauthn/browser");
-  startRegistration = (mod as any).startRegistration;
-  startAuthentication = (mod as any).startAuthentication;
+  startRegistration = (mod as Record<string, unknown>).startRegistration;
+  startAuthentication = (mod as Record<string, unknown>).startAuthentication;
 }
 
 // Material Web not required for access UI anymore; using native inputs
@@ -86,7 +86,8 @@ async function mountAccessUI(prefill?: string) {
 
   const support = document.createElement("div");
   support.className = "support";
-  support.textContent = "Can't wait to welcome you into the makerspace! Pop your email below to request access, and I'll reach out as soon as it's ready.";
+  support.textContent =
+    "Can't wait to welcome you into the makerspace! Pop your email below to request access, and I'll reach out as soon as it's ready.";
 
   titles.appendChild(title);
   titles.appendChild(support);
@@ -239,7 +240,7 @@ async function handlePasskeyClick() {
     if (!roRes.ok)
       throw new Error(`registration-options-failed:${roRes.status}`);
     const ro = await roRes.json();
-    const att = await startRegistration(ro);
+    const att = await (startRegistration as Function)(ro);
     const vr = await fetch("/api/auth/verify-registration", {
       method: "POST",
       credentials: "same-origin",
@@ -263,7 +264,7 @@ async function handlePasskeyClick() {
       });
       if (!optRes.ok) throw new Error(`auth-options-failed:${optRes.status}`);
       const opts = await optRes.json();
-      const assn = await startAuthentication(opts);
+      const assn = await (startAuthentication as Function)(opts);
       const res = await fetch("/api/auth/verify-authentication", {
         method: "POST",
         credentials: "same-origin",
@@ -312,8 +313,9 @@ function attachEvents() {
     window.addEventListener("resize", adjustMakerChip);
   }
   // Listen for close events from nav toggle
-  window.addEventListener("toggle-creator", (ev: any) => {
-    const open = ev?.detail?.open;
+  window.addEventListener("toggle-creator", (ev: Event) => {
+    const customEvent = ev as CustomEvent;
+    const open = customEvent?.detail?.open;
     if (!open) closeCreatorUI();
   });
 }
