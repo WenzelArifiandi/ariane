@@ -1,0 +1,304 @@
+name: "🤖 Auto-Test & Merge Security Branches"
+
+on:
+  push:
+    branches:
+      - 'ci/security-fixes/**'
+      - 'ci/security-autofix/**'
+  schedule:
+    # Run every 6 hours to catch any missed branches
+    - cron: "0 */6 * * *"
+  workflow_dispatch:
+    inputs:
+      branch_pattern:
+        description: "Branch pattern to match (default: ci/security-*)"
+        required: false
+        default: "ci/security-*"
+        type: string
+
+permissions:
+  contents: write
+  actions: read
+  pull-requests: write
+  issues: write
+
+jobs:
+  auto-test-and-merge:
+    name: "🧪 Test & Auto-Merge Security Branches"
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: "📥 Checkout Main Branch"
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: "🔧 Setup Node.js"
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22.x"
+          cache: "npm"
+          cache-dependency-path: |
+            site/package-lock.json
+            studio/package-lock.json
+
+      - name: "🔍 Find Security Branches to Process"
+        id: find_branches
+        env:
+          BRANCH_PATTERN: ${{ inputs.branch_pattern || 'ci/security-*' }}
+        run: |
+          echo "🔍 Finding security branches matching pattern: $BRANCH_PATTERN"
+
+          # Get all remote branches matching the pattern
+          git fetch --all --prune
+          BRANCHES=$(git branch -r | grep -E "origin/ci/security-(fixes|autofix)/" | sed 's/.*origin\///' | head -5)
+
+          if [ -z "$BRANCHES" ]; then
+            echo "ℹ️ No security branches found to process"
+            echo "has_branches=false" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+
+          echo "📋 Found security branches:"
+          echo "$BRANCHES"
+
+          # Process only the first branch for safety
+          FIRST_BRANCH=$(echo "$BRANCHES" | head -1)
+          echo "target_branch=$FIRST_BRANCH" >> $GITHUB_OUTPUT
+          echo "has_branches=true" >> $GITHUB_OUTPUT
+
+          echo "🎯 Will process branch: $FIRST_BRANCH"
+
+      - name: "🧪 Test Security Branch"
+        if: steps.find_branches.outputs.has_branches == 'true'
+        id: test_branch
+        env:
+          TARGET_BRANCH: ${{ steps.find_branches.outputs.target_branch }}
+        run: |
+          echo "🧪 Testing branch: $TARGET_BRANCH"
+
+          # Create a test merge to check for conflicts
+          git checkout -b test-merge-${{ github.run_id }}
+
+          echo "🔀 Testing merge with main..."
+          if git merge origin/$TARGET_BRANCH --no-commit --no-ff; then
+            echo "✅ Branch can be merged cleanly"
+            git merge --abort || true
+            MERGE_CLEAN=true
+          else
+            echo "❌ Branch has merge conflicts"
+            git merge --abort || true
+            MERGE_CLEAN=false
+          fi
+
+          git checkout main
+          git branch -D test-merge-${{ github.run_id }}
+
+          echo "merge_clean=$MERGE_CLEAN" >> $GITHUB_OUTPUT
+
+          if [ "$MERGE_CLEAN" = "false" ]; then
+            echo "⚠️ Skipping auto-merge due to conflicts"
+            exit 0
+          fi
+
+          # Test the changes by installing dependencies
+          echo "📦 Testing dependency installation..."
+
+          # Checkout the security branch to test it
+          git checkout origin/$TARGET_BRANCH
+
+          # Test site dependencies
+          if [ -f "site/package.json" ]; then
+            echo "🧪 Testing site dependencies..."
+            cd site
+            npm ci || npm install
+            if npm audit --audit-level=high; then
+              echo "✅ Site dependencies are secure"
+              SITE_SECURE=true
+            else
+              echo "⚠️ Site still has high/critical vulnerabilities"
+              SITE_SECURE=false
+            fi
+            cd ..
+          else
+            SITE_SECURE=true
+          fi
+
+          # Test studio dependencies
+          if [ -f "studio/package.json" ]; then
+            echo "🧪 Testing studio dependencies..."
+            cd studio
+            npm ci || npm install
+            if npm audit --audit-level=high; then
+              echo "✅ Studio dependencies are secure"
+              STUDIO_SECURE=true
+            else
+              echo "⚠️ Studio still has high/critical vulnerabilities"
+              STUDIO_SECURE=false
+            fi
+            cd ..
+          else
+            STUDIO_SECURE=true
+          fi
+
+          git checkout main
+
+          if [ "$SITE_SECURE" = "true" ] && [ "$STUDIO_SECURE" = "true" ]; then
+            echo "✅ All security tests passed"
+            echo "tests_passed=true" >> $GITHUB_OUTPUT
+          else
+            echo "❌ Security tests failed"
+            echo "tests_passed=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: "🔀 Auto-Merge Security Branch"
+        if: steps.find_branches.outputs.has_branches == 'true' && steps.test_branch.outputs.merge_clean == 'true' && steps.test_branch.outputs.tests_passed == 'true'
+        env:
+          TARGET_BRANCH: ${{ steps.find_branches.outputs.target_branch }}
+        run: |
+          echo "🔀 Auto-merging security branch: $TARGET_BRANCH"
+
+          git config --local user.email "security-autofix@github.com"
+          git config --local user.name "Security Auto-Merger"
+
+          # Merge the security branch
+          git merge origin/$TARGET_BRANCH --no-edit
+
+          # Add commit note about auto-merge
+          git commit --amend --no-edit -m "$(git log -1 --pretty=%B)
+
+🤖 Auto-merged by security automation after successful testing
+🧪 Verified: clean merge, secure dependencies
+📅 Merged: $(date -Iseconds)
+
+🚀 Generated with [Claude Code](https://claude.ai/code)"
+
+          echo "✅ Security branch merged successfully"
+
+      - name: "📤 Push Merged Changes"
+        if: steps.find_branches.outputs.has_branches == 'true' && steps.test_branch.outputs.merge_clean == 'true' && steps.test_branch.outputs.tests_passed == 'true'
+        run: |
+          echo "📤 Pushing merged security fixes to main..."
+          git push origin main
+          echo "✅ Successfully pushed merged security fixes"
+
+      - name: "🧹 Cleanup Merged Branch"
+        if: steps.find_branches.outputs.has_branches == 'true' && steps.test_branch.outputs.merge_clean == 'true' && steps.test_branch.outputs.tests_passed == 'true'
+        env:
+          TARGET_BRANCH: ${{ steps.find_branches.outputs.target_branch }}
+        run: |
+          echo "🧹 Cleaning up merged branch: $TARGET_BRANCH"
+          git push origin --delete $TARGET_BRANCH || echo "Branch already deleted or doesn't exist remotely"
+          echo "✅ Cleanup completed"
+
+      - name: "💬 Update or Close Related Issues"
+        if: steps.find_branches.outputs.has_branches == 'true' && steps.test_branch.outputs.merge_clean == 'true' && steps.test_branch.outputs.tests_passed == 'true'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            // Find related security issues
+            const { data: issues } = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: 'open',
+              labels: 'security,automated-fix'
+            });
+
+            for (const issue of issues) {
+              // Check if this issue mentions the merged branch
+              const branchName = '${{ steps.find_branches.outputs.target_branch }}';
+              if (issue.body && issue.body.includes(branchName)) {
+                await github.rest.issues.createComment({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  issue_number: issue.number,
+                  body: `✅ **Auto-merge completed successfully!**
+
+Branch \`${branchName}\` has been automatically tested and merged into main.
+
+🧪 **Tests performed:**
+- Clean merge verification
+- Dependency security audit
+- Installation validation
+
+🔀 **Result:** All security fixes are now live on the main branch.
+
+Closing this issue as the fixes have been applied.`
+                });
+
+                await github.rest.issues.update({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  issue_number: issue.number,
+                  state: 'closed'
+                });
+              }
+            }
+
+      - name: "⚠️ Handle Failed Auto-Merge"
+        if: steps.find_branches.outputs.has_branches == 'true' && (steps.test_branch.outputs.merge_clean == 'false' || steps.test_branch.outputs.tests_passed == 'false')
+        uses: actions/github-script@v7
+        env:
+          TARGET_BRANCH: ${{ steps.find_branches.outputs.target_branch }}
+          MERGE_CLEAN: ${{ steps.test_branch.outputs.merge_clean }}
+          TESTS_PASSED: ${{ steps.test_branch.outputs.tests_passed }}
+        with:
+          script: |
+            const branchName = process.env.TARGET_BRANCH;
+            const mergeClean = process.env.MERGE_CLEAN === 'true';
+            const testsPassed = process.env.TESTS_PASSED === 'true';
+
+            let reason = '';
+            if (!mergeClean) reason += '- Branch has merge conflicts\n';
+            if (!testsPassed) reason += '- Security tests failed\n';
+
+            const title = `⚠️ Auto-merge failed for ${branchName}`;
+            const body = `# 🚨 Automatic Merge Failed
+
+The security branch \`${branchName}\` could not be automatically merged.
+
+## Issues Found
+${reason}
+
+## Manual Action Required
+1. Review the branch: \`${branchName}\`
+2. Resolve any conflicts or test failures
+3. Create a manual pull request
+4. Merge after review
+
+**Branch:** \`${branchName}\`
+**Run ID:** ${{ github.run_id }}
+
+---
+🤖 Generated with [Claude Code](https://claude.ai/code)`;
+
+            await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: title,
+              body: body,
+              labels: ['security', 'manual-review-required']
+            });
+
+      - name: "📊 Summary Report"
+        if: always()
+        run: |
+          echo "## 🤖 Auto-Merge Security Report" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Branch Processed:** ${{ steps.find_branches.outputs.target_branch || 'None found' }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Has Branches:** ${{ steps.find_branches.outputs.has_branches }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Merge Clean:** ${{ steps.test_branch.outputs.merge_clean || 'N/A' }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Tests Passed:** ${{ steps.test_branch.outputs.tests_passed || 'N/A' }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          if [ "${{ steps.find_branches.outputs.has_branches }}" = "true" ]; then
+            if [ "${{ steps.test_branch.outputs.merge_clean }}" = "true" ] && [ "${{ steps.test_branch.outputs.tests_passed }}" = "true" ]; then
+              echo "✅ **Result:** Security branch auto-merged successfully" >> $GITHUB_STEP_SUMMARY
+            else
+              echo "⚠️ **Result:** Auto-merge failed, manual intervention required" >> $GITHUB_STEP_SUMMARY
+            fi
+          else
+            echo "ℹ️ **Result:** No security branches found to process" >> $GITHUB_STEP_SUMMARY
+          fi
