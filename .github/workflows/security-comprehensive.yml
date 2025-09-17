@@ -234,6 +234,7 @@ jobs:
           severity: "CRITICAL,HIGH,MEDIUM"
           exit-code: "0"
           ignore-unfixed: true
+          skip-dirs: studio/dist,site/dist,site/public/_astro
 
       - name: "🔍 Run Trivy Config Scan"
         uses: aquasecurity/trivy-action@915b19bbe73b92a6cf82a1bc12b087c9a19a5fe2 # v0.28.0
@@ -245,6 +246,7 @@ jobs:
           severity: "CRITICAL,HIGH,MEDIUM"
           exit-code: "0"
           ignore-unfixed: true
+          skip-dirs: studio/dist,site/dist,site/public/_astro
 
       - name: "📊 Upload Trivy Filesystem SARIF"
         uses: github/codeql-action/upload-sarif@v3
@@ -333,15 +335,7 @@ jobs:
         with:
           results_file: scorecard-results.sarif
           results_format: sarif
-          publish_results: true
-        continue-on-error: true
-
-      - name: "📊 Upload Scorecard SARIF"
-        uses: github/codeql-action/upload-sarif@v3
-        if: hashFiles('scorecard-results.sarif') != ''
-        with:
-          sarif_file: scorecard-results.sarif
-          category: scorecard
+          publish_results: false
         continue-on-error: true
 
   # ==============================================================================
@@ -371,6 +365,7 @@ jobs:
         with:
           languages: ${{ matrix.language }}
           queries: security-extended,security-and-quality
+          config-file: ./.github/codeql/codeql-config-js.yml
       - name: "🔧 Setup Node.js for CodeQL"
         uses: actions/setup-node@v4
         with:

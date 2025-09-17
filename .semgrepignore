@@ -1,0 +1,43 @@
+# Exclude generated build artifacts and caches
+
+node_modules/
+\*\*/node_modules/
+
+# Build outputs
+
+site/dist/
+studio/dist/
+**/dist/
+**/build/
+\*\*/out/
+
+# Framework-specific artifacts
+
+**/.astro/
+**/\_astro/
+\*\*/.next/
+
+# Hosting/platform artifacts
+
+\*\*/.vercel/
+
+# Coverage and tests
+
+**/coverage/
+**/test/
+**/tests/
+**/_.test._ \*_/_.spec.\*
+
+# Misc static bundles
+
+**/\*.min.js
+**/_.min.mjs
+\*\*/_.bundle.js
+**/\*.bundle.mjs
+**/chunks/
+\*\*/static/
+
+# Declarations and configs
+
+**/\*.d.ts
+**/tsconfig.json

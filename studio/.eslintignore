@@ -1,0 +1,14 @@
+# Generated outputs
+_dist/
+dist/
+.vercel/
+.next/
+coverage/
+
+# Node
+node_modules/
+
+# Misc
+*.min.js
+*.bundle.js
+*.bundle.mjs

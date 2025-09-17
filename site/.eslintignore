@@ -1,0 +1,18 @@
+# Generated outputs
+_dist/
+dist/
+.astro/
+_astro/
+.vercel/
+.next/
+coverage/
+public/_astro/
+public/**/*.min.js
+
+# Node
+node_modules/
+
+# Misc
+*.min.js
+*.bundle.js
+*.bundle.mjs

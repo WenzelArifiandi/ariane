@@ -36,6 +36,7 @@ jobs:
           severity: "CRITICAL,HIGH,MEDIUM"
           exit-code: "0"
           ignore-unfixed: true
+          skip-dirs: studio/dist,site/dist
 
       - name: 📊 Upload Trivy Results to GitHub Security
         uses: github/codeql-action/upload-sarif@v3
