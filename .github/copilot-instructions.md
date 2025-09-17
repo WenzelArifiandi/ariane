@@ -8,6 +8,7 @@
 - **wasm/**: Rust→WASM modules for hot paths (session signing). Built via `wasm-pack`, fallback to TS implementation.
 - **ops/**: Operational docs (Cloudflare Access + GitHub OIDC setup, DNS, troubleshooting).
 - **scripts/**: Bash deployment helpers with SSH status checks, health monitoring, and remediation playbooks.
+- **tests/**: Testing infrastructure with Vitest (unit/integration), Playwright (e2e), and custom security test suite.
 
 ## Developer Workflows
 
@@ -26,7 +27,13 @@
 - **Security automation:**
   - `npm run security:autofix` (CodeQL alert fixes for 8+ vulnerability types)
   - `npm run security:autofix:dry-run` (preview mode)
+  - `npm run security:autofix:advanced` (extended patterns, more aggressive)
   - `npm run deps:audit:fix` (dependency vulnerabilities)
+- **Testing:**
+  - `npm run test` (unit + integration via Vitest)
+  - `npm run test:e2e` (Playwright across Chrome/Firefox/Safari)
+  - `npm run test:security` (validate security-autofix patterns)
+  - `npm run test:all` (comprehensive test suite)
 - **Zitadel ops:**
   - Remote status: `scripts/deployment-status.sh` (SSH + health checks)
   - Remote session: `scripts/zitadel-remote-session.sh`
@@ -40,6 +47,7 @@
 - **Cloudflare Access:** JWT validation with configurable group claims (`CF_ACCESS_GROUP_CLAIM`, `CF_ACCESS_REQUIRED_GROUPS`). Protected path prefixes configurable. GitHub OIDC + hardware key MFA documented in `ops/cloudflare-access-github.md`.
 - **WASM integration:** Session signer module with fallback. Built to `site/src/lib/wasm/session-signer/`, imports attempted in `signer.ts` with graceful fallback to pure TS implementation.
 - **Build optimizations:** Vercel headers for immutable assets (`/_astro/`, static files). HMR configured for tunnel domains via `CF_TUNNEL_HOST`. Source maps disabled in production.
+- **Testing patterns:** Vitest with jsdom environment, path aliases (`@site`, `@studio`, `@tests`). Playwright for e2e with mobile device coverage. MSW for API mocking.
 
 ## Integration Points & Patterns
 
@@ -57,6 +65,13 @@
 - **Auth mode conflicts:** Main site domains (`wenzelarifiandi.com`) force `public` mode for safety. Check `determineAuthMode()` logic in middleware. Verify `AUTH_MODE` env var and origin calculation via `getOriginFromHeaders()`.
 - **Zitadel operational issues:** Use `scripts/deployment-status.sh` for comprehensive SSH health checks. Check Postgres connectivity, Caddy SSL cert status. Remediation playbooks in `zitadel/scripts/remediation-playbook.md`.
 - **WASM build failures:** Ensure `wasm-pack` installed and Rust toolchain available. Check output directory `site/src/lib/wasm/session-signer/` for artifacts. Graceful fallback to TypeScript implementation if import fails.
+
+## Testing & Quality Assurance
+
+- **Unit/Integration tests:** Run via Vitest with jsdom environment. Use path aliases: `@site/lib/utils`, `@studio/schemas`, `@tests/fixtures`
+- **E2E tests:** Playwright config covers desktop + mobile browsers. Tests expect local dev server on port 4321 (`npm run dev:site`)
+- **Security testing:** Custom `test-security-autofix.js` validates vulnerability pattern fixes. Run `npm run test:security` before deploying fixes
+- **Test file patterns:** `tests/{unit,integration,e2e}/**/*.{test,spec}.{js,ts}` and `{site,studio}/**/*.{test,spec}.{js,ts}`
 
 ---
 

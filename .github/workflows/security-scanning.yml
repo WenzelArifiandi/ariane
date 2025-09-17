@@ -243,5 +243,28 @@ jobs:
 
           Co-Authored-By: Security Bot <security-bot@github.com>"
 
-          git push
-          echo "✅ Automated security fixes committed and pushed"
+          echo "✅ Automated security fixes committed locally; opening a pull request"
+
+      - name: 📬 Open PR for Auto-fixes
+        uses: peter-evans/create-pull-request@271a8d0340265f705b14b6d32b9829c1cb33d45e # v7.0.8
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          branch: ci/security-autofix/${{ github.run_id }}
+          title: "security: automated dependency updates and vulnerability fixes"
+          commit-message: |
+            security: automated dependency updates and vulnerability fixes
+
+            🤖 Automated security maintenance:
+            - Updated dependencies to latest secure versions
+            - Applied npm audit fixes
+            - Resolved known vulnerabilities
+
+            🔍 Triggered by: ${{ github.event_name }}
+          body: |
+            This PR was opened automatically to apply safe security-related updates discovered by the scheduled scan.
+
+            Please review and merge; direct pushes to `main` are blocked by branch protections.
+          labels: |
+            security
+            automated-fix
+          delete-branch: true

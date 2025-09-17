@@ -571,6 +571,28 @@ jobs:
 
           Co-authored-by: Security Scanner <security@github.com>"
 
-          git push || echo "⚠️ Failed to push auto-fixes (may need manual intervention)"
+          echo "✅ Security auto-fixes committed locally; opening a pull request"
 
-          echo "🎉 Security auto-fixes completed and pushed!"
+      - name: "📬 Open PR for Auto-fixes"
+        uses: peter-evans/create-pull-request@271a8d0340265f705b14b6d32b9829c1cb33d45e # v7.0.8
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          branch: ci/security-auto-fix/${{ github.run_id }}
+          title: "🔧 auto-fix: resolve security issues automatically"
+          commit-message: |
+            🔧 auto-fix: resolve security issues automatically
+
+            🛡️ Security improvements applied:
+            - ESLint security rule violations fixed
+            - Common security anti-patterns resolved  
+            - Dependency vulnerabilities patched
+
+            🤖 Automated by: Security Scanner Bot
+          body: |
+            This PR contains automated security improvements detected by the comprehensive scan workflow.
+
+            Please review and merge; direct pushes to `main` are blocked by branch protections.
+          labels: |
+            security
+            automated-fix
+          delete-branch: true
