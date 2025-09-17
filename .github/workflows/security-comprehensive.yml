@@ -312,6 +312,7 @@ jobs:
     name: "🔍 OSSF Scorecard"
     runs-on: ubuntu-latest
     if: github.actor != 'dependabot[bot]'
+    continue-on-error: true  # Don't fail the entire workflow if Scorecard fails
     permissions:
       actions: read
       contents: read
@@ -329,12 +330,15 @@ jobs:
           results_file: scorecard-results.sarif
           results_format: sarif
           publish_results: true
+        continue-on-error: true
 
       - name: "📊 Upload Scorecard SARIF"
         uses: github/codeql-action/upload-sarif@v3
+        if: hashFiles('scorecard-results.sarif') != ''
         with:
           sarif_file: scorecard-results.sarif
           category: scorecard
+        continue-on-error: true
 
   # ==============================================================================
   # GITHUB'S PREMIUM SAST (FREE ON PUBLIC REPOS)
