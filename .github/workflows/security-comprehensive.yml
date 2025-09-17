@@ -312,7 +312,7 @@ jobs:
     name: "🔍 OSSF Scorecard"
     runs-on: ubuntu-latest
     if: github.actor != 'dependabot[bot]'
-    continue-on-error: true  # Don't fail the entire workflow if Scorecard fails
+    continue-on-error: true # Don't fail the entire workflow if Scorecard fails
     permissions:
       actions: read
       contents: read
