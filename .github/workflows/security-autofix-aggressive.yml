@@ -19,8 +19,10 @@ on:
 
 permissions:
   contents: write
-  security-events: read
   pull-requests: write
+  issues: write
+  security-events: write
+  actions: write
 
 jobs:
   aggressive-autofix:
