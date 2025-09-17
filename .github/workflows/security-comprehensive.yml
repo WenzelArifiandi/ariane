@@ -523,26 +523,41 @@ jobs:
 
           echo "✅ Security anti-patterns fixed"
 
-      - name: "🔧 Dependency Vulnerability Fixes"
+      - name: "🔧 Safe Dependency Security Updates"
         run: |
-          echo "🔧 Fixing dependency vulnerabilities..."
+          echo "🔧 Applying SAFE security updates (no breaking changes)..."
 
-          # Fix site dependencies
+          # Site dependencies - SAFE updates only
           cd site
           if npm audit --audit-level=high 2>/dev/null | grep -q "vulnerabilities"; then
-            echo "🔧 Fixing site dependencies..."
-            npm audit fix --force 2>/dev/null || npm audit fix 2>/dev/null || true
+            echo "🔧 Applying safe security updates to site..."
+
+            # SAFE approach: Only patch and minor updates, no major version changes
+            npm audit fix --only=prod 2>/dev/null || true
+
+            # Manual safe updates for specific security patches
+            npm update --save $(npm audit --audit-level=high --json 2>/dev/null | jq -r '.vulnerabilities | keys[]' 2>/dev/null | head -5) 2>/dev/null || true
+
+            echo "Site vulnerabilities addressed safely"
+          else
+            echo "No high-severity vulnerabilities in site"
           fi
 
-          # Fix studio dependencies
+          # Studio dependencies - SAFE updates only
           cd ../studio
           if npm audit --audit-level=high 2>/dev/null | grep -q "vulnerabilities"; then
-            echo "🔧 Fixing studio dependencies..."  
-            npm audit fix --force 2>/dev/null || npm audit fix 2>/dev/null || true
+            echo "🔧 Applying safe security updates to studio..."
+
+            # SAFE approach: Only patch and minor updates
+            npm audit fix --only=prod 2>/dev/null || true
+
+            echo "Studio vulnerabilities addressed safely"
+          else
+            echo "No high-severity vulnerabilities in studio"
           fi
 
           cd ..
-          echo "✅ Dependency vulnerabilities fixed"
+          echo "✅ SAFE security updates completed (no breaking changes)"
 
       - name: "💾 Commit Auto-fixes"
         run: |

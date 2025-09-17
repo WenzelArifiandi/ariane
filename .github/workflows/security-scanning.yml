@@ -188,12 +188,12 @@ jobs:
 
           # Update all dependencies to latest secure versions
           cd site
-          npm update
-          npm audit fix --force || true
+          # SAFE security updates only - no breaking changes
+          npm audit fix --only=prod || npm audit fix || true
 
           cd ../studio
-          npm update
-          npm audit fix --force || true
+          # SAFE security updates only - no breaking changes
+          npm audit fix --only=prod || npm audit fix || true
 
           cd ..
 
