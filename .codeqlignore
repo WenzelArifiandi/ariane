@@ -1,0 +1,43 @@
+# CodeQL ignore file to exclude problematic auto-generated files
+
+# Dependencies
+node_modules/
+**/node_modules/
+
+# Build outputs
+dist/
+**/dist/
+build/
+**/build/
+out/
+**/out/
+
+# Deployment artifacts
+.vercel/
+**/.vercel/
+.astro/
+**/.astro/
+.next/
+**/.next/
+
+# Generated/bundled files
+**/*.min.js
+**/*.min.mjs
+**/*.bundle.js
+**/*.bundle.mjs
+**/chunks/
+**/static/
+**/vendor/
+
+# Test files
+**/test/
+**/tests/
+**/spec/
+**/*.test.*
+**/*.spec.*
+**/coverage/
+
+# Config files that might have syntax issues
+*.config.js
+*.config.ts
+*.config.mjs

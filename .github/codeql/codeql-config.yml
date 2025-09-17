@@ -11,28 +11,52 @@ queries:
     uses: security-extended
 
 paths-ignore:
-  - node_modules/**
+  - "node_modules/**"
   - "**/node_modules/**"
-  - dist/**
+  - "dist/**"
   - "**/dist/**"
-  - .vercel/**
+  - ".vercel/**"
   - "**/.vercel/**"
-  - "*.config.js"
-  - "*.config.ts"
-  - "*.config.mjs"
+  - ".astro/**"
+  - "**/.astro/**"
   - ".next/**"
+  - "**/.next/**"
+  - "build/**"
+  - "**/build/**"
+  - "out/**"
+  - "**/out/**"
   - "**/coverage/**"
   - "**/test/**"
   - "**/tests/**"
   - "**/spec/**"
   - "**/*.test.*"
   - "**/*.spec.*"
+  - "**/*.min.js"
+  - "**/*.min.mjs"
+  - "**/vendor/**"
+  - "**/*.bundle.js"
+  - "**/*.bundle.mjs"
+  - "**/chunks/**"
+  - "**/static/**"
 
 # Include specific directories for scanning
 paths:
-  - site/src/**
-  - studio/api/**
-  - studio/schemas/**
+  - "studio/**/*.ts"
+  - "studio/**/*.tsx"
+  - "studio/**/*.js"
+  - "studio/**/*.jsx"
+  - "site/**/*.ts"
+  - "site/**/*.tsx"
+  - "site/**/*.js"
+  - "site/**/*.jsx"
+  - "site/**/*.mjs"
+  - "site/**/*.astro"
+  - "scripts/**/*.js"
+  - "scripts/**/*.ts"
+  - "scripts/**/*.mjs"
+  - "*.js"
+  - "*.mjs"
+  - "*.ts"
 
 # Specific query configurations
 query-filters:
