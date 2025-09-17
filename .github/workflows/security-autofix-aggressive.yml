@@ -230,6 +230,9 @@ jobs:
       - name: "💾 Commit Aggressive Fixes"
         env:
           GH_TOKEN: ${{ github.token }}
+          CHANGED_FILES: ${{ steps.count_fixes.outputs.changed_files }}
+          TOTAL_CHANGES: ${{ steps.count_fixes.outputs.total_changes }}
+          FIX_LEVEL: ${{ github.event.inputs.fix_level || 'scheduled' }}
         run: |
           git config --local user.email "security-autofix@github.com"
           git config --local user.name "Aggressive Security Auto-Fix Bot 🛠️"
@@ -240,7 +243,7 @@ jobs:
           fi
 
           git add .
-          git commit -m "🛠️ aggressive security auto-fix: resolve ${{ steps.count_fixes.outputs.changed_files }} files
+          git commit -m "🛠️ aggressive security auto-fix: resolve $CHANGED_FILES files
 
           🛡️ Comprehensive security improvements:
           - ESLint security rules applied with aggressive fixes
@@ -250,9 +253,9 @@ jobs:
           - Security headers configuration added
 
           📊 Impact:
-          - Files modified: ${{ steps.count_fixes.outputs.changed_files }}
-          - Total changes: ${{ steps.count_fixes.outputs.total_changes }}
-          - Fix level: ${{ github.event.inputs.fix_level || 'scheduled' }}
+          - Files modified: $CHANGED_FILES
+          - Total changes: $TOTAL_CHANGES
+          - Fix level: $FIX_LEVEL
 
           🤖 Automated by: Aggressive Security Auto-Fix Bot
           🎯 Target: Resolve code scanning alerts
@@ -272,10 +275,10 @@ jobs:
 
             # Create PR using GitHub CLI
             gh pr create \
-              --title "🛠️ Aggressive Security Auto-Fix: ${{ steps.count_fixes.outputs.changed_files }} files" \
+              --title "🛠️ Aggressive Security Auto-Fix: $CHANGED_FILES files" \
               --body "## 🛡️ Automated Security Fixes
 
-            This PR contains ${{ steps.count_fixes.outputs.changed_files }} files with ${{ steps.count_fixes.outputs.total_changes }} security improvements:
+            This PR contains $CHANGED_FILES files with $TOTAL_CHANGES security improvements:
 
             ### ✅ Fixes Applied
             - ESLint security rules with aggressive fixes
@@ -285,9 +288,9 @@ jobs:
             - Security headers configuration added
 
             ### 📊 Impact
-            - **Files modified**: ${{ steps.count_fixes.outputs.changed_files }}
-            - **Total changes**: ${{ steps.count_fixes.outputs.total_changes }}
-            - **Fix level**: ${{ github.event.inputs.fix_level || 'scheduled' }}
+            - **Files modified**: $CHANGED_FILES
+            - **Total changes**: $TOTAL_CHANGES
+            - **Fix level**: $FIX_LEVEL
 
             🤖 **Auto-generated** by Aggressive Security Auto-Fix Bot
             🎯 **Target**: Resolve code scanning alerts
@@ -302,14 +305,18 @@ jobs:
 
       - name: "📈 Create Summary Report"
         if: always()
+        env:
+          CHANGED_FILES: ${{ steps.count_fixes.outputs.changed_files }}
+          TOTAL_CHANGES: ${{ steps.count_fixes.outputs.total_changes }}
+          FIX_LEVEL: ${{ github.event.inputs.fix_level || 'scheduled' }}
         run: |
-          cat >> $GITHUB_STEP_SUMMARY << 'EOF'
+          cat >> $GITHUB_STEP_SUMMARY << EOF
           ## 🛠️ Aggressive Security Auto-Fix Report
 
           ### 📊 Fixes Applied
-          - **Files Changed:** ${{ steps.count_fixes.outputs.changed_files }}
-          - **Total Changes:** ${{ steps.count_fixes.outputs.total_changes }}
-          - **Fix Level:** ${{ github.event.inputs.fix_level || 'scheduled' }}
+          - **Files Changed:** $CHANGED_FILES
+          - **Total Changes:** $TOTAL_CHANGES
+          - **Fix Level:** $FIX_LEVEL
 
           ### 🛡️ Security Improvements
           - ✅ ESLint security rules with aggressive fixing
