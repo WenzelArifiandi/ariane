@@ -834,7 +834,7 @@ DefaultInstance:
       Phone:
         Number: # ZITADEL_DEFAULTINSTANCE_ORG_HUMAN_PHONE_NUMBER
         Verified: # ZITADEL_DEFAULTINSTANCE_ORG_HUMAN_PHONE_VERIFIED
-      Password: # ZITADEL_DEFAULTINSTANCE_ORG_HUMAN_PASSWORD
+      Password: # ZITADEL_DEFAULTINSTANCE_ORG_HUMAN_PASSWORD (REQUIRED: Set strong password via environment variable)
     # In the DefaultInstance.Org.Machine section, the initial organization's admin user with the role IAM_OWNER is defined.
     # If DefaultInstance.Org.Machine.Machine is defined, a service user is created with the IAM_OWNER role.
     Machine:
@@ -1021,7 +1021,7 @@ DefaultInstance:
       # must include the port, like smtp.mailtrap.io:2525. IPv6 is also supported, like [2001:db8::1]:2525
       Host: # ZITADEL_DEFAULTINSTANCE_SMTPCONFIGURATION_SMTP_HOST
       User: # ZITADEL_DEFAULTINSTANCE_SMTPCONFIGURATION_SMTP_USER
-      Password: # ZITADEL_DEFAULTINSTANCE_SMTPCONFIGURATION_SMTP_PASSWORD
+      Password: # ZITADEL_DEFAULTINSTANCE_SMTPCONFIGURATION_SMTP_PASSWORD (DO NOT leave empty in production)
     TLS: # ZITADEL_DEFAULTINSTANCE_SMTPCONFIGURATION_TLS
     # If the host of the sender is different from ExternalDomain set DefaultInstance.DomainPolicy.SMTPSenderAddressMatchesInstanceDomain to false
     From: # ZITADEL_DEFAULTINSTANCE_SMTPCONFIGURATION_FROM

@@ -18,7 +18,8 @@ const DB_FILE = join(DATA_DIR, 'webauthn.json');
 
 function load(): DB {
   try {
-    if (!existsSync(DATA_DIR)) mkdirSync(DATA_DIR);
+    // Use recursive option to avoid race conditions
+    mkdirSync(DATA_DIR, { recursive: true });
     if (!existsSync(DB_FILE)) {
       const empty: DB = { credentials: [] };
       writeFileSync(DB_FILE, JSON.stringify(empty, null, 2));
