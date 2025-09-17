@@ -22,16 +22,10 @@ updates:
       - "dependencies"
       - "site"
       - "automated"
-    # Auto-merge patch and minor security updates
+    # Allow security and version updates
     allow:
       - dependency-type: "direct"
-        update-type: "security"
       - dependency-type: "indirect"
-        update-type: "security"
-      - dependency-type: "direct"
-        update-type: "version-update:semver-patch"
-      - dependency-type: "direct"
-        update-type: "version-update:semver-minor"
     # Group related updates together
     groups:
       astro:
@@ -76,16 +70,10 @@ updates:
       - "dependencies"
       - "studio"
       - "automated"
-    # Auto-merge patch and minor security updates
+    # Allow security and version updates
     allow:
       - dependency-type: "direct"
-        update-type: "security"
       - dependency-type: "indirect"
-        update-type: "security"
-      - dependency-type: "direct"
-        update-type: "version-update:semver-patch"
-      - dependency-type: "direct"
-        update-type: "version-update:semver-minor"
     # Group Sanity-related updates
     groups:
       sanity:

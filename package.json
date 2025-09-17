@@ -20,7 +20,8 @@
     "security:autofix:advanced": "node security-autofix-advanced.js",
     "security:autofix:advanced:dry-run": "node security-autofix-advanced.js --dry-run",
     "security:autofix:advanced:aggressive": "node security-autofix-advanced.js --aggressive",
-    "security:autofix:test": "node test-security-autofix.js"
+    "security:autofix:test": "node test-security-autofix.js",
+    "deps:audit": "npm audit && npm --prefix site audit",
+    "deps:audit:fix": "npm audit fix && npm --prefix site audit fix"
   }
 }
-

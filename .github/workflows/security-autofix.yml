@@ -38,13 +38,13 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
         with:
           fetch-depth: 0
           token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@1e60f620b9541d16bece96c5465dc8ee9832be0b # v4.0.3
         with:
           node-version: '22'
           cache: 'npm'
@@ -61,8 +61,10 @@ jobs:
 
       - name: Run Security Auto-Fix (Conservative)
         if: ${{ github.event.inputs.mode == 'conservative' || github.event.inputs.mode == '' }}
+        env:
+          DRY_RUN: ${{ github.event.inputs.dry_run }}
         run: |
-          if [[ "${{ github.event.inputs.dry_run }}" == "true" ]]; then
+          if [[ "$DRY_RUN" == "true" ]]; then
             npm run security:autofix:dry-run
           else
             npm run security:autofix
@@ -70,8 +72,10 @@ jobs:
 
       - name: Run Security Auto-Fix (Advanced)
         if: ${{ github.event.inputs.mode == 'advanced' }}
+        env:
+          DRY_RUN: ${{ github.event.inputs.dry_run }}
         run: |
-          if [[ "${{ github.event.inputs.dry_run }}" == "true" ]]; then
+          if [[ "$DRY_RUN" == "true" ]]; then
             npm run security:autofix:advanced:dry-run
           else
             npm run security:autofix:advanced
@@ -79,15 +83,17 @@ jobs:
 
       - name: Run Security Auto-Fix (Aggressive)
         if: ${{ github.event.inputs.mode == 'aggressive' }}
+        env:
+          DRY_RUN: ${{ github.event.inputs.dry_run }}
         run: |
-          if [[ "${{ github.event.inputs.dry_run }}" == "true" ]]; then
+          if [[ "$DRY_RUN" == "true" ]]; then
             npm run security:autofix:advanced:dry-run
           else
             npm run security:autofix:advanced:aggressive
           fi
 
       - name: Upload Fix Report
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@50769540e7f4bd5e21e526ee35c689e35e0d6874 # v4.4.0
         if: always()
         with:
           name: security-autofix-report
@@ -103,25 +109,29 @@ jobs:
             echo "has_changes=false" >> $GITHUB_OUTPUT
           else
             echo "has_changes=true" >> $GITHUB_OUTPUT
-            echo "files_changed=$(git diff --name-only | wc -l)" >> $GITHUB_OUTPUT
+            FILES_CHANGED=$(git diff --name-only | wc -l)
+            echo "files_changed=$FILES_CHANGED" >> $GITHUB_OUTPUT
           fi
 
       - name: Commit changes
         if: steps.changes.outputs.has_changes == 'true' && github.event.inputs.dry_run != 'true'
+        env:
+          MODE: ${{ github.event.inputs.mode || 'conservative' }}
+          FILES_CHANGED: ${{ steps.changes.outputs.files_changed }}
         run: |
           git add .
           git commit -m "🛡️ Security auto-fix: resolve CodeQL alerts
 
           - Applied automated fixes for security vulnerabilities
-          - Mode: ${{ github.event.inputs.mode || 'conservative' }}
-          - Files changed: ${{ steps.changes.outputs.files_changed }}
+          - Mode: $MODE
+          - Files changed: $FILES_CHANGED
 
           🤖 Generated with security auto-fix script
           Co-Authored-By: GitHub Action <action@github.com>"
 
       - name: Create Pull Request
         if: steps.changes.outputs.has_changes == 'true' && github.event.inputs.dry_run != 'true'
-        uses: peter-evans/create-pull-request@v5
+        uses: peter-evans/create-pull-request@c5a7806660adbe173f04e3e038b0ccdcd758773c # v6.1.0
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           branch: security-fixes-${{ github.run_id }}
@@ -172,18 +182,20 @@ jobs:
             security
             automated
             codeql
-          reviewers: |
-            ${{ github.repository_owner }}
+          reviewers: ${{ github.repository_owner }}
           draft: false
 
       - name: Comment on Dry Run
         if: github.event.inputs.dry_run == 'true' && steps.changes.outputs.has_changes == 'true'
+        env:
+          FILES_CHANGED: ${{ steps.changes.outputs.files_changed }}
+          MODE: ${{ github.event.inputs.mode || 'conservative' }}
         run: |
           echo "## 🔍 Dry Run Results"
           echo ""
           echo "The security auto-fix script found potential fixes:"
-          echo "- Files that would be changed: ${{ steps.changes.outputs.files_changed }}"
-          echo "- Mode: ${{ github.event.inputs.mode || 'conservative' }}"
+          echo "- Files that would be changed: $FILES_CHANGED"
+          echo "- Mode: $MODE"
           echo ""
           echo "To apply these fixes, re-run this workflow with 'Dry run' set to false."
           echo ""
@@ -191,14 +203,19 @@ jobs:
 
       - name: Summary
         if: always()
+        env:
+          MODE: ${{ github.event.inputs.mode || 'conservative' }}
+          DRY_RUN: ${{ github.event.inputs.dry_run || 'false' }}
+          HAS_CHANGES: ${{ steps.changes.outputs.has_changes }}
+          FILES_CHANGED: ${{ steps.changes.outputs.files_changed }}
         run: |
           echo "## Security Auto-Fix Summary" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "- **Mode**: ${{ github.event.inputs.mode || 'conservative' }}" >> $GITHUB_STEP_SUMMARY
-          echo "- **Dry Run**: ${{ github.event.inputs.dry_run || 'false' }}" >> $GITHUB_STEP_SUMMARY
-          echo "- **Changes Found**: ${{ steps.changes.outputs.has_changes }}" >> $GITHUB_STEP_SUMMARY
-          if [[ "${{ steps.changes.outputs.has_changes }}" == "true" ]]; then
-            echo "- **Files Changed**: ${{ steps.changes.outputs.files_changed }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Mode**: $MODE" >> $GITHUB_STEP_SUMMARY
+          echo "- **Dry Run**: $DRY_RUN" >> $GITHUB_STEP_SUMMARY
+          echo "- **Changes Found**: $HAS_CHANGES" >> $GITHUB_STEP_SUMMARY
+          if [[ "$HAS_CHANGES" == "true" ]]; then
+            echo "- **Files Changed**: $FILES_CHANGED" >> $GITHUB_STEP_SUMMARY
           fi
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "Check the uploaded artifacts for detailed reports." >> $GITHUB_STEP_SUMMARY
@@ -211,12 +228,12 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
         with:
           ref: security-fixes-${{ github.run_id }}
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@1e60f620b9541d16bece96c5465dc8ee9832be0b # v4.0.3
         with:
           node-version: '22'
           cache: 'npm'
