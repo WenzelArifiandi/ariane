@@ -49,6 +49,8 @@ jobs:
 
       - name: "📊 Pre-fix Security Scan"
         id: pre_scan
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
           echo "📊 Checking current vulnerability count..."
 
@@ -58,6 +60,8 @@ jobs:
           echo "📈 Current open security alerts: $ALERT_COUNT"
 
       - name: "🎯 Execute Security Fix Strategy"
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
           STRATEGY="${{ inputs.strategy || 'safe' }}"
           echo "🎯 Executing $STRATEGY security fix strategy..."
@@ -80,6 +84,8 @@ jobs:
           esac
 
       - name: "⏳ Wait for Completion"
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
           echo "⏳ Waiting for security fix workflow to complete..."
 
@@ -109,6 +115,8 @@ jobs:
 
       - name: "📊 Post-fix Security Scan"
         id: post_scan
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
           echo "📊 Checking post-fix vulnerability count..."
 
