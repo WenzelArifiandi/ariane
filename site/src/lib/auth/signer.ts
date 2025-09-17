@@ -15,10 +15,10 @@ async function loadWasm(): Promise<void> {
   if (wasm || wasmReady) return wasmReady ?? Promise.resolve();
   wasmReady = (async () => {
     try {
-      // Use dynamic import; path relative to this file's compiled location.
-      // Vite/Astro will treat it as an optional chunk if it exists.
-      // The generated file name from wasm-pack is usually `session_signer.js`.
-      const mod = await import("../wasm/session-signer/session_signer.js");
+      // Use dynamic import with string concatenation to prevent bundlers from resolving at build time
+      // This makes the import truly optional - if the file doesn't exist, it fails gracefully
+      const wasmPath = "../wasm/session-signer/" + "session_signer.js";
+      const mod = await import(/* @vite-ignore */ wasmPath);
       if (typeof mod.default === "function") {
         // Some wasm-pack targets export a default init function requiring the wasm URL.
         // Try to locate the .wasm next to the JS file.
