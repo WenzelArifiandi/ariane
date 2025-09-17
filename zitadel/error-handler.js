@@ -1,5 +1,6 @@
 // Zitadel User-Friendly Error Handler
 // Intercepts Zitadel API errors and provides better messages
+/* global module, window */
 
 const ERROR_MAPPINGS = {
   // Profile/User errors
