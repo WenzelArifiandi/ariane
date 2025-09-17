@@ -2,12 +2,12 @@ name: "🛡️ Security Scan Suite"
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ["main"]
   pull_request:
-    branches: [ "main" ]
+    branches: ["main"]
   schedule:
     # Run weekly on Sundays at 6 AM UTC
-    - cron: '0 6 * * 0'
+    - cron: "0 6 * * 0"
   workflow_dispatch:
 
 permissions:
@@ -21,12 +21,12 @@ jobs:
   # ==============================================================================
   # FAST PARALLEL SCANS - Run these together for quick feedback
   # ==============================================================================
-  
+
   eslint:
     name: "🔍 ESLint Security & Quality"
     runs-on: ubuntu-latest
     if: github.actor != 'dependabot[bot]'
-    
+
     steps:
       - name: "📥 Checkout"
         uses: actions/checkout@v4
@@ -80,7 +80,7 @@ jobs:
     name: "🔍 Semgrep SAST"
     runs-on: ubuntu-latest
     if: github.actor != 'dependabot[bot]'
-    
+
     container:
       image: semgrep/semgrep
 
@@ -108,7 +108,7 @@ jobs:
     name: "🔍 OSV Scanner (Dependencies)"
     runs-on: ubuntu-latest
     if: github.actor != 'dependabot[bot]'
-    
+
     steps:
       - name: "📥 Checkout"
         uses: actions/checkout@v4
@@ -132,12 +132,12 @@ jobs:
   # ==============================================================================
   # DOCKER & CONTAINER SECURITY
   # ==============================================================================
-  
+
   trivy:
     name: "🔍 Trivy Container & Filesystem"
     runs-on: ubuntu-latest
     if: github.actor != 'dependabot[bot]'
-    
+
     steps:
       - name: "📥 Checkout"
         uses: actions/checkout@v4
@@ -145,40 +145,40 @@ jobs:
       - name: "🔍 Run Trivy Filesystem Scan"
         uses: aquasecurity/trivy-action@master
         with:
-          scan-type: 'fs'
-          scan-ref: '.'
-          format: 'sarif'
-          output: 'trivy-fs-results.sarif'
-          severity: 'CRITICAL,HIGH,MEDIUM'
+          scan-type: "fs"
+          scan-ref: "."
+          format: "sarif"
+          output: "trivy-fs-results.sarif"
+          severity: "CRITICAL,HIGH,MEDIUM"
 
       - name: "🔍 Run Trivy Config Scan"
         uses: aquasecurity/trivy-action@master
         with:
-          scan-type: 'config'
-          scan-ref: '.'
-          format: 'sarif'
-          output: 'trivy-config-results.sarif'
-          severity: 'CRITICAL,HIGH,MEDIUM'
+          scan-type: "config"
+          scan-ref: "."
+          format: "sarif"
+          output: "trivy-config-results.sarif"
+          severity: "CRITICAL,HIGH,MEDIUM"
 
       - name: "📊 Upload Trivy Filesystem SARIF"
         uses: github/codeql-action/upload-sarif@v3
         if: always()
         with:
-          sarif_file: 'trivy-fs-results.sarif'
+          sarif_file: "trivy-fs-results.sarif"
           category: trivy-filesystem
 
       - name: "📊 Upload Trivy Config SARIF"
         uses: github/codeql-action/upload-sarif@v3
         if: always()
         with:
-          sarif_file: 'trivy-config-results.sarif'
+          sarif_file: "trivy-config-results.sarif"
           category: trivy-config
 
   sbom-generation:
     name: "📋 SBOM Generation (Syft)"
     runs-on: ubuntu-latest
     if: github.actor != 'dependabot[bot]'
-    
+
     steps:
       - name: "📥 Checkout"
         uses: actions/checkout@v4
@@ -198,12 +198,12 @@ jobs:
   # ==============================================================================
   # INFRASTRUCTURE & KUBERNETES SECURITY
   # ==============================================================================
-  
+
   kubernetes-security:
     name: "🔍 Kubernetes Security (Kubesec)"
     runs-on: ubuntu-latest
     if: github.actor != 'dependabot[bot]'
-    
+
     steps:
       - name: "📥 Checkout"
         uses: actions/checkout@v4
@@ -212,7 +212,7 @@ jobs:
         run: |
           # Find all Kubernetes YAML files
           find . -name "*.yaml" -o -name "*.yml" | grep -E "(k8s|kube|deploy)" || echo "No Kubernetes manifests found"
-          
+
           # If we have docker-compose files, scan those too
           if find . -name "docker-compose*.yml" -o -name "docker-compose*.yaml" | head -1; then
             echo "🐳 Found Docker Compose files, scanning for security issues..."
@@ -225,7 +225,7 @@ jobs:
   # ==============================================================================
   # SUPPLY CHAIN & REPO SECURITY
   # ==============================================================================
-  
+
   scorecard:
     name: "🔍 OSSF Scorecard"
     runs-on: ubuntu-latest
@@ -235,7 +235,7 @@ jobs:
       id-token: write
       actions: read
       contents: read
-    
+
     steps:
       - name: "📥 Checkout"
         uses: actions/checkout@v4
@@ -258,7 +258,7 @@ jobs:
   # ==============================================================================
   # GITHUB'S PREMIUM SAST (FREE ON PUBLIC REPOS)
   # ==============================================================================
-  
+
   codeql:
     name: "🔍 CodeQL Analysis"
     runs-on: ubuntu-latest
@@ -272,7 +272,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        language: [ 'javascript-typescript' ]
+        language: ["javascript-typescript"]
 
     steps:
       - name: "📥 Checkout"
@@ -300,7 +300,7 @@ jobs:
           npm ci
           npm run build
           cd ..
-          
+
           # Build studio
           cd studio
           npm ci
@@ -314,13 +314,22 @@ jobs:
   # ==============================================================================
   # SECURITY SUMMARY & REPORTING
   # ==============================================================================
-  
+
   security-summary:
     name: "📊 Security Summary"
     runs-on: ubuntu-latest
-    needs: [eslint, semgrep, osv-scanner, trivy, sbom-generation, kubernetes-security, scorecard]
+    needs:
+      [
+        eslint,
+        semgrep,
+        osv-scanner,
+        trivy,
+        sbom-generation,
+        kubernetes-security,
+        scorecard,
+      ]
     if: always() && github.actor != 'dependabot[bot]'
-    
+
     steps:
       - name: "📥 Checkout"
         uses: actions/checkout@v4
@@ -355,9 +364,9 @@ jobs:
         with:
           script: |
             const summary = `## 🛡️ Security Scan Results
-            
+
             Your pull request has been scanned with our comprehensive security suite:
-            
+
             | Scanner | Status | Findings |
             |---------|--------|----------|
             | ESLint | ${{ needs.eslint.result }} | JavaScript/TypeScript security & quality |
@@ -365,11 +374,11 @@ jobs:
             | OSV Scanner | ${{ needs.osv-scanner.result }} | Dependency vulnerability scan |
             | Trivy | ${{ needs.trivy.result }} | Container & filesystem security |
             | OSSF Scorecard | ${{ needs.scorecard.result }} | Supply chain security posture |
-            
+
             **📊 View detailed results:** [Security Tab](https://github.com/${{ github.repository }}/security/code-scanning)
-            
+
             **🤖 Automated by:** World-class, zero-cost security scanning suite`;
-            
+
             github.rest.issues.createComment({
               issue_number: context.issue.number,
               owner: context.repo.owner,
@@ -380,13 +389,13 @@ jobs:
   # ==============================================================================
   # AUTOMATIC SECURITY FIXES (BONUS)
   # ==============================================================================
-  
+
   auto-fix:
     name: "🔧 Auto-fix Security Issues"
     runs-on: ubuntu-latest
     needs: [eslint, osv-scanner]
     if: github.event_name == 'push' && github.ref == 'refs/heads/main' && github.actor != 'dependabot[bot]'
-    
+
     steps:
       - name: "📥 Checkout"
         uses: actions/checkout@v4
@@ -405,7 +414,7 @@ jobs:
             echo "🔧 Fixing site dependencies..."
             npm audit fix --force || npm audit fix || true
           fi
-          
+
           cd ../studio
           if npm audit --audit-level=high | grep -q "vulnerabilities"; then
             echo "🔧 Fixing studio dependencies..."
@@ -416,12 +425,12 @@ jobs:
         run: |
           git config --local user.email "security-bot@github.com"
           git config --local user.name "Security Auto-Fix Bot"
-          
+
           if git diff --quiet; then
             echo "No changes to commit"
             exit 0
           fi
-          
+
           git add .
           git commit -m "🔧 security: auto-fix dependency vulnerabilities
 
@@ -431,5 +440,5 @@ jobs:
 
           Generated by world-class security scanning suite
           " || echo "Nothing to commit"
-          
+
           git push || echo "Nothing to push"
