@@ -127,6 +127,39 @@ if cat "$TEMP_BACKUP" | docker compose exec -T db psql -U postgres -d zitadel >/
         GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA adminapi TO zitadel;
     " >/dev/null 2>&1 || echo "⚠️ Some permission grants may have failed (this is often normal)"
     
+    # Fix domain compatibility for local development
+    echo "🌐 Adding localhost domains for local development compatibility..."
+    docker compose exec -T db psql -U postgres -d zitadel -c "
+        -- Get the instance ID (should only be one)
+        DO \$\$
+        DECLARE
+            instance_uuid TEXT;
+            max_seq INTEGER;
+        BEGIN
+            SELECT id INTO instance_uuid FROM projections.instances LIMIT 1;
+            SELECT COALESCE(MAX(sequence), 0) + 1 INTO max_seq FROM projections.instance_domains;
+            
+            -- Add localhost:8080 domain if it doesn't exist
+            INSERT INTO projections.instance_domains 
+            (instance_id, creation_date, change_date, sequence, domain, is_generated, is_primary)
+            SELECT instance_uuid, NOW(), NOW(), max_seq, 'localhost:8080', false, false
+            WHERE NOT EXISTS (
+                SELECT 1 FROM projections.instance_domains 
+                WHERE domain = 'localhost:8080'
+            );
+            
+            -- Add localhost domain if it doesn't exist  
+            INSERT INTO projections.instance_domains 
+            (instance_id, creation_date, change_date, sequence, domain, is_generated, is_primary)
+            SELECT instance_uuid, NOW(), NOW(), max_seq + 1, 'localhost', false, false
+            WHERE NOT EXISTS (
+                SELECT 1 FROM projections.instance_domains 
+                WHERE domain = 'localhost'
+            );
+        END
+        \$\$;
+    " >/dev/null 2>&1 || echo "⚠️ Domain compatibility fix may have failed"
+    
 else
     echo "❌ Database import failed"
     echo "🔄 Attempting to restore local backup..."
