@@ -4,15 +4,15 @@ on:
   workflow_dispatch:
     inputs:
       fix_level:
-        description: 'Fix level (low, medium, high, all)'
+        description: "Fix level (low, medium, high, all)"
         required: true
-        default: 'medium'
+        default: "medium"
         type: choice
         options:
-        - low
-        - medium
-        - high
-        - all
+          - low
+          - medium
+          - high
+          - all
   schedule:
     # Run weekly on Sundays at 2 AM UTC
     - cron: "0 2 * * 0"
@@ -48,14 +48,14 @@ jobs:
         run: |
           cd site && npm ci
           cd ../studio && npm ci
-          
+
           # Install additional security tools
           npm install -g eslint-plugin-security @typescript-eslint/eslint-plugin
-          
+
       - name: "🔧 ESLint Security Fixes (Aggressive)"
         run: |
           echo "🔧 Running aggressive ESLint security fixes..."
-          
+
           # Create temporary enhanced ESLint config for security
           cat > .eslintrc.security.js << 'EOF'
           module.exports = {
@@ -94,15 +94,15 @@ jobs:
             }
           };
           EOF
-          
+
           # Fix site with security config
           cd site
           npx eslint . --config ../.eslintrc.security.js --ext .js,.jsx,.ts,.tsx,.astro --fix --max-warnings 0 || true
-          
+
           # Fix studio with security config
           cd ../studio  
           npx eslint . --config ../.eslintrc.security.js --ext .js,.jsx,.ts,.tsx --fix --max-warnings 0 || true
-          
+
           cd ..
           rm .eslintrc.security.js
           echo "✅ Aggressive ESLint security fixes applied"
@@ -110,7 +110,7 @@ jobs:
       - name: "🔧 Fix TypeScript Security Issues"
         run: |
           echo "🔧 Fixing TypeScript security issues..."
-          
+
           # Add explicit types to reduce 'any' usage
           find ./site/src ./studio -name "*.ts" -o -name "*.tsx" | while read file; do
             # Replace common 'any' patterns with more specific types
@@ -120,16 +120,16 @@ jobs:
               sed -i.bak 's/(.*: any)/(param: unknown)/g' "$file" 2>/dev/null || true
             fi
           done
-          
+
           # Remove backup files
           find . -name "*.bak" -delete 2>/dev/null || true
-          
+
           echo "✅ TypeScript security issues fixed"
 
       - name: "🔧 Fix Insecure Code Patterns"
         run: |
           echo "🔧 Fixing insecure code patterns..."
-          
+
           # Fix innerHTML usage (XSS risk)
           find ./site/src ./studio -name "*.js" -o -name "*.ts" -o -name "*.jsx" -o -name "*.tsx" | while read file; do
             if [ -f "$file" ] && grep -q "innerHTML" "$file"; then
@@ -137,7 +137,7 @@ jobs:
               sed -i.bak 's/\.innerHTML = /\/\* SECURITY: Consider using textContent or sanitize *\/ .innerHTML = /g' "$file" 2>/dev/null || true
             fi
           done
-          
+
           # Fix eval() usage
           find ./site/src ./studio -name "*.js" -o -name "*.ts" -o -name "*.jsx" -o -name "*.tsx" | while read file; do
             if [ -f "$file" ] && grep -q "eval(" "$file"; then
@@ -145,41 +145,41 @@ jobs:
               sed -i.bak 's/eval(/\/\* SECURITY RISK: eval() disabled *\/ \/\/ eval(/g' "$file" 2>/dev/null || true
             fi
           done
-          
+
           # Remove backup files
           find . -name "*.bak" -delete 2>/dev/null || true
-          
+
           echo "✅ Insecure code patterns fixed"
 
       - name: "🔧 Dependency Security Updates"
         run: |
           echo "🔧 Updating dependencies for security..."
-          
+
           # Aggressive dependency updates for site
           cd site
           echo "📦 Updating site dependencies..."
           npm update --save 2>/dev/null || true
           npm audit fix --force 2>/dev/null || true
-          
+
           # Update dev dependencies too
           npm update --save-dev 2>/dev/null || true
-          
+
           # Aggressive dependency updates for studio  
           cd ../studio
           echo "📦 Updating studio dependencies..."
           npm update --save 2>/dev/null || true
           npm audit fix --force 2>/dev/null || true
-          
+
           # Update dev dependencies too
           npm update --save-dev 2>/dev/null || true
-          
+
           cd ..
           echo "✅ Dependencies updated for security"
 
       - name: "🔧 Add Missing Security Headers"
         run: |
           echo "🔧 Adding security headers and configurations..."
-          
+
           # Add security middleware to Astro if missing
           MIDDLEWARE_FILE="site/src/middleware.ts"
           if [ -f "$MIDDLEWARE_FILE" ] && ! grep -q "security-headers" "$MIDDLEWARE_FILE"; then
@@ -194,7 +194,7 @@ jobs:
             return response;
           }" >> "$MIDDLEWARE_FILE"
           fi
-          
+
           echo "✅ Security headers configuration added"
 
       - name: "📊 Count Fixed Issues"
@@ -202,10 +202,10 @@ jobs:
         run: |
           CHANGED_FILES=$(git diff --name-only | wc -l)
           TOTAL_CHANGES=$(git diff --stat | tail -n1 | grep -o '[0-9]\+ insertions\|[0-9]\+ deletions' | grep -o '[0-9]\+' | paste -sd+ | bc 2>/dev/null || echo "0")
-          
+
           echo "changed_files=$CHANGED_FILES" >> $GITHUB_OUTPUT
           echo "total_changes=$TOTAL_CHANGES" >> $GITHUB_OUTPUT
-          
+
           echo "📊 Security fixes summary:"
           echo "  - Files changed: $CHANGED_FILES"
           echo "  - Total changes: $TOTAL_CHANGES"
@@ -229,17 +229,17 @@ jobs:
           - Insecure code patterns (innerHTML, eval) secured
           - Dependencies updated to latest secure versions
           - Security headers configuration added
-          
+
           📊 Impact:
           - Files modified: ${{ steps.count_fixes.outputs.changed_files }}
           - Total changes: ${{ steps.count_fixes.outputs.total_changes }}
           - Fix level: ${{ github.event.inputs.fix_level || 'scheduled' }}
-          
+
           🤖 Automated by: Aggressive Security Auto-Fix Bot
           🎯 Target: Resolve code scanning alerts
-          
+
           Co-authored-by: Security Scanner <security@github.com>"
-          
+
           if git push; then
             echo "🎉 Aggressive security fixes successfully pushed!"
           else
@@ -252,24 +252,24 @@ jobs:
         run: |
           cat >> $GITHUB_STEP_SUMMARY << 'EOF'
           ## 🛠️ Aggressive Security Auto-Fix Report
-          
+
           ### 📊 Fixes Applied
           - **Files Changed:** ${{ steps.count_fixes.outputs.changed_files }}
           - **Total Changes:** ${{ steps.count_fixes.outputs.total_changes }}
           - **Fix Level:** ${{ github.event.inputs.fix_level || 'scheduled' }}
-          
+
           ### 🛡️ Security Improvements
           - ✅ ESLint security rules with aggressive fixing
           - ✅ TypeScript security type improvements  
           - ✅ Insecure code pattern remediation
           - ✅ Dependency security updates
           - ✅ Security headers configuration
-          
+
           ### 🎯 Next Steps
           1. Review the changes in the latest commit
           2. Run security scans to verify issue reduction
           3. Monitor for any breaking changes
           4. Consider running again with higher fix level if needed
-          
+
           **Target:** Reduce the 231 code scanning alerts significantly
           EOF

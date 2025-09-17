@@ -495,34 +495,34 @@ jobs:
       - name: "�🔧 ESLint Auto-fix (Security Issues)"
         run: |
           echo "🔧 Auto-fixing ESLint security issues..."
-          
+
           # Fix site ESLint issues
           cd site
           npx eslint . --ext .js,.jsx,.ts,.tsx,.astro --fix --quiet || true
-          
+
           # Fix studio ESLint issues  
           cd ../studio
           npx eslint . --ext .js,.jsx,.ts,.tsx --fix --quiet || true
-          
+
           cd ..
           echo "✅ ESLint auto-fixes applied"
 
       - name: "🔧 Fix Common Security Anti-patterns"
         run: |
           echo "🔧 Fixing common security anti-patterns..."
-          
+
           # Fix insecure random number generation (if any)
           find . -name "*.js" -o -name "*.ts" -o -name "*.jsx" -o -name "*.tsx" | xargs grep -l "Math\.random" | xargs sed -i.bak 's/Math\.random()/crypto.getRandomValues(new Uint32Array(1))[0] \/ (0xffffffff + 1)/g' 2>/dev/null || true
-          
+
           # Remove .bak files
           find . -name "*.bak" -delete 2>/dev/null || true
-          
+
           echo "✅ Security anti-patterns fixed"
 
       - name: "🔧 Dependency Vulnerability Fixes"
         run: |
           echo "🔧 Fixing dependency vulnerabilities..."
-          
+
           # Fix site dependencies
           cd site
           if npm audit --audit-level=high 2>/dev/null | grep -q "vulnerabilities"; then
@@ -536,7 +536,7 @@ jobs:
             echo "🔧 Fixing studio dependencies..."  
             npm audit fix --force 2>/dev/null || npm audit fix 2>/dev/null || true
           fi
-          
+
           cd ..
           echo "✅ Dependency vulnerabilities fixed"
 
@@ -561,12 +561,12 @@ jobs:
           - ESLint security rule violations fixed
           - Common security anti-patterns resolved  
           - Dependency vulnerabilities patched
-          
+
           📊 Files changed: $CHANGED_FILES
           🤖 Automated by: Security Scanner Bot
-          
+
           Co-authored-by: Security Scanner <security@github.com>"
-          
+
           git push || echo "⚠️ Failed to push auto-fixes (may need manual intervention)"
-          
+
           echo "🎉 Security auto-fixes completed and pushed!"

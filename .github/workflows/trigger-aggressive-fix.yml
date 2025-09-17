@@ -4,7 +4,7 @@ on:
   push:
     branches: [main]
     paths:
-      - '.github/workflows/trigger-aggressive-fix.yml'
+      - ".github/workflows/trigger-aggressive-fix.yml"
 
 jobs:
   trigger:
