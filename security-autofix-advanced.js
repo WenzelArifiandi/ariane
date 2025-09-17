@@ -135,7 +135,6 @@ const ADVANCED_PATTERNS = {
         match: /([\s\S]*?)(\nfunction\s+(\w+)\([^)]*\)\s*\{[\s\S]*?\n\})/g,
         replacement: (match, before, funcDecl, funcName) => {
           if (before.includes(funcName + '(')) {
-            const lines = before.split('\n');
             const hoistedFunc = funcDecl.trim();
             return `${hoistedFunc}\n${before}`;
           }
@@ -161,7 +160,7 @@ const ADVANCED_PATTERNS = {
       },
       {
         // typeof x !== 'undefined' && x -> x
-        match: /typeof\s+(\w+)\s*!==\s*['"']undefined['"']\s*&&\s*\1/g,
+        match: /typeof\s+(\w+)\s*!==\s*['"]undefined['"]\s*&&\s*\1/g,
         replacement: '$1'
       },
       {
@@ -188,7 +187,7 @@ const ADVANCED_PATTERNS = {
       },
       {
         // Trailing empty string
-        match: /,\s*['"']['"']\s*\)/g,
+        match: /,\s*['"]\s*\)/g,
         replacement: ')'
       }
     ]
@@ -267,7 +266,7 @@ const ADVANCED_PATTERNS = {
     fixes: [
       {
         // Empty password strings
-        match: /(password|pwd|pass)\s*[:=]\s*['"']['"']/gi,
+        match: /(password|pwd|pass)\s*[:=]\s*['"]+/gi,
         replacement: (match, field) => `${field}: process.env.${field.toUpperCase()} || ''`
       }
     ]
@@ -366,23 +365,6 @@ async function fetchCodeQLAlerts() {
   }
 }
 
-function analyzeCodeContext(content, startLine, endLine) {
-  const lines = content.split('\n');
-  const contextLines = 5;
-
-  const start = Math.max(0, startLine - contextLines);
-  const end = Math.min(lines.length, endLine + contextLines);
-
-  return {
-    before: lines.slice(start, startLine).join('\n'),
-    target: lines.slice(startLine, endLine).join('\n'),
-    after: lines.slice(endLine, end).join('\n'),
-    indentation: lines[startLine]?.match(/^\s*/)?.[0] || '',
-    isInFunction: lines.slice(0, startLine).some(line =>
-      /^\s*function\s|\s*=>\s*\{|\s*\{/.test(line)
-    )
-  };
-}
 
 function applyAdvancedFixes(content, vulnerabilityType, alertLocation) {
   const pattern = ADVANCED_PATTERNS[vulnerabilityType];

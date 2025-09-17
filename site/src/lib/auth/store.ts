@@ -1,6 +1,6 @@
 // Minimal credential store with a JSON file for dev.
 // For production, replace with a durable DB (e.g., Sanity, KV, Postgres).
-import { readFileSync, writeFileSync, mkdirSync, existsSync } from 'node:fs';
+import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
 import { join } from 'node:path';
 
 export type StoredCredential = {
