@@ -17,7 +17,7 @@ async function sendResendEmail(opts: { from: string; to: string; subject: string
   }
 }
 
-function extractEmail(payload: any): string | null {
+function extractEmail(payload: unknown): string | null {
   if (!payload) return null
   if (typeof payload.email === 'string') return payload.email
   if (typeof payload?.document?.email === 'string') return payload.document.email
@@ -41,7 +41,7 @@ export const POST: APIRoute = async ({ request }) => {
     }
 
     const bodyText = await request.text()
-    let payload: any
+    let payload: unknown
     try { payload = JSON.parse(bodyText) } catch { payload = { email: null } }
 
     const email = extractEmail(payload)
