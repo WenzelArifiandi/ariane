@@ -39,6 +39,11 @@ jobs:
 
       - name: "🔍 Detect Changes"
         id: changes
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          INPUT_FORCE: ${{ github.event.inputs.force }}
+          GITHUB_REF: ${{ github.ref }}
+          EVENT_BEFORE: ${{ github.event.before }}
         run: |
           # Determine whether to deploy using git-based and Oracle server state comparison
           echo "🔍 Enhanced deployment change detection"
@@ -48,7 +53,7 @@ jobs:
           echo "📍 Current commit: $CURRENT_COMMIT"
 
           # 1) If manually dispatched with force=true, always deploy
-          if [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ "${{ github.event.inputs.force }}" = "true" ]; then
+          if [ "$EVENT_NAME" = "workflow_dispatch" ] && [ "$INPUT_FORCE" = "true" ]; then
             echo "zitadel_changed=true" >> $GITHUB_OUTPUT
             echo "🚀 Manual dispatch with force=true: will deploy"
             exit 0
@@ -57,9 +62,9 @@ jobs:
           # 2) Check git changes first (this is always reliable)
           echo ""
           echo "🔍 Checking git changes since last commit..."
-          git fetch --no-tags --depth=10 origin ${{ github.ref }}
+          git fetch --no-tags --depth=10 origin "$GITHUB_REF"
 
-          BASE="${{ github.event.before }}"
+          BASE="$EVENT_BEFORE"
           if [ -z "$BASE" ] || ! git cat-file -e "$BASE^{commit}" 2>/dev/null; then
             BASE="HEAD~1"
           fi
@@ -512,7 +517,7 @@ jobs:
           }
 
       - name: "🔍 Run Trivy Security Scan"
-        uses: aquasecurity/trivy-action@master
+        uses: aquasecurity/trivy-action@915b19bbe73b92a6cf82a1bc12b087c9a19a5fe2 # v0.28.0
         with:
           scan-type: "fs"
           scan-ref: "zitadel/"
@@ -574,4 +579,3 @@ jobs:
 
           git push
           echo "✅ Security fixes applied and committed"
-                      echo "ℹ️ No staged changes after audit fixes; skipping commit"
