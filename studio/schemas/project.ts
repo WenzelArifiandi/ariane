@@ -1,28 +1,28 @@
-import { defineField, defineType } from 'sanity';
+import {defineField, defineType} from 'sanity'
 
 export default defineType({
   name: 'project',
   type: 'document',
   title: 'Project',
   fields: [
-    defineField({ name: 'title', type: 'string', validation: (r) => r.required() }),
+    defineField({name: 'title', type: 'string', validation: (r) => r.required()}),
     defineField({
       name: 'slug',
       type: 'slug',
-      options: { source: 'title', maxLength: 96 },
+      options: {source: 'title', maxLength: 96},
       validation: (r) => r.required(),
     }),
-    defineField({ name: 'year', type: 'number' }),
-    defineField({ name: 'role', type: 'string' }),
-    defineField({ name: 'summary', type: 'text' }),
-    defineField({ name: 'tags', type: 'array', of: [{ type: 'string' }] }),
-    defineField({ name: 'featured', type: 'boolean' }),
+    defineField({name: 'year', type: 'number'}),
+    defineField({name: 'role', type: 'string'}),
+    defineField({name: 'summary', type: 'text'}),
+    defineField({name: 'tags', type: 'array', of: [{type: 'string'}]}),
+    defineField({name: 'featured', type: 'boolean'}),
 
     defineField({
       name: 'hero',
       type: 'image',
-      options: { hotspot: true },
-      fields: [{ name: 'alt', type: 'string' }],
+      options: {hotspot: true},
+      fields: [{name: 'alt', type: 'string'}],
       // TS-safe custom validation
       validation: (Rule) =>
         Rule.custom((val: any) => (val?.asset?._ref ? true : 'Hero image is required')),
@@ -35,17 +35,17 @@ export default defineType({
       of: [
         {
           type: 'image',
-          options: { hotspot: true },
-          fields: [{ name: 'caption', type: 'string' }],
+          options: {hotspot: true},
+          fields: [{name: 'caption', type: 'string'}],
         },
       ],
       // TS-safe custom validation
       validation: (Rule) =>
         Rule.custom((items: any[] | undefined) => {
-          if (!items || items.length === 0) return true;
+          if (!items || items.length === 0) return true
           return items.every((i: any) => i?.asset?._ref)
             ? true
-            : 'All gallery images must be uploaded (no empty items).';
+            : 'All gallery images must be uploaded (no empty items).'
         }),
     }),
 
@@ -54,9 +54,9 @@ export default defineType({
       title: 'Case Study',
       type: 'array',
       of: [
-        { type: 'block' },
-        { type: 'image', options: { hotspot: true }, fields: [{ name: 'caption', type: 'string' }] },
+        {type: 'block'},
+        {type: 'image', options: {hotspot: true}, fields: [{name: 'caption', type: 'string'}]},
       ],
     }),
   ],
-});
+})
