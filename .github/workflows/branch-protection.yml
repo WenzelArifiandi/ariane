@@ -38,7 +38,7 @@ jobs:
 
             const sha = pr.data.head.sha;
 
-            # Wait for CI checks to complete
+            // Wait for CI checks to complete
             let attempts = 0;
             const maxAttempts = 30;
             let allChecksPassed = false;
