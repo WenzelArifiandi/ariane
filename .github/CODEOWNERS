@@ -1,0 +1,33 @@
+# Enterprise Security Code Ownership
+# Global ownership - all files require review from the repository owner
+* @WenzelArifiandi
+
+# YAML configuration files - critical for CI/CD security
+*.yml @WenzelArifiandi
+*.yaml @WenzelArifiandi
+
+# Package management files - critical for dependency security
+package*.json @WenzelArifiandi
+npm-shrinkwrap.json @WenzelArifiandi
+
+# GitHub configuration - critical for repository security
+.github/ @WenzelArifiandi
+
+# Security-critical workflow files require additional scrutiny
+.github/workflows/security*.yml @WenzelArifiandi
+.github/workflows/deploy*.yml @WenzelArifiandi
+.github/workflows/*security*.yml @WenzelArifiandi
+
+# Environment and configuration files
+.env* @WenzelArifiandi
+*.config.js @WenzelArifiandi
+*.config.ts @WenzelArifiandi
+
+# Docker and infrastructure files
+Dockerfile* @WenzelArifiandi
+docker-compose*.yml @WenzelArifiandi
+zitadel/ @WenzelArifiandi
+
+# Security documentation and policies
+SECURITY.md @WenzelArifiandi
+.github/SECURITY_AUTOMATION_SETUP.md @WenzelArifiandi

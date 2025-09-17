@@ -115,18 +115,31 @@ jobs:
             echo "files_changed=$FILES_CHANGED" >> $GITHUB_OUTPUT
           fi
 
-      - name: Create Issue for Security Fixes
+      - name: Create Pull Request
         if: steps.changes.outputs.has_changes == 'true' && github.event.inputs.dry_run != 'true'
-        uses: actions/github-script@v7
+        uses: peter-evans/create-pull-request@c5a7806660adbe173f04e3e038b0ccdcd758773c
         with:
-          script: |
-            const title = "🛡️ Security Auto-Fix: CodeQL Vulnerability Fixes";
-            const body = `## Security Auto-Fix Report
+          token: ${{ secrets.SECURITY_AUTOMATION_TOKEN || secrets.GITHUB_TOKEN }}
+          branch: security-fixes-${{ github.run_id }}
+          title: "🛡️ Security Auto-Fix: CodeQL Vulnerability Fixes"
+          commit-message: |
+            🛡️ Security auto-fix: resolve CodeQL alerts
 
-            This issue tracks automated fixes for CodeQL security vulnerabilities.
+            - Applied automated fixes for security vulnerabilities
+            - Mode: ${{ github.event.inputs.mode || 'conservative' }}
+            - Files changed: ${{ steps.changes.outputs.files_changed }}
+
+            🤖 Generated with security auto-fix script
+            Co-Authored-By: GitHub Action <action@github.com>
+          author: Security Auto-Fix Bot <security-scan@github.com>
+          committer: Security Auto-Fix Bot <security-scan@github.com>
+          body: |
+            ## Security Auto-Fix Report
+
+            This PR contains automated fixes for CodeQL security vulnerabilities.
 
             **Configuration:**
-            - Mode: \`${{ github.event.inputs.mode || 'conservative' }}\`
+            - Mode: `${{ github.event.inputs.mode || 'conservative' }}`
             - Files changed: ${{ steps.changes.outputs.files_changed }}
             - Triggered by: ${{ github.event_name == 'schedule' && 'Scheduled run' || 'Manual trigger' }}
 
@@ -141,41 +154,7 @@ jobs:
             - Unreachable statements
             - Redundant operations
 
-            ## Next Steps
-            1. Review the changes in the \`security-fixes-${{ github.run_id }}\` branch
-            2. Create a pull request manually from that branch to main
-            3. Review and merge the changes
-
-            **Branch:** \`security-fixes-${{ github.run_id }}\`
-            **Run ID:** ${{ github.run_id }}
-
-            ---
-            🤖 Generated with [Claude Code](https://claude.ai/code)`;
-
-            // Check if similar issue already exists
-            const { data: issues } = await github.rest.issues.listForRepo({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              state: 'open',
-              labels: 'security,automated-fix,codeql'
-            });
-
-            if (issues.length === 0) {
-              await github.rest.issues.create({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                title: title,
-                body: body,
-                labels: ['security', 'automated-fix', 'codeql']
-              });
-            } else {
-              console.log('Similar security issue already exists, skipping creation');
-            }
-
-      - name: Push Security Fix Branch
-        if: steps.changes.outputs.has_changes == 'true' && github.event.inputs.dry_run != 'true'
-        run: |
-          git push origin HEAD:security-fixes-${{ github.run_id }}
+            **Review Required:**
             Please review the changes carefully before merging:
             1. Check that the fixes don't break functionality
             2. Run tests to ensure everything still works
