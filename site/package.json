@@ -6,6 +6,9 @@
     "node": "22.x"
   },
   "scripts": {
+    "wasm:build:signer": "bash -lc 'command -v wasm-pack >/dev/null 2>&1 || cargo install wasm-pack --locked; cd ../wasm/session-signer && wasm-pack build --target web --release --out-dir ../../site/src/lib/wasm/session-signer'",
+    "wasm:clean:signer": "bash -lc 'rm -rf src/lib/wasm/session-signer'",
+    "wasm:rebuild:signer": "npm run wasm:clean:signer && npm run wasm:build:signer",
     "dev:kill": "bash -lc 'pkill -f \"astro dev\" || true; lsof -t -i:4321 | xargs kill -9 2>/dev/null || true'",
     "predev": "npm run dev:kill",
     "dev": "astro dev --host 127.0.0.1 --port 4321",

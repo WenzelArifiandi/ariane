@@ -42,7 +42,8 @@ export const onRequest: MiddlewareHandler = async (context, next) => {
   const path = url.pathname;
 
   if (PUBLIC_PATHS.includes(path) || isApiOrAsset(path)) {
-    return next();
+    const response = await next();
+    return addSecurityHeaders(response);
   }
 
   // Determine host/proto for environment-aware behavior behind proxies/CDNs
@@ -78,16 +79,17 @@ export const onRequest: MiddlewareHandler = async (context, next) => {
       if (shouldEnforceApproved()) {
         try {
           const token = context.request.headers.get("cf-access-jwt-assertion");
-          if (!token) return new Response("Unauthorized", { status: 401 });
+          if (!token) return addSecurityHeaders(new Response("Unauthorized", { status: 401 }));
           const claims = await verifyCfAccessJwt(token, { origin });
           if (!isApprovedFromClaims(claims as Record<string, unknown>)) {
-            return new Response("Forbidden", { status: 403 });
+            return addSecurityHeaders(new Response("Forbidden", { status: 403 }));
           }
         } catch {
-          return new Response("Unauthorized", { status: 401 });
+          return addSecurityHeaders(new Response("Unauthorized", { status: 401 }));
         }
       }
-      return next();
+      const response = await next();
+      return addSecurityHeaders(response);
     }
     try {
       const token = context.request.headers.get("cf-access-jwt-assertion");
@@ -98,10 +100,13 @@ export const onRequest: MiddlewareHandler = async (context, next) => {
       const { claim, required } = getRequiredGroupsEnv();
       if (required.length === 0) {
         // If no groups required, check Auth0-approved flag if present; otherwise allow
-        if (isApprovedFromClaims(claims as Record<string, unknown>))
-          return next();
+        if (isApprovedFromClaims(claims as Record<string, unknown>)) {
+          const response = await next();
+          return addSecurityHeaders(response);
+        }
         // If no approved flag configured/found, allow by default
-        return next();
+        const response = await next();
+        return addSecurityHeaders(response);
       }
       const groups = claims[claim] as unknown as string[] | undefined;
       const has =
@@ -131,15 +136,17 @@ export const onRequest: MiddlewareHandler = async (context, next) => {
     //   const origin = getOriginFromHeaders(context.request.headers)
     //   const claims = await verifyCfAccessJwt(cfAccessJwt!, { origin })
     //   if (!isApprovedFromClaims(claims as any)) {
-    //     return new Response("Forbidden", { status: 403 })
+    //     return addSecurityHeaders(new Response("Forbidden", { status: 403 }))
     //   }
     // } catch {}
-    return next();
+    const response = await next();
+    return addSecurityHeaders(response);
   }
 
   // In public mode, don't enforce app auth
   if (authMode !== "app") {
-    return next();
+    const response = await next();
+    return addSecurityHeaders(response);
   }
 
   const secret = getEnv("SESSION_SECRET", "dev-secret-change-me");
@@ -154,7 +161,8 @@ export const onRequest: MiddlewareHandler = async (context, next) => {
       try {
         const session = JSON.parse(payload);
         if (session.exp && Date.now() < session.exp) {
-          return next();
+          const response = await next();
+          return addSecurityHeaders(response);
         }
       } catch {}
     }
@@ -166,7 +174,8 @@ export const onRequest: MiddlewareHandler = async (context, next) => {
   // Absolute redirect for proxies
   const absoluteOrigin = `${proto}://${host}`;
   const absolute = `${absoluteOrigin}/access-required?next=${redirect}`;
-  return Response.redirect(absolute, 302);
+  const response = Response.redirect(absolute, 302);
+  return addSecurityHeaders(response);
 };
 
 // Security headers (auto-added by security bot)
