@@ -1,10 +1,20 @@
 {
+  // Workspace-specific settings for Ariane project
   "css.lint.unknownAtRules": "ignore",
   "tailwindCSS.emmetCompletions": true,
-  "tailwindCSS.includeLanguages": { "astro": "html", "css": "css" },
+  "tailwindCSS.includeLanguages": { 
+    "astro": "html", 
+    "css": "css" 
+  },
   "editor.formatOnSave": true,
   "editor.defaultFormatter": "esbenp.prettier-vscode",
-  "[astro]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
-  "[javascript]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
-  "[typescript]": { "editor.defaultFormatter": "esbenp.prettier-vscode" }
+  "[astro]": { 
+    "editor.defaultFormatter": "esbenp.prettier-vscode" 
+  },
+  "[javascript]": { 
+    "editor.defaultFormatter": "esbenp.prettier-vscode" 
+  },
+  "[typescript]": { 
+    "editor.defaultFormatter": "esbenp.prettier-vscode" 
+  }
 }

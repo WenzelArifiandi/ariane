@@ -3,8 +3,9 @@ import Base from '../../layouts/Base.astro'
 import { client } from '../../lib/sanity'
 import { allProjects } from '../../lib/queries'
 import { urlFor } from '../../lib/sanity'
+import type { SanityProject } from '../../lib/types'
 
-let projects: unknown[] = []
+let projects: SanityProject[] = []
 try { projects = await client.fetch(allProjects) } catch { projects = [] }
 const page = { title: 'Work — Ariane', description: 'Selected projects' }
 ---
@@ -19,7 +20,7 @@ const page = { title: 'Work — Ariane', description: 'Selected projects' }
             {p.hero && (
               <img
                 src={urlFor(p.hero).width(800).height(500).fit('crop').auto('format').url()}
-                alt={p.hero.alt}
+                alt={p.hero.alt || p.title}
                 class="aspect-[16/10] w-full object-cover"
                 loading="lazy"
               />

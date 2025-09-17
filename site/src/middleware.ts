@@ -37,25 +37,32 @@ function isApiOrAsset(path: string): boolean {
   return false;
 }
 
-export const onRequest: MiddlewareHandler = async (context, next) => {
+interface RequestContext {
+  url: URL;
+  path: string;
+  headers: Headers;
+  origin: string;
+  host: string;
+  proto: string;
+}
+
+interface AuthResult {
+  authenticated: boolean;
+  response?: Response;
+}
+
+function getRequestContext(context: any): RequestContext {
   const { url } = context;
   const path = url.pathname;
-
-  if (PUBLIC_PATHS.includes(path) || isApiOrAsset(path)) {
-    const response = await next();
-    return addSecurityHeaders(response);
-  }
-
-  // Determine host/proto for environment-aware behavior behind proxies/CDNs
   const headers = context.request.headers;
   const origin = getOriginFromHeaders(headers);
   const host = origin.replace(/^https?:\/\//, "");
   const proto = origin.startsWith("https") ? "https" : "http";
 
-  // Auth modes:
-  // - 'public' (default): no app auth required
-  // - 'app': require app session unless Cloudflare Access headers are present
-  // - 'cf-access-only': skip app auth entirely; rely on Cloudflare Access at the edge
+  return { url, path, headers, origin, host, proto };
+}
+
+function determineAuthMode(host: string): string {
   let authMode =
     process.env.AUTH_MODE ||
     ((import.meta as unknown as { env?: Record<string, unknown> }).env
@@ -63,82 +70,165 @@ export const onRequest: MiddlewareHandler = async (context, next) => {
     "public";
 
   // Safety: on the primary public domain, default to public mode to avoid accidental prompts
-  // This prevents a mis-set AUTH_MODE from forcing app login on wenzelarifiandi.com
   const isMainSite =
     host === "wenzelarifiandi.com" || host === "www.wenzelarifiandi.com";
   if (isMainSite && authMode === "app") {
     authMode = "public";
   }
-  if (authMode === "cf-access-only") {
-    // Optional: enforce group-based authorization for selected path prefixes using CF Access JWT
-    const protectedPrefixes = getProtectedPrefixes();
-    const requiresAuthz = protectedPrefixes.some((p) => path.startsWith(p));
-    // If not a protected path, still allow through (public-by-default under cf-access-only)
-    if (!requiresAuthz) {
-      // Optionally enforce Auth0-approved globally when behind Access
-      if (shouldEnforceApproved()) {
-        try {
-          const token = context.request.headers.get("cf-access-jwt-assertion");
-          if (!token) return addSecurityHeaders(new Response("Unauthorized", { status: 401 }));
-          const claims = await verifyCfAccessJwt(token, { origin });
-          if (!isApprovedFromClaims(claims as Record<string, unknown>)) {
-            return addSecurityHeaders(new Response("Forbidden", { status: 403 }));
-          }
-        } catch {
-          return addSecurityHeaders(new Response("Unauthorized", { status: 401 }));
+
+  return authMode;
+}
+
+async function handleCloudflareAccessOnlyMode(
+  requestContext: RequestContext,
+): Promise<AuthResult> {
+  const { path, headers, origin } = requestContext;
+
+  const protectedPrefixes = getProtectedPrefixes();
+  const requiresAuthz = protectedPrefixes.some((p) => path.startsWith(p));
+
+  // If not a protected path, still allow through (public-by-default under cf-access-only)
+  if (!requiresAuthz) {
+    // Optionally enforce Auth0-approved globally when behind Access
+    if (shouldEnforceApproved()) {
+      try {
+        const token = headers.get("cf-access-jwt-assertion");
+        if (!token) {
+          return {
+            authenticated: false,
+            response: addSecurityHeaders(
+              new Response("Unauthorized", { status: 401 }),
+            ),
+          };
         }
-      }
-      const response = await next();
-      return addSecurityHeaders(response);
-    }
-    try {
-      const token = context.request.headers.get("cf-access-jwt-assertion");
-      if (!token) {
-        return new Response("Unauthorized", { status: 401 });
-      }
-      const claims = await verifyCfAccessJwt(token, { origin });
-      const { claim, required } = getRequiredGroupsEnv();
-      if (required.length === 0) {
-        // If no groups required, check Auth0-approved flag if present; otherwise allow
-        if (isApprovedFromClaims(claims as Record<string, unknown>)) {
-          const response = await next();
-          return addSecurityHeaders(response);
+        const claims = await verifyCfAccessJwt(token, { origin });
+        if (!isApprovedFromClaims(claims as Record<string, unknown>)) {
+          return {
+            authenticated: false,
+            response: addSecurityHeaders(
+              new Response("Forbidden", { status: 403 }),
+            ),
+          };
         }
-        // If no approved flag configured/found, allow by default
-        const response = await next();
-        return addSecurityHeaders(response);
+      } catch {
+        return {
+          authenticated: false,
+          response: addSecurityHeaders(
+            new Response("Unauthorized", { status: 401 }),
+          ),
+        };
       }
-      const groups = claims[claim] as unknown as string[] | undefined;
-      const has =
-        Array.isArray(groups) && required.every((g) => groups.includes(g));
-      if (!has) {
-        return new Response("Forbidden", { status: 403 });
-      }
-      // Passed group check; also allow Auth0-approved flow
-      return next();
-    } catch (e) {
-      return new Response("Unauthorized", { status: 401 });
     }
+    return { authenticated: true };
   }
 
-  // If Cloudflare Access is enforcing at the edge, trust it and skip app auth
-  const cfAccessJwt = context.request.headers.get("cf-access-jwt-assertion");
-  const cfAccessEmail = context.request.headers.get(
-    "cf-access-authenticated-user-email",
-  );
-  const cfAccessOrgId = context.request.headers.get("cf-access-org-id");
+  try {
+    const token = headers.get("cf-access-jwt-assertion");
+    if (!token) {
+      return {
+        authenticated: false,
+        response: new Response("Unauthorized", { status: 401 }),
+      };
+    }
 
-  // If any Cloudflare Access headers are present, user has been authenticated by CF Access
-  if (cfAccessJwt || cfAccessEmail || cfAccessOrgId) {
-    // Optional: if you want to require Auth0-approved for the whole site when behind Access,
-    // you can uncomment the block below to enforce globally.
-    // try {
-    //   const origin = getOriginFromHeaders(context.request.headers)
-    //   const claims = await verifyCfAccessJwt(cfAccessJwt!, { origin })
-    //   if (!isApprovedFromClaims(claims as any)) {
-    //     return addSecurityHeaders(new Response("Forbidden", { status: 403 }))
-    //   }
-    // } catch {}
+    const claims = await verifyCfAccessJwt(token, { origin });
+    const { claim, required } = getRequiredGroupsEnv();
+
+    if (required.length === 0) {
+      // If no groups required, check Auth0-approved flag if present; otherwise allow
+      if (isApprovedFromClaims(claims as Record<string, unknown>)) {
+        return { authenticated: true };
+      }
+      // If no approved flag configured/found, allow by default
+      return { authenticated: true };
+    }
+
+    const groups = claims[claim] as unknown as string[] | undefined;
+    const hasRequiredGroups =
+      Array.isArray(groups) && required.every((g) => groups.includes(g));
+
+    if (!hasRequiredGroups) {
+      return {
+        authenticated: false,
+        response: new Response("Forbidden", { status: 403 }),
+      };
+    }
+
+    return { authenticated: true };
+  } catch (e) {
+    return {
+      authenticated: false,
+      response: new Response("Unauthorized", { status: 401 }),
+    };
+  }
+}
+
+function checkCloudflareAccessHeaders(headers: Headers): boolean {
+  const cfAccessJwt = headers.get("cf-access-jwt-assertion");
+  const cfAccessEmail = headers.get("cf-access-authenticated-user-email");
+  const cfAccessOrgId = headers.get("cf-access-org-id");
+
+  return !!(cfAccessJwt || cfAccessEmail || cfAccessOrgId);
+}
+
+function checkSessionAuth(headers: Headers): boolean {
+  const secret = getEnv("SESSION_SECRET", "dev-secret-change-me");
+  const cookieHeader = headers.get("cookie") || "";
+  const sessionCookie = cookieHeader
+    .split(/;\s*/)
+    .find((c) => c.startsWith("session="));
+
+  if (!sessionCookie) return false;
+
+  const signed = sessionCookie.split("=")[1];
+  const payload = verifySig(signed, secret);
+
+  if (!payload) return false;
+
+  try {
+    const session = JSON.parse(payload);
+    return session.exp && Date.now() < session.exp;
+  } catch {
+    return false;
+  }
+}
+
+function createAccessRequiredRedirect(
+  requestContext: RequestContext,
+): Response {
+  const { url, proto, host } = requestContext;
+  const requestedPath = `${url.pathname}${url.search}` || "/";
+  const redirect = encodeURIComponent(requestedPath);
+  const absoluteOrigin = `${proto}://${host}`;
+  const absolute = `${absoluteOrigin}/access-required?next=${redirect}`;
+  const response = Response.redirect(absolute, 302);
+  return addSecurityHeaders(response);
+}
+
+export const onRequest: MiddlewareHandler = async (context, next) => {
+  const requestContext = getRequestContext(context);
+  const { path } = requestContext;
+
+  // Handle public paths and assets
+  if (PUBLIC_PATHS.includes(path) || isApiOrAsset(path)) {
+    const response = await next();
+    return addSecurityHeaders(response);
+  }
+
+  const authMode = determineAuthMode(requestContext.host);
+
+  // Handle Cloudflare Access only mode
+  if (authMode === "cf-access-only") {
+    const authResult = await handleCloudflareAccessOnlyMode(requestContext);
+    if (!authResult.authenticated) {
+      return authResult.response!;
+    }
+    const response = await next();
+    return addSecurityHeaders(response);
+  }
+
+  // Check for Cloudflare Access headers
+  if (checkCloudflareAccessHeaders(requestContext.headers)) {
     const response = await next();
     return addSecurityHeaders(response);
   }
@@ -149,46 +239,30 @@ export const onRequest: MiddlewareHandler = async (context, next) => {
     return addSecurityHeaders(response);
   }
 
-  const secret = getEnv("SESSION_SECRET", "dev-secret-change-me");
-  const cookieHeader = context.request.headers.get("cookie") || "";
-  const sessionCookie = cookieHeader
-    .split(/;\s*/)
-    .find((c) => c.startsWith("session="));
-  if (sessionCookie) {
-    const signed = sessionCookie.split("=")[1];
-    const payload = verifySig(signed, secret);
-    if (payload) {
-      try {
-        const session = JSON.parse(payload);
-        if (session.exp && Date.now() < session.exp) {
-          const response = await next();
-          return addSecurityHeaders(response);
-        }
-      } catch {}
-    }
+  // Check session authentication
+  if (checkSessionAuth(requestContext.headers)) {
+    const response = await next();
+    return addSecurityHeaders(response);
   }
 
-  // Not authenticated: redirect to OAuth start with return path
-  const requestedPath = `${url.pathname}${url.search}` || "/";
-  const redirect = encodeURIComponent(requestedPath);
-  // Absolute redirect for proxies
-  const absoluteOrigin = `${proto}://${host}`;
-  const absolute = `${absoluteOrigin}/access-required?next=${redirect}`;
-  const response = Response.redirect(absolute, 302);
-  return addSecurityHeaders(response);
+  // Not authenticated: redirect to access required
+  return createAccessRequiredRedirect(requestContext);
 };
 
 // Consolidated security headers helper. (Removed duplicate definition added by bot.)
 export function addSecurityHeaders(response: Response): Response {
   // Clickjacking
-  response.headers.set('X-Frame-Options', 'DENY');
+  response.headers.set("X-Frame-Options", "DENY");
   // MIME sniffing
-  response.headers.set('X-Content-Type-Options', 'nosniff');
+  response.headers.set("X-Content-Type-Options", "nosniff");
   // Basic legacy XSS filter (largely inert on modern browsers but harmless)
-  response.headers.set('X-XSS-Protection', '1; mode=block');
+  response.headers.set("X-XSS-Protection", "1; mode=block");
   // Referrer policy: restricted cross-origin leakage
-  response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
+  response.headers.set("Referrer-Policy", "strict-origin-when-cross-origin");
   // Restrictive permissions; extend as needed
-  response.headers.set('Permissions-Policy', 'camera=(), microphone=(), geolocation=()');
+  response.headers.set(
+    "Permissions-Policy",
+    "camera=(), microphone=(), geolocation=()",
+  );
   return response;
 }

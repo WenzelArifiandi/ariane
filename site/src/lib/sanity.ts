@@ -1,6 +1,7 @@
 import { createClient } from "@sanity/client";
 import imageUrlBuilder from "@sanity/image-url";
 import type { QueryParams } from "@sanity/client";
+import type { SanityImageSource } from "@sanity/image-url/lib/types/types";
 
 const projectId = import.meta.env.PUBLIC_SANITY_PROJECT_ID;
 const dataset = import.meta.env.PUBLIC_SANITY_DATASET;
@@ -20,8 +21,8 @@ export const client = enabled
 
 const realBuilder = enabled ? imageUrlBuilder(client) : null;
 
-// Type-safe image source without importing deep types
-export type ImageSource = any;
+// Type-safe image source
+export type ImageSource = SanityImageSource;
 
 type UrlBuilder = {
   width: (n: number) => UrlBuilder;

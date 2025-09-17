@@ -151,148 +151,236 @@ function closeCreatorUI() {
   if (mount) mount.textContent = "";
 }
 
-async function handlePasskeyClick() {
-  console.log("[maker] Passkey button clicked"); // Debug log
+interface PasskeyButtonElements {
+  btn: HTMLButtonElement | null;
+  labelEl: HTMLSpanElement | null;
+  iconEl: HTMLElement | null;
+  origLabel: string | null;
+}
+
+function getPasskeyButtonElements(): PasskeyButtonElements {
   const btn = qs<HTMLButtonElement>("#creator-passkey");
   const labelEl = btn?.querySelector(".label") as HTMLSpanElement | null;
   const iconEl = btn?.querySelector(".icon") as HTMLElement | null;
-  const origLabel = labelEl?.textContent;
-  // If already signed in, this becomes Sign out
-  const currentMode =
-    qs<HTMLButtonElement>("#creator-passkey")?.dataset.mode || "signin";
-  if (currentMode === "signout") {
-    try {
-      // busy state only for the duration of sign out
-      if (btn) {
-        btn.disabled = true;
-        btn.setAttribute("aria-busy", "true");
-      }
-      if (labelEl) labelEl.textContent = "Signing out…";
-      if (iconEl) iconEl.textContent = "hourglass_top";
-      await fetch("/api/auth/logout", {
-        method: "POST",
-        credentials: "same-origin",
-      });
-      await refreshAuth();
-    } finally {
-      if (btn) {
-        btn.disabled = false;
-        btn.removeAttribute("aria-busy");
-      }
-      // rely on refreshAuth() to set correct label/icon state post-logout
+  const origLabel = labelEl?.textContent || null;
+
+  return { btn, labelEl, iconEl, origLabel };
+}
+
+function setButtonBusyState(
+  elements: PasskeyButtonElements,
+  busy: boolean,
+  label?: string,
+  icon?: string,
+) {
+  const { btn, labelEl, iconEl } = elements;
+
+  if (btn) {
+    btn.disabled = busy;
+    if (busy) {
+      btn.setAttribute("aria-busy", "true");
+    } else {
+      btn.removeAttribute("aria-busy");
     }
+  }
+
+  if (labelEl && label) {
+    labelEl.textContent = label;
+  }
+
+  if (iconEl && icon) {
+    iconEl.textContent = icon;
+  }
+}
+
+function resetButtonState(elements: PasskeyButtonElements) {
+  const { btn, labelEl, iconEl, origLabel } = elements;
+
+  if (btn) {
+    btn.disabled = false;
+    btn.removeAttribute("aria-busy");
+  }
+
+  if (labelEl && origLabel) {
+    labelEl.textContent = origLabel;
+  }
+
+  if (iconEl) {
+    iconEl.textContent = "fingerprint";
+  }
+}
+
+async function handleSignOut(): Promise<void> {
+  const elements = getPasskeyButtonElements();
+
+  try {
+    setButtonBusyState(elements, true, "Signing out…", "hourglass_top");
+
+    await fetch("/api/auth/logout", {
+      method: "POST",
+      credentials: "same-origin",
+    });
+
+    await refreshAuth();
+  } finally {
+    resetButtonState(elements);
+  }
+}
+
+function getEmailFromStorage(): string {
+  return String(localStorage.getItem("maker_email") ?? "").trim();
+}
+
+function getEmailFromInput(): string {
+  const existingInput = document.querySelector(
+    "#req-access #email",
+  ) as HTMLInputElement | null;
+  return String(existingInput?.value ?? "").trim();
+}
+
+async function promptForEmail(): Promise<void> {
+  const elements = getPasskeyButtonElements();
+
+  await mountAccessUI();
+
+  const afterMountInput = document.querySelector(
+    "#req-access #email",
+  ) as HTMLInputElement | null;
+  afterMountInput?.focus?.();
+
+  resetButtonState(elements);
+}
+
+async function checkApprovalStatus(email: string): Promise<boolean> {
+  const status = await fetch(
+    `/api/auth/approval-status?email=${encodeURIComponent(email)}`,
+    { credentials: "same-origin" },
+  )
+    .then((r) => r.json())
+    .catch(() => ({ approved: false }));
+
+  return (
+    status?.approved || String(import.meta.env.ALLOW_REGISTRATION) === "true"
+  );
+}
+
+async function attemptRegistration(email: string): Promise<void> {
+  await ensureWebAuthn();
+
+  const roRes = await fetch(
+    `/api/auth/registration-options?email=${encodeURIComponent(email)}`,
+    { credentials: "same-origin" },
+  );
+
+  if (!roRes.ok) {
+    throw new Error(`registration-options-failed:${roRes.status}`);
+  }
+
+  const ro = await roRes.json();
+  const att = await (startRegistration as Function)(ro);
+
+  const vr = await fetch("/api/auth/verify-registration", {
+    method: "POST",
+    credentials: "same-origin",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(att),
+  });
+
+  if (!vr.ok) {
+    throw new Error(`registration-verify-failed:${vr.status}`);
+  }
+}
+
+async function attemptAuthentication(): Promise<void> {
+  await ensureWebAuthn();
+
+  const optRes = await fetch("/api/auth/authentication-options", {
+    credentials: "same-origin",
+  });
+
+  if (!optRes.ok) {
+    throw new Error(`auth-options-failed:${optRes.status}`);
+  }
+
+  const opts = await optRes.json();
+  const assn = await (startAuthentication as Function)(opts);
+
+  const res = await fetch("/api/auth/verify-authentication", {
+    method: "POST",
+    credentials: "same-origin",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(assn),
+  });
+
+  if (!res.ok) {
+    throw new Error(`auth-verify-failed:${res.status}`);
+  }
+}
+
+function redirectToStudio(): void {
+  if (location.hostname === "localhost") {
+    location.assign("http://localhost:3333/");
+  } else {
+    location.assign("https://studio.wenzelarifiandi.com");
+  }
+}
+
+async function handlePasskeyClick() {
+  console.log("[maker] Passkey button clicked"); // Debug log
+
+  const elements = getPasskeyButtonElements();
+  const currentMode = elements.btn?.dataset.mode || "signin";
+
+  // Handle sign out
+  if (currentMode === "signout") {
+    await handleSignOut();
     return;
   }
-  // Prefer registration first; fallback to sign-in if already enrolled
-  // Ask for an email to check approval status. Remember between attempts.
-  let email = String(localStorage.getItem("maker_email") ?? "").trim();
+
+  // Get email for authentication
+  let email = getEmailFromStorage();
+
   if (!email) {
-    // If the access UI is already on screen, try to read the current value
-    const existingInput = document.querySelector(
-      "#req-access #email",
-    ) as HTMLInputElement | null;
-    const liveVal = String(existingInput?.value ?? "").trim();
+    const liveVal = getEmailFromInput();
     if (liveVal && liveVal.includes("@")) {
       email = liveVal;
     } else {
-      await mountAccessUI();
-      const afterMountInput = document.querySelector(
-        "#req-access #email",
-      ) as HTMLInputElement | null;
-      afterMountInput?.focus?.();
-      // ensure button is not left in a busy state
-      if (btn) {
-        btn.disabled = false;
-        btn.removeAttribute("aria-busy");
-      }
-      if (labelEl && origLabel) labelEl.textContent = origLabel;
-      if (iconEl) iconEl.textContent = "fingerprint";
+      await promptForEmail();
       return;
     }
   }
-  // Now we have email and can proceed: set busy state
+
+  // Set busy state for authentication process
+  setButtonBusyState(elements, true, "Working…", "hourglass_top");
+
   try {
-    if (btn) {
-      btn.disabled = true;
-      btn.setAttribute("aria-busy", "true");
-    }
-    if (labelEl) labelEl.textContent = "Working…";
-    if (iconEl) iconEl.textContent = "hourglass_top";
-  } catch {}
-  try {
-    const status = await fetch(
-      `/api/auth/approval-status?email=${encodeURIComponent(email)}`,
-      { credentials: "same-origin" },
-    )
-      .then((r) => r.json())
-      .catch(() => ({ approved: false }));
-    if (
-      !status?.approved &&
-      String(import.meta.env.ALLOW_REGISTRATION) !== "true"
-    ) {
+    // Check if user is approved
+    const approved = await checkApprovalStatus(email);
+
+    if (!approved) {
       mountAccessUI(email);
       throw new Error("not-approved");
     }
-    await ensureWebAuthn();
-    const roRes = await fetch(
-      `/api/auth/registration-options?email=${encodeURIComponent(email)}`,
-      { credentials: "same-origin" },
-    );
-    if (!roRes.ok)
-      throw new Error(`registration-options-failed:${roRes.status}`);
-    const ro = await roRes.json();
-    const att = await (startRegistration as Function)(ro);
-    const vr = await fetch("/api/auth/verify-registration", {
-      method: "POST",
-      credentials: "same-origin",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(att),
-    });
-    if (!vr.ok) throw new Error(`registration-verify-failed:${vr.status}`);
-    await refreshAuth();
-    if (location.hostname === "localhost") {
-      location.assign("http://localhost:3333/");
-    } else {
-      location.assign("https://studio.wenzelarifiandi.com");
-    }
-    return;
-  } catch (regErr) {
-    console.warn("[maker] registration flow failed:", regErr);
+
+    // Try registration first, then fall back to authentication
     try {
-      await ensureWebAuthn();
-      const optRes = await fetch("/api/auth/authentication-options", {
-        credentials: "same-origin",
-      });
-      if (!optRes.ok) throw new Error(`auth-options-failed:${optRes.status}`);
-      const opts = await optRes.json();
-      const assn = await (startAuthentication as Function)(opts);
-      const res = await fetch("/api/auth/verify-authentication", {
-        method: "POST",
-        credentials: "same-origin",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(assn),
-      });
-      if (!res.ok) throw new Error(`auth-verify-failed:${res.status}`);
+      await attemptRegistration(email);
       await refreshAuth();
-      if (location.hostname === "localhost") {
-        location.assign("http://localhost:3333/");
-      } else {
-        location.assign("https://studio.wenzelarifiandi.com");
-      }
-    } catch (err) {
-      // Show inline access request if both paths fail
-      mountAccessUI(localStorage.getItem("maker_email") || "");
-      console.error("[maker] auth flow failed:", err);
+      redirectToStudio();
+      return;
+    } catch (regErr) {
+      console.warn("[maker] registration flow failed:", regErr);
+
+      await attemptAuthentication();
+      await refreshAuth();
+      redirectToStudio();
     }
+  } catch (err) {
+    // Show inline access request if both paths fail
+    mountAccessUI(localStorage.getItem("maker_email") || "");
+    console.error("[maker] auth flow failed:", err);
   } finally {
-    try {
-      if (btn) {
-        btn.disabled = false;
-        btn.removeAttribute("aria-busy");
-      }
-      if (labelEl && origLabel) labelEl.textContent = origLabel;
-      if (iconEl) iconEl.textContent = "fingerprint";
-    } catch {}
+    resetButtonState(elements);
   }
 }
 

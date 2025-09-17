@@ -58,8 +58,8 @@ jobs:
 
       - name: Configure Git
         run: |
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
+          git config --local user.email "security-scan@github.com"
+          git config --local user.name "Security Auto-Fix Bot"
 
       - name: Run Security Auto-Fix (Conservative)
         if: ${{ github.event.inputs.mode == 'conservative' || github.event.inputs.mode == '' }}
@@ -115,22 +115,6 @@ jobs:
             echo "files_changed=$FILES_CHANGED" >> $GITHUB_OUTPUT
           fi
 
-      - name: Commit changes
-        if: steps.changes.outputs.has_changes == 'true' && github.event.inputs.dry_run != 'true'
-        env:
-          MODE: ${{ github.event.inputs.mode || 'conservative' }}
-          FILES_CHANGED: ${{ steps.changes.outputs.files_changed }}
-        run: |
-          git add .
-          git commit -m "🛡️ Security auto-fix: resolve CodeQL alerts
-
-          - Applied automated fixes for security vulnerabilities
-          - Mode: ${MODE}
-          - Files changed: ${FILES_CHANGED}
-
-          🤖 Generated with security auto-fix script
-          Co-Authored-By: GitHub Action <action@github.com>"
-
       - name: Create Pull Request
         if: steps.changes.outputs.has_changes == 'true' && github.event.inputs.dry_run != 'true'
         uses: peter-evans/create-pull-request@c5a7806660adbe173f04e3e038b0ccdcd758773c # v6.1.0
@@ -138,6 +122,17 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           branch: security-fixes-${{ github.run_id }}
           title: "🛡️ Security Auto-Fix: CodeQL Vulnerability Fixes"
+          commit-message: |
+            🛡️ Security auto-fix: resolve CodeQL alerts
+
+            - Applied automated fixes for security vulnerabilities
+            - Mode: ${{ github.event.inputs.mode || 'conservative' }}
+            - Files changed: ${{ steps.changes.outputs.files_changed }}
+
+            🤖 Generated with security auto-fix script
+            Co-Authored-By: GitHub Action <action@github.com>
+          author: Security Auto-Fix Bot <security-scan@github.com>
+          committer: Security Auto-Fix Bot <security-scan@github.com>
           body: |
             ## Security Auto-Fix Report
 

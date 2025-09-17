@@ -6,6 +6,7 @@ import Footer from '../components/Footer.astro'
 import { client } from '../lib/sanity'
 import { allProjects } from '../lib/queries'
 import { urlFor } from '../lib/sanity'
+import type { SanityProject } from '../lib/types'
 import '../styles/global.css' // adjust the relative path if needed
 
 const page = {
@@ -15,7 +16,7 @@ const page = {
   image: '/og.jpg',
 }
 const email = 'hello@wenzelarifiandi.com'
-let projects: unknown[] = []
+let projects: SanityProject[] = []
 try { projects = await client.fetch(allProjects) } catch { projects = [] }
 ---
 
@@ -32,18 +33,18 @@ try { projects = await client.fetch(allProjects) } catch { projects = [] }
         <ul class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 mt-4">
           {projects.slice(0, 3).map((p) => (
             <li class="rounded-xl border overflow-hidden hover:shadow-sm transition-shadow">
-              <a href={`/work/${p.slug as string}`} class="block">
+              <a href={`/work/${p.slug}`} class="block">
                 {p.hero && (
                   <img
-                    src={urlFor(p.hero as Record<string, unknown>).width(800).height(500).fit('crop').auto('format').url()}
-                    alt={(p.hero as Record<string, unknown>).alt as string}
+                    src={urlFor(p.hero).width(800).height(500).fit('crop').auto('format').url()}
+                    alt={p.hero.alt || p.title}
                     class="aspect-[16/10] w-full object-cover"
                     loading="lazy"
                   />
                 )}
                 <div class="p-4">
-                  <h3 class="font-semibold">{p.title as string}</h3>
-                  {p.year && <p class="text-sm text-neutral-500 mt-1">{p.year as string}</p>}
+                  <h3 class="font-semibold">{p.title}</h3>
+                  {p.year && <p class="text-sm text-neutral-500 mt-1">{p.year}</p>}
                 </div>
               </a>
             </li>
