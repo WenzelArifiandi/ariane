@@ -28,6 +28,7 @@
 ### 🔒 Security Metrics
 
 [![CodeQL](https://github.com/WenzelArifiandi/ariane/security/code-scanning/badge.svg?branch=main)](https://github.com/WenzelArifiandi/ariane/security/code-scanning)
+[![OSSF Scorecard](https://api.securityscorecards.dev/projects/github.com/WenzelArifiandi/ariane/badge)](https://securityscorecards.dev/viewer/?uri=github.com/WenzelArifiandi/ariane)
 [![Known Vulnerabilities](https://snyk.io/test/github/WenzelArifiandi/ariane/badge.svg)](https://snyk.io/test/github/WenzelArifiandi/ariane)
 [![Dependabot Status](https://img.shields.io/badge/Dependabot-enabled-brightgreen?style=flat-square&logo=dependabot)](https://github.com/WenzelArifiandi/ariane/security/dependabot)
 [![Security Alerts](https://img.shields.io/github/issues-search/WenzelArifiandi/ariane?query=is%3Aopen%20label%3A%22security%22&label=Security%20Alerts&style=flat-square&color=red)](https://github.com/WenzelArifiandi/ariane/security/advisories)
