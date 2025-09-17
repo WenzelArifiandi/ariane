@@ -6,7 +6,7 @@ const links = [
 ]
 const studioHref = import.meta.env.DEV ? 'http://localhost:3333/' : 'https://studio.wenzelarifiandi.com';
 // In dev tunnel, we may rely solely on Cloudflare Access (no app OAuth)
-const AUTH_MODE = (import.meta as any).env?.AUTH_MODE ?? process.env.AUTH_MODE;
+const AUTH_MODE = ((import.meta as unknown as { env?: Record<string, unknown> }).env?.AUTH_MODE as string) ?? process.env.AUTH_MODE;
 const isAccessOnly = AUTH_MODE === 'cf-access-only';
 const isAppAuth = AUTH_MODE === 'app';
 // Use Access-first zero-UI signout route; it logs out of Cloudflare Access, then (optionally) Auth0 via /post-access-logout, and returns to root to trigger login.
@@ -39,7 +39,7 @@ const cfLogoutHref: string = '/signout';
   {isAppAuth && (
       <li id="signout-link" style="display:none">
         <form method="get" action="/api/auth/logout">
-          <input type="hidden" name="next" value={(Astro as any).url?.pathname + ((Astro as any).url?.search || '') || '/'} />
+          <input type="hidden" name="next" value={Astro.url?.pathname + (Astro.url?.search || '') || '/'} />
           <button class="btn m3" style="background:#ef4444">Sign out</button>
         </form>
       </li>

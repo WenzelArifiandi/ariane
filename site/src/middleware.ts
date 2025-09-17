@@ -56,7 +56,7 @@ export const onRequest: MiddlewareHandler = async (context, next) => {
   // - 'app': require app session unless Cloudflare Access headers are present
   // - 'cf-access-only': skip app auth entirely; rely on Cloudflare Access at the edge
   let authMode =
-    process.env.AUTH_MODE || (import.meta as any).env?.AUTH_MODE || "public";
+    process.env.AUTH_MODE || ((import.meta as unknown as { env?: Record<string, unknown> }).env?.AUTH_MODE as string) || "public";
 
   // Safety: on the primary public domain, default to public mode to avoid accidental prompts
   // This prevents a mis-set AUTH_MODE from forcing app login on wenzelarifiandi.com
@@ -77,7 +77,7 @@ export const onRequest: MiddlewareHandler = async (context, next) => {
           const token = context.request.headers.get("cf-access-jwt-assertion");
           if (!token) return new Response("Unauthorized", { status: 401 });
           const claims = await verifyCfAccessJwt(token, { origin });
-          if (!isApprovedFromClaims(claims as any)) {
+          if (!isApprovedFromClaims(claims as Record<string, unknown>)) {
             return new Response("Forbidden", { status: 403 });
           }
         } catch {
@@ -95,7 +95,7 @@ export const onRequest: MiddlewareHandler = async (context, next) => {
       const { claim, required } = getRequiredGroupsEnv();
       if (required.length === 0) {
         // If no groups required, check Auth0-approved flag if present; otherwise allow
-        if (isApprovedFromClaims(claims as any)) return next();
+        if (isApprovedFromClaims(claims as Record<string, unknown>)) return next();
         // If no approved flag configured/found, allow by default
         return next();
       }
