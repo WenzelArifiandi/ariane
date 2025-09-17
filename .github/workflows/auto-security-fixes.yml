@@ -5,6 +5,9 @@ on:
     # Run daily at 2 AM UTC to check for security issues
     - cron: '0 2 * * *'
   workflow_dispatch:
+  # Also run on pushes to main to fix issues immediately
+  push:
+    branches: [main]
   # Trigger when Dependabot creates PRs
   pull_request:
     types: [opened, synchronize]
@@ -23,7 +26,8 @@ jobs:
   auto-fix-vulnerabilities:
     name: 🔧 Auto Fix Security Vulnerabilities
     runs-on: ubuntu-latest
-    if: github.actor != 'dependabot[bot]'
+    # Run for scheduled runs, manual triggers, and pushes (but not for dependabot PRs)
+    if: github.event_name != 'pull_request' || github.actor != 'dependabot[bot]'
 
     steps:
       - name: 📥 Checkout
