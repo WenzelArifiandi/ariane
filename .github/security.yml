@@ -1,0 +1,54 @@
+# GitHub Security Configuration
+# This file configures security settings for the repository
+
+# Security contact information
+security_contacts:
+  - WenzelArifiandi
+
+# Security policy reference
+security_policy:
+  file: SECURITY.md
+
+# Vulnerability reporting
+vulnerability_reporting:
+  enabled: true
+  security_advisories: true
+  private_vulnerability_reporting: true
+
+# Security scanning
+security_scanning:
+  code_scanning:
+    enabled: true
+    default_setup: true
+  secret_scanning:
+    enabled: true
+    push_protection: true
+  dependency_review:
+    enabled: true
+
+# Branch protection
+branch_protection:
+  main:
+    required_status_checks:
+      strict: true
+      contexts:
+        - "CodeQL"
+        - "Security Scan"
+    enforce_admins: false
+    required_pull_request_reviews:
+      required_approving_review_count: 1
+      dismiss_stale_reviews: true
+      require_code_owner_reviews: false
+    restrictions: null
+
+# Security notifications
+notifications:
+  security_advisories: true
+  dependency_alerts: true
+
+# Automated security updates
+automated_security_fixes:
+  enabled: true
+  dependabot:
+    enabled: true
+    schedule: "weekly"
