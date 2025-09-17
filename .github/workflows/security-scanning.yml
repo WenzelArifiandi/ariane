@@ -245,26 +245,54 @@ jobs:
 
           echo "✅ Automated security fixes committed locally; opening a pull request"
 
-      - name: 📬 Open PR for Auto-fixes
-        uses: peter-evans/create-pull-request@271a8d0340265f705b14b6d32b9829c1cb33d45e # v7.0.8
+      - name: 📬 Create Issue for Auto-fixes
+        if: success()
+        uses: actions/github-script@v7
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          branch: ci/security-autofix/${{ github.run_id }}
-          title: "security: automated dependency updates and vulnerability fixes"
-          commit-message: |
-            security: automated dependency updates and vulnerability fixes
+          script: |
+            const title = "🔧 Security Auto-fixes Available";
+            const body = `# 🛡️ Automated Security Fixes Ready
 
-            🤖 Automated security maintenance:
+            This issue was created automatically because security fixes were applied to dependencies.
+
+            ## Changes Made
             - Updated dependencies to latest secure versions
             - Applied npm audit fixes
             - Resolved known vulnerabilities
 
-            🔍 Triggered by: ${{ github.event_name }}
-          body: |
-            This PR was opened automatically to apply safe security-related updates discovered by the scheduled scan.
+            ## Next Steps
+            1. Review the changes in the \`ci/security-autofix/${{ github.run_id }}\` branch
+            2. Create a pull request manually from that branch to main
+            3. Review and merge the changes
 
-            Please review and merge; direct pushes to `main` are blocked by branch protections.
-          labels: |
-            security
-            automated-fix
-          delete-branch: true
+            **Branch:** \`ci/security-autofix/${{ github.run_id }}\`
+            **Triggered by:** ${{ github.event_name }}
+            **Run ID:** ${{ github.run_id }}
+
+            ---
+            🤖 Generated with [Claude Code](https://claude.ai/code)`;
+
+            // Check if similar issue already exists
+            const { data: issues } = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: 'open',
+              labels: 'security,automated-fix'
+            });
+
+            if (issues.length === 0) {
+              await github.rest.issues.create({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                title: title,
+                body: body,
+                labels: ['security', 'automated-fix']
+              });
+            } else {
+              console.log('Similar security issue already exists, skipping creation');
+            }
+
+      - name: 📤 Push Auto-fix Branch
+        if: success()
+        run: |
+          git push origin HEAD:ci/security-autofix/${{ github.run_id }}
