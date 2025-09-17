@@ -34,7 +34,6 @@ jobs:
       - name: "🔍 Find Security Fix Branches"
         id: find_branches
         run: |
-          set -x
           echo "🔍 Finding security fix branches..."
           BRANCHES=$(git branch -r | grep -E "origin/security-fixes-[0-9]{8}-[0-9]{6}" | sed 's,.*origin/,,g' | sort)
 
@@ -42,7 +41,7 @@ jobs:
           echo "$BRANCHES"
 
           # Convert to JSON array for matrix
-          BRANCH_ARRAY=$(echo "$BRANCHES" | jq -R . | jq -s .)
+          BRANCH_ARRAY=$(echo "$BRANCHES" | jq -R . | jq -sc .)
           echo "branches=$BRANCH_ARRAY" >> $GITHUB_OUTPUT
 
           BRANCH_COUNT=$(echo "$BRANCHES" | wc -l)
