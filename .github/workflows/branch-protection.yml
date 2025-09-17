@@ -38,78 +38,103 @@ jobs:
 
             const sha = pr.data.head.sha;
 
-            // Wait for CI checks to complete
-            let attempts = 0;
-            const maxAttempts = 30;
-            let allChecksPassed = false;
+            // Get required status checks from branch protection
+            const branchProtection = await github.rest.repos.getBranchProtection({
+              owner,
+              repo,
+              branch: 'main'
+            });
 
-            while (attempts < maxAttempts && !allChecksPassed) {
+            const requiredChecks = branchProtection.data.required_status_checks?.contexts || [];
+            console.log(`Required status checks: ${requiredChecks.join(', ') || 'none'}`);
+
+            // Wait for REQUIRED CI checks to complete
+            let attempts = 0;
+            const maxAttempts = 10; // Reduced from 30 to 10
+            let requiredChecksPassed = false;
+
+            while (attempts < maxAttempts && !requiredChecksPassed) {
               attempts++;
-              
+
               // Get check runs for this commit
               const checkRuns = await github.rest.checks.listForRef({
                 owner,
                 repo,
                 ref: sha
               });
-              
+
               // Get commit statuses
               const statuses = await github.rest.repos.listCommitStatusesForRef({
                 owner,
                 repo,
                 ref: sha
               });
-              
+
               console.log(`Attempt ${attempts}: Found ${checkRuns.data.check_runs.length} check runs and ${statuses.data.length} statuses`);
-              
-              // Check if we have any checks/statuses
-              const hasChecks = checkRuns.data.check_runs.length > 0 || statuses.data.length > 0;
-              
-              if (!hasChecks) {
-                console.log('No CI checks found yet, waiting...');
-                await new Promise(resolve => setTimeout(resolve, 30000)); // Wait 30 seconds
+
+              // If no required checks are configured, pass immediately
+              if (requiredChecks.length === 0) {
+                console.log('No required status checks configured - allowing merge');
+                requiredChecksPassed = true;
+                break;
+              }
+
+              // Check ONLY required checks
+              const requiredCheckStatuses = [];
+
+              // Check required checks in check runs
+              for (const checkName of requiredChecks) {
+                const checkRun = checkRuns.data.check_runs.find(c => c.name === checkName);
+                if (checkRun) {
+                  requiredCheckStatuses.push({
+                    name: checkName,
+                    status: checkRun.status,
+                    conclusion: checkRun.conclusion
+                  });
+                }
+              }
+
+              // Check required checks in commit statuses
+              for (const checkName of requiredChecks) {
+                const status = statuses.data.find(s => s.context === checkName);
+                if (status) {
+                  requiredCheckStatuses.push({
+                    name: checkName,
+                    status: 'completed',
+                    conclusion: status.state === 'success' ? 'success' : status.state
+                  });
+                }
+              }
+
+              console.log(`Required checks status: ${requiredCheckStatuses.map(c => `${c.name}:${c.conclusion}`).join(', ')}`);
+
+              // Check if required checks are pending
+              const pendingRequired = requiredCheckStatuses.filter(
+                check => check.status !== 'completed' || check.conclusion === 'pending'
+              );
+
+              if (pendingRequired.length > 0) {
+                console.log(`Still waiting for required checks: ${pendingRequired.map(c => c.name).join(', ')}`);
+                await new Promise(resolve => setTimeout(resolve, 15000)); // Wait 15 seconds
                 continue;
               }
-              
-              // Check if all checks are completed and successful
-              const pendingCheckRuns = checkRuns.data.check_runs.filter(
-                check => check.status !== 'completed'
+
+              // Check if required checks failed
+              const failedRequired = requiredCheckStatuses.filter(
+                check => check.conclusion !== 'success' && check.conclusion !== 'neutral' && check.conclusion !== 'skipped'
               );
-              
-              const failedCheckRuns = checkRuns.data.check_runs.filter(
-                check => check.status === 'completed' && check.conclusion !== 'success'
-              );
-              
-              const pendingStatuses = statuses.data.filter(
-                status => status.state === 'pending'
-              );
-              
-              const failedStatuses = statuses.data.filter(
-                status => status.state === 'failure' || status.state === 'error'
-              );
-              
-              if (pendingCheckRuns.length > 0 || pendingStatuses.length > 0) {
-                console.log(`Still waiting for ${pendingCheckRuns.length} check runs and ${pendingStatuses.length} statuses to complete`);
-                await new Promise(resolve => setTimeout(resolve, 30000)); // Wait 30 seconds
-                continue;
-              }
-              
-              if (failedCheckRuns.length > 0 || failedStatuses.length > 0) {
-                const failedChecks = [
-                  ...failedCheckRuns.map(c => c.name),
-                  ...failedStatuses.map(s => s.context)
-                ];
-                
-                core.setFailed(`CI checks failed: ${failedChecks.join(', ')}`);
+
+              if (failedRequired.length > 0) {
+                core.setFailed(`Required CI checks failed: ${failedRequired.map(c => c.name).join(', ')}`);
                 return;
               }
-              
-              allChecksPassed = true;
-              console.log('All CI checks passed successfully!');
+
+              requiredChecksPassed = true;
+              console.log('All required CI checks passed successfully!');
             }
 
-            if (!allChecksPassed) {
-              core.setFailed('Timeout waiting for CI checks to complete');
+            if (!requiredChecksPassed) {
+              core.setFailed('Timeout waiting for required CI checks to complete');
               return;
             }
 
