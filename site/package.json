@@ -45,7 +45,7 @@
     "astro": "^5.13.8",
     "astro-icon": "^1.1.5",
     "groq": "^4.9.0",
-    "jose": "^5.10.0"
+    "jose": "^6.1.0"
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.4",
