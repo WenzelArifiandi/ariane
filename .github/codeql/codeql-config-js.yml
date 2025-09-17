@@ -53,7 +53,7 @@ paths:
   - "site/src/**"
   - "site/public/scripts/**"
   - "scripts/**"
-  - ".github/workflows/**"
+  
   - "zitadel/**/*.js"
   - "*.js"
   - "*.mjs"

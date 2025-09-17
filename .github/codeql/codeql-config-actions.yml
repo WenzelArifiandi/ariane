@@ -1,0 +1,11 @@
+name: "Enhanced Security Scanning for Actions"
+paths:
+  - ".github/workflows/**"
+query-filters:
+  - include:
+      tags:
+        - security
+        - correctness
+  - exclude:
+      tags:
+        - experimental

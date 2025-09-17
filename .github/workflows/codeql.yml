@@ -71,7 +71,7 @@ jobs:
       with:
         languages: ${{ matrix.language }}
         build-mode: ${{ matrix.build-mode }}
-        config-file: ./.github/codeql/codeql-config.yml
+        config-file: ./.github/codeql/${{ matrix.language == 'actions' && 'codeql-config-actions.yml' || 'codeql-config-js.yml' }}
         # For more details on CodeQL's query packs, refer to: https://docs.github.com/en/code-security/code-scanning/automatically-scanning-your-code-for-vulnerabilities-and-errors/configuring-code-scanning#using-queries-in-ql-packs
         queries: security-and-quality
 
