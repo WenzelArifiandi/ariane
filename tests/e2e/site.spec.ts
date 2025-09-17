@@ -15,7 +15,7 @@ test.describe('Site Navigation and Authentication', () => {
     await page.goto('/admin')
     
     // Should redirect to access required or show appropriate message
-    await expect(page.url()).toMatch(/(access-required|login|\/)/
+    await expect(page.url()).toMatch(/(access-required|login|\/)/)
   })
 
   test('should have proper navigation', async ({ page }) => {
