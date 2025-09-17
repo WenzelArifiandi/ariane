@@ -9,6 +9,8 @@ services:
       - "ZITADEL_MASTERKEY=MasterkeyNeedsToHave32Characters"
     volumes:
       - ./zitadel.yaml:/config/zitadel.yaml:ro
+      - ./defaults.yaml:/config/defaults.yaml:ro
+      - ./init-setup.yaml:/config/init-setup.yaml:ro
     depends_on:
       db:
         condition: "service_healthy"

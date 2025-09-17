@@ -1,0 +1,18 @@
+FirstInstance:
+  InstanceName: ZITADEL
+  DefaultLanguage: en
+  Org:
+    Name: ZITADEL
+    Users:
+      - UserName: admin
+        Password: Password1!
+        FirstName: Admin
+        LastName: User
+        Email: admin@wenzelarifiandi.com
+        ChangeRequired: true
+      - UserName: hello
+        Password: TempPassword123
+        FirstName: Hello
+        LastName: User
+        Email: hello@wenzelarifiandi.com
+        ChangeRequired: true
