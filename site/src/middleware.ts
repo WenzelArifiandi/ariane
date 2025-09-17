@@ -169,33 +169,12 @@ export const onRequest: MiddlewareHandler = async (context, next) => {
   return Response.redirect(absolute, 302);
 };
 
-// Consolidated security headers helper. (Removed duplicate definition added by bot.)
-export function addSecurityHeaders(response: Response): Response {
-  // Clickjacking
-  response.headers.set("X-Frame-Options", "DENY");
-  // MIME sniffing
-  response.headers.set("X-Content-Type-Options", "nosniff");
-  // Basic legacy XSS filter (largely inert on modern browsers but harmless)
-  response.headers.set("X-XSS-Protection", "1; mode=block");
-  // Referrer policy: restricted cross-origin leakage
-  response.headers.set("Referrer-Policy", "strict-origin-when-cross-origin");
-  // Restrictive permissions; extend as needed
-  response.headers.set(
-    "Permissions-Policy",
-    "camera=(), microphone=(), geolocation=()",
-  );
-  return response;
-}
-
 // Security headers (auto-added by security bot)
 export function addSecurityHeaders(response: Response): Response {
-  response.headers.set("X-Frame-Options", "DENY");
-  response.headers.set("X-Content-Type-Options", "nosniff");
-  response.headers.set("X-XSS-Protection", "1; mode=block");
-  response.headers.set("Referrer-Policy", "strict-origin-when-cross-origin");
-  response.headers.set(
-    "Permissions-Policy",
-    "camera=(), microphone=(), geolocation=()",
-  );
+  response.headers.set('X-Frame-Options', 'DENY');
+  response.headers.set('X-Content-Type-Options', 'nosniff');
+  response.headers.set('X-XSS-Protection', '1; mode=block');
+  response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
+  response.headers.set('Permissions-Policy', 'camera=(), microphone=(), geolocation=()');
   return response;
 }

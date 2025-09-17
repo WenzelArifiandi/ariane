@@ -25,10 +25,7 @@ export default defineType({
       fields: [{name: 'alt', type: 'string'}],
       // TS-safe custom validation
       validation: (Rule) =>
-        Rule.custom((val) => {
-          const hasRef = (val as {asset?: {_ref?: string}} | undefined)?.asset?._ref
-          return hasRef ? true : 'Hero image is required'
-        }),
+        Rule.custom((val: unknown) => ((val as any)?.asset?._ref ? true : 'Hero image is required')),
     }),
 
     defineField({
@@ -44,12 +41,11 @@ export default defineType({
       ],
       // TS-safe custom validation
       validation: (Rule) =>
-        Rule.custom((items) => {
-          if (!Array.isArray(items) || items.length === 0) return true
-          const allHaveRefs = items.every(
-            (item) => (item as {asset?: {_ref?: string}})?.asset?._ref,
-          )
-          return allHaveRefs ? true : 'All gallery images must be uploaded (no empty items).'
+        Rule.custom((items: unknown[] | undefined) => {
+          if (!items || items.length === 0) return true
+          return items.every((item: unknown) => (item as any)?.asset?._ref)
+            ? true
+            : 'All gallery images must be uploaded (no empty items).'
         }),
     }),
 
