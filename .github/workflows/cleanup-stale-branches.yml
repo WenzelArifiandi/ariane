@@ -1,0 +1,136 @@
+name: "🧹 Cleanup Stale Security Branches"
+
+on:
+  schedule:
+    # Run daily at 3 AM UTC to clean up old branches
+    - cron: "0 3 * * *"
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Dry run (show what would be deleted)"
+        required: false
+        default: false
+        type: boolean
+      max_age_hours:
+        description: "Max age in hours for branches to keep"
+        required: false
+        default: "24"
+        type: string
+
+permissions:
+  contents: write
+  actions: read
+
+# Prevent multiple cleanup instances
+concurrency:
+  group: branch-cleanup
+  cancel-in-progress: true
+
+jobs:
+  cleanup-stale-branches:
+    name: "🧹 Clean Up Stale Branches"
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: "📥 Checkout"
+        uses: actions/checkout@08eba0b27e820071cde6df949e0beb9ba4906955 # v4
+        with:
+          fetch-depth: 0
+
+      - name: "🔍 Find Stale Security Branches"
+        id: find_stale
+        run: |
+          MAX_AGE_HOURS="${{ inputs.max_age_hours || '24' }}"
+          CUTOFF_DATE=$(date -d "$MAX_AGE_HOURS hours ago" +%s)
+
+          echo "🔍 Looking for security fix branches older than $MAX_AGE_HOURS hours..."
+
+          STALE_BRANCHES=()
+
+          # Find all security-fixes branches
+          git branch -r | grep -E "origin/security-fixes-[0-9]{8}-[0-9]{6}" | while read branch; do
+            branch_name=$(echo $branch | sed 's/origin\///')
+
+            # Extract timestamp from branch name (YYYYMMDD-HHMMSS)
+            timestamp=$(echo $branch_name | grep -o '[0-9]\{8\}-[0-9]\{6\}')
+
+            if [ -n "$timestamp" ]; then
+              # Convert timestamp to epoch
+              year=${timestamp:0:4}
+              month=${timestamp:4:2}
+              day=${timestamp:6:2}
+              hour=${timestamp:9:2}
+              minute=${timestamp:11:2}
+              second=${timestamp:13:2}
+
+              branch_date=$(date -d "$year-$month-$day $hour:$minute:$second" +%s 2>/dev/null || echo "0")
+
+              if [ "$branch_date" -lt "$CUTOFF_DATE" ] && [ "$branch_date" -gt "0" ]; then
+                echo "🗑️ Stale branch: $branch_name (age: $(( ($(date +%s) - branch_date) / 3600 )) hours)"
+                STALE_BRANCHES+=("$branch_name")
+              else
+                echo "✅ Keeping recent branch: $branch_name"
+              fi
+            fi
+          done
+
+          # Output results
+          if [ ${#STALE_BRANCHES[@]} -eq 0 ]; then
+            echo "stale_count=0" >> $GITHUB_OUTPUT
+            echo "has_stale=false" >> $GITHUB_OUTPUT
+          else
+            echo "stale_count=${#STALE_BRANCHES[@]}" >> $GITHUB_OUTPUT
+            echo "has_stale=true" >> $GITHUB_OUTPUT
+            printf '%s\n' "${STALE_BRANCHES[@]}" > stale_branches.txt
+          fi
+
+      - name: "🧪 Dry Run Report"
+        if: ${{ inputs.dry_run && steps.find_stale.outputs.has_stale == 'true' }}
+        run: |
+          echo "🧪 DRY RUN: Would delete the following stale branches:"
+          cat stale_branches.txt || echo "No stale branches file found"
+
+      - name: "🗑️ Delete Stale Branches"
+        if: ${{ !inputs.dry_run && steps.find_stale.outputs.has_stale == 'true' }}
+        run: |
+          echo "🗑️ Deleting ${{ steps.find_stale.outputs.stale_count }} stale security branches..."
+
+          DELETED_COUNT=0
+          FAILED_COUNT=0
+
+          while IFS= read -r branch; do
+            if [ -n "$branch" ]; then
+              echo "Deleting $branch..."
+              if git push origin --delete "$branch" 2>/dev/null; then
+                echo "✅ Deleted $branch"
+                DELETED_COUNT=$((DELETED_COUNT + 1))
+              else
+                echo "⚠️ Failed to delete $branch (may not exist)"
+                FAILED_COUNT=$((FAILED_COUNT + 1))
+              fi
+            fi
+          done < stale_branches.txt
+
+          echo "📊 Cleanup Summary:"
+          echo "  ✅ Deleted: $DELETED_COUNT branches"
+          echo "  ⚠️ Failed: $FAILED_COUNT branches"
+
+      - name: "📈 Summary Report"
+        if: always()
+        run: |
+          cat >> $GITHUB_STEP_SUMMARY << EOF
+          ## 🧹 Branch Cleanup Report
+
+          ### 📊 Results
+          - **Stale Branches Found**: ${{ steps.find_stale.outputs.stale_count }}
+          - **Max Age Threshold**: ${{ inputs.max_age_hours || '24' }} hours
+          - **Dry Run**: ${{ inputs.dry_run }}
+
+          ### 🎯 Purpose
+          This automated cleanup prevents the accumulation of conflicting security fix branches
+          by removing branches older than the specified threshold.
+
+          ### 🔄 Schedule
+          - **Automatic**: Daily at 3 AM UTC
+          - **Manual**: Via workflow_dispatch with custom settings
+          EOF

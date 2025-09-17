@@ -24,6 +24,11 @@ permissions:
   security-events: write
   actions: write
 
+# Prevent multiple instances from running simultaneously
+concurrency:
+  group: security-autofix-aggressive
+  cancel-in-progress: false
+
 jobs:
   aggressive-autofix:
     name: "🛠️ Aggressive Security Fixes"
@@ -213,6 +218,14 @@ jobs:
           echo "📊 Security fixes summary:"
           echo "  - Files changed: $CHANGED_FILES"
           echo "  - Total changes: $TOTAL_CHANGES"
+
+      - name: "🔄 Handle Existing Security Reports"
+        run: |
+          # Remove any existing security-report.md to avoid conflicts
+          if [ -f "security-report.md" ]; then
+            echo "🗑️ Removing existing security report to avoid conflicts"
+            rm security-report.md
+          fi
 
       - name: "💾 Commit Aggressive Fixes"
         run: |

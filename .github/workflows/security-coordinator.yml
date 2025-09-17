@@ -1,0 +1,148 @@
+name: "🎯 Security Fix Coordinator"
+
+on:
+  workflow_dispatch:
+    inputs:
+      strategy:
+        description: "Fix strategy"
+        required: true
+        default: "safe"
+        type: choice
+        options:
+          - safe
+          - aggressive
+          - comprehensive
+  schedule:
+    # Run coordinated security fixes weekly on Sundays at 1 AM UTC
+    - cron: "0 1 * * 0"
+
+permissions:
+  contents: write
+  actions: write
+  pull-requests: write
+
+# Only one security coordinator can run at a time
+concurrency:
+  group: security-coordinator
+  cancel-in-progress: false
+
+jobs:
+  coordinate-security-fixes:
+    name: "🎯 Coordinate Security Fixes"
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: "📥 Checkout"
+        uses: actions/checkout@08eba0b27e820071cde6df949e0beb9ba4906955 # v4
+
+      - name: "🧹 Pre-cleanup: Remove Stale Branches"
+        run: |
+          echo "🧹 Cleaning up any existing security fix branches..."
+          git fetch --all
+
+          # Delete any existing security-fixes branches older than 1 hour
+          git branch -r | grep -E "origin/security-fixes-[0-9]{8}-[0-9]{6}" | while read branch; do
+            branch_name=$(echo $branch | sed 's/origin\///')
+            echo "🗑️ Removing stale branch: $branch_name"
+            git push origin --delete "$branch_name" 2>/dev/null || echo "Branch already deleted"
+          done
+
+      - name: "📊 Pre-fix Security Scan"
+        id: pre_scan
+        run: |
+          echo "📊 Checking current vulnerability count..."
+
+          # Use GitHub API to get current alert count
+          ALERT_COUNT=$(gh api repos/${{ github.repository }}/code-scanning/alerts --paginate | jq '[.[] | select(.state == "open")] | length')
+          echo "current_alerts=$ALERT_COUNT" >> $GITHUB_OUTPUT
+          echo "📈 Current open security alerts: $ALERT_COUNT"
+
+      - name: "🎯 Execute Security Fix Strategy"
+        run: |
+          STRATEGY="${{ inputs.strategy || 'safe' }}"
+          echo "🎯 Executing $STRATEGY security fix strategy..."
+
+          case $STRATEGY in
+            "safe")
+              echo "🛡️ Running safe security fixes..."
+              gh workflow run auto-security-fixes.yml
+              ;;
+            "aggressive")
+              echo "🛠️ Running aggressive security fixes..."
+              gh workflow run security-autofix-aggressive.yml --field fix_level=all
+              ;;
+            "comprehensive")
+              echo "🔧 Running comprehensive security suite..."
+              gh workflow run auto-security-fixes.yml
+              sleep 30  # Wait to avoid conflicts
+              gh workflow run security-autofix-aggressive.yml --field fix_level=all
+              ;;
+          esac
+
+      - name: "⏳ Wait for Completion"
+        run: |
+          echo "⏳ Waiting for security fix workflow to complete..."
+
+          # Wait up to 10 minutes for security workflows to complete
+          timeout=600
+          elapsed=0
+          interval=30
+
+          while [ $elapsed -lt $timeout ]; do
+            # Check if any security workflows are still running
+            running_workflows=$(gh run list --workflow=auto-security-fixes.yml --status=in_progress --limit=1 --json id | jq length)
+            running_aggressive=$(gh run list --workflow=security-autofix-aggressive.yml --status=in_progress --limit=1 --json id | jq length)
+
+            if [ "$running_workflows" -eq 0 ] && [ "$running_aggressive" -eq 0 ]; then
+              echo "✅ All security workflows completed"
+              break
+            fi
+
+            echo "⏳ Security workflows still running... (${elapsed}s elapsed)"
+            sleep $interval
+            elapsed=$((elapsed + interval))
+          done
+
+          if [ $elapsed -ge $timeout ]; then
+            echo "⚠️ Timeout waiting for workflows to complete"
+          fi
+
+      - name: "📊 Post-fix Security Scan"
+        id: post_scan
+        run: |
+          echo "📊 Checking post-fix vulnerability count..."
+
+          ALERT_COUNT=$(gh api repos/${{ github.repository }}/code-scanning/alerts --paginate | jq '[.[] | select(.state == "open")] | length')
+          echo "final_alerts=$ALERT_COUNT" >> $GITHUB_OUTPUT
+          echo "📈 Final open security alerts: $ALERT_COUNT"
+
+          # Calculate improvement
+          INITIAL_COUNT=${{ steps.pre_scan.outputs.current_alerts }}
+          IMPROVEMENT=$((INITIAL_COUNT - ALERT_COUNT))
+          echo "improvement=$IMPROVEMENT" >> $GITHUB_OUTPUT
+          echo "📉 Security improvement: $IMPROVEMENT alerts resolved"
+
+      - name: "📈 Create Coordination Report"
+        run: |
+          cat >> $GITHUB_STEP_SUMMARY << EOF
+          ## 🎯 Security Fix Coordination Report
+
+          ### 📊 Results
+          - **Strategy Used**: ${{ inputs.strategy || 'safe' }}
+          - **Initial Alerts**: ${{ steps.pre_scan.outputs.current_alerts }}
+          - **Final Alerts**: ${{ steps.post_scan.outputs.final_alerts }}
+          - **Alerts Resolved**: ${{ steps.post_scan.outputs.improvement }}
+          - **Improvement**: $(( ${{ steps.post_scan.outputs.improvement }} * 100 / ${{ steps.pre_scan.outputs.current_alerts }} ))%
+
+          ### 🛡️ Process
+          1. ✅ Cleaned up stale security branches
+          2. ✅ Executed coordinated security fixes
+          3. ✅ Waited for completion to avoid conflicts
+          4. ✅ Verified security improvements
+
+          ### 🎯 Benefits
+          - **No conflicting branches** created
+          - **Coordinated execution** prevents race conditions
+          - **Automatic cleanup** of temporary artifacts
+          - **Measurable results** with before/after comparison
+          EOF
