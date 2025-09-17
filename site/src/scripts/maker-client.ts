@@ -147,7 +147,7 @@ function closeCreatorUI() {
   const mount = document.querySelector("#access-mount") as HTMLElement | null;
   document.documentElement.setAttribute("data-creator", "closed");
   if (bar) bar.classList.remove("access-open");
-  if (mount) mount.innerHTML = "";
+  if (mount) mount/* SECURITY: Consider using textContent or sanitize */ .innerHTML = "";
 }
 
 async function handlePasskeyClick() {

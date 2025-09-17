@@ -30,18 +30,18 @@
     "check": "astro check"
   },
   "dependencies": {
-    "@fontsource-variable/inter": "^5.2.6",
+    "@fontsource-variable/inter": "^5.2.7",
     "@material/web": "^1.5.1",
     "@portabletext/to-html": "^3.0.0",
     "@sanity/client": "^7.11.1",
     "@sanity/image-url": "^1.2.0",
-    "@simplewebauthn/browser": "^13.1.2",
+    "@simplewebauthn/browser": "^13.2.0",
     "@simplewebauthn/server": "^10.0.1",
     "@vercel/analytics": "^1.5.0",
     "@vercel/speed-insights": "^1.2.0",
-    "astro": "^5.13.7",
+    "astro": "^5.13.8",
     "astro-icon": "^1.1.5",
-    "groq": "^4.8.1",
+    "groq": "^4.9.0",
     "jose": "^5.10.0"
   },
   "devDependencies": {
@@ -49,10 +49,10 @@
     "@astrojs/node": "^9.4.3",
     "@astrojs/tailwind": "^6.0.2",
     "@astrojs/vercel": "^8.2.7",
-    "@iconify-json/tabler": "^1.2.20",
+    "@iconify-json/tabler": "^1.2.23",
     "@tailwindcss/typography": "^0.5.16",
-    "@typescript-eslint/eslint-plugin": "^8.43.0",
-    "@typescript-eslint/parser": "^8.43.0",
+    "@typescript-eslint/eslint-plugin": "^8.44.0",
+    "@typescript-eslint/parser": "^8.44.0",
     "autoprefixer": "^10.4.21",
     "concurrently": "^8.2.2",
     "eslint": "^9.35.0",
@@ -61,8 +61,8 @@
     "postcss": "^8.5.6",
     "prettier": "^3.6.2",
     "tailwindcss": "^3.4.17",
-    "typescript": "^5.6.3",
-    "wait-on": "^7.0.1"
+    "typescript": "^5.9.2",
+    "wait-on": "^7.2.0"
   },
   "overrides": {
     "path-to-regexp": "^8.3.0"

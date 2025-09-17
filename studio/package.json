@@ -17,24 +17,24 @@
   ],
   "dependencies": {
     "@sanity/client": "^7.11.1",
-    "@sanity/vision": "^4.8.1",
+    "@sanity/vision": "^4.9.0",
     "busboy": "^1.6.0",
     "formidable": "^3.5.4",
     "heic2any": "^0.0.4",
-    "react": "^19.1",
-    "react-dom": "^19.1",
-    "sanity": "^4.8.1",
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1",
+    "sanity": "^4.9.0",
     "sharp": "^0.34.3",
-    "styled-components": "^6.1.18"
+    "styled-components": "^6.1.19"
   },
   "devDependencies": {
     "@sanity/eslint-config-studio": "^5.0.2",
     "@types/busboy": "^1.5.4",
-    "@types/react": "^19.1",
-    "@vercel/node": "^2.3.0",
-    "eslint": "^9.28",
-    "prettier": "^3.5",
-    "typescript": "^5.8"
+    "@types/react": "^19.1.13",
+    "@vercel/node": "^2.15.10",
+    "eslint": "^9.35.0",
+    "prettier": "^3.6.2",
+    "typescript": "^5.9.2"
   },
   "prettier": {
     "semi": false,
