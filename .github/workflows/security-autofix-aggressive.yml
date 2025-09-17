@@ -185,7 +185,8 @@ jobs:
           # Add security middleware to Astro if missing
           MIDDLEWARE_FILE="site/src/middleware.ts"
           if [ -f "$MIDDLEWARE_FILE" ] && ! grep -q "security-headers" "$MIDDLEWARE_FILE"; then
-            echo "
+            cat >> "$MIDDLEWARE_FILE" << 'EOF'
+
           // Security headers (auto-added by security bot)
           export function addSecurityHeaders(response: Response): Response {
             response.headers.set('X-Frame-Options', 'DENY');
@@ -194,7 +195,8 @@ jobs:
             response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
             response.headers.set('Permissions-Policy', 'camera=(), microphone=(), geolocation=()');
             return response;
-          }" >> "$MIDDLEWARE_FILE"
+          }
+          EOF
           fi
 
           echo "✅ Security headers configuration added"
