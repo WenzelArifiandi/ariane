@@ -573,26 +573,55 @@ jobs:
 
           echo "✅ Security auto-fixes committed locally; opening a pull request"
 
-      - name: "📬 Open PR for Auto-fixes"
-        uses: peter-evans/create-pull-request@271a8d0340265f705b14b6d32b9829c1cb33d45e # v7.0.8
+      - name: "📬 Create Security Fix Report"
+        uses: actions/github-script@v7
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          branch: ci/security-auto-fix/${{ github.run_id }}
-          title: "🔧 auto-fix: resolve security issues automatically"
-          commit-message: |
-            🔧 auto-fix: resolve security issues automatically
+          script: |
+            const title = "🔧 Security Auto-fixes Available";
+            const body = `# 🛡️ Comprehensive Security Fixes Ready
 
-            🛡️ Security improvements applied:
+            This issue was created automatically because security fixes were applied by the comprehensive security scan.
+
+            ## Security Improvements Applied
             - ESLint security rule violations fixed
-            - Common security anti-patterns resolved  
+            - Common security anti-patterns resolved
             - Dependency vulnerabilities patched
 
-            🤖 Automated by: Security Scanner Bot
-          body: |
-            This PR contains automated security improvements detected by the comprehensive scan workflow.
+            ## Files Changed
+            The following changes are ready to be applied:
+            \`\`\`
+            ${{ github.event.head_commit.message }}
+            \`\`\`
 
-            Please review and merge; direct pushes to `main` are blocked by branch protections.
-          labels: |
-            security
-            automated-fix
-          delete-branch: true
+            ## Manual Steps Required
+            Since branch protections prevent automatic PR creation, please:
+
+            1. Review the proposed changes in this workflow run
+            2. Apply the security fixes manually by running the same security scan locally
+            3. Create a PR with the fixes when ready
+
+            **Run ID:** ${{ github.run_id }}
+            **Workflow:** Comprehensive Security Scan
+
+            ---
+            🤖 Generated with [Claude Code](https://claude.ai/code)`;
+
+            // Check if similar issue already exists
+            const { data: issues } = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: 'open',
+              labels: 'security,automated-fix,comprehensive'
+            });
+
+            if (issues.length === 0) {
+              await github.rest.issues.create({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                title: title,
+                body: body,
+                labels: ['security', 'automated-fix', 'comprehensive']
+              });
+            } else {
+              console.log('Similar comprehensive security issue already exists, skipping creation');
+            }

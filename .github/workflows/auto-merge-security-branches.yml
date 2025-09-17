@@ -166,15 +166,6 @@ jobs:
           # Merge the security branch
           git merge origin/$TARGET_BRANCH --no-edit
 
-          # Add commit note about auto-merge
-          git commit --amend --no-edit -m "$(git log -1 --pretty=%B)
-
-🤖 Auto-merged by security automation after successful testing
-🧪 Verified: clean merge, secure dependencies
-📅 Merged: $(date -Iseconds)
-
-🚀 Generated with [Claude Code](https://claude.ai/code)"
-
           echo "✅ Security branch merged successfully"
 
       - name: "📤 Push Merged Changes"
@@ -184,14 +175,13 @@ jobs:
           git push origin main
           echo "✅ Successfully pushed merged security fixes"
 
-      - name: "🧹 Cleanup Merged Branch"
+      - name: "🧹 Note Branch for Cleanup"
         if: steps.find_branches.outputs.has_branches == 'true' && steps.test_branch.outputs.merge_clean == 'true' && steps.test_branch.outputs.tests_passed == 'true'
         env:
           TARGET_BRANCH: ${{ steps.find_branches.outputs.target_branch }}
         run: |
-          echo "🧹 Cleaning up merged branch: $TARGET_BRANCH"
-          git push origin --delete $TARGET_BRANCH || echo "Branch already deleted or doesn't exist remotely"
-          echo "✅ Cleanup completed"
+          echo "🧹 Branch $TARGET_BRANCH successfully merged and can be deleted manually"
+          echo "ℹ️ Automatic branch deletion skipped due to repository permissions"
 
       - name: "💬 Update or Close Related Issues"
         if: steps.find_branches.outputs.has_branches == 'true' && steps.test_branch.outputs.merge_clean == 'true' && steps.test_branch.outputs.tests_passed == 'true'
@@ -216,16 +206,16 @@ jobs:
                   issue_number: issue.number,
                   body: `✅ **Auto-merge completed successfully!**
 
-Branch \`${branchName}\` has been automatically tested and merged into main.
+            Branch \`${branchName}\` has been automatically tested and merged into main.
 
-🧪 **Tests performed:**
-- Clean merge verification
-- Dependency security audit
-- Installation validation
+            🧪 **Tests performed:**
+            - Clean merge verification
+            - Dependency security audit
+            - Installation validation
 
-🔀 **Result:** All security fixes are now live on the main branch.
+            🔀 **Result:** All security fixes are now live on the main branch.
 
-Closing this issue as the fixes have been applied.`
+            Closing this issue as the fixes have been applied.`
                 });
 
                 await github.rest.issues.update({
@@ -257,22 +247,22 @@ Closing this issue as the fixes have been applied.`
             const title = `⚠️ Auto-merge failed for ${branchName}`;
             const body = `# 🚨 Automatic Merge Failed
 
-The security branch \`${branchName}\` could not be automatically merged.
+            The security branch \`${branchName}\` could not be automatically merged.
 
-## Issues Found
-${reason}
+            ## Issues Found
+            ${reason}
 
-## Manual Action Required
-1. Review the branch: \`${branchName}\`
-2. Resolve any conflicts or test failures
-3. Create a manual pull request
-4. Merge after review
+            ## Manual Action Required
+            1. Review the branch: \`${branchName}\`
+            2. Resolve any conflicts or test failures
+            3. Create a manual pull request
+            4. Merge after review
 
-**Branch:** \`${branchName}\`
-**Run ID:** ${{ github.run_id }}
+            **Branch:** \`${branchName}\`
+            **Run ID:** ${{ github.run_id }}
 
----
-🤖 Generated with [Claude Code](https://claude.ai/code)`;
+            ---
+            🤖 Generated with [Claude Code](https://claude.ai/code)`;
 
             await github.rest.issues.create({
               owner: context.repo.owner,
