@@ -147,6 +147,7 @@ function closeCreatorUI() {
   const mount = document.querySelector("#access-mount") as HTMLElement | null;
   document.documentElement.setAttribute("data-creator", "closed");
   if (bar) bar.classList.remove("access-open");
+  // Use textContent to avoid accidental HTML injection.
   if (mount) mount.textContent = "";
 }
 
