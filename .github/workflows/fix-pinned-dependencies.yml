@@ -1,0 +1,93 @@
+name: "🔒 Fix Pinned Dependencies"
+
+on:
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Dry run (show what would be changed)"
+        required: false
+        default: false
+        type: boolean
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  fix-pinned-deps:
+    name: "🔒 Pin GitHub Actions to Commit SHAs"
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: "📥 Checkout"
+        uses: actions/checkout@08eba0b27e820071cde6df949e0beb9ba4906955 # v4
+        with:
+          fetch-depth: 0
+
+      - name: "🔍 Install pin-github-action tool"
+        run: |
+          # Install the tool to pin GitHub Actions to commit SHAs
+          npm install -g pin-github-action
+
+      - name: "🔒 Pin Actions to Commit SHAs"
+        run: |
+          echo "🔍 Finding workflow files..."
+          find .github/workflows -name "*.yml" -o -name "*.yaml" | while read workflow; do
+            echo "📝 Processing $workflow..."
+
+            if [ "${{ inputs.dry_run }}" = "true" ]; then
+              echo "🧪 DRY RUN: Would pin actions in $workflow"
+              pin-github-action --dry-run "$workflow"
+            else
+              pin-github-action "$workflow"
+              echo "✅ Pinned actions in $workflow"
+            fi
+          done
+
+      - name: "📊 Show Changes"
+        if: ${{ !inputs.dry_run }}
+        run: |
+          echo "📊 Files changed:"
+          git diff --name-only
+
+          echo "📈 Stats:"
+          git diff --stat
+
+      - name: "💾 Commit Changes"
+        if: ${{ !inputs.dry_run }}
+        run: |
+          git config --local user.email "security-fix@github.com"
+          git config --local user.name "Security Fix Bot"
+
+          if git diff --quiet && git diff --cached --quiet; then
+            echo "✅ No changes to commit"
+            exit 0
+          fi
+
+          git add .github/workflows/
+
+          CHANGED_FILES=$(git diff --cached --name-only | wc -l)
+
+          git commit -m "🔒 Pin GitHub Actions to commit SHAs for security
+
+🛡️ Security improvement: Pin all GitHub Actions to specific commit SHAs
+to prevent supply chain attacks and ensure reproducible builds.
+
+📊 Files updated: $CHANGED_FILES workflow files
+🎯 Fixes: PinnedDependenciesID code scanning alerts
+
+🤖 Automated security fix
+🔗 Reference: https://docs.github.com/en/actions/security-guides/security-hardening-for-github-actions
+
+Co-authored-by: Security Fix Bot <security-fix@github.com>"
+
+          git push
+
+      - name: "📈 Summary"
+        run: |
+          if [ "${{ inputs.dry_run }}" = "true" ]; then
+            echo "🧪 DRY RUN completed - no changes made"
+          else
+            CHANGED=$(git log -1 --name-only --pretty=format: | wc -l)
+            echo "✅ Pinned dependencies in $CHANGED workflow files"
+          fi
