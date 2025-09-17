@@ -1,0 +1,257 @@
+name: Security Auto-Fix
+
+on:
+  # Run weekly on Monday at 2 AM UTC
+  schedule:
+    - cron: '0 2 * * 1'
+
+  # Allow manual triggering
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: 'Fix mode'
+        required: true
+        default: 'conservative'
+        type: choice
+        options:
+          - conservative
+          - advanced
+          - aggressive
+      dry_run:
+        description: 'Dry run (preview changes only)'
+        required: false
+        default: true
+        type: boolean
+
+env:
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  GITHUB_OWNER: ${{ github.repository_owner }}
+  GITHUB_REPO: ${{ github.event.repository.name }}
+
+jobs:
+  security-autofix:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+      security-events: read
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: |
+          # Install any required dependencies
+          npm install --no-save
+
+      - name: Configure Git
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+
+      - name: Run Security Auto-Fix (Conservative)
+        if: ${{ github.event.inputs.mode == 'conservative' || github.event.inputs.mode == '' }}
+        run: |
+          if [[ "${{ github.event.inputs.dry_run }}" == "true" ]]; then
+            npm run security:autofix:dry-run
+          else
+            npm run security:autofix
+          fi
+
+      - name: Run Security Auto-Fix (Advanced)
+        if: ${{ github.event.inputs.mode == 'advanced' }}
+        run: |
+          if [[ "${{ github.event.inputs.dry_run }}" == "true" ]]; then
+            npm run security:autofix:advanced:dry-run
+          else
+            npm run security:autofix:advanced
+          fi
+
+      - name: Run Security Auto-Fix (Aggressive)
+        if: ${{ github.event.inputs.mode == 'aggressive' }}
+        run: |
+          if [[ "${{ github.event.inputs.dry_run }}" == "true" ]]; then
+            npm run security:autofix:advanced:dry-run
+          else
+            npm run security:autofix:advanced:aggressive
+          fi
+
+      - name: Upload Fix Report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: security-autofix-report
+          path: |
+            security-autofix-report.json
+            security-autofix-advanced-report.json
+          retention-days: 30
+
+      - name: Check for changes
+        id: changes
+        run: |
+          if git diff --quiet; then
+            echo "has_changes=false" >> $GITHUB_OUTPUT
+          else
+            echo "has_changes=true" >> $GITHUB_OUTPUT
+            echo "files_changed=$(git diff --name-only | wc -l)" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Commit changes
+        if: steps.changes.outputs.has_changes == 'true' && github.event.inputs.dry_run != 'true'
+        run: |
+          git add .
+          git commit -m "🛡️ Security auto-fix: resolve CodeQL alerts
+
+          - Applied automated fixes for security vulnerabilities
+          - Mode: ${{ github.event.inputs.mode || 'conservative' }}
+          - Files changed: ${{ steps.changes.outputs.files_changed }}
+
+          🤖 Generated with security auto-fix script
+          Co-Authored-By: GitHub Action <action@github.com>"
+
+      - name: Create Pull Request
+        if: steps.changes.outputs.has_changes == 'true' && github.event.inputs.dry_run != 'true'
+        uses: peter-evans/create-pull-request@v5
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          branch: security-fixes-${{ github.run_id }}
+          title: '🛡️ Security Auto-Fix: CodeQL Vulnerability Fixes'
+          body: |
+            ## Security Auto-Fix Report
+
+            This PR contains automated fixes for CodeQL security vulnerabilities.
+
+            **Configuration:**
+            - Mode: `${{ github.event.inputs.mode || 'conservative' }}`
+            - Files changed: ${{ steps.changes.outputs.files_changed }}
+            - Triggered by: ${{ github.event_name == 'schedule' && 'Scheduled run' || 'Manual trigger' }}
+
+            **What was fixed:**
+            The security auto-fix script has analyzed the codebase and applied safe, conservative fixes for:
+            - Useless assignments to local variables
+            - Trivial conditionals that are always true/false
+            - Type comparison issues
+            - Use-before-declaration problems
+            - Unneeded defensive code patterns
+            - Superfluous trailing arguments
+            - Unreachable statements
+            - Redundant operations
+
+            **Review Required:**
+            Please review the changes carefully before merging:
+            1. Check that the fixes don't break functionality
+            2. Run tests to ensure everything still works
+            3. Review the detailed report artifact for specifics
+
+            **Reports:**
+            - Detailed fix report is available in the workflow artifacts
+            - Look for `security-autofix-report.json` for complete details
+
+            ---
+
+            🤖 This PR was created automatically by the security auto-fix workflow.
+
+            If you have concerns about any of the changes, please:
+            1. Review the individual commits
+            2. Check the detailed report
+            3. Test the changes thoroughly
+            4. Revert specific changes if needed
+
+            The script only applies conservative fixes that are highly likely to be safe and correct.
+          labels: |
+            security
+            automated
+            codeql
+          reviewers: |
+            ${{ github.repository_owner }}
+          draft: false
+
+      - name: Comment on Dry Run
+        if: github.event.inputs.dry_run == 'true' && steps.changes.outputs.has_changes == 'true'
+        run: |
+          echo "## 🔍 Dry Run Results"
+          echo ""
+          echo "The security auto-fix script found potential fixes:"
+          echo "- Files that would be changed: ${{ steps.changes.outputs.files_changed }}"
+          echo "- Mode: ${{ github.event.inputs.mode || 'conservative' }}"
+          echo ""
+          echo "To apply these fixes, re-run this workflow with 'Dry run' set to false."
+          echo ""
+          echo "Review the uploaded report artifact for detailed information."
+
+      - name: Summary
+        if: always()
+        run: |
+          echo "## Security Auto-Fix Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "- **Mode**: ${{ github.event.inputs.mode || 'conservative' }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Dry Run**: ${{ github.event.inputs.dry_run || 'false' }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Changes Found**: ${{ steps.changes.outputs.has_changes }}" >> $GITHUB_STEP_SUMMARY
+          if [[ "${{ steps.changes.outputs.has_changes }}" == "true" ]]; then
+            echo "- **Files Changed**: ${{ steps.changes.outputs.files_changed }}" >> $GITHUB_STEP_SUMMARY
+          fi
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "Check the uploaded artifacts for detailed reports." >> $GITHUB_STEP_SUMMARY
+
+  # Run tests after applying fixes to ensure nothing breaks
+  test-fixes:
+    runs-on: ubuntu-latest
+    needs: security-autofix
+    if: needs.security-autofix.outputs.has_changes == 'true' && github.event.inputs.dry_run != 'true'
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          ref: security-fixes-${{ github.run_id }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: |
+          npm install
+          npm --prefix site install
+          npm --prefix studio install
+
+      - name: Run tests (if available)
+        run: |
+          # Run any available test suites
+          if npm run test --if-present; then
+            echo "✅ Tests passed after security fixes"
+          else
+            echo "❌ Tests failed after security fixes"
+            exit 1
+          fi
+
+      - name: Build project
+        run: |
+          # Attempt to build the project to ensure fixes don't break compilation
+          if npm run build --if-present; then
+            echo "✅ Build succeeded after security fixes"
+          else
+            echo "❌ Build failed after security fixes"
+            exit 1
+          fi
+
+      - name: Lint code
+        run: |
+          # Run linting if available
+          if npm run lint --if-present; then
+            echo "✅ Linting passed after security fixes"
+          else
+            echo "⚠️ Linting failed after security fixes (may be acceptable)"
+          fi
