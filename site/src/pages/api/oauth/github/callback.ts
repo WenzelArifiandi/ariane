@@ -19,7 +19,7 @@ const TOKEN_URL = "https://github.com/login/oauth/access_token";
 const USER_URL = "https://api.github.com/user";
 const EMAILS_URL = "https://api.github.com/user/emails";
 
-export const GET: APIRoute = async ({ url, request }) => {
+export const GET: APIRoute = async ({ url }) => {
   const clientId =
     (import.meta as any).env?.GITHUB_OAUTH_CLIENT_ID ??
     process.env.GITHUB_OAUTH_CLIENT_ID;

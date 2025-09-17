@@ -1,4 +1,4 @@
-import type { MiddlewareHandler } from "astro";
+import type { MiddlewareHandler, APIContext } from "astro";
 import { verify as verifySig } from "./lib/auth/signer";
 import {
   getOriginFromHeaders,
@@ -51,7 +51,7 @@ interface AuthResult {
   response?: Response;
 }
 
-function getRequestContext(context: unknown): RequestContext {
+function getRequestContext(context: APIContext): RequestContext {
   const { url } = context;
   const path = url.pathname;
   const headers = context.request.headers;
