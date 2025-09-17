@@ -524,6 +524,10 @@ jobs:
           format: "sarif"
           output: "trivy-results.sarif"
           severity: "CRITICAL,HIGH,MEDIUM"
+          # Do not fail the job on findings; report via SARIF instead
+          exit-code: "0"
+          # Reduce noise from unresolved upstream issues
+          ignore-unfixed: true
 
       - name: "📊 Upload Trivy Results"
         uses: github/codeql-action/upload-sarif@v3
