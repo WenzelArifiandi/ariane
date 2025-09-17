@@ -4,7 +4,7 @@ import { client } from '../lib/sanity'
 import groq from 'groq'
 
 const linksQuery = groq`*[_type == "link"] | order(pin desc, label asc){ _id, label, url, category, pin }`
-let links: any[] = []
+let links: unknown[] = []
 try { links = await client.fetch(linksQuery) } catch { links = [] }
 ---
 <Base title="Links — Ariane" description="Curated links.">
