@@ -2,7 +2,7 @@
 
 ## Current State
 
-- ✅ Basic security autofix testing (`test-security-autofix.js`)
+- ✅ Basic security autofix testing (`scripts/test-security-autofix.js`)
 - ✅ Lighthouse configuration (`.lighthouserc.js`)
 - ✅ ESLint + Prettier for code quality
 - ❌ No unit/integration tests for components

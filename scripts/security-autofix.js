@@ -6,7 +6,7 @@
  * This script fetches CodeQL alerts from GitHub API and applies automated fixes
  * for common vulnerability patterns in TypeScript/JavaScript code.
  *
- * Usage: node security-autofix.js [options]
+ * Usage: node scripts/security-autofix.js [options]
  *
  * Environment variables required:
  * - GITHUB_TOKEN: GitHub token with security_events scope

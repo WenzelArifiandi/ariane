@@ -145,10 +145,10 @@ npm run security:autofix:verbose
 ### Direct Script Usage
 ```bash
 # Basic usage
-node security-autofix.js
+node scripts/security-autofix.js
 
 # With options
-node security-autofix.js --dry-run --verbose
+node scripts/security-autofix.js --dry-run --verbose
 ```
 
 ### Command Line Options
@@ -157,7 +157,7 @@ node security-autofix.js --dry-run --verbose
 
 ## Configuration
 
-The script can be configured by editing the `CONFIG` object in `security-autofix.js`:
+The script can be configured by editing the `CONFIG` object in `scripts/security-autofix.js`:
 
 ```javascript
 const CONFIG = {
@@ -319,7 +319,7 @@ Check the generated report file for detailed information about what was processe
 
 To add support for new vulnerability patterns:
 
-1. Add the pattern to `VULNERABILITY_PATTERNS` in `security-autofix.js`
+1. Add the pattern to `VULNERABILITY_PATTERNS` in `scripts/security-autofix.js`
 2. Define the regex patterns and replacement logic
 3. Test thoroughly with `--dry-run` mode
 4. Update this documentation
