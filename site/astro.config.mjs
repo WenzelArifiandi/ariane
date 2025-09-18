@@ -3,6 +3,7 @@ import vercel from "@astrojs/vercel";
 import tailwind from "@astrojs/tailwind";
 import icon from "astro-icon";
 import react from "@astrojs/react";
+import { storyblok } from "@storyblok/astro";
 
 export default defineConfig({
   adapter: vercel(),
@@ -21,7 +22,7 @@ export default defineConfig({
         strictPort: true,
         // Allow all hosts in dev so Cloudflare Tunnel can forward requests with your domain.
         // Safe in development only.
-        allowedHosts: "all",
+        allowedHosts: ["localhost", "127.0.0.1", "tunnel.wenzelarifiandi.com"],
         hmr: useTunnel
           ? {
               host: CF_TUNNEL_HOST,
@@ -38,5 +39,17 @@ export default defineConfig({
     host: "127.0.0.1",
     port: 4321,
   },
-  integrations: [tailwind({ applyBaseStyles: false }), icon(), react()],
+  integrations: [
+    tailwind({ applyBaseStyles: false }),
+    icon(),
+    react(),
+    storyblok({
+      accessToken: process.env.STORYBLOK_TOKEN,
+      components: {
+        page: 'storyblok/Page',
+        hero: 'storyblok/Hero',
+        project: 'storyblok/Project',
+      },
+    })
+  ],
 });

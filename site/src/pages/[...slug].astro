@@ -1,0 +1,90 @@
+---
+import { useStoryblokApi, StoryblokComponent } from '@storyblok/astro'
+import Base from '../layouts/Base.astro'
+import Nav from '../components/Nav.astro'
+import Footer from '../components/Footer.astro'
+import LiquidGlassHybridIsland from '../components/LiquidGlassHybridIsland.jsx'
+
+const { slug } = Astro.params
+const storyblokApi = useStoryblokApi()
+
+let story = null
+let error = null
+
+try {
+  const { data } = await storyblokApi.get(`cdn/stories/${slug || 'home'}`, {
+    version: 'draft'
+  })
+  story = data?.story
+} catch (e) {
+  error = e.message
+  console.log('Storyblok error:', e)
+}
+
+const page = {
+  title: story?.name ? `${story.name} - Wenzel Arifiandi` : 'Wenzel Arifiandi',
+  description: story?.content?.description || 'Content managed with Storyblok',
+  url: `https://wenzelarifiandi.com/${slug || ''}`,
+  image: '/og.jpg',
+}
+---
+
+<Base title={page.title} description={page.description} ogImage={page.image} pathname={`/${slug || ''}`}>
+  <Nav />
+
+  {story ? (
+    <StoryblokComponent blok={story.content} />
+  ) : error ? (
+    <section class="container align-hero">
+      <div class="hero">
+        <div class="hero__inner">
+          <h1>Content Not Found</h1>
+          <p>The requested content could not be loaded.</p>
+          <p><small>Error: {error}</small></p>
+        </div>
+      </div>
+    </section>
+  ) : (
+    <section class="container align-hero">
+      <div class="hero">
+        <div class="hero__inner">
+          <h1>Loading...</h1>
+          <p>Content is being loaded from Storyblok...</p>
+        </div>
+      </div>
+    </section>
+  )}
+
+  <!-- Keep the liquid glass component -->
+  <LiquidGlassHybridIsland client:load
+    blur={30}
+    saturation={1.8}
+    thickness={0.6}
+    specularIntensity={0.22}
+    radiusPx={28}
+    target="body" />
+
+  <Footer />
+</Base>
+
+<style>
+  .hero {
+    display: flex;
+    align-items: center;
+    min-height: 60vh;
+    padding: 4rem 0;
+  }
+
+  .hero__inner {
+    text-align: center;
+    max-width: 800px;
+    margin: 0 auto;
+  }
+
+  /* Enhanced background for glass effect */
+  body {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+    background-attachment: fixed;
+    min-height: 100vh;
+  }
+</style>

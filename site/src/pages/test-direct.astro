@@ -1,0 +1,55 @@
+---
+import { useStoryblokApi } from '@storyblok/astro'
+import Hero from '../components/storyblok/Hero.astro'
+import Project from '../components/storyblok/Project.astro'
+import Base from '../layouts/Base.astro'
+import Nav from '../components/Nav.astro'
+import Footer from '../components/Footer.astro'
+
+// Fetch content directly
+const storyblokApi = useStoryblokApi()
+let story = null
+
+try {
+  const { data } = await storyblokApi.get('cdn/stories/home', {
+    version: 'draft'
+  })
+  story = data?.story
+} catch (error) {
+  console.log('Error:', error)
+}
+---
+
+<Base title="Direct Test" description="Testing components directly">
+  <Nav />
+
+  {story?.content?.body ? (
+    <main>
+      {story.content.body.map((block) => {
+        if (block.component === 'hero') {
+          return <Hero blok={block} />
+        }
+        if (block.component === 'project') {
+          return <Project blok={block} />
+        }
+        return <div>Unknown component: {block.component}</div>
+      })}
+    </main>
+  ) : (
+    <main style="padding: 2rem; text-align: center;">
+      <h1>No content found</h1>
+      <p>Check if story exists and has content.</p>
+    </main>
+  )}
+
+  <Footer />
+</Base>
+
+<style>
+  /* Enhanced background for glass effect */
+  body {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+    background-attachment: fixed;
+    min-height: 100vh;
+  }
+</style>

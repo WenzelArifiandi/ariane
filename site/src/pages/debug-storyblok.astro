@@ -1,0 +1,72 @@
+---
+import { useStoryblokApi } from '@storyblok/astro'
+
+let debugInfo = {
+  tokenFromEnv: import.meta.env.STORYBLOK_TOKEN,
+  tokenLength: import.meta.env.STORYBLOK_TOKEN?.length || 0,
+  apiTest: "Testing...",
+  storyTest: "Testing...",
+  error: null
+}
+
+// Test 1: Basic API connection
+try {
+  const storyblokApi = useStoryblokApi()
+  const { data } = await storyblokApi.get('cdn/spaces/me')
+  debugInfo.apiTest = `✅ API works: ${data.space?.name}`
+} catch (error) {
+  debugInfo.apiTest = `❌ API failed: ${error.message}`
+  debugInfo.error = error
+}
+
+// Test 2: Story fetch
+try {
+  const storyblokApi = useStoryblokApi()
+  const { data } = await storyblokApi.get('cdn/stories/home', {
+    version: 'draft'
+  })
+  debugInfo.storyTest = `✅ Story found: ${data.story?.name || 'Unknown'}`
+} catch (error) {
+  debugInfo.storyTest = `❌ Story failed: ${error.message}`
+}
+---
+
+<html>
+<head>
+  <title>Storyblok Debug</title>
+</head>
+<body style="font-family: system-ui; padding: 2rem; max-width: 800px; margin: 0 auto;">
+  <h1>Storyblok Debug Information</h1>
+
+  <div style="background: #f5f5f5; padding: 1rem; border-radius: 8px; margin: 1rem 0;">
+    <h2>Token Info</h2>
+    <p><strong>Token:</strong> <code>{debugInfo.tokenFromEnv ? debugInfo.tokenFromEnv.substring(0, 8) + '...' : 'NOT FOUND'}</code></p>
+    <p><strong>Length:</strong> {debugInfo.tokenLength} characters</p>
+  </div>
+
+  <div style="background: #f5f5f5; padding: 1rem; border-radius: 8px; margin: 1rem 0;">
+    <h2>API Tests</h2>
+    <p><strong>Space API:</strong> {debugInfo.apiTest}</p>
+    <p><strong>Story API:</strong> {debugInfo.storyTest}</p>
+  </div>
+
+  {debugInfo.error && (
+    <div style="background: #ffe6e6; padding: 1rem; border-radius: 8px; margin: 1rem 0;">
+      <h2>Error Details</h2>
+      <pre style="background: white; padding: 1rem; border-radius: 4px; overflow: auto; font-size: 12px;">
+        {JSON.stringify(debugInfo.error, null, 2)}
+      </pre>
+    </div>
+  )}
+
+  <div style="margin-top: 2rem;">
+    <h3>Troubleshooting</h3>
+    <ol>
+      <li>If API test fails, check your token in .env</li>
+      <li>If Story test fails, make sure you created a story called "home"</li>
+      <li>Make sure the story content type is "page"</li>
+      <li>Make sure you published or saved the story</li>
+    </ol>
+  </div>
+</body>
+</html>

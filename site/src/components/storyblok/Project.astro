@@ -1,0 +1,88 @@
+---
+import { storyblokEditable } from '@storyblok/astro'
+
+interface Props {
+  blok: {
+    title: string
+    description: string
+    year: string
+    image: {
+      filename: string
+      alt: string
+    }
+    link: string
+    component: string
+  }
+}
+
+const { blok } = Astro.props
+---
+
+<div class="project-card" {...storyblokEditable(blok)}>
+  <a href={blok.link} class="project-link">
+    {blok.image && (
+      <img
+        src={`${blok.image.filename}/m/300x200/filters:quality(80)`}
+        alt={blok.image.alt || blok.title}
+        class="project-image"
+        loading="lazy"
+      />
+    )}
+    <div class="project-content">
+      <h3 class="project-title">{blok.title}</h3>
+      {blok.year && <p class="project-year">{blok.year}</p>}
+      {blok.description && <p class="project-description">{blok.description}</p>}
+    </div>
+  </a>
+</div>
+
+<style>
+  .project-card {
+    border-radius: var(--radius);
+    border: 1px solid color-mix(in oklab, var(--ink), transparent 85%);
+    overflow: hidden;
+    transition: all 0.2s ease;
+  }
+
+  .project-card:hover {
+    box-shadow: var(--shadow);
+    transform: translateY(-2px);
+  }
+
+  .project-link {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+  }
+
+  .project-image {
+    aspect-ratio: 3/2;
+    width: 100%;
+    max-width: 300px;
+    object-fit: cover;
+    display: block;
+  }
+
+  .project-content {
+    padding: 1rem;
+  }
+
+  .project-title {
+    font-weight: 600;
+    margin: 0 0 0.25rem 0;
+    font-size: 1.1rem;
+  }
+
+  .project-year {
+    font-size: 0.875rem;
+    color: color-mix(in oklab, var(--ink), black 25%);
+    margin: 0 0 0.5rem 0;
+  }
+
+  .project-description {
+    font-size: 0.9rem;
+    color: color-mix(in oklab, var(--ink), black 15%);
+    margin: 0;
+    line-height: 1.4;
+  }
+</style>

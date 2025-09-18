@@ -1,0 +1,40 @@
+---
+import { useStoryblokApi } from '@storyblok/astro'
+import Base from '../layouts/Base.astro'
+
+let tokenStatus = 'Unknown'
+let apiResponse = null
+
+// Test the Storyblok connection
+try {
+  const storyblokApi = useStoryblokApi()
+  const { data } = await storyblokApi.get('cdn/spaces/me')
+  tokenStatus = 'Working ✅'
+  apiResponse = data
+} catch (error) {
+  tokenStatus = 'Failed ❌'
+  apiResponse = error.message
+}
+---
+
+<Base title="Storyblok Test" description="Testing Storyblok connection">
+  <main style="padding: 2rem; max-width: 800px; margin: 0 auto;">
+    <h1>Storyblok Connection Test</h1>
+
+    <div style="background: #f5f5f5; padding: 1rem; border-radius: 8px; margin: 1rem 0;">
+      <h2>Token Status: {tokenStatus}</h2>
+      <pre style="background: white; padding: 1rem; border-radius: 4px; overflow: auto;">
+        {JSON.stringify(apiResponse, null, 2)}
+      </pre>
+    </div>
+
+    <div style="margin-top: 2rem;">
+      <h3>Next Steps:</h3>
+      <ol>
+        <li>If you see "Working ✅", your token is correct!</li>
+        <li>If you see "Failed ❌", check your token in .env file</li>
+        <li>Make sure you copied the <strong>Preview Token</strong> from Storyblok</li>
+      </ol>
+    </div>
+  </main>
+</Base>

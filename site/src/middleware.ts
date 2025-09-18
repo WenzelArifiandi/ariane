@@ -98,6 +98,7 @@ async function handleCloudflareAccessOnlyMode(
             authenticated: false,
             response: addSecurityHeaders(
               new Response("Unauthorized", { status: 401 }),
+              false
             ),
           };
         }
@@ -107,6 +108,7 @@ async function handleCloudflareAccessOnlyMode(
             authenticated: false,
             response: addSecurityHeaders(
               new Response("Forbidden", { status: 403 }),
+              false
             ),
           };
         }
@@ -115,6 +117,7 @@ async function handleCloudflareAccessOnlyMode(
           authenticated: false,
           response: addSecurityHeaders(
             new Response("Unauthorized", { status: 401 }),
+            false
           ),
         };
       }
@@ -202,17 +205,20 @@ function createAccessRequiredRedirect(
   const absoluteOrigin = `${proto}://${host}`;
   const absolute = `${absoluteOrigin}/access-required?next=${redirect}`;
   const response = Response.redirect(absolute, 302);
-  return addSecurityHeaders(response);
+  return addSecurityHeaders(response, false);
 }
 
 export const onRequest: MiddlewareHandler = async (context, next) => {
   const requestContext = getRequestContext(context);
   const { path } = requestContext;
 
+  // Check if this is a Storyblok preview request
+  const isStoryblokPreview = context.url.searchParams.has('_storyblok');
+
   // Handle public paths and assets
   if (PUBLIC_PATHS.includes(path) || isApiOrAsset(path)) {
     const response = await next();
-    return addSecurityHeaders(response);
+    return addSecurityHeaders(response, isStoryblokPreview);
   }
 
   const authMode = determineAuthMode(requestContext.host);
@@ -224,25 +230,25 @@ export const onRequest: MiddlewareHandler = async (context, next) => {
       return authResult.response!;
     }
     const response = await next();
-    return addSecurityHeaders(response);
+    return addSecurityHeaders(response, isStoryblokPreview);
   }
 
   // Check for Cloudflare Access headers
   if (checkCloudflareAccessHeaders(requestContext.headers)) {
     const response = await next();
-    return addSecurityHeaders(response);
+    return addSecurityHeaders(response, isStoryblokPreview);
   }
 
   // In public mode, don't enforce app auth
   if (authMode !== "app") {
     const response = await next();
-    return addSecurityHeaders(response);
+    return addSecurityHeaders(response, isStoryblokPreview);
   }
 
   // Check session authentication
   if (checkSessionAuth(requestContext.headers)) {
     const response = await next();
-    return addSecurityHeaders(response);
+    return addSecurityHeaders(response, isStoryblokPreview);
   }
 
   // Not authenticated: redirect to access required
@@ -250,9 +256,15 @@ export const onRequest: MiddlewareHandler = async (context, next) => {
 };
 
 // Consolidated security headers helper. (Removed duplicate definition added by bot.)
-export function addSecurityHeaders(response: Response): Response {
-  // Clickjacking
-  response.headers.set("X-Frame-Options", "DENY");
+export function addSecurityHeaders(response: Response, isStoryblokPreview: boolean = false): Response {
+  // Clickjacking - allow framing from Storyblok for preview
+  if (isStoryblokPreview) {
+    response.headers.set("X-Frame-Options", "ALLOW-FROM https://app.storyblok.com");
+    response.headers.set("Content-Security-Policy", "frame-ancestors 'self' https://app.storyblok.com https://*.storyblok.com");
+  } else {
+    response.headers.set("X-Frame-Options", "DENY");
+  }
+
   // MIME sniffing
   response.headers.set("X-Content-Type-Options", "nosniff");
   // Basic legacy XSS filter (largely inert on modern browsers but harmless)

@@ -1,0 +1,79 @@
+---
+import { useStoryblokApi, StoryblokComponent } from '@storyblok/astro'
+import Base from '../layouts/Base.astro'
+import Nav from '../components/Nav.astro'
+import Footer from '../components/Footer.astro'
+import LiquidGlassHybridIsland from '../components/LiquidGlassHybridIsland.jsx'
+
+const page = {
+  title: 'Wenzel Arifiandi - Storyblok',
+  description: 'Content managed with Storyblok',
+  url: 'https://wenzelarifiandi.com/storyblok',
+  image: '/og.jpg',
+}
+
+// Fetch content from Storyblok
+const storyblokApi = useStoryblokApi()
+let story = null
+
+try {
+  const { data } = await storyblokApi.get('cdn/stories/home', {
+    version: 'draft', // Use 'published' for production
+  })
+  story = data?.story
+} catch (error) {
+  console.log('Storyblok error:', error)
+}
+---
+
+<Base title={page.title} description={page.description} ogImage={page.image} pathname="/storyblok">
+  <Nav />
+
+  {story ? (
+    <StoryblokComponent blok={story.content} />
+  ) : (
+    <!-- Fallback content if Storyblok is not available -->
+    <section class="container align-hero">
+      <div class="hero">
+        <div class="hero__inner">
+          <h1>Welcome to Storyblok!</h1>
+          <p>Create your first story in Storyblok to see content here.</p>
+          <p>Go to your Storyblok space and create a story called "home" with a "page" content type.</p>
+        </div>
+      </div>
+    </section>
+  )}
+
+  <!-- Keep the liquid glass component -->
+  <LiquidGlassHybridIsland client:load
+    blur={30}
+    saturation={1.8}
+    thickness={0.6}
+    specularIntensity={0.22}
+    radiusPx={28}
+    target="body" />
+
+  <Footer />
+</Base>
+
+<style>
+  .hero {
+    display: flex;
+    align-items: center;
+    min-height: 60vh;
+    padding: 4rem 0;
+  }
+
+  .hero__inner {
+    text-align: center;
+    max-width: 800px;
+    margin: 0 auto;
+  }
+
+  /* Enhanced background for glass effect */
+  body {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+    background-attachment: fixed;
+    min-height: 100vh;
+  }
+</style>

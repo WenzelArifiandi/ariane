@@ -1,0 +1,62 @@
+---
+import { useStoryblokApi } from '@storyblok/astro'
+
+let storyData = null
+let error = null
+
+try {
+  const storyblokApi = useStoryblokApi()
+  const { data } = await storyblokApi.get('cdn/stories/home', {
+    version: 'draft'
+  })
+  storyData = data?.story
+} catch (e) {
+  error = e.message
+}
+---
+
+<html>
+<head>
+  <title>Debug Content Structure</title>
+</head>
+<body style="font-family: system-ui; padding: 2rem; max-width: 1000px; margin: 0 auto;">
+  <h1>Storyblok Content Debug</h1>
+
+  {error ? (
+    <div style="background: #ffe6e6; padding: 1rem; border-radius: 8px;">
+      <h2>Error:</h2>
+      <p>{error}</p>
+    </div>
+  ) : storyData ? (
+    <div>
+      <div style="background: #e6ffe6; padding: 1rem; border-radius: 8px; margin: 1rem 0;">
+        <h2>✅ Story Found: {storyData.name}</h2>
+        <p><strong>ID:</strong> {storyData.id}</p>
+        <p><strong>Slug:</strong> {storyData.slug}</p>
+      </div>
+
+      <div style="background: #f5f5f5; padding: 1rem; border-radius: 8px; margin: 1rem 0;">
+        <h2>Story Content Structure:</h2>
+        <pre style="background: white; padding: 1rem; border-radius: 4px; overflow: auto; font-size: 12px; line-height: 1.4;">
+          {JSON.stringify(storyData.content, null, 2)}
+        </pre>
+      </div>
+
+      <div style="margin-top: 2rem;">
+        <h3>What to check:</h3>
+        <ol>
+          <li>Look for "component": "page" in the content</li>
+          <li>Look for "body": [...] array with your blocks</li>
+          <li>Check if block names match: "hero", "project", etc.</li>
+          <li>Make sure blocks have the right component names</li>
+        </ol>
+      </div>
+    </div>
+  ) : (
+    <div style="background: #fff3cd; padding: 1rem; border-radius: 8px;">
+      <h2>⚠️ No Story Data</h2>
+      <p>Story exists but no content found.</p>
+    </div>
+  )}
+</body>
+</html>
