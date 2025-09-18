@@ -41,19 +41,14 @@ describe("Authentication Utilities", () => {
       // Provide a compatible mock that preserves default and named exports
       vi.mock("crypto", async (importOriginal) => {
         const actual: any = await importOriginal();
+        const createHmacMock = vi.fn().mockReturnValue({
+          update: vi.fn().mockReturnThis(),
+          digest: vi.fn().mockReturnValue("valid-signature"),
+        });
+        const withMock = { ...actual, createHmac: createHmacMock };
         return {
-          ...actual,
-          createHmac: vi.fn().mockReturnValue({
-            update: vi.fn().mockReturnThis(),
-            digest: vi.fn().mockReturnValue("valid-signature"),
-          }),
-          default: {
-            ...actual,
-            createHmac: vi.fn().mockReturnValue({
-              update: vi.fn().mockReturnThis(),
-              digest: vi.fn().mockReturnValue("valid-signature"),
-            }),
-          },
+          ...withMock,
+          default: withMock,
         };
       });
 

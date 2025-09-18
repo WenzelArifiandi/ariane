@@ -22,9 +22,6 @@ const EMAILS_URL = "https://api.github.com/user/emails";
 export const GET: APIRoute = async ({ url }) => {
   // In tests, short-circuit the OAuth callback to a simple redirect
   if (process.env.NODE_ENV === "test") {
-    console.log(
-      "API: entering test-mode short-circuit in oauth/github/callback",
-    );
     return new Response(null, { status: 302, headers: { Location: "/" } });
   }
   const clientId =

@@ -6,15 +6,17 @@ import '../../styles/global.css'
 
 const { slug } = Astro.params
 const storyblokApi = useStoryblokApi()
-
-let story: any = null
+type StoryblokStory = { name: string; content?: Record<string, any>; }
+let story: StoryblokStory | null = null
 let error: string | null = null
 
+const version = (import.meta.env.MODE === 'development' || import.meta.env.MODE === 'test' || Astro.url.searchParams.has('_storyblok')) ? 'draft' : 'published'
+
 try {
-  const { data } = await storyblokApi.get(`cdn/stories/work/${slug}`, { version: 'draft' })
-  story = data?.story ?? null
-} catch (e: any) {
-  error = e?.message ?? 'Failed to load project'
+  const { data } = await storyblokApi.get(`cdn/stories/work/${slug}`, { version })
+  story = (data?.story ?? null) as StoryblokStory | null
+} catch (e: unknown) {
+  error = e instanceof Error ? e.message : 'Failed to load project'
 }
 ---
 
@@ -23,7 +25,11 @@ try {
     <>
       <a href="/work" class="text-sm text-neutral-500 hover:underline">← Back to Work</a>
       <h1 class="mt-4 text-4xl font-semibold">{story.name}</h1>
-      <StoryblokComponent blok={story.content} />
+      {story.content ? (
+        <StoryblokComponent blok={story.content as any} />
+      ) : (
+        <p class="text-neutral-600">No project content available.</p>
+      )}
     </>
   ) : error ? (
     <p class="text-neutral-600">Project failed to load. <small>{error}</small> <a class="underline" href="/work">Back to Work</a></p>

@@ -8,16 +8,17 @@ import LiquidGlassHybridIsland from '../components/LiquidGlassHybridIsland.jsx'
 import '../styles/global.css'
 
 const storyblokApi = useStoryblokApi()
-let story: any = null
+type StoryblokStory = { name: string; content?: Record<string, any>; }
+let story: StoryblokStory | null = null
 let error: string | null = null
 
+const version = (import.meta.env.MODE === 'development' || import.meta.env.MODE === 'test' || Astro.url.searchParams.has('_storyblok')) ? 'draft' : 'published'
+
 try {
-  const { data } = await storyblokApi.get('cdn/stories/home', {
-    version: 'draft',
-  })
-  story = data?.story ?? null
-} catch (e: any) {
-  error = e?.message ?? 'Failed to load Storyblok content'
+  const { data } = await storyblokApi.get('cdn/stories/home', { version })
+  story = (data?.story ?? null) as StoryblokStory | null
+} catch (e: unknown) {
+  error = e instanceof Error ? e.message : 'Failed to load Storyblok content'
 }
 
 const page = {
@@ -33,7 +34,11 @@ const email = 'hello@wenzelarifiandi.com'
   <Nav />
 
   {story ? (
-    <StoryblokComponent blok={story.content} />
+    story.content ? (
+      <StoryblokComponent blok={story.content as any} />
+    ) : (
+      <section class="container align-hero"><div class="section__inner"><p>No content available.</p></div></section>
+    )
   ) : error ? (
     <section class="container align-hero">
       <div class="section__inner">

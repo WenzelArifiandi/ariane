@@ -3,17 +3,8 @@ import { http, HttpResponse } from "msw";
 
 // Mock handlers for API endpoints
 export const handlers = [
-  // Ensure callback path is matched (with or without querystring) and always 302
-  http.get("/api/oauth/github/callback", () => {
-    // Debug: indicate MSW callback handler was hit
-    // eslint-disable-next-line no-console
-    console.log("MSW: matched /api/oauth/github/callback (exact)");
-    return HttpResponse.redirect("http://localhost:4321/", 302);
-  }),
+  // OAuth callback redirect (matches with or without querystring)
   http.get(/\/api\/oauth\/github\/callback.*/, () => {
-    // Debug: indicate MSW callback regex handler was hit
-    // eslint-disable-next-line no-console
-    console.log("MSW: matched /api/oauth/github/callback (regex)");
     return HttpResponse.redirect("http://localhost:4321/", 302);
   }),
   // Auth endpoints

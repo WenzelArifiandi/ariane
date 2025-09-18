@@ -4,19 +4,26 @@ import StoryblokComponent from '@storyblok/astro/StoryblokComponent.astro'
 import Base from '../layouts/Base.astro'
 
 const storyblokApi = useStoryblokApi()
-let story: any = null
+type StoryblokStory = { name: string; content?: Record<string, any> }
+let story: StoryblokStory | null = null
 let error: string | null = null
 
+const version = (import.meta.env.MODE === 'development' || import.meta.env.MODE === 'test' || Astro.url.searchParams.has('_storyblok')) ? 'draft' : 'published'
+
 try {
-  const { data } = await storyblokApi.get('cdn/stories/about', { version: 'draft' })
-  story = data?.story ?? null
-} catch (e: any) {
-  error = e?.message ?? 'Failed to load About content'
+  const { data } = await storyblokApi.get('cdn/stories/about', { version })
+  story = (data?.story ?? null) as StoryblokStory | null
+} catch (e: unknown) {
+  error = e instanceof Error ? e.message : 'Failed to load About content'
 }
 ---
 <Base title={story?.name ? `${story.name} — Ariane` : 'About — Ariane'} description={story?.content?.description ?? 'About the designer.'}>
   {story ? (
-    <StoryblokComponent blok={story.content} />
+    story.content ? (
+      <StoryblokComponent blok={story.content as any} />
+    ) : (
+      <p class="mt-6 text-neutral-500">No About content available.</p>
+    )
   ) : error ? (
     <p class="mt-6 text-neutral-500">Could not load About content. <small>{error}</small></p>
   ) : (

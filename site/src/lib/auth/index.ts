@@ -6,6 +6,13 @@ export type SessionAuthResult = {
   user: { id: string } | null;
 };
 
+export type SessionPayload = {
+  sub: string; // subject (e.g., provider:userId)
+  iat?: number; // issued at (ms since epoch)
+  exp?: number; // expiry (ms since epoch)
+  [key: string]: unknown;
+};
+
 function parseCookie(
   header: string | null | undefined,
 ): Record<string, string> {
@@ -33,9 +40,26 @@ export async function checkSessionAuth(
   const value = verify(session, secret);
   if (!value) return { isAuthenticated: false, user: null };
 
-  // The value can be any serialized payload; for tests we just return a stubbed user
-  // If your signed value encodes userId, you can parse it here.
-  return { isAuthenticated: true, user: { id: "user" } };
+  // Parse and validate the signed session payload
+  let payload: SessionPayload | null = null;
+  try {
+    const obj = JSON.parse(value);
+    // Basic shape checks
+    if (obj && typeof obj.sub === "string") {
+      payload = obj as SessionPayload;
+    }
+  } catch {
+    // Non-JSON payloads are not accepted for authentication
+    return { isAuthenticated: false, user: null };
+  }
+  if (!payload) return { isAuthenticated: false, user: null };
+
+  // Expiration check (if present)
+  if (typeof payload.exp === "number" && Date.now() > payload.exp) {
+    return { isAuthenticated: false, user: null };
+  }
+
+  return { isAuthenticated: true, user: { id: payload.sub } };
 }
 
 export * from "./signer";
