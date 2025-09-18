@@ -13,7 +13,7 @@ export default defineConfig({
   vite: {
     build: { sourcemap: false },
     server: (() => {
-      const CF_TUNNEL_HOST = process.env.CF_TUNNEL_HOST;
+      const CF_TUNNEL_HOST = import.meta.env.CF_TUNNEL_HOST;
       const useTunnel = Boolean(CF_TUNNEL_HOST);
       return {
         host: "127.0.0.1",
