@@ -32,13 +32,14 @@ function parseCookie(
 export async function checkSessionAuth(
   request: Request,
 ): Promise<SessionAuthResult> {
+  const unauthorizedResult: SessionAuthResult = { isAuthenticated: false, user: null };
   const cookies = parseCookie(request.headers.get("cookie"));
   const session = cookies["session"];
-  if (!session) return { isAuthenticated: false, user: null };
+  if (!session) return unauthorizedResult;
 
   const secret = getEnv("SESSION_SECRET");
   const value = verify(session, secret);
-  if (!value) return { isAuthenticated: false, user: null };
+  if (!value) return unauthorizedResult;
 
   // Parse and validate the signed session payload
   let payload: SessionPayload | null = null;
@@ -50,14 +51,12 @@ export async function checkSessionAuth(
     }
   } catch {
     // Non-JSON payloads are not accepted for authentication
-    return { isAuthenticated: false, user: null };
+    return unauthorizedResult;
   }
-  if (!payload) return { isAuthenticated: false, user: null };
+  if (!payload) return unauthorizedResult;
 
   // Expiration check (if present)
-  if (typeof payload.exp === "number" && Date.now() > payload.exp) {
-    return { isAuthenticated: false, user: null };
-  }
+  if (typeof payload.exp === "number" && Date.now() > payload.exp) return unauthorizedResult;
 
   return { isAuthenticated: true, user: { id: payload.sub } };
 }

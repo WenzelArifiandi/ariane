@@ -65,7 +65,6 @@ describe("API Integration Tests", () => {
           redirect: "manual",
         }
       );
-      const body = await response.text();
       expect(response.status).toBe(302);
       const location = response.headers.get("location");
       expect(["/", "http://localhost:4321/"]).toContain(location);

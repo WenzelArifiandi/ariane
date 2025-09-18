@@ -45,9 +45,6 @@ export const GET: APIRoute = async ({ url }) => {
   const code = url.searchParams.get("code");
   const stateParam = url.searchParams.get("state");
   if (!clientId || !clientSecret) {
-    if (process.env.NODE_ENV === "test") {
-      return new Response(null, { status: 302, headers: { Location: "/" } });
-    }
     return new Response(
       "GitHub OAuth not configured. Set GITHUB_OAUTH_CLIENT_ID and GITHUB_OAUTH_CLIENT_SECRET in .env",
       { status: 500 },
