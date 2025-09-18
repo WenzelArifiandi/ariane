@@ -33,13 +33,13 @@ export const GET: APIRoute = async ({ request }) => {
 
   // If generic OIDC end-session is configured (e.g., Zitadel), prefer that
   if (!isLocal && OIDC_END_SESSION) {
-    const cfLogout = new URL("/cdn-cgi/access/logout", origin);
-    cfLogout.searchParams.set("returnTo", new URL("/", origin).toString());
+    // Redirect back to a logout completion page that will handle CF Access logout
+    const logoutComplete = new URL("/logout-complete", origin);
     const endSession = new URL(OIDC_END_SESSION);
-    // RP-initiated logout: at minimum supply post_logout_redirect_uri
+    // RP-initiated logout: redirect back to our logout completion handler
     endSession.searchParams.set(
       "post_logout_redirect_uri",
-      cfLogout.toString(),
+      logoutComplete.toString(),
     );
     if (OIDC_CLIENT_ID)
       endSession.searchParams.set("client_id", OIDC_CLIENT_ID);
