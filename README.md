@@ -52,6 +52,20 @@
 
 ---
 
+## 🖥️ Infrastructure
+
+### Proxmox Bare Metal Server
+- **Host**: `neve` (54.39.102.214)
+- **Hardware**: Intel Xeon E3-1270 v6 @ 3.8GHz (8 cores) | 64GB RAM | 2x 419GB NVMe RAID1
+- **OS**: Proxmox VE 9.0.10 on Debian 13
+- **Storage**: 384GB ZFS pool for VMs/containers
+- **Web UI**: [Proxmox Console](https://54.39.102.214:8006)
+- **SSH**: `ssh root@54.39.102.214`
+
+*See [ops/proxmox-server.md](ops/proxmox-server.md) for detailed specs and [CLAUDE.md](CLAUDE.md) for management workflows.*
+
+---
+
 ## Monorepo Overview
 
 - site: Production Astro app deployed on Vercel.
