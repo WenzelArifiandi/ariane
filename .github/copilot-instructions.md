@@ -53,7 +53,7 @@
 
 - **API routes:** Auth/session endpoints in `site/src/pages/api/auth/*`. GitHub OAuth: `/api/oauth/github/{start,callback}.ts`. Session management uses HMAC-signed cookies with `SESSION_SECRET`. Diagnostic endpoint: `/api/diag`.
 - **Environment config:** Critical vars: `AUTH_MODE`, `SESSION_SECRET`, Sanity project ID/dataset, Cloudflare Access settings. Astro config reads from env for domains, HMR tunnel setup. Studio uses hardcoded project ID `tz1p3961`.
-- **Security automation:** CodeQL alert processing via `security-autofix.js` (8+ vulnerability patterns: trivial conditionals, useless assignments, type comparisons, etc.). Conservative fixes with safety limits. Detailed reports in `security-autofix-report.json`.
+- **Security automation:** CodeQL alert processing via `scripts/security-autofix.js` (8+ vulnerability patterns: trivial conditionals, useless assignments, type comparisons, etc.). Conservative fixes with safety limits. Detailed reports in `security-autofix-report.json`.
 - **Deployment validation:** SSH-based status checks (`scripts/deployment-status.sh`) compare local vs deployed commit hashes. Health endpoints: Zitadel OpenID config, console UI. Caddy reverse proxy handles SSL termination.
 - **Cross-service auth:** Zitadel integrates with Cloudflare Access via JWT validation. Studio approval workflow updates user records. Session state persists across auth modes with configurable fallbacks.
 
@@ -70,7 +70,7 @@
 
 - **Unit/Integration tests:** Run via Vitest with jsdom environment. Use path aliases: `@site/lib/utils`, `@studio/schemas`, `@tests/fixtures`
 - **E2E tests:** Playwright config covers desktop + mobile browsers. Tests expect local dev server on port 4321 (`npm run dev:site`)
-- **Security testing:** Custom `test-security-autofix.js` validates vulnerability pattern fixes. Run `npm run test:security` before deploying fixes
+- **Security testing:** Custom `test-scripts/security-autofix.js` validates vulnerability pattern fixes. Run `npm run test:security` before deploying fixes
 - **Test file patterns:** `tests/{unit,integration,e2e}/**/*.{test,spec}.{js,ts}` and `{site,studio}/**/*.{test,spec}.{js,ts}`
 
 ---
