@@ -5,7 +5,7 @@ import {
   verify as verifySig,
 } from "../../../../lib/auth/signer";
 import { getEnv, isProd } from "../../../../lib/auth/config";
-import { createHmac } from "crypto";
+import { createHmac } from "node:crypto";
 
 function b64url(buf: Buffer): string {
   return buf

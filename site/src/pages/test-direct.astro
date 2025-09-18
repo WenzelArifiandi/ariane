@@ -1,5 +1,6 @@
 ---
 import { useStoryblokApi } from '@storyblok/astro'
+import { getStoryblokVersion } from '../lib/storyblok/version'
 import Hero from '../components/storyblok/Hero.astro'
 import Project from '../components/storyblok/Project.astro'
 import Base from '../layouts/Base.astro'
@@ -10,7 +11,7 @@ import Footer from '../components/Footer.astro'
 const storyblokApi = useStoryblokApi()
 let story = null
 
-const version = (import.meta.env.MODE === 'development' || import.meta.env.MODE === 'test' || Astro.url.searchParams.has('_storyblok')) ? 'draft' : 'published'
+const version = getStoryblokVersion({ mode: import.meta.env.MODE, hasPreview: Astro.url.searchParams.has('_storyblok') })
 
 try {
   const { data } = await storyblokApi.get('cdn/stories/home', { version })
@@ -25,7 +26,7 @@ try {
 
   {story?.content?.body ? (
     <main>
-      {story.content.body.map((block) => {
+  {story.content.body.map((block: any) => {
         if (block.component === 'hero') {
           return <Hero blok={block} />
         }
