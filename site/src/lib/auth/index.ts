@@ -45,18 +45,17 @@ export async function checkSessionAuth(
   if (!value) return unauthorizedResult;
 
   // Parse and validate the signed session payload
-  let payload: SessionPayload | null = null;
+  let payload: SessionPayload;
   try {
-    const obj = JSON.parse(value);
-    // Basic shape checks
-    if (obj && typeof obj.sub === "string") {
-      payload = obj as SessionPayload;
-    }
+    payload = JSON.parse(value);
   } catch {
     // Non-JSON payloads are not accepted for authentication
     return unauthorizedResult;
   }
-  if (!payload) return unauthorizedResult;
+
+  if (!payload || typeof payload.sub !== "string") {
+    return unauthorizedResult;
+  }
 
   // Expiration check (if present)
   if (typeof payload.exp === "number" && Date.now() > payload.exp)
