@@ -1,4 +1,4 @@
-import { createHmac, timingSafeEqual } from "crypto";
+import { createHmac, timingSafeEqual } from "node:crypto";
 
 // Optional WASM acceleration (loaded lazily). Build via: `npm --prefix site run wasm:build:signer`.
 // Output expected at: site/src/lib/wasm/session-signer/*.wasm & JS glue.
