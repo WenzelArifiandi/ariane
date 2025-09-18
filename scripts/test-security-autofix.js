@@ -153,7 +153,7 @@ async function runAutoFix() {
     };
 
     // Run the basic auto-fix script in test mode
-    const output = execSync('node security-autofix.js --dry-run --verbose', {
+    const output = execSync('node scripts/security-autofix.js --dry-run --verbose', {
       cwd: process.cwd(),
       env,
       encoding: 'utf8'

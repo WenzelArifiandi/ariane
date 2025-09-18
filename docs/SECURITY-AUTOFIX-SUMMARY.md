@@ -7,9 +7,9 @@ I've created a comprehensive security auto-fix system to resolve the remaining 3
 ## Files Created
 
 ### 1. Core Scripts
-- **`security-autofix.js`** - Main auto-fix script with conservative, safe fixes
-- **`security-autofix-advanced.js`** - Enhanced version with more sophisticated pattern matching
-- **`test-security-autofix.js`** - Test suite to validate fix functionality
+- **`scripts/security-autofix.js`** - Main auto-fix script with conservative, safe fixes
+- **`scripts/security-autofix-advanced.js`** - Enhanced version with more sophisticated pattern matching
+- **`scripts/test-security-autofix.js`** - Test suite to validate fix functionality
 
 ### 2. Documentation & Configuration
 - **`SECURITY-AUTOFIX.md`** - Comprehensive documentation and usage guide
@@ -19,13 +19,13 @@ I've created a comprehensive security auto-fix system to resolve the remaining 3
 ### 3. Package.json Scripts Added
 ```json
 {
-  "security:autofix": "node security-autofix.js",
-  "security:autofix:dry-run": "node security-autofix.js --dry-run",
-  "security:autofix:verbose": "node security-autofix.js --verbose",
-  "security:autofix:advanced": "node security-autofix-advanced.js",
-  "security:autofix:advanced:dry-run": "node security-autofix-advanced.js --dry-run",
-  "security:autofix:advanced:aggressive": "node security-autofix-advanced.js --aggressive",
-  "security:autofix:test": "node test-security-autofix.js"
+  "security:autofix": "node scripts/security-autofix.js",
+  "security:autofix:dry-run": "node scripts/security-autofix.js --dry-run",
+  "security:autofix:verbose": "node scripts/security-autofix.js --verbose",
+  "security:autofix:advanced": "node scripts/security-autofix-advanced.js",
+  "security:autofix:advanced:dry-run": "node scripts/security-autofix-advanced.js --dry-run",
+  "security:autofix:advanced:aggressive": "node scripts/security-autofix-advanced.js --aggressive",
+  "security:autofix:test": "node scripts/test-security-autofix.js"
 }
 ```
 
