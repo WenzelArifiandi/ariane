@@ -2,6 +2,7 @@ import { defineConfig } from "astro/config";
 import vercel from "@astrojs/vercel";
 import tailwind from "@astrojs/tailwind";
 import icon from "astro-icon";
+import react from "@astrojs/react";
 
 export default defineConfig({
   adapter: vercel(),
@@ -37,5 +38,5 @@ export default defineConfig({
     host: "127.0.0.1",
     port: 4321,
   },
-  integrations: [tailwind({ applyBaseStyles: false }), icon()],
+  integrations: [tailwind({ applyBaseStyles: false }), icon(), react()],
 });

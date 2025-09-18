@@ -3,6 +3,7 @@ import Base from '../layouts/Base.astro'
 import Nav from '../components/Nav.astro'
 import Hero from '../components/Hero.astro'
 import Footer from '../components/Footer.astro'
+import LiquidGlassHybridIsland from '../components/LiquidGlassHybridIsland.jsx'
 import { client } from '../lib/sanity'
 import { allProjects } from '../lib/queries'
 import { urlFor } from '../lib/sanity'
@@ -24,6 +25,15 @@ try { projects = await client.fetch(allProjects) } catch { projects = [] }
   <!-- preview-smoke-test: harmless comment to trigger preview workflow -->
   <Nav />
   <Hero />
+
+  <!-- Liquid Glass Component -->
+  <LiquidGlassHybridIsland client:load
+    blur={30}
+    saturation={1.8}
+    thickness={0.6}
+    specularIntensity={0.22}
+    radiusPx={28}
+    target="body" />
 
   {/* Work anchor */}
   <section id="work" class="container align-hero">
@@ -83,4 +93,11 @@ try { projects = await client.fetch(allProjects) } catch { projects = [] }
   #work, #about, #contact { padding-block: 28px; }
   /* Add space before footer */
   #contact { padding-bottom: clamp(64px, 10vw, 120px); }
+
+  /* Enhanced background for glass effect */
+  body {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+    background-attachment: fixed;
+    min-height: 100vh;
+  }
 </style>
