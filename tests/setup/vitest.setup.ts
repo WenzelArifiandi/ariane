@@ -3,8 +3,15 @@ import { beforeAll, afterEach, afterAll, vi } from "vitest";
 // Type helpers for Node-ish globals in Vitest context
 declare const process: any;
 declare const global: any;
-// Ensure Node 'crypto' mock exposes both named and default exports when mocked
+// Ensure Node 'crypto' mocks expose both named and default exports
 vi.mock("crypto", async (importOriginal) => {
+  const actual: any = await importOriginal();
+  return {
+    ...actual,
+    default: actual,
+  };
+});
+vi.mock("node:crypto", async (importOriginal) => {
   const actual: any = await importOriginal();
   return {
     ...actual,

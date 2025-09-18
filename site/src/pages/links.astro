@@ -1,5 +1,6 @@
 ---
 import { useStoryblokApi } from '@storyblok/astro'
+import { getStoryblokVersion } from '../lib/storyblok/version'
 import StoryblokComponent from '@storyblok/astro/StoryblokComponent.astro'
 import Base from '../layouts/Base.astro'
 
@@ -8,7 +9,7 @@ type StoryblokStory = { name: string; content?: Record<string, any> }
 let story: StoryblokStory | null = null
 let error: string | null = null
 
-const version = (import.meta.env.MODE === 'development' || import.meta.env.MODE === 'test' || Astro.url.searchParams.has('_storyblok')) ? 'draft' : 'published'
+const version = getStoryblokVersion({ mode: import.meta.env.MODE, hasPreview: Astro.url.searchParams.has('_storyblok') })
 
 try {
   const { data } = await storyblokApi.get('cdn/stories/links', { version })

@@ -1,5 +1,6 @@
 ---
 import { useStoryblokApi } from '@storyblok/astro'
+import { getStoryblokVersion } from '../../lib/storyblok/version'
 import StoryblokComponent from '@storyblok/astro/StoryblokComponent.astro'
 import Base from '../../layouts/Base.astro'
 import '../../styles/global.css'
@@ -10,7 +11,7 @@ type StoryblokStory = { name: string; content?: Record<string, any>; }
 let story: StoryblokStory | null = null
 let error: string | null = null
 
-const version = (import.meta.env.MODE === 'development' || import.meta.env.MODE === 'test' || Astro.url.searchParams.has('_storyblok')) ? 'draft' : 'published'
+const version = getStoryblokVersion({ mode: import.meta.env.MODE, hasPreview: Astro.url.searchParams.has('_storyblok') })
 
 try {
   const { data } = await storyblokApi.get(`cdn/stories/work/${slug}`, { version })
@@ -26,7 +27,32 @@ try {
       <a href="/work" class="text-sm text-neutral-500 hover:underline">← Back to Work</a>
       <h1 class="mt-4 text-4xl font-semibold">{story.name}</h1>
       {story.content ? (
-        <StoryblokComponent blok={story.content as any} />
+        <>
+          <StoryblokComponent blok={story.content as any} />
+          <script>
+            const dlg = document.createElement('dialog');
+            dlg.className = 'lb-backdrop';
+            dlg.innerHTML = `<div class="lb-frame"><img id="lb-img" class="lb-img" alt="" /><button class="lb-btn lb-close" aria-label="Close">✕</button></div>`;
+            document.body.appendChild(dlg);
+            const imgEl = dlg.querySelector('#lb-img');
+            function openLightbox(src, alt) {
+              imgEl.src = src; imgEl.alt = alt || '';
+              if (!dlg.open) dlg.showModal();
+            }
+            document.addEventListener('click', (e) => {
+              const a = e.target?.closest?.('[data-lightbox]');
+              if (a) { e.preventDefault(); openLightbox(a.getAttribute('href'), a.getAttribute('data-alt') || ''); }
+            });
+            dlg.addEventListener('click', (e) => { if (e.target === dlg) dlg.close(); });
+            dlg.querySelector('.lb-close')?.addEventListener('click', (e) => { e.stopPropagation(); dlg.close(); });
+          </script>
+          <style>
+            .lb-backdrop { position: fixed; inset: 0; background: rgba(0,0,0,.9); display: grid; place-items: center; }
+            .lb-frame { position: relative; max-width: 92vw; max-height: 92vh; }
+            .lb-img { max-width: 92vw; max-height: 92vh; object-fit: contain; }
+            .lb-btn { position: absolute; top: .5rem; right: .5rem; background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.2); color: white; padding: .4rem .6rem; border-radius: .5rem; cursor: pointer; user-select: none; backdrop-filter: blur(6px); }
+          </style>
+        </>
       ) : (
         <p class="text-neutral-600">No project content available.</p>
       )}

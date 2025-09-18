@@ -2,7 +2,7 @@ const GITHUB_AUTHORIZE_URL = "https://github.com/login/oauth/authorize";
 import type { APIRoute } from "astro";
 import { sign } from "../../../../lib/auth/signer";
 import { getEnv } from "../../../../lib/auth/config";
-import { createHmac, createHash } from "crypto";
+import { createHmac, createHash, randomUUID } from "node:crypto";
 
 function b64url(buf: Buffer): string {
   return buf
@@ -50,7 +50,7 @@ export const GET: APIRoute = async ({ url }) => {
   }
 
   // Generate CSRF state and encode redirect in the state param
-  const csrf = crypto.randomUUID();
+  const csrf = randomUUID();
   const redirectParam = url.searchParams.get("redirect");
   let redirect = "/";
   if (
