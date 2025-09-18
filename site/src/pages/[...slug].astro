@@ -1,5 +1,6 @@
 ---
-import { useStoryblokApi, StoryblokComponent } from '@storyblok/astro'
+import { useStoryblokApi } from '@storyblok/astro'
+import StoryblokComponent from '@storyblok/astro/StoryblokComponent.astro'
 import Base from '../layouts/Base.astro'
 import Nav from '../components/Nav.astro'
 import Footer from '../components/Footer.astro'
@@ -16,8 +17,9 @@ try {
     version: 'draft'
   })
   story = data?.story
-} catch (e) {
-  error = e.message
+} catch (e: unknown) {
+  const msg = (e as any)?.message ?? String(e)
+  error = msg
   console.log('Storyblok error:', e)
 }
 

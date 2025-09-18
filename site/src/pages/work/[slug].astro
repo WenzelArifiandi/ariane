@@ -1,155 +1,33 @@
 ---
+import { useStoryblokApi } from '@storyblok/astro'
+import StoryblokComponent from '@storyblok/astro/StoryblokComponent.astro'
 import Base from '../../layouts/Base.astro'
-import { client } from '../../lib/sanity'
-import { projectBySlug, allProjects } from '../../lib/queries'
-import { urlFor } from '../../lib/sanity'
-import '../../styles/global.css' // adjust the relative path if needed
-
-export async function getStaticPaths() {
-  try {
-    const projects = await client.fetch(allProjects)
-    return projects.map((p: any) => ({ params: { slug: p.slug } }))
-  } catch {
-    return []
-  }
-}
+import '../../styles/global.css'
 
 const { slug } = Astro.params
-let project: any = null
-try { project = await client.fetch(projectBySlug, { slug }) } catch { project = null }
+const storyblokApi = useStoryblokApi()
+
+let story: any = null
+let error: string | null = null
+
+try {
+  const { data } = await storyblokApi.get(`cdn/stories/work/${slug}`, { version: 'draft' })
+  story = data?.story ?? null
+} catch (e: any) {
+  error = e?.message ?? 'Failed to load project'
+}
 ---
 
-<Base title={(project?.title ? `${project.title} — Ariane` : 'Project — Ariane')} description={project?.summary ?? ''} ogImage={project?.hero ? urlFor(project.hero).width(1600).fit('max').auto('format').url() : undefined} pathname={`/work/${slug}`}>
-  {project ? (
+<Base title={(story?.name ? `${story.name} — Ariane` : 'Project — Ariane')} description={story?.content?.summary ?? ''} pathname={`/work/${slug}`}>
+  {story ? (
     <>
-    <a href="/work" class="text-sm text-neutral-500 hover:underline">← Back to Work</a>
-    <h1 class="mt-4 text-4xl font-semibold">{project.title}</h1>
-    {project.year && <p class="mt-1 text-neutral-500">{project.year}</p>}
-
-  {project.hero && (
-    <img
-      src={urlFor(project.hero).width(1600).fit('max').auto('format').url()}
-      alt={project.hero.alt}
-      class="mt-8 rounded-xl"
-      loading="eager"
-    />
-  )}
-
-  {project.summary && <p class="mt-6 text-lg text-neutral-700">{project.summary}</p>}
-
-  {project.gallery?.length > 0 && (
-    <section class="mt-10 grid gap-6 sm:grid-cols-2">
-      {project.gallery.map((img: any, i: number) => {
-        const full = urlFor(img).width(2400).fit('max').auto('format').url()
-        const thumb = urlFor(img).width(1200).fit('max').auto('format').url()
-        const alt = img.alt ?? project.title
-        return (
-          <figure>
-            <a href={full} data-gallery data-index={String(i)} aria-label={`Open image ${i + 1} of ${project.gallery.length}`}>
-              <img
-                src={thumb}
-                alt={alt}
-                loading="lazy"
-                class="rounded-lg cursor-zoom-in"
-              />
-            </a>
-            {img.caption && <figcaption class="mt-2 text-sm text-neutral-500">{img.caption}</figcaption>}
-          </figure>
-        )
-      })}
-    </section>
-  )}
-
-  {/* LIGHTBOX */}
-  <style>
-  .lb-backdrop {
-    position: fixed; inset: 0; background: rgba(0,0,0,.9);
-    display: grid; place-items: center;
-  }
-  .lb-frame {
-    position: relative; max-width: 92vw; max-height: 92vh;
-    display: grid; place-items: center;
-  }
-  .lb-img {
-    max-width: 92vw; max-height: 92vh; object-fit: contain;
-    transition: transform .2s ease;
-  }
-  .lb-btn {
-    position: absolute; top: 50%; transform: translateY(-50%);
-    background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.2);
-    color: white; padding: .6rem .8rem; border-radius: .6rem; cursor: pointer;
-    user-select: none; backdrop-filter: blur(6px);
-  }
-  .lb-prev { left: .5rem; }
-  .lb-next { right: .5rem; }
-  .lb-close {
-    position: absolute; top: .5rem; right: .5rem;
-    padding: .4rem .6rem; border-radius: .5rem;
-  }
-</style>
-
-  <dialog id="lb" class="lb-backdrop">
-    <div class="lb-frame">
-      <img id="lb-img" class="lb-img" alt="" />
-      <button class="lb-btn lb-prev" aria-label="Previous (←)">&larr;</button>
-      <button class="lb-btn lb-next" aria-label="Next (→)">&rarr;</button>
-      <button class="lb-btn lb-close" aria-label="Close (ESC)">✕</button>
-    </div>
-  </dialog>
-
-  <script>
-    const dialog = document.getElementById('lb') as HTMLDialogElement | null
-    const imgEl = document.getElementById('lb-img') as HTMLImageElement | null
-    const anchors = Array.from(document.querySelectorAll<HTMLAnchorElement>('a[data-gallery]'))
-    let idx = 0
-
-    function openAt(i: number) {
-      if (!dialog || !imgEl || anchors.length === 0) return
-      idx = (i + anchors.length) % anchors.length
-      const a = anchors[idx]
-      const href = a.getAttribute('href')
-      if (href) imgEl.src = href
-      const innerImg = a.querySelector('img') as HTMLImageElement | null
-      imgEl.alt = innerImg?.alt ?? ''
-      if (!dialog.open) dialog.showModal()
-    }
-
-    function next() { openAt(idx + 1) }
-    function prev() { openAt(idx - 1) }
-    function closeDlg() { if (dialog?.open) dialog.close() }
-
-    anchors.forEach((a: HTMLAnchorElement) => {
-      a.addEventListener('click', (e) => {
-        e.preventDefault()
-        const iStr = a.dataset.index ?? '0'
-        const i = Number(iStr)
-        openAt(Number.isFinite(i) ? i : 0)
-      })
-    })
-
-    dialog?.addEventListener('click', (e: MouseEvent) => {
-      if (!imgEl) return
-      const rect = imgEl.getBoundingClientRect()
-      const inside = e.clientX >= rect.left && e.clientX <= rect.right && e.clientY >= rect.top && e.clientY <= rect.bottom
-      if (!inside) closeDlg()
-    })
-
-    dialog?.querySelector('.lb-next')?.addEventListener('click', (e) => { e.stopPropagation(); next() })
-    dialog?.querySelector('.lb-prev')?.addEventListener('click', (e) => { e.stopPropagation(); prev() })
-    dialog?.querySelector('.lb-close')?.addEventListener('click', (e) => { e.stopPropagation(); closeDlg() })
-
-    window.addEventListener('keydown', (e) => {
-      if (!dialog?.open) return
-      if (e.key === 'Escape') closeDlg()
-      if (e.key === 'ArrowRight') next()
-      if (e.key === 'ArrowLeft') prev()
-      if (e.key.toLowerCase() === 'z' && imgEl) {
-        imgEl.style.transform = imgEl.style.transform ? '' : 'scale(1.2)'
-      }
-    })
-  </script>
+      <a href="/work" class="text-sm text-neutral-500 hover:underline">← Back to Work</a>
+      <h1 class="mt-4 text-4xl font-semibold">{story.name}</h1>
+      <StoryblokComponent blok={story.content} />
     </>
+  ) : error ? (
+    <p class="text-neutral-600">Project failed to load. <small>{error}</small> <a class="underline" href="/work">Back to Work</a></p>
   ) : (
-    <p class="text-neutral-600">Project not found. <a class="underline" href="/work">Back to Work</a></p>
+    <p class="text-neutral-600">Loading project…</p>
   )}
 </Base>
