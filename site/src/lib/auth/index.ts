@@ -32,7 +32,10 @@ function parseCookie(
 export async function checkSessionAuth(
   request: Request,
 ): Promise<SessionAuthResult> {
-  const unauthorizedResult: SessionAuthResult = { isAuthenticated: false, user: null };
+  const unauthorizedResult: SessionAuthResult = {
+    isAuthenticated: false,
+    user: null,
+  };
   const cookies = parseCookie(request.headers.get("cookie"));
   const session = cookies["session"];
   if (!session) return unauthorizedResult;
@@ -56,7 +59,8 @@ export async function checkSessionAuth(
   if (!payload) return unauthorizedResult;
 
   // Expiration check (if present)
-  if (typeof payload.exp === "number" && Date.now() > payload.exp) return unauthorizedResult;
+  if (typeof payload.exp === "number" && Date.now() > payload.exp)
+    return unauthorizedResult;
 
   return { isAuthenticated: true, user: { id: payload.sub } };
 }
