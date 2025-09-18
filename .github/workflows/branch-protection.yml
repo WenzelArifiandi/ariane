@@ -39,14 +39,22 @@ jobs:
             const sha = pr.data.head.sha;
 
             // Get required status checks from branch protection
-            const branchProtection = await github.rest.repos.getBranchProtection({
-              owner,
-              repo,
-              branch: 'main'
-            });
-
-            const requiredChecks = branchProtection.data.required_status_checks?.contexts || [];
-            console.log(`Required status checks: ${requiredChecks.join(', ') || 'none'}`);
+            let requiredChecks = [];
+            try {
+              const branchProtection = await github.rest.repos.getBranchProtection({
+                owner,
+                repo,
+                branch: 'main'
+              });
+              requiredChecks = branchProtection.data.required_status_checks?.contexts || [];
+              console.log(`Required status checks: ${requiredChecks.join(', ') || 'none'}`);
+            } catch (error) {
+              console.log('Cannot access branch protection settings (insufficient permissions). Falling back to basic CI check.');
+              console.log(`Error: ${error.message}`);
+              // Define basic required checks when we can't access branch protection
+              requiredChecks = ['ci', 'test', 'build', 'lint', 'type-check'];
+              console.log(`Using fallback required checks: ${requiredChecks.join(', ')}`);
+            }
 
             // Wait for REQUIRED CI checks to complete
             let attempts = 0;
