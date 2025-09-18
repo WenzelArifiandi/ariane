@@ -20,11 +20,10 @@ try {
 }
 
 // Test 2: Story fetch
+const version = (import.meta.env.MODE === 'development' || import.meta.env.MODE === 'test' || Astro.url.searchParams.has('_storyblok')) ? 'draft' : 'published'
 try {
   const storyblokApi = useStoryblokApi()
-  const { data } = await storyblokApi.get('cdn/stories/home', {
-    version: 'draft'
-  })
+  const { data } = await storyblokApi.get('cdn/stories/home', { version })
   debugInfo.storyTest = `✅ Story found: ${data.story?.name || 'Unknown'}`
 } catch (error) {
   debugInfo.storyTest = `❌ Story failed: ${error.message}`

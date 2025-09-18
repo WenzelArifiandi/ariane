@@ -55,7 +55,7 @@ export const GET: APIRoute = async ({ url }) => {
   }
 
   // Verify signed state and expiration
-  const sessionSecret = getEnv("SESSION_SECRET", "dev-secret-change-me");
+  const sessionSecret = getEnv("SESSION_SECRET");
   const payload = verifySig(stateParam, sessionSecret);
   if (!payload)
     return new Response("Invalid OAuth state signature", { status: 400 });

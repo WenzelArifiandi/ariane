@@ -175,7 +175,7 @@ function checkCloudflareAccessHeaders(headers: Headers): boolean {
 }
 
 function checkSessionAuth(headers: Headers): boolean {
-  const secret = getEnv("SESSION_SECRET", "dev-secret-change-me");
+  const secret = getEnv("SESSION_SECRET");
   const cookieHeader = headers.get("cookie") || "";
   const sessionCookie = cookieHeader
     .split(/;\s*/)

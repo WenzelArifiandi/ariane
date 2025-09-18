@@ -20,7 +20,7 @@ export const POST: APIRoute = async ({ request }) => {
   const rpID = getRpIdFromOrigin(origin);
   const body = await request.json();
 
-  const secret = getEnv("SESSION_SECRET", "dev-secret-change-me");
+  const secret = getEnv("SESSION_SECRET");
   const chalCookie = request.headers
     .get("cookie")
     ?.split(/;\s*/)

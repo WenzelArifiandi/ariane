@@ -3,7 +3,7 @@ import { verify as verifySig } from '../../../lib/auth/signer';
 import { getEnv } from '../../../lib/auth/config';
 
 export const GET: APIRoute = async ({ request }) => {
-  const secret = getEnv('SESSION_SECRET', 'dev-secret-change-me');
+  const secret = getEnv('SESSION_SECRET');
   const cookieHeader = request.headers.get('cookie') || '';
   const sessionCookie = cookieHeader.split(/;\s*/).find(c => c.startsWith('session='));
   if (!sessionCookie) return new Response(JSON.stringify({ authenticated: false }), { headers: { 'Content-Type': 'application/json' } });
