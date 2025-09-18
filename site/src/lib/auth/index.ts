@@ -36,7 +36,7 @@ export async function checkSessionAuth(
   const session = cookies["session"];
   if (!session) return { isAuthenticated: false, user: null };
 
-  const secret = getEnv("SESSION_SECRET", "dev-only");
+  const secret = getEnv("SESSION_SECRET");
   const value = verify(session, secret);
   if (!value) return { isAuthenticated: false, user: null };
 

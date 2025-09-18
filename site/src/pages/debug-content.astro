@@ -6,12 +6,11 @@ let error = null
 
 try {
   const storyblokApi = useStoryblokApi()
-  const { data } = await storyblokApi.get('cdn/stories/home', {
-    version: 'draft'
-  })
+  const version = import.meta.env.MODE === 'development' || import.meta.env.MODE === 'test' ? 'draft' : 'published'
+  const { data } = await storyblokApi.get('cdn/stories/home', { version })
   storyData = data?.story
-} catch (e) {
-  error = e.message
+} catch (e: unknown) {
+  error = e instanceof Error ? e.message : String(e)
 }
 ---
 
