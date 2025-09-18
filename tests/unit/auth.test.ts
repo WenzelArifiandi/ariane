@@ -38,13 +38,24 @@ describe("Authentication Utilities", () => {
 
     it("should validate correct session cookie", async () => {
       // Note: This would require actual HMAC signing in a real test
-      // For now, we'll mock the crypto operations
-      vi.mock("crypto", () => ({
-        createHmac: vi.fn().mockReturnValue({
-          update: vi.fn().mockReturnThis(),
-          digest: vi.fn().mockReturnValue("valid-signature"),
-        }),
-      }));
+      // Provide a compatible mock that preserves default and named exports
+      vi.mock("crypto", async (importOriginal) => {
+        const actual: any = await importOriginal();
+        return {
+          ...actual,
+          createHmac: vi.fn().mockReturnValue({
+            update: vi.fn().mockReturnThis(),
+            digest: vi.fn().mockReturnValue("valid-signature"),
+          }),
+          default: {
+            ...actual,
+            createHmac: vi.fn().mockReturnValue({
+              update: vi.fn().mockReturnThis(),
+              digest: vi.fn().mockReturnValue("valid-signature"),
+            }),
+          },
+        };
+      });
 
       const request = createMockRequest("http://localhost:4321/protected", {
         headers: {

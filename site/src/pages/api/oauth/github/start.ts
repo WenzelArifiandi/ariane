@@ -2,7 +2,7 @@ const GITHUB_AUTHORIZE_URL = "https://github.com/login/oauth/authorize";
 import type { APIRoute } from "astro";
 import { sign } from "../../../../lib/auth/signer";
 import { getEnv } from "../../../../lib/auth/config";
-import { createHmac, createHash } from "node:crypto";
+import { createHmac, createHash } from "crypto";
 
 function b64url(buf: Buffer): string {
   return buf

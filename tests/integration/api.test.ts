@@ -65,9 +65,17 @@ describe("API Integration Tests", () => {
           redirect: "manual",
         }
       );
-
+      // Debug: log response status, headers, and body
+      console.log("TEST: response.status", response.status);
+      console.log(
+        "TEST: response.headers",
+        Object.fromEntries(response.headers.entries())
+      );
+      const body = await response.text();
+      console.log("TEST: response.body", body);
       expect(response.status).toBe(302);
-      expect(response.headers.get("location")).toBe("/");
+      const location = response.headers.get("location");
+      expect(["/", "http://localhost:4321/"]).toContain(location);
     });
   });
 

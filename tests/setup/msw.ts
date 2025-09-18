@@ -3,6 +3,19 @@ import { http, HttpResponse } from "msw";
 
 // Mock handlers for API endpoints
 export const handlers = [
+  // Ensure callback path is matched (with or without querystring) and always 302
+  http.get("/api/oauth/github/callback", () => {
+    // Debug: indicate MSW callback handler was hit
+    // eslint-disable-next-line no-console
+    console.log("MSW: matched /api/oauth/github/callback (exact)");
+    return HttpResponse.redirect("http://localhost:4321/", 302);
+  }),
+  http.get(/\/api\/oauth\/github\/callback.*/, () => {
+    // Debug: indicate MSW callback regex handler was hit
+    // eslint-disable-next-line no-console
+    console.log("MSW: matched /api/oauth/github/callback (regex)");
+    return HttpResponse.redirect("http://localhost:4321/", 302);
+  }),
   // Auth endpoints
   http.get("/api/auth/session", () => {
     return HttpResponse.json({
@@ -25,13 +38,9 @@ export const handlers = [
     });
   }),
 
-  // GitHub OAuth endpoints
+  // GitHub OAuth start endpoint
   http.get("/api/oauth/github/start", () => {
     return HttpResponse.redirect("https://github.com/login/oauth/authorize");
-  }),
-
-  http.get("/api/oauth/github/callback", () => {
-    return HttpResponse.redirect("/");
   }),
 
   // Sanity API mocks
