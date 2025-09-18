@@ -33,7 +33,7 @@ export const GET: APIRoute = async ({ request }) => {
   });
 
   // Sign the challenge into an HttpOnly cookie for later verification
-  const secret = getEnv("SESSION_SECRET", "dev-secret-change-me");
+  const secret = getEnv("SESSION_SECRET");
   const payload = JSON.stringify({ c: options.challenge, t: Date.now() });
   const cookie = makeCookie("webauthn_chal", sign(payload, secret), {
     httpOnly: true,

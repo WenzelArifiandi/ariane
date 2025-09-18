@@ -1,30 +1,60 @@
 ---
+import { useStoryblokApi } from '@storyblok/astro'
+import StoryblokComponent from '@storyblok/astro/StoryblokComponent.astro'
 import Base from '../layouts/Base.astro'
 import Nav from '../components/Nav.astro'
-import Hero from '../components/Hero.astro'
 import Footer from '../components/Footer.astro'
 import LiquidGlassHybridIsland from '../components/LiquidGlassHybridIsland.jsx'
-import { client } from '../lib/sanity'
-import { allProjects } from '../lib/queries'
-import { urlFor } from '../lib/sanity'
-import type { SanityProject } from '../lib/types'
-import '../styles/global.css' // adjust the relative path if needed
+import '../styles/global.css'
+
+const storyblokApi = useStoryblokApi()
+type StoryblokStory = { name: string; content?: Record<string, any>; }
+let story: StoryblokStory | null = null
+let error: string | null = null
+
+const version = (import.meta.env.MODE === 'development' || import.meta.env.MODE === 'test' || Astro.url.searchParams.has('_storyblok')) ? 'draft' : 'published'
+
+try {
+  const { data } = await storyblokApi.get('cdn/stories/home', { version })
+  story = (data?.story ?? null) as StoryblokStory | null
+} catch (e: unknown) {
+  error = e instanceof Error ? e.message : 'Failed to load Storyblok content'
+}
 
 const page = {
-  title: 'Wenzel Arifiandi',
-  description: 'Hi there!',
+  title: story?.name ? `${story.name} - Wenzel Arifiandi` : 'Wenzel Arifiandi',
+  description: story?.content?.description || 'Content managed with Storyblok',
   url: 'https://wenzelarifiandi.com/',
   image: '/og.jpg',
 }
 const email = 'hello@wenzelarifiandi.com'
-let projects: SanityProject[] = []
-try { projects = await client.fetch(allProjects) } catch { projects = [] }
 ---
 
 <Base title={page.title} description={page.description} ogImage={page.image} pathname="/">
-  <!-- preview-smoke-test: harmless comment to trigger preview workflow -->
   <Nav />
-  <Hero />
+
+  {story ? (
+    story.content ? (
+      <StoryblokComponent blok={story.content as any} />
+    ) : (
+      <section class="container align-hero"><div class="section__inner"><p>No content available.</p></div></section>
+    )
+  ) : error ? (
+    <section class="container align-hero">
+      <div class="section__inner">
+        <h1>Content Not Available</h1>
+        <p>We couldn't load the homepage content.</p>
+        <p><small>Error: {error}</small></p>
+      </div>
+    </section>
+  ) : (
+    <section class="container align-hero">
+      <div class="section__inner">
+        <h1>Loading…</h1>
+        <p>Fetching content from Storyblok…</p>
+      </div>
+    </section>
+  )}
 
   <!-- Liquid Glass Component -->
   <LiquidGlassHybridIsland client:load
@@ -35,47 +65,6 @@ try { projects = await client.fetch(allProjects) } catch { projects = [] }
     radiusPx={28}
     target="body" />
 
-  {/* Work anchor */}
-  <section id="work" class="container align-hero">
-    <div class="section__inner">
-      <h2>Work</h2>
-      {projects?.length ? (
-        <ul class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 mt-4">
-          {projects.slice(0, 3).map((p) => (
-            <li class="rounded-xl border overflow-hidden hover:shadow-sm transition-shadow">
-              <a href={`/work/${p.slug}`} class="block">
-                {p.hero && (
-                  <img
-                    src={urlFor(p.hero).width(800).height(500).fit('crop').auto('format').url()}
-                    alt={p.hero.alt || p.title}
-                    class="aspect-[16/10] w-full object-cover"
-                    loading="lazy"
-                  />
-                )}
-                <div class="p-4">
-                  <h3 class="font-semibold">{p.title}</h3>
-                  {p.year && <p class="text-sm text-neutral-500 mt-1">{p.year}</p>}
-                </div>
-              </a>
-            </li>
-          ))}
-        </ul>
-      ) : (
-        <p class="muted">Publish some <code>Project</code> docs in Studio to see them here.</p>
-      )}
-      <p class="mt-4"><a class="accent" href="/work">View all work →</a></p>
-    </div>
-  </section>
-
-  {/* About anchor */}
-  <section id="about" class="container align-hero">
-    <div class="section__inner">
-      <h2>About</h2>
-      <p class="muted">More details coming shortly.</p>
-    </div>
-  </section>
-
-  {/* Contact anchor */}
   <section id="contact" class="container align-hero">
     <div class="section__inner">
       <h2>Contact</h2>
@@ -90,9 +79,7 @@ try { projects = await client.fetch(allProjects) } catch { projects = [] }
   h2 { font-size: var(--h2); letter-spacing: -0.01em; margin-bottom: .5rem; }
   .muted { color: color-mix(in oklab, var(--ink), black 25%); }
   .section__inner { padding-left: var(--pad-x); }
-  #work, #about, #contact { padding-block: 28px; }
-  /* Add space before footer */
-  #contact { padding-bottom: clamp(64px, 10vw, 120px); }
+  #contact { padding-block: 28px; padding-bottom: clamp(64px, 10vw, 120px); }
 
   /* Enhanced background for glass effect */
   body {

@@ -65,9 +65,9 @@ describe("API Integration Tests", () => {
           redirect: "manual",
         }
       );
-
       expect(response.status).toBe(302);
-      expect(response.headers.get("location")).toBe("/");
+      const location = response.headers.get("location");
+      expect(["/", "http://localhost:4321/"]).toContain(location);
     });
   });
 

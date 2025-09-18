@@ -1,5 +1,16 @@
 import "@testing-library/jest-dom";
-import { beforeAll, afterEach, afterAll } from "vitest";
+import { beforeAll, afterEach, afterAll, vi } from "vitest";
+// Type helpers for Node-ish globals in Vitest context
+declare const process: any;
+declare const global: any;
+// Ensure Node 'crypto' mock exposes both named and default exports when mocked
+vi.mock("crypto", async (importOriginal) => {
+  const actual: any = await importOriginal();
+  return {
+    ...actual,
+    default: actual,
+  };
+});
 import { server } from "./msw";
 
 // Start MSW server before all tests

@@ -46,10 +46,10 @@ export default defineConfig({
     storyblok({
       accessToken: process.env.STORYBLOK_TOKEN,
       components: {
-        page: 'storyblok/Page',
-        hero: 'storyblok/Hero',
-        project: 'storyblok/Project',
+        page: "components/storyblok/Page.astro",
+        hero: "components/storyblok/Hero.astro",
+        project: "components/storyblok/Project.astro",
       },
-    })
+    }),
   ],
 });

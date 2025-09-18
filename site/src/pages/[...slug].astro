@@ -1,5 +1,6 @@
 ---
-import { useStoryblokApi, StoryblokComponent } from '@storyblok/astro'
+import { useStoryblokApi } from '@storyblok/astro'
+import StoryblokComponent from '@storyblok/astro/StoryblokComponent.astro'
 import Base from '../layouts/Base.astro'
 import Nav from '../components/Nav.astro'
 import Footer from '../components/Footer.astro'
@@ -7,18 +8,18 @@ import LiquidGlassHybridIsland from '../components/LiquidGlassHybridIsland.jsx'
 
 const { slug } = Astro.params
 const storyblokApi = useStoryblokApi()
+type StoryblokStory = { name: string; content?: Record<string, any> }
+let story: StoryblokStory | null = null
+let error: string | null = null
 
-let story = null
-let error = null
+const version = (import.meta.env.MODE === 'development' || import.meta.env.MODE === 'test' || Astro.url.searchParams.has('_storyblok')) ? 'draft' : 'published'
 
 try {
-  const { data } = await storyblokApi.get(`cdn/stories/${slug || 'home'}`, {
-    version: 'draft'
-  })
-  story = data?.story
-} catch (e) {
-  error = e.message
-  console.log('Storyblok error:', e)
+  const { data } = await storyblokApi.get(`cdn/stories/${slug || 'home'}`, { version })
+  story = (data?.story ?? null) as StoryblokStory | null
+} catch (e: unknown) {
+  const msg = e instanceof Error ? e.message : String(e)
+  error = msg
 }
 
 const page = {
@@ -33,7 +34,11 @@ const page = {
   <Nav />
 
   {story ? (
-    <StoryblokComponent blok={story.content} />
+    story.content ? (
+      <StoryblokComponent blok={story.content as any} />
+    ) : (
+      <section class="container align-hero"><div class="hero"><div class="hero__inner"><p>No content available.</p></div></div></section>
+    )
   ) : error ? (
     <section class="container align-hero">
       <div class="hero">

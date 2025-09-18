@@ -1,44 +1,32 @@
 ---
+import { useStoryblokApi } from '@storyblok/astro'
+import StoryblokComponent from '@storyblok/astro/StoryblokComponent.astro'
 import Base from '../layouts/Base.astro'
-import { client } from '../lib/sanity'
-import groq from 'groq'
-import { toHTML } from '@portabletext/to-html'
 
-const aboutQuery = groq`*[_type == "about"][0]{ bio, headshot, skills, "headshotUrl": headshot.asset->url }`
-let about: Record<string, unknown> | null = null
-try { about = await client.fetch(aboutQuery) } catch { about = null }
-const html = about?.bio ? toHTML(about.bio as any) : ''
+const storyblokApi = useStoryblokApi()
+type StoryblokStory = { name: string; content?: Record<string, any> }
+let story: StoryblokStory | null = null
+let error: string | null = null
+
+const version = (import.meta.env.MODE === 'development' || import.meta.env.MODE === 'test' || Astro.url.searchParams.has('_storyblok')) ? 'draft' : 'published'
+
+try {
+  const { data } = await storyblokApi.get('cdn/stories/about', { version })
+  story = (data?.story ?? null) as StoryblokStory | null
+} catch (e: unknown) {
+  error = e instanceof Error ? e.message : 'Failed to load About content'
+}
 ---
-<Base title="About — Ariane" description="About the designer.">
-  <h1 class="text-4xl font-semibold">About</h1>
-
-  {about ? (
-    <>
-      {about.headshotUrl && (
-        <img
-          src={about.headshotUrl + '?w=800&auto=format'}
-          alt="Headshot"
-          class="mt-6 w-40 h-40 rounded-full object-cover"
-        />
-      )}
-
-      {about.bio ? (
-        <div class="prose prose-neutral mt-6" set:html={html}></div>
-      ) : (
-        <p class="mt-6 text-neutral-500">Add your bio in the <code>About</code> document.</p>
-      )}
-
-      {(about.skills as string[])?.length > 0 && (
-        <ul class="mt-6 flex flex-wrap gap-2 text-sm text-neutral-600">
-          {(about.skills as string[]).map((s: string) => (
-            <li class="rounded-full border px-3 py-1">{s}</li>
-          ))}
-        </ul>
-      )}
-    </>
+<Base title={story?.name ? `${story.name} — Ariane` : 'About — Ariane'} description={story?.content?.description ?? 'About the designer.'}>
+  {story ? (
+    story.content ? (
+      <StoryblokComponent blok={story.content as any} />
+    ) : (
+      <p class="mt-6 text-neutral-500">No About content available.</p>
+    )
+  ) : error ? (
+    <p class="mt-6 text-neutral-500">Could not load About content. <small>{error}</small></p>
   ) : (
-    <p class="mt-6 text-neutral-500">
-      Fill the <code>About</code> document in Studio to populate this page.
-    </p>
+    <p class="mt-6 text-neutral-500">Loading About content…</p>
   )}
 </Base>

@@ -1,40 +1,34 @@
 ---
+import { useStoryblokApi } from '@storyblok/astro'
+import StoryblokComponent from '@storyblok/astro/StoryblokComponent.astro'
 import Base from '../../layouts/Base.astro'
-import { client } from '../../lib/sanity'
-import { allProjects } from '../../lib/queries'
-import { urlFor } from '../../lib/sanity'
-import type { SanityProject } from '../../lib/types'
 
-let projects: SanityProject[] = []
-try { projects = await client.fetch(allProjects) } catch { projects = [] }
-const page = { title: 'Work — Ariane', description: 'Selected projects' }
+const storyblokApi = useStoryblokApi()
+type StoryblokStory = { name: string; content?: Record<string, any> }
+let story: StoryblokStory | null = null
+let error: string | null = null
+
+const version = (import.meta.env.MODE === 'development' || import.meta.env.MODE === 'test' || Astro.url.searchParams.has('_storyblok')) ? 'draft' : 'published'
+
+try {
+  const { data } = await storyblokApi.get('cdn/stories/work', { version })
+  story = (data?.story ?? null) as StoryblokStory | null
+} catch (e: unknown) {
+  error = e instanceof Error ? e.message : 'Failed to load Work content'
+}
+const page = { title: story?.name ? `${story.name} — Ariane` : 'Work — Ariane', description: story?.content?.description ?? 'Selected projects' }
 ---
 
 <Base title={page.title} description={page.description} pathname="/work">
-  <h1 class="text-4xl font-semibold">Work</h1>
-  {projects?.length ? (
-    <ul class="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-      {projects.map((p) => (
-        <li class="rounded-xl border overflow-hidden hover:shadow-sm transition-shadow">
-          <a href={`/work/${p.slug}`} class="block">
-            {p.hero && (
-              <img
-                src={urlFor(p.hero).width(800).height(500).fit('crop').auto('format').url()}
-                alt={p.hero.alt || p.title}
-                class="aspect-[16/10] w-full object-cover"
-                loading="lazy"
-              />
-            )}
-            <div class="p-4">
-              <h3 class="font-semibold">{p.title}</h3>
-              {p.year && <p class="text-sm text-neutral-500 mt-1">{p.year}</p>}
-              {p.summary && <p class="text-sm text-neutral-600 mt-2 line-clamp-2">{p.summary}</p>}
-            </div>
-          </a>
-        </li>
-      ))}
-    </ul>
+  {story ? (
+    story.content ? (
+      <StoryblokComponent blok={story.content as any} />
+    ) : (
+      <p class="mt-6 text-neutral-500">No Work content available.</p>
+    )
+  ) : error ? (
+    <p class="mt-6 text-neutral-500">Could not load Work content. <small>{error}</small></p>
   ) : (
-    <p class="mt-6 text-neutral-500">Publish some <code>Project</code> docs in Studio to populate this page.</p>
+    <p class="mt-6 text-neutral-500">Loading Work…</p>
   )}
 </Base>

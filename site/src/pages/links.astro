@@ -1,24 +1,32 @@
 ---
+import { useStoryblokApi } from '@storyblok/astro'
+import StoryblokComponent from '@storyblok/astro/StoryblokComponent.astro'
 import Base from '../layouts/Base.astro'
-import { client } from '../lib/sanity'
-import groq from 'groq'
 
-const linksQuery = groq`*[_type == "link"] | order(pin desc, label asc){ _id, label, url, category, pin }`
-let links: unknown[] = []
-try { links = await client.fetch(linksQuery) } catch { links = [] }
+const storyblokApi = useStoryblokApi()
+type StoryblokStory = { name: string; content?: Record<string, any> }
+let story: StoryblokStory | null = null
+let error: string | null = null
+
+const version = (import.meta.env.MODE === 'development' || import.meta.env.MODE === 'test' || Astro.url.searchParams.has('_storyblok')) ? 'draft' : 'published'
+
+try {
+  const { data } = await storyblokApi.get('cdn/stories/links', { version })
+  story = (data?.story ?? null) as StoryblokStory | null
+} catch (e: unknown) {
+  error = e instanceof Error ? e.message : 'Failed to load Links content'
+}
 ---
-<Base title="Links — Ariane" description="Curated links.">
-  <h1 class="text-4xl font-semibold">Links</h1>
-  {links?.length ? (
-    <ul class="mt-8 grid gap-4 sm:grid-cols-2">
-      {links.map((l: any) => (
-        <li class="rounded-lg border p-4 hover:bg-neutral-50">
-          <a class="font-medium underline" href={l.url} target="_blank" rel="noopener noreferrer">{l.label}</a>
-          {l.category && <p class="text-sm text-neutral-500 mt-1">{l.category}</p>}
-        </li>
-      ))}
-    </ul>
+<Base title={story?.name ? `${story.name} — Ariane` : 'Links — Ariane'} description={story?.content?.description ?? 'Curated links.'}>
+  {story ? (
+    story.content ? (
+      <StoryblokComponent blok={story.content as any} />
+    ) : (
+      <p class="mt-6 text-neutral-500">No Links content available.</p>
+    )
+  ) : error ? (
+    <p class="mt-6 text-neutral-500">Could not load Links content. <small>{error}</small></p>
   ) : (
-    <p class="mt-6 text-neutral-500">Add some <code>Link</code> docs in Studio to populate this page.</p>
+    <p class="mt-6 text-neutral-500">Loading Links…</p>
   )}
 </Base>

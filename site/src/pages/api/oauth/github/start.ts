@@ -2,7 +2,7 @@ const GITHUB_AUTHORIZE_URL = "https://github.com/login/oauth/authorize";
 import type { APIRoute } from "astro";
 import { sign } from "../../../../lib/auth/signer";
 import { getEnv } from "../../../../lib/auth/config";
-import { createHmac, createHash } from "node:crypto";
+import { createHmac, createHash } from "crypto";
 
 function b64url(buf: Buffer): string {
   return buf
@@ -63,7 +63,7 @@ export const GET: APIRoute = async ({ url }) => {
   // Create signed, expiring state
   const now = Date.now();
   const exp = now + 10 * 60 * 1000; // 10 minutes
-  const secret = getEnv("SESSION_SECRET", "dev-secret-change-me");
+  const secret = getEnv("SESSION_SECRET");
   const statePayload = JSON.stringify({ csrf, iat: now, exp, redirect });
   const state = sign(statePayload, secret);
 
