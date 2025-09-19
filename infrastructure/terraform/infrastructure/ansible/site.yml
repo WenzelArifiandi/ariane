@@ -22,8 +22,18 @@
   hosts: kubernetes
   become: no
   roles:
-    - zitadel
+    - zitadel-helm
   tags:
     - zitadel
     - helm
     - apps
+
+- name: Configure Ingress and SSL
+  hosts: kubernetes
+  become: no
+  roles:
+    - ingress-ssl
+  tags:
+    - ingress
+    - ssl
+    - networking

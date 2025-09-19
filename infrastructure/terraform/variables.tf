@@ -91,3 +91,9 @@ variable "proxmox_host_ip" {
   type        = string
   default     = "54.39.102.214"
 }
+
+variable "enable_smoke_test" {
+  description = "Enable template smoke test VM creation"
+  type        = bool
+  default     = false
+}

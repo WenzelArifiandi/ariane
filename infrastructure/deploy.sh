@@ -84,6 +84,42 @@ terraform_plan() {
     success "Terraform plan completed"
 }
 
+template_smoke_test() {
+    log "Running template smoke test..."
+    cd "$TERRAFORM_DIR"
+
+    # Enable smoke test and create VM
+    log "Creating smoke test VM..."
+    terraform apply -var="enable_smoke_test=true" -target=proxmox_vm_qemu.template_smoke -auto-approve
+
+    # Wait for VM to be ready
+    log "Waiting for smoke test VM to boot..."
+    sleep 60
+
+    # Run Ansible smoke test
+    log "Running Ansible smoke tests..."
+    cd "$ANSIBLE_DIR"
+
+    ANSIBLE_HOST_KEY_CHECKING=False \
+    ansible-playbook -i "10.98.0.250," -u ubuntu \
+      --ssh-common-args='-o StrictHostKeyChecking=no -o ProxyJump=root@54.39.102.214' \
+      --private-key ~/.ssh/id_ed25519 \
+      playbooks/template-smoke.yml
+
+    if [ $? -eq 0 ]; then
+        success "Template smoke test PASSED!"
+    else
+        error "Template smoke test FAILED! Check template configuration."
+    fi
+
+    # Clean up smoke test VM
+    log "Cleaning up smoke test VM..."
+    cd "$TERRAFORM_DIR"
+    terraform destroy -var="enable_smoke_test=true" -target=proxmox_vm_qemu.template_smoke -auto-approve
+
+    success "Template smoke test completed and cleaned up"
+}
+
 terraform_apply() {
     log "Applying Terraform configuration..."
     cd "$TERRAFORM_DIR"
@@ -202,17 +238,19 @@ show_help() {
     echo "Usage: $0 [command]"
     echo ""
     echo "Commands:"
-    echo "  plan     - Run Terraform plan"
-    echo "  apply    - Deploy infrastructure with Terraform + Ansible"
+    echo "  plan      - Run Terraform plan"
+    echo "  smoke     - Test VM template only (smoke test)"
+    echo "  apply     - Deploy infrastructure with Terraform + Ansible (includes smoke test)"
     echo "  apply-pbs|pbs - Configure PBS host(s) only (after inventory exists)"
-    echo "  destroy  - Destroy all infrastructure"
-    echo "  migrate  - Migrate data from Oracle Cloud"
-    echo "  help     - Show this help message"
+    echo "  destroy   - Destroy all infrastructure"
+    echo "  migrate   - Migrate data from Oracle Cloud"
+    echo "  help      - Show this help message"
     echo ""
     echo "Full deployment process:"
     echo "  1. ./deploy.sh plan"
-    echo "  2. ./deploy.sh apply"
-    echo "  3. ./deploy.sh migrate"
+    echo "  2. ./deploy.sh smoke  (optional - test template)"
+    echo "  3. ./deploy.sh apply"
+    echo "  4. ./deploy.sh migrate"
 }
 
 main() {
@@ -221,9 +259,14 @@ main() {
             check_dependencies
             terraform_plan
             ;;
+        "smoke")
+            check_dependencies
+            template_smoke_test
+            ;;
         "apply")
             check_dependencies
             setup_proxmox_template
+            template_smoke_test
             terraform_apply
             ansible_deploy
             ansible_deploy_pbs
