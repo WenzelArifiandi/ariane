@@ -1,0 +1,36 @@
+auth.wenzelarifiandi.com {
+    encode zstd gzip
+
+    handle_path /healthz {
+        respond 200 "OK"
+    }
+
+        reverse_proxy 127.0.0.1:8080
+
+    # optional: set your email for ACME notifications
+    {% if acme_email is defined and acme_email %}
+    tls {{ acme_email }}
+    {% endif %}
+
+    # Security headers
+    header {
+        Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
+        X-Content-Type-Options "nosniff"
+        X-Frame-Options "DENY"
+        X-XSS-Protection "1; mode=block"
+        Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; connect-src 'self'; frame-ancestors 'none';"
+        Referrer-Policy "strict-origin-when-cross-origin"
+    }
+
+    # Logging
+    log {
+        output file /var/log/caddy/auth.log
+        format console
+        level INFO
+    }
+}
+
+# Redirect www to apex
+www.auth.wenzelarifiandi.com {
+    redir https://auth.wenzelarifiandi.com{uri} permanent
+}

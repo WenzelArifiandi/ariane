@@ -1,0 +1,55 @@
+# PostgreSQL configuration optimized for NVMe SSD + 8GB RAM
+
+# Connection settings
+listen_addresses = {{ postgresql_listen_addresses | default("'*'") }}
+port = 5432
+max_connections = {{ postgresql_max_connections | default(200) }}
+
+# Memory settings (optimized for 8GB VM)
+shared_buffers = {{ postgresql_shared_buffers | default("2GB") }}
+effective_cache_size = {{ postgresql_effective_cache_size | default("6GB") }}
+work_mem = {{ postgresql_work_mem | default("16MB") }}
+maintenance_work_mem = {{ postgresql_maintenance_work_mem | default("512MB") }}
+
+# Checkpoint settings (optimized for NVMe)
+checkpoint_completion_target = {{ postgresql_checkpoint_completion_target | default(0.9) }}
+wal_buffers = {{ postgresql_wal_buffers | default("16MB") }}
+max_wal_size = 4GB
+min_wal_size = 1GB
+
+# Query planner settings (optimized for SSD)
+random_page_cost = {{ postgresql_random_page_cost | default(1.1) }}
+effective_io_concurrency = {{ postgresql_effective_io_concurrency | default(200) }}
+seq_page_cost = 1.0
+
+# Statistics settings
+default_statistics_target = {{ postgresql_default_statistics_target | default(100) }}
+
+# Logging settings
+log_destination = 'csvlog'
+logging_collector = on
+log_directory = 'log'
+log_filename = 'postgresql-%Y-%m-%d_%H%M%S.log'
+log_rotation_age = 1d
+log_rotation_size = 100MB
+log_min_duration_statement = 1000
+log_checkpoints = on
+log_connections = on
+log_disconnections = on
+log_lock_waits = on
+
+# Additional optimizations for Zitadel workload
+shared_preload_libraries = 'pg_stat_statements'
+track_activity_query_size = 2048
+track_io_timing = on
+
+# Time zone
+timezone = 'UTC'
+log_timezone = 'UTC'
+
+# Locale settings
+lc_messages = 'en_US.UTF-8'
+lc_monetary = 'en_US.UTF-8'
+lc_numeric = 'en_US.UTF-8'
+lc_time = 'en_US.UTF-8'
+default_text_search_config = 'pg_catalog.english'

@@ -1,0 +1,23 @@
+# Proxmox API Configuration
+# SECURITY: Copy this file to terraform.tfvars and set actual values
+# Or use environment variables: export TF_VAR_proxmox_password="your_password"
+proxmox_api_url  = "https://54.39.102.214:8006/api2/json"
+proxmox_user     = "root@pam"
+proxmox_password = "CHANGE_ME_TO_ACTUAL_PASSWORD"
+
+# Node Configuration
+target_node = "neve"
+
+# SSH Configuration
+ssh_public_key = "CHANGE_ME_TO_YOUR_PUBLIC_KEY"
+
+# Storage Configuration
+storage_pool = "local"
+
+# ISO Configuration
+iso_file = "local:iso/ubuntu-24.04.1-live-server-amd64.iso"
+ 
+# Optional: Static IP addressing (include CIDR)
+# postgres_static_cidr = "192.168.1.50/24"
+# k8s_static_cidr      = "192.168.1.60/24"
+# net_gateway          = "192.168.1.1"

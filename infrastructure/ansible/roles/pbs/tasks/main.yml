@@ -1,0 +1,132 @@
+---
+# Proxmox Backup Server (PBS) installation and configuration
+# Includes rclone setup for automated sync to Backblaze B2
+
+- name: Update apt cache
+  apt:
+    update_cache: yes
+    cache_valid_time: 3600
+
+- name: Install required packages
+  apt:
+    name:
+      - curl
+      - gnupg
+      - apt-transport-https
+      - ca-certificates
+      - wget
+    state: present
+
+- name: Add Proxmox repository key
+  get_url:
+    url: https://enterprise.proxmox.com/debian/proxmox-release-bookworm.gpg
+    dest: /etc/apt/trusted.gpg.d/proxmox-release-bookworm.gpg
+    mode: '0644'
+
+- name: Add Proxmox Backup Server repository
+  apt_repository:
+    repo: "deb http://download.proxmox.com/debian/pbs bookworm pbs-no-subscription"
+    filename: pbs
+    state: present
+
+- name: Update apt cache after adding repository
+  apt:
+    update_cache: yes
+
+- name: Install Proxmox Backup Server
+  apt:
+    name: proxmox-backup-server
+    state: present
+
+- name: Enable and start proxmox-backup service
+  systemd:
+    name: proxmox-backup
+    enabled: yes
+    state: started
+
+- name: Create PBS datastore directory
+  file:
+    path: "{{ pbs_datastore_path }}"
+    state: directory
+    owner: backup
+    group: backup
+    mode: '0755'
+
+- name: Install rclone
+  apt:
+    name: rclone
+    state: present
+
+- name: Create rclone config directory for backup user
+  file:
+    path: /var/lib/pbs/.config/rclone
+    state: directory
+    owner: backup
+    group: backup
+    mode: '0700'
+
+- name: Create rclone configuration for Backblaze B2
+  template:
+    src: rclone.conf.j2
+    dest: /var/lib/pbs/.config/rclone/rclone.conf
+    owner: backup
+    group: backup
+    mode: '0600'
+
+- name: Create PBS to B2 sync script
+  template:
+    src: pbs-sync-to-b2.sh.j2
+    dest: /usr/local/bin/pbs-sync-to-b2.sh
+    owner: root
+    group: root
+    mode: '0755'
+
+- name: Create log directory for rclone
+  file:
+    path: /var/log
+    state: directory
+    mode: '0755'
+
+- name: Set up cron job for nightly B2 sync
+  cron:
+    name: "PBS to B2 sync"
+    cron_file: pbs-rclone
+    user: backup
+    job: "/usr/local/bin/pbs-sync-to-b2.sh"
+    minute: "{{ rclone_sync_schedule.split(' ')[0] }}"
+    hour: "{{ rclone_sync_schedule.split(' ')[1] }}"
+    day: "{{ rclone_sync_schedule.split(' ')[2] }}"
+    month: "{{ rclone_sync_schedule.split(' ')[3] }}"
+    weekday: "{{ rclone_sync_schedule.split(' ')[4] }}"
+
+- name: Configure firewall for PBS
+  ufw:
+    rule: allow
+    port: "{{ item.port }}"
+    proto: "{{ item.proto }}"
+    src: "{{ item.src | default('10.98.0.0/24') }}"
+  loop:
+    - { port: "8007", proto: "tcp" }  # PBS Web UI
+    - { port: "8007", proto: "udp" }  # PBS Web UI
+  when: firewall_enabled | default(true)
+
+- name: Display PBS setup information
+  debug:
+    msg: |
+      PBS installed successfully!
+
+      Access:
+      - Web UI: https://{{ ansible_host }}:8007
+      - Datastore: {{ pbs_datastore_path }}
+      - Domain: {{ pbs_domain }}
+
+      Backblaze B2:
+      - Bucket: {{ b2_bucket }}
+      - Endpoint: {{ b2_endpoint }}
+      - Sync Schedule: {{ rclone_sync_schedule }}
+
+      Next Steps:
+      1. Access PBS UI and create datastore: {{ pbs_datastore_name }}
+      2. Configure Proxmox VE to use this PBS
+      3. Test backup and restore operations
+      4. Monitor sync logs: {{ rclone_log_file }}

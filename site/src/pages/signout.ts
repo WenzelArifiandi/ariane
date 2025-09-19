@@ -31,6 +31,24 @@ export const GET: APIRoute = async ({ request }) => {
   const isLocal = host.includes("127.0.0.1") || host.includes("localhost");
   // We'll return to site root, letting Access trigger the correct login flow
 
+  // If generic OIDC end-session is configured (e.g., Zitadel), prefer that
+  if (!isLocal && OIDC_END_SESSION) {
+    // Redirect back to a logout completion page that will handle CF Access logout
+    const logoutComplete = new URL("/logout-complete", origin);
+    const endSession = new URL(OIDC_END_SESSION);
+    // RP-initiated logout: redirect back to our logout completion handler
+    endSession.searchParams.set(
+      "post_logout_redirect_uri",
+      logoutComplete.toString(),
+    );
+    if (OIDC_CLIENT_ID)
+      endSession.searchParams.set("client_id", OIDC_CLIENT_ID);
+    return new Response(null, {
+      status: 302,
+      headers: { Location: endSession.toString() },
+    });
+  }
+
   // If Auth0 is configured, do IdP-first logout to clear SSO before Access logout
   if (!isLocal && AUTH0_DOMAIN && AUTH0_CLIENT_ID) {
     // After IdP logout, hit CF Access logout then return to '/', allowing Access to redirect to team login
@@ -42,24 +60,6 @@ export const GET: APIRoute = async ({ request }) => {
     return new Response(null, {
       status: 302,
       headers: { Location: auth0Logout.toString() },
-    });
-  }
-
-  // If generic OIDC end-session is configured (e.g., Zitadel), prefer that
-  if (!isLocal && OIDC_END_SESSION) {
-    const cfLogout = new URL("/cdn-cgi/access/logout", origin);
-    cfLogout.searchParams.set("returnTo", new URL("/", origin).toString());
-    const endSession = new URL(OIDC_END_SESSION);
-    // RP-initiated logout: at minimum supply post_logout_redirect_uri
-    endSession.searchParams.set(
-      "post_logout_redirect_uri",
-      cfLogout.toString(),
-    );
-    if (OIDC_CLIENT_ID)
-      endSession.searchParams.set("client_id", OIDC_CLIENT_ID);
-    return new Response(null, {
-      status: 302,
-      headers: { Location: endSession.toString() },
     });
   }
 
