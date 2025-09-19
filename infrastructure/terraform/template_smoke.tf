@@ -4,9 +4,11 @@
 resource "proxmox_vm_qemu" "template_smoke" {
   count = var.enable_smoke_test ? 1 : 0
 
+  depends_on = [module.ubuntu_template]
+
   name        = "template-smoke"
   target_node = var.target_node
-  clone       = "ubuntu-24.04-vanilla"
+  clone       = "ubuntu-24.04-template"
   full_clone  = true
 
   # Minimal resources for testing
@@ -21,9 +23,8 @@ resource "proxmox_vm_qemu" "template_smoke" {
     bridge = var.vm_bridge
   }
 
-  # Static IP for testing
-  ipconfig0  = "ip=10.98.0.250/24,gw=10.98.0.1"
-  nameserver = "1.1.1.1"
+  # Use DHCP since template has cloud-init networking disabled
+  # ipconfig0 and nameserver removed to let netplan handle networking
   onboot     = true
 
   # Serial console and agent for testing
@@ -51,10 +52,10 @@ resource "proxmox_vm_qemu" "template_smoke" {
 }
 
 output "template_smoke_ip" {
-  value       = var.enable_smoke_test ? "10.98.0.250" : null
+  value       = var.enable_smoke_test ? try(proxmox_vm_qemu.template_smoke[0].default_ipv4_address, "unknown") : null
   description = "IP address of the template smoke test VM"
 }
 
 output "template_smoke_status" {
-  value = var.enable_smoke_test ? "Template smoke test VM created at 10.98.0.250" : "Template smoke test disabled"
+  value = var.enable_smoke_test ? "Template smoke test VM created with DHCP IP: ${try(proxmox_vm_qemu.template_smoke[0].default_ipv4_address, "pending")}" : "Template smoke test disabled"
 }

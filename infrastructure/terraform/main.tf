@@ -1,8 +1,23 @@
 # Cell v0 - Hybrid PostgreSQL VM + K8s VM Architecture
 
+# Ubuntu Template Creation
+module "ubuntu_template" {
+  source = "./modules/ubuntu-template"
+
+  proxmox_host         = var.proxmox_host_ip
+  ssh_private_key_path = var.ssh_private_key_path
+  template_id          = 9000
+  template_name        = "ubuntu-24.04-template"
+  storage_pool         = "local"
+  vm_bridge           = var.vm_bridge
+  force_rebuild_template = var.force_rebuild_template
+}
+
 # PostgreSQL Database VM
 module "postgresql_vm" {
   source = "./modules/ubuntu-vm"
+
+  depends_on = [module.ubuntu_template]
 
   vm_name          = "db-postgres"
   target_node      = var.target_node
@@ -29,6 +44,8 @@ module "postgresql_vm" {
 module "k8s_vm" {
   source = "./modules/ubuntu-vm"
 
+  depends_on = [module.ubuntu_template]
+
   vm_name          = "app-k3s"
   target_node      = var.target_node
   cores            = 4
@@ -54,6 +71,8 @@ module "k8s_vm" {
 # Proxmox Backup Server VM (étoile.neve)
 module "pbs_vm" {
   source = "./modules/ubuntu-vm"
+
+  depends_on = [module.ubuntu_template]
 
   vm_name          = "etoile-pbs"
   target_node      = var.target_node

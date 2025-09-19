@@ -5,7 +5,7 @@ import {
   copyFileSync,
   rmSync,
 } from "node:fs";
-import { join, relative, dirname } from "node:path";
+import { join, relative, dirname, basename } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const __filename = fileURLToPath(import.meta.url);
@@ -29,15 +29,18 @@ const excludeDirs = [
   ".astro",
 ];
 
+
+
 function walk(dir) {
   for (const entry of readdirSync(dir)) {
     if (excludeDirs.includes(entry)) continue;
     const fullPath = join(dir, entry);
-    const relPath = relative(repoRoot, fullPath);
+    
     if (statSync(fullPath).isDirectory()) {
       walk(fullPath);
-    } else if (entry.endsWith(".md")) {
-      const dest = join(target, relPath);
+    } else if (entry.endsWith(".md") || entry.endsWith(".mdx")) {
+      // Flatten: copy all markdown files directly into src/content/all/
+      const dest = join(target, basename(fullPath));
       mkdirSync(dirname(dest), { recursive: true });
       copyFileSync(fullPath, dest);
     }
@@ -45,6 +48,4 @@ function walk(dir) {
 }
 
 walk(repoRoot);
-console.log("✅ Synced all markdown to", target);
-
-console.log("✅ Synced all markdown to", target);
+globalThis.console.log("\u2705 Synced all markdown to", target);

@@ -97,3 +97,15 @@ variable "enable_smoke_test" {
   type        = bool
   default     = false
 }
+
+variable "ssh_private_key_path" {
+  description = "Path to SSH private key for Proxmox access"
+  type        = string
+  default     = "~/.ssh/id_ed25519"
+}
+
+variable "force_rebuild_template" {
+  description = "Force rebuild of Ubuntu template (change this value to trigger rebuild)"
+  type        = string
+  default     = "v3-network-fix"
+}

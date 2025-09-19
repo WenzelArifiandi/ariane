@@ -4,7 +4,7 @@
   "version": "0.0.1",
   "scripts": {
     "predev": "node scripts/sync-md.js",
-    "prebuild": "node scripts/sync-md.js",
+    "prebuild": "node scripts/sync-md.js && node ../tools/fix-frontmatter.mjs",
     "dev": "astro dev",
     "start": "astro dev",
     "build": "astro build",

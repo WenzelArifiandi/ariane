@@ -55,25 +55,21 @@ check_dependencies() {
 }
 
 setup_proxmox_template() {
-    log "Setting up Proxmox VM template..."
-    warning "Manual step required: Create Ubuntu 24.04 template in Proxmox"
-    echo ""
-    echo "Please run these commands on your Proxmox server:"
-    echo ""
-    echo "# Download Ubuntu cloud image"
-    echo "wget https://cloud-images.ubuntu.com/releases/24.04/release/ubuntu-24.04-server-cloudimg-amd64.img"
-    echo ""
-    echo "# Create VM template"
-    echo "qm create 9000 --name ubuntu-24.04-template --memory 2048 --cores 2 --net0 virtio,bridge=vmbr0"
-    echo "qm importdisk 9000 ubuntu-24.04-server-cloudimg-amd64.img data"
-    echo "qm set 9000 --scsihw virtio-scsi-pci --scsi0 data:vm-9000-disk-0"
-    echo "qm set 9000 --boot c --bootdisk scsi0"
-    echo "qm set 9000 --ide2 data:cloudinit"
-    echo "qm set 9000 --serial0 socket --vga serial0"
-    echo "qm set 9000 --agent enabled=1"
-    echo "qm template 9000"
-    echo ""
-    read -p "Press Enter when template is created..."
+    log "Creating Proxmox VM template automatically..."
+    cd "$TERRAFORM_DIR"
+
+    # Initialize Terraform if needed
+    terraform init
+
+    # Create only the template first
+    log "Building Ubuntu 24.04 template..."
+    terraform apply -target=module.ubuntu_template -auto-approve
+
+    if [ $? -eq 0 ]; then
+        success "Ubuntu template created successfully!"
+    else
+        error "Template creation failed! Check Terraform output above."
+    fi
 }
 
 terraform_plan() {
@@ -87,6 +83,9 @@ terraform_plan() {
 template_smoke_test() {
     log "Running template smoke test..."
     cd "$TERRAFORM_DIR"
+
+    # Ensure template exists first
+    terraform apply -target=module.ubuntu_template -auto-approve
 
     # Enable smoke test and create VM
     log "Creating smoke test VM..."

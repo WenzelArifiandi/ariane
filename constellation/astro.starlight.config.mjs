@@ -1,5 +1,5 @@
 import { defineConfig } from "astro/config";
-import starlight from "@astro-starlight/starlight/config";
+import starlight from "@astrojs/starlight";
 
 export default defineConfig({
   integrations: [
@@ -12,12 +12,10 @@ export default defineConfig({
         alt: "Ariane Logo",
       },
       sidebar: [
-        { label: "Getting Started", link: "/docs/getting-started" },
-        { label: "Infrastructure", link: "/docs/infrastructure" },
-        { label: "Authentication", link: "/docs/authentication" },
-        { label: "Migration", link: "/docs/migration" },
-        { label: "Reference", link: "/docs/reference" },
-        { label: "All Docs", autogenerate: { directory: "all" } },
+        {
+          label: "Docs",
+          autogenerate: { collection: "all" },
+        },
       ],
       github: {
         repo: "WenzelArifiandi/ariane",
