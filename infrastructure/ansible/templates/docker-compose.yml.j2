@@ -1,0 +1,74 @@
+services:
+  zitadel:
+    restart: "unless-stopped"
+    image: "ghcr.io/zitadel/zitadel:{{ zitadel_version | default('v2.65.1') }}"
+    command: "start --config /config/zitadel.yaml --tlsMode external --masterkeyFromEnv"
+    environment:
+      - "ZITADEL_MASTERKEY=MasterkeyNeedsToHave32Characters"
+    volumes:
+      - ./zitadel.yaml:/config/zitadel.yaml:ro
+      - ./defaults.yaml:/config/defaults.yaml:ro
+    depends_on:
+      - db
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "wget",
+          "--no-verbose",
+          "--tries=1",
+          "--spider",
+          "http://localhost:8080/debug/healthz",
+        ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    ports:
+      - "8080:8080"
+    networks:
+      - "zitadel"
+
+  db:
+    restart: "unless-stopped"
+    image: postgres:16
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=zitadel
+    command: |
+      postgres -c 'max_connections=200' -c 'shared_preload_libraries=pg_stat_statements'
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -d zitadel -U postgres"]
+      interval: 15s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+    volumes:
+      - "data:/var/lib/postgresql/data:rw"
+    networks:
+      - "zitadel"
+    # External database - this container is used for local dev only
+    profiles:
+      - "local"
+
+  caddy:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile
+      - caddy_data:/data
+      - caddy_config:/config
+    networks:
+      - "zitadel"
+
+volumes:
+  data:
+  caddy_data:
+  caddy_config:
+
+networks:
+  zitadel:

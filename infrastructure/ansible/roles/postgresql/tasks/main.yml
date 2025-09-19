@@ -1,0 +1,238 @@
+---
+# PostgreSQL 16 with pgBackRest, monitoring, and enterprise tuning
+# Optimized for NVMe SSD + 12-16GB RAM
+
+- name: Install PostgreSQL and dependencies
+  apt:
+    name:
+      - postgresql-{{ postgres_version }}
+      - postgresql-client-{{ postgres_version }}
+      - postgresql-contrib-{{ postgres_version }}
+      - postgresql-{{ postgres_version }}-pgbackrest
+      - pgbackrest
+      - python3-psycopg2
+      - python3-pip
+      - acl
+      - htop
+      - iotop
+      - sysstat
+    state: present
+    update_cache: yes
+
+- name: Install PgBouncer (connection pooler)
+  apt:
+    name:
+      - pgbouncer
+    state: present
+  when: postgres_pooler == "pgbouncer"
+
+- name: Create postgres_exporter user
+  user:
+    name: postgres_exporter
+    system: yes
+    shell: /bin/false
+    home: /var/lib/postgres_exporter
+    create_home: no
+
+- name: Download and install postgres_exporter
+  get_url:
+    url: "https://github.com/prometheus-community/postgres_exporter/releases/download/v{{ postgres_exporter_version }}/postgres_exporter-{{ postgres_exporter_version }}.linux-amd64.tar.gz"
+    dest: "/tmp/postgres_exporter.tar.gz"
+    mode: '0644'
+
+- name: Extract postgres_exporter
+  unarchive:
+    src: "/tmp/postgres_exporter.tar.gz"
+    dest: "/tmp"
+    remote_src: yes
+
+- name: Install postgres_exporter binary
+  copy:
+    src: "/tmp/postgres_exporter-{{ postgres_exporter_version }}.linux-amd64/postgres_exporter"
+    dest: "/usr/local/bin/postgres_exporter"
+    mode: '0755'
+    owner: root
+    group: root
+    remote_src: yes
+
+- name: Stop PostgreSQL for configuration
+  systemd:
+    name: postgresql
+    state: stopped
+
+- name: Configure PostgreSQL
+  template:
+    src: postgresql.conf.j2
+    dest: "/etc/postgresql/{{ postgres_version }}/main/postgresql.conf"
+    owner: postgres
+    group: postgres
+    mode: '0644'
+    backup: yes
+  notify: restart postgresql
+
+- name: Configure PostgreSQL authentication
+  template:
+    src: pg_hba.conf.j2
+    dest: "/etc/postgresql/{{ postgres_version }}/main/pg_hba.conf"
+    owner: postgres
+    group: postgres
+    mode: '0640'
+    backup: yes
+  notify: restart postgresql
+
+- name: Configure pgBackRest
+  template:
+    src: pgbackrest.conf.j2
+    dest: /etc/pgbackrest/pgbackrest.conf
+    owner: postgres
+    group: postgres
+    mode: '0640'
+    backup: yes
+
+- name: Create pgBackRest directories
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: postgres
+    group: postgres
+    mode: '0750'
+  loop:
+    - /var/lib/pgbackrest
+    - /var/log/pgbackrest
+    - /var/spool/pgbackrest
+
+- name: Configure PgBouncer
+  template:
+    src: pgbouncer.ini.j2
+    dest: /etc/pgbouncer/pgbouncer.ini
+    owner: postgres
+    group: postgres
+    mode: '0640'
+    backup: yes
+  when: postgres_pooler == "pgbouncer"
+  notify: restart pgbouncer
+
+- name: Create PgBouncer auth file
+  template:
+    src: userlist.txt.j2
+    dest: /etc/pgbouncer/userlist.txt
+    owner: postgres
+    group: postgres
+    mode: '0640'
+  when: postgres_pooler == "pgbouncer"
+  notify: restart pgbouncer
+
+- name: Start and enable PostgreSQL
+  systemd:
+    name: postgresql
+    state: started
+    enabled: yes
+
+- name: Wait for PostgreSQL to be ready
+  wait_for:
+    port: 5432
+    host: localhost
+    timeout: 30
+
+- name: Create Zitadel database
+  postgresql_db:
+    name: "{{ zitadel_db_name }}"
+    encoding: UTF-8
+    locale: en_US.UTF-8
+    template: template0
+    state: present
+  become_user: postgres
+
+- name: Create Zitadel user
+  postgresql_user:
+    name: "{{ zitadel_db_user }}"
+    password: "{{ zitadel_db_password }}"
+    db: "{{ zitadel_db_name }}"
+    priv: ALL
+    state: present
+  become_user: postgres
+
+- name: Create monitoring user for postgres_exporter
+  postgresql_user:
+    name: postgres_exporter
+    password: "{{ postgres_exporter_password }}"
+    role_attr_flags: LOGIN,NOSUPERUSER,NOCREATEDB,NOCREATEROLE
+    state: present
+  become_user: postgres
+
+- name: Grant monitoring permissions
+  postgresql_privs:
+    db: postgres
+    role: postgres_exporter
+    objs: pg_stat_database
+    privs: SELECT
+    type: table
+  become_user: postgres
+
+- name: Configure postgres_exporter systemd service
+  template:
+    src: postgres-exporter.service.j2
+    dest: /etc/systemd/system/postgres-exporter.service
+    mode: '0644'
+  notify:
+    - reload systemd
+    - restart postgres-exporter
+
+- name: Start and enable postgres_exporter
+  systemd:
+    name: postgres-exporter
+    state: started
+    enabled: yes
+    daemon_reload: yes
+
+- name: Start and enable PgBouncer
+  systemd:
+    name: pgbouncer
+    state: started
+    enabled: yes
+  when: postgres_pooler == "pgbouncer"
+
+- name: Configure pgBackRest stanza
+  shell: |
+    sudo -u postgres pgbackrest --stanza={{ pgbackrest_stanza }} stanza-create
+  args:
+    creates: "/var/lib/pgbackrest/backup/{{ pgbackrest_stanza }}"
+
+- name: Create pgBackRest systemd timer for full backup
+  template:
+    src: pgbackrest-full.timer.j2
+    dest: /etc/systemd/system/pgbackrest-full.timer
+    mode: '0644'
+
+- name: Create pgBackRest systemd service for full backup
+  template:
+    src: pgbackrest-full.service.j2
+    dest: /etc/systemd/system/pgbackrest-full.service
+    mode: '0644'
+
+- name: Enable and start pgBackRest timer
+  systemd:
+    name: pgbackrest-full.timer
+    state: started
+    enabled: yes
+    daemon_reload: yes
+
+- name: Configure firewall rules
+  ufw:
+    rule: allow
+    port: "{{ item.port }}"
+    proto: "{{ item.proto }}"
+    src: "{{ item.src }}"
+  loop: "{{ postgres_firewall_rules }}"
+  when: firewall_enabled | default(true)
+
+- name: Initial pgBackRest backup
+  shell: |
+    sudo -u postgres pgbackrest --stanza={{ pgbackrest_stanza }} backup
+  async: 3600
+  poll: 0
+  register: initial_backup
+
+- name: Display initial backup status
+  debug:
+    msg: "Initial pgBackRest backup started in background. Check with: sudo -u postgres pgbackrest info"

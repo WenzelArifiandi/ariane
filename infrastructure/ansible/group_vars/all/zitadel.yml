@@ -1,0 +1,167 @@
+---
+# Zitadel Helm values for Cell v0 architecture
+# Production-ready configuration with external PostgreSQL
+
+zitadel_helm_values:
+  # Zitadel application configuration
+  zitadel:
+    configmapConfig:
+      ExternalDomain: "{{ zitadel_domain }}"
+      ExternalSecure: true
+      ExternalPort: 443
+      TLS:
+        Enabled: false  # Terminated at ingress
+      Database:
+        postgres:
+          Host: "{{ postgres_host }}"
+          Port: 5432
+          Database: "{{ postgres_database }}"
+          MaxOpenConns: 25
+          MaxIdleConns: 5
+          MaxConnLifetime: "1h"
+          MaxConnIdleTime: "300s"
+      Log:
+        Level: "info"
+        Formatter: "json"
+      SystemDefaults:
+        SecretGenerators:
+          MachineKeySize: 2048
+      DefaultInstance:
+        InstanceName: "ZITADEL"
+        DefaultLanguage: "en"
+        Org:
+          Name: "Ariane"
+        PasswordComplexityPolicy:
+          MinLength: 8
+          HasLowercase: true
+          HasUppercase: true
+          HasNumber: true
+          HasSymbol: false
+        LoginPolicy:
+          AllowUsernamePassword: true
+          AllowRegister: true
+          AllowExternalIDP: false
+          ForceMFA: false
+          HidePasswordReset: false
+        LockoutPolicy:
+          MaxPasswordAttempts: 5
+          MaxOTPAttempts: 3
+
+    secretConfig:
+      Database:
+        postgres:
+          User: "{{ postgres_user }}"
+          Password: "{{ zitadel_db_password }}"
+      MasterKey: "{{ zitadel_master_key }}"
+
+  # Deployment configuration
+  replicaCount: 2
+  image:
+    repository: ghcr.io/zitadel/zitadel
+    tag: "v2.65.1"
+    pullPolicy: IfNotPresent
+
+  # Resource limits
+  resources:
+    limits:
+      cpu: 1000m
+      memory: 2Gi
+    requests:
+      cpu: 500m
+      memory: 1Gi
+
+  # Health checks
+  livenessProbe:
+    httpGet:
+      path: /debug/healthz
+      port: 8080
+    initialDelaySeconds: 60
+    periodSeconds: 30
+    timeoutSeconds: 10
+    failureThreshold: 3
+
+  readinessProbe:
+    httpGet:
+      path: /debug/ready
+      port: 8080
+    initialDelaySeconds: 30
+    periodSeconds: 10
+    timeoutSeconds: 5
+    failureThreshold: 3
+
+  # Ingress configuration
+  ingress:
+    enabled: true
+    className: nginx
+    annotations:
+      cert-manager.io/cluster-issuer: "letsencrypt-production"
+      nginx.ingress.kubernetes.io/ssl-redirect: "true"
+      nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+      nginx.ingress.kubernetes.io/proxy-body-size: "0"
+      nginx.ingress.kubernetes.io/proxy-read-timeout: "600"
+      nginx.ingress.kubernetes.io/proxy-send-timeout: "600"
+    hosts:
+      - host: "{{ zitadel_domain }}"
+        paths:
+          - path: /
+            pathType: Prefix
+    tls:
+      - hosts:
+          - "{{ zitadel_domain }}"
+        secretName: zitadel-tls
+
+  # Service configuration
+  service:
+    type: ClusterIP
+    port: 8080
+    protocol: TCP
+
+  # Pod disruption budget
+  podDisruptionBudget:
+    enabled: true
+    minAvailable: 1
+
+  # Security context
+  podSecurityContext:
+    runAsNonRoot: true
+    runAsUser: 1000
+    runAsGroup: 1000
+    fsGroup: 1000
+
+  securityContext:
+    allowPrivilegeEscalation: false
+    capabilities:
+      drop:
+        - ALL
+    readOnlyRootFilesystem: true
+
+  # Node selection
+  nodeSelector: {}
+  tolerations: []
+  affinity:
+    podAntiAffinity:
+      preferredDuringSchedulingIgnoredDuringExecution:
+        - weight: 100
+          podAffinityTerm:
+            labelSelector:
+              matchExpressions:
+                - key: app.kubernetes.io/name
+                  operator: In
+                  values:
+                    - zitadel
+            topologyKey: kubernetes.io/hostname
+
+  # Service monitor for Prometheus
+  serviceMonitor:
+    enabled: true
+    interval: 30s
+    path: /debug/metrics
+    port: 8080
+
+  # Autoscaling
+  autoscaling:
+    enabled: false  # Start simple, enable later
+    minReplicas: 2
+    maxReplicas: 10
+    targetCPUUtilizationPercentage: 80
+    targetMemoryUtilizationPercentage: 80

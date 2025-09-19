@@ -1,0 +1,12 @@
+# Proxmox Provider Configuration
+proxmox_api_url          = "https://54.39.102.214:8006/api2/json"
+proxmox_api_token_id     = "root@pam!terraform"
+proxmox_api_token_secret = "your-api-token-secret-here"
+
+# SSH Configuration
+ssh_public_key = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAI... your-public-key-here"
+
+# Infrastructure Settings
+target_node   = "neve"
+storage_pool  = "data"
+iso_file      = "local:iso/ubuntu-24.04.1-live-server-amd64.iso"

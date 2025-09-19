@@ -1,0 +1,163 @@
+---
+- name: Migrate Zitadel from Oracle Cloud to Proxmox
+  hosts: localhost
+  gather_facts: no
+  vars:
+    oracle_host: "ubuntu@auth.wenzelarifiandi.com"
+    oracle_key: "~/.ssh/oracle_key_correct"
+    backup_dir: "/tmp/zitadel-migration"
+    timestamp: "{{ ansible_date_time.epoch }}"
+
+  tasks:
+    - name: Create local backup directory
+      file:
+        path: "{{ backup_dir }}"
+        state: directory
+        mode: '0755'
+
+    - name: Stop Zitadel service on Oracle Cloud (maintenance mode)
+      shell: |
+        ssh -i {{ oracle_key }} {{ oracle_host }} "cd zitadel && docker-compose stop zitadel"
+      delegate_to: localhost
+
+    - name: Create PostgreSQL dump on Oracle Cloud
+      shell: |
+        ssh -i {{ oracle_key }} {{ oracle_host }} "cd zitadel && docker-compose exec -T db pg_dump -U postgres -d zitadel --clean --if-exists" > {{ backup_dir }}/zitadel_db_{{ timestamp }}.sql
+      delegate_to: localhost
+
+    - name: Backup Zitadel configuration from Oracle Cloud
+      shell: |
+        scp -i {{ oracle_key }} -r {{ oracle_host }}:zitadel/*.yaml {{ backup_dir }}/
+        scp -i {{ oracle_key }} {{ oracle_host }}:zitadel/Caddyfile {{ backup_dir }}/
+        scp -i {{ oracle_key }} {{ oracle_host }}:zitadel/docker-compose.yml {{ backup_dir }}/
+      delegate_to: localhost
+
+    - name: Display backup status
+      debug:
+        msg: |
+          Migration backup completed:
+          - Database dump: {{ backup_dir }}/zitadel_db_{{ timestamp }}.sql
+          - Configuration files: {{ backup_dir }}/
+          - Oracle Cloud Zitadel service stopped
+
+- name: Restore Zitadel to Proxmox VMs
+  hosts: database
+  become: yes
+  vars:
+    backup_dir: "/tmp/zitadel-migration"
+    timestamp: "{{ hostvars['localhost']['timestamp'] }}"
+
+  tasks:
+    - name: Copy database dump to PostgreSQL VM
+      copy:
+        src: "{{ backup_dir }}/zitadel_db_{{ timestamp }}.sql"
+        dest: /tmp/zitadel_restore.sql
+        owner: postgres
+        group: postgres
+        mode: '0600'
+
+    - name: Restore database from dump
+      shell: |
+        sudo -u postgres psql -d zitadel -f /tmp/zitadel_restore.sql
+      register: restore_result
+
+    - name: Verify database restoration
+      shell: |
+        sudo -u postgres psql -d zitadel -c "SELECT count(*) FROM users;" 2>/dev/null || echo "No users table yet"
+      register: db_check
+
+    - name: Display restoration status
+      debug:
+        msg: |
+          Database restoration completed.
+          Database check: {{ db_check.stdout }}
+
+- name: Configure Zitadel application with restored data
+  hosts: application
+  become: yes
+  vars:
+    backup_dir: "/tmp/zitadel-migration"
+
+  tasks:
+    - name: Copy restored configuration files
+      copy:
+        src: "{{ backup_dir }}/{{ item }}"
+        dest: "/opt/zitadel/{{ item }}"
+        owner: ubuntu
+        group: ubuntu
+        mode: '0644'
+      loop:
+        - zitadel.yaml
+        - defaults.yaml
+        - Caddyfile
+      when: item != "docker-compose.yml"  # We use our own docker-compose
+
+    - name: Update Zitadel configuration for new environment
+      lineinfile:
+        path: /opt/zitadel/zitadel.yaml
+        regexp: '^  Host:'
+        line: '  Host: {{ hostvars["postgresql"]["ansible_host"] }}'
+        backup: yes
+
+    - name: Restart Zitadel services with restored data
+      shell: |
+        cd /opt/zitadel
+        docker compose down
+        docker compose up -d db
+        sleep 10
+        docker compose up -d zitadel
+        sleep 15
+        docker compose up -d caddy
+      become_user: ubuntu
+
+    - name: Wait for Zitadel to be healthy
+      uri:
+        url: "http://{{ ansible_host }}:8080/debug/healthz"
+        method: GET
+        timeout: 30
+      retries: 10
+      delay: 30
+      register: health_check
+      until: health_check.status == 200
+
+    - name: Display migration completion status
+      debug:
+        msg: |
+          ✅ Migration completed successfully!
+
+          Zitadel is now running on:
+          - Database: {{ hostvars["postgresql"]["ansible_host"] }}:5432
+          - Application: {{ ansible_host }}:8080
+          - Web UI: https://{{ ansible_host }} (via Caddy)
+
+          Next steps:
+          1. Update DNS: auth.wenzelarifiandi.com → {{ ansible_host }}
+          2. Test authentication flows
+          3. Monitor logs for any issues
+
+- name: Cleanup and final steps
+  hosts: localhost
+  gather_facts: no
+  vars:
+    backup_dir: "/tmp/zitadel-migration"
+
+  tasks:
+    - name: Create backup archive
+      archive:
+        path: "{{ backup_dir }}/*"
+        dest: "{{ backup_dir }}_{{ timestamp }}.tar.gz"
+        format: gz
+
+    - name: Display final migration summary
+      debug:
+        msg: |
+          🎉 MIGRATION COMPLETE! 🎉
+
+          📦 Backup archived: {{ backup_dir }}_{{ timestamp }}.tar.gz
+          🔄 Oracle Cloud Zitadel: STOPPED (in maintenance mode)
+          ✅ Proxmox Zitadel: RUNNING
+
+          To complete the migration:
+          1. Test new Zitadel instance thoroughly
+          2. Update DNS records when ready
+          3. Decommission Oracle Cloud instance
