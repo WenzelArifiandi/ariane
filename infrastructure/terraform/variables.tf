@@ -109,3 +109,9 @@ variable "force_rebuild_template" {
   type        = string
   default     = "v3-network-fix"
 }
+
+variable "smoke_test_ipconfig" {
+  description = "Optional Proxmox ipconfig0 string for the smoke test VM (e.g., ip=10.98.0.250/24,gw=10.98.0.1). Leave empty to rely on template netplan."
+  type        = string
+  default     = ""
+}

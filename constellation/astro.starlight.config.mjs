@@ -14,27 +14,27 @@ export default defineConfig({
       sidebar: [
         {
           label: "Docs",
-          autogenerate: { collection: "all" },
+          autogenerate: { directory: "all" },
         },
       ],
-      github: {
-        repo: "WenzelArifiandi/ariane",
-        editLinks: true,
-      },
-      search: {
-        provider: "pagefind",
-      },
-      i18n: {
-        defaultLocale: "en",
-        locales: ["en"],
-      },
-      theme: {
-        default: "dark",
-        colors: {
-          primary: "#7c3aed",
-          accent: "#f472b6",
-        },
-      },
     }),
   ],
+  github: {
+    repo: "WenzelArifiandi/ariane",
+    editLinks: true,
+  },
+  search: {
+    provider: "pagefind",
+  },
+  i18n: {
+    defaultLocale: "en",
+    locales: ["en"],
+  },
+  theme: {
+    default: "dark",
+    colors: {
+      primary: "#7c3aed",
+      accent: "#f472b6",
+    },
+  },
 });

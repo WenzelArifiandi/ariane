@@ -11,6 +11,10 @@ ANSIBLE_DIR="$SCRIPT_DIR/ansible"
 ACTION="${1:-help}"
 TIMESTAMP=$(date +%Y%m%d_%H%M%S)
 
+PROXMOX_HOST="${TF_VAR_proxmox_host_ip:-54.39.102.214}"
+SMOKE_TEST_IPCONFIG_DEFAULT="${TF_VAR_smoke_test_ipconfig:-ip=10.98.0.250/24,gw=10.98.0.1}"
+SSH_PRIVATE_KEY="${TF_VAR_ssh_private_key_path:-${HOME}/.ssh/id_ed25519}"
+
 # Colors for output
 RED='\033[0;31m'
 GREEN='\033[0;32m'
@@ -91,24 +95,59 @@ template_smoke_test() {
     log "Creating smoke test VM..."
     terraform apply -var="enable_smoke_test=true" -target=proxmox_vm_qemu.template_smoke -auto-approve
 
-    # Wait for VM to be ready
-    log "Waiting for smoke test VM to boot..."
-    sleep 60
+    local smoke_ip_output
+    smoke_ip_output=$(terraform output -raw template_smoke_ip 2>/dev/null || true)
+    local smoke_vmid
+    smoke_vmid=$(terraform output -raw template_smoke_vmid 2>/dev/null || true)
+
+    local smoke_ip="$smoke_ip_output"
+    if [[ -z "$smoke_ip" || "$smoke_ip" == "unknown" || "$smoke_ip" == "pending" ]]; then
+        smoke_ip=$(echo "$SMOKE_TEST_IPCONFIG_DEFAULT" | sed -n 's/.*ip=\([^,]*\).*/\1/p')
+    fi
+    smoke_ip=${smoke_ip%%/*}
+
+    if [[ -z "$smoke_ip" ]]; then
+        warning "Unable to determine smoke test IP address from Terraform output or configuration; defaulting to 10.98.0.250"
+        smoke_ip="10.98.0.250"
+    fi
+
+    log "Waiting for smoke test VM to boot (IP: ${smoke_ip:-unknown}, VMID: ${smoke_vmid:-unknown})..."
+    sleep 120
+
+    if [[ -n "$smoke_vmid" ]]; then
+        log "Verifying QEMU guest agent configuration on VMID $smoke_vmid..."
+        ssh -o StrictHostKeyChecking=no root@"$PROXMOX_HOST" "qm config $smoke_vmid | grep -E '^agent'" 2>/dev/null || warning "Unable to confirm guest agent config"
+
+        ssh -o StrictHostKeyChecking=no root@"$PROXMOX_HOST" "for i in \\$(seq 1 10); do if qm agent $smoke_vmid ping >/dev/null 2>&1; then echo 'Guest agent responded'; exit 0; fi; sleep 30; done; echo 'Guest agent did not respond within timeout'; exit 0" || true
+    fi
 
     # Run Ansible smoke test
     log "Running Ansible smoke tests..."
     cd "$ANSIBLE_DIR"
 
+    set +e
     ANSIBLE_HOST_KEY_CHECKING=False \
-    ansible-playbook -i "10.98.0.250," -u ubuntu \
-      --ssh-common-args='-o StrictHostKeyChecking=no -o ProxyJump=root@54.39.102.214' \
-      --private-key ~/.ssh/id_ed25519 \
+    ansible-playbook -i "${smoke_ip}," -u ubuntu \
+      --ssh-common-args="-o StrictHostKeyChecking=no -o ProxyJump=root@${PROXMOX_HOST}" \
+      --private-key "${SSH_PRIVATE_KEY}" \
       playbooks/template-smoke.yml
+    local ansible_rc=$?
+    set -e
 
-    if [ $? -eq 0 ]; then
+    if [[ $ansible_rc -eq 0 ]]; then
         success "Template smoke test PASSED!"
     else
-        error "Template smoke test FAILED! Check template configuration."
+        warning "Template smoke test failed. Gathering debug information..."
+        if [[ -n "$smoke_vmid" ]]; then
+            ssh -o StrictHostKeyChecking=no root@"$PROXMOX_HOST" "qm agent $smoke_vmid ping" 2>/dev/null || warning "Guest agent ping failed"
+            ssh -o StrictHostKeyChecking=no root@"$PROXMOX_HOST" "qm guest exec $smoke_vmid -- systemctl status systemd-networkd --no-pager" 2>/dev/null || true
+            ssh -o StrictHostKeyChecking=no root@"$PROXMOX_HOST" "qm guest exec $smoke_vmid -- journalctl -u systemd-networkd --no-pager -n 50" 2>/dev/null || true
+            ssh -o StrictHostKeyChecking=no root@"$PROXMOX_HOST" "qm guest exec $smoke_vmid -- netplan status" 2>/dev/null || true
+            ssh -o StrictHostKeyChecking=no root@"$PROXMOX_HOST" "qm guest exec $smoke_vmid -- ip a" 2>/dev/null || true
+            ssh -o StrictHostKeyChecking=no root@"$PROXMOX_HOST" "qm guest exec $smoke_vmid -- systemctl status qemu-guest-agent --no-pager" 2>/dev/null || true
+            ssh -o StrictHostKeyChecking=no root@"$PROXMOX_HOST" "qm guest exec $smoke_vmid -- journalctl -u qemu-guest-agent --no-pager -n 50" 2>/dev/null || true
+        fi
+        error "Template smoke test FAILED! Check logs above for details."
     fi
 
     # Clean up smoke test VM

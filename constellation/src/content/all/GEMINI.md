@@ -1,39 +1,27 @@
 ---
-title: Ariane Monorepo – Gemini Agent Context
-description: "# Ariane Monorepo – Gemini Agent Context"
+title: Constellation – Ariane Docs
+description: "# Constellation – Ariane Docs"
 slug: gemini
 ---
 
-# Ariane Monorepo – Gemini Agent Context
+# Constellation – Ariane Docs
 
 ## Purpose
 
-This repository contains all infrastructure, documentation, and code for the Ariane project. Key subprojects include:
-
-- `constellation/` (Astro + Starlight docs)
-- `studio/` (Sanity Studio)
-- `wasm/` (Rust/WASM session signer)
-- `tests/` (Vitest, Playwright, MSW)
-- `zitadel/` (infra config)
+This project uses Astro + Starlight to build documentation for Ariane infrastructure.
 
 ## Key Notes
 
-- Docs live in `constellation/src/content/all/`.
+- Docs live in `src/content/all/`.
 - Frontmatter must include at least `title:`.
-- Build/preview scripts for docs:
+- Build/preview scripts:
   ```bash
-  cd constellation
   npm run build
   npm run preview
   ```
-- Studio and WASM have their own build/test workflows.
 
 ## Agent Instructions
 
-- Always ensure Markdown files in `constellation/src/content/all` start with valid frontmatter.
-- If build errors reference missing slugs, check `constellation/astro.starlight.config.mjs`.
-- Prefer fixing frontmatter automatically using `constellation/tools/fix-frontmatter.mjs`.
-- For infrastructure, see `zitadel/README.md` and `infrastructure/` scripts.
-- For tests, use root-level `npm run test` and `npm run test:e2e`.
-
-You can add more context for each subproject in their own `GEMINI.md` files as needed.
+- Always ensure Markdown files in src/content/all start with valid frontmatter.
+- If build errors reference missing slugs, check astro.starlight.config.mjs.
+- Prefer fixing frontmatter automatically using tools/fix-frontmatter.mjs.

@@ -1,5 +1,5 @@
 ---
-title: "Auth0 Approval Flow (Studio + Site)"
+title: Auth0 Approval Flow (Studio + Site)
 description: "# Auth0 Approval Flow (Studio + Site)"
 slug: "readme-auth0"
 ---

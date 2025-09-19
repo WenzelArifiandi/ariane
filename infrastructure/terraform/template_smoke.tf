@@ -10,6 +10,10 @@ resource "proxmox_vm_qemu" "template_smoke" {
   target_node = var.target_node
   clone       = "ubuntu-24.04-template"
   full_clone  = true
+  scsihw      = "virtio-scsi-pci"
+  bootdisk    = "scsi0"
+
+  boot = "order=scsi0"
 
   # Minimal resources for testing
   sockets = 1
@@ -23,9 +27,10 @@ resource "proxmox_vm_qemu" "template_smoke" {
     bridge = var.vm_bridge
   }
 
-  # Use DHCP since template has cloud-init networking disabled
-  # ipconfig0 and nameserver removed to let netplan handle networking
-  onboot     = true
+  # Allow overriding the network config so we can pin a static IP during smoke tests
+  ipconfig0 = var.smoke_test_ipconfig != "" ? var.smoke_test_ipconfig : null
+
+  onboot = true
 
   # Serial console and agent for testing
   serial {
@@ -48,6 +53,10 @@ resource "proxmox_vm_qemu" "template_smoke" {
     create_before_destroy = true
   }
 
+  timeouts {
+    create = "10m"
+  }
+
   tags = "smoke-test,temporary"
 }
 
@@ -57,5 +66,14 @@ output "template_smoke_ip" {
 }
 
 output "template_smoke_status" {
-  value = var.enable_smoke_test ? "Template smoke test VM created with DHCP IP: ${try(proxmox_vm_qemu.template_smoke[0].default_ipv4_address, "pending")}" : "Template smoke test disabled"
+  value = var.enable_smoke_test ? (
+    var.smoke_test_ipconfig != ""
+    ? "Template smoke test VM created with IP: ${split("/", split("=", split(",", var.smoke_test_ipconfig)[0])[1])[0]}"
+    : "Template smoke test VM created with DHCP IP: ${try(proxmox_vm_qemu.template_smoke[0].default_ipv4_address, "pending")}"
+  ) : "Template smoke test disabled"
+}
+
+output "template_smoke_vmid" {
+  value       = var.enable_smoke_test ? try(proxmox_vm_qemu.template_smoke[0].vmid, null) : null
+  description = "VMID of the template smoke test clone"
 }

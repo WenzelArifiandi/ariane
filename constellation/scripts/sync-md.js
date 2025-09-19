@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars, no-useless-escape */
 import {
   readdirSync,
   statSync,
@@ -5,7 +6,7 @@ import {
   copyFileSync,
   rmSync,
 } from "node:fs";
-import { join, relative, dirname, basename } from "node:path";
+import { join, dirname, basename } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const __filename = fileURLToPath(import.meta.url);
@@ -20,8 +21,6 @@ mkdirSync(target, { recursive: true });
 const excludeDirs = [
   "node_modules",
   ".git",
-  "constellation",
-  "docs-app",
   "dist",
   "build",
   ".vercel",

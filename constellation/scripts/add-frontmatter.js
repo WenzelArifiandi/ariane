@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 /* eslint-env node */
 import fs from "node:fs";
 import path from "node:path";
@@ -77,17 +78,15 @@ function prependFM(file) {
   // No frontmatter, add minimal
   const title = niceTitle(file);
   const description = extractDescription(raw);
-  const fm = `---
-title: ${title}
-description: ${description}
-sidebar:
-  label: ${title}
-  order: ${fileOrder(
+  const fm = `---` +
+`title: ${title}` +
+`description: ${description}` +
+`sidebar:` +
+`  label: ${title}` +
+`  order: ${fileOrder(
     file
-  )}
----
-
-`;
+  )}` +
+`---` + "\n\n";
   fs.writeFileSync(file, fm + raw, "utf8");
   return true;
 }
@@ -105,14 +104,14 @@ function walk(dir) {
     if (entry.isDirectory()) walk(p);
     else if (/\.(md|mdx)$/i.test(entry.name)) {
       const changed = prependFM(p);
-      if (changed) console.log("Enhanced FM:", p);
+      if (changed) globalThis.console.log("Enhanced FM:", p);
     }
   }
 }
 
 if (!fs.existsSync(ROOT)) {
-  console.error("No src/content/all directory found.");
-  process.exit(1);
+  globalThis.console.error("No src/content/all directory found.");
+  globalThis.process.exit(1);
 }
 walk(ROOT);
-console.log("Frontmatter enhancement complete.");
+globalThis.console.log("Frontmatter enhancement complete.");
