@@ -5,28 +5,30 @@ variable "proxmox_api_url" {
 }
 
 variable "proxmox_user" {
-  description = "Proxmox username"
+  description = "Proxmox username (optional, for user/password auth)"
   type        = string
+  default     = null
   sensitive   = true
 }
 
 variable "proxmox_password" {
-  description = "Proxmox password"
+  description = "Proxmox password (optional, for user/password auth)"
   type        = string
+  default     = null
   sensitive   = true
 }
 
 variable "proxmox_api_token_id" {
   description = "Proxmox API token id in the form user@realm!tokenid (e.g., root@pam!terraform)"
   type        = string
-  default     = ""
+  default     = null
   sensitive   = true
 }
 
 variable "proxmox_api_token_secret" {
   description = "Proxmox API token secret"
   type        = string
-  default     = ""
+  default     = null
   sensitive   = true
 }
 
