@@ -53,6 +53,14 @@
     host: localhost
     timeout: 120
 
+- name: Create .kube directory for ubuntu user
+  file:
+    path: /home/ubuntu/.kube
+    state: directory
+    owner: ubuntu
+    group: ubuntu
+    mode: '0755'
+
 - name: Create kubeconfig for ubuntu user
   copy:
     src: /etc/rancher/k3s/k3s.yaml

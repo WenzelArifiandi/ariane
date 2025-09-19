@@ -46,10 +46,33 @@ all:
           prometheus_enabled: true
           grafana_enabled: true
 
+    backup:
+      hosts:
+        etoile-pbs:
+          ansible_host: ${pbs_ip}
+          ansible_user: ubuntu
+          ansible_ssh_private_key_file: ~/.ssh/id_ed25519
+          ansible_ssh_common_args: '-o StrictHostKeyChecking=no -o ProxyJump=root@${proxmox_host}'
+
+          # PBS configuration
+          pbs_datastore_path: "/var/lib/pbs/datastore/main"
+          pbs_datastore_name: "main"
+          pbs_domain: "etoile.neve.wenzelarifiandi.com"
+
+          # Backblaze B2 configuration
+          b2_bucket: "francoise-etoile"
+          b2_endpoint: "s3.eu-central-003.backblazeb2.com"
+          b2_remote_name: "b2-etoile"
+
+          # Sync configuration
+          rclone_sync_schedule: "30 2 * * *"  # Daily at 02:30
+          rclone_log_file: "/var/log/pbs-rclone.log"
+
     cell_v0:
       children:
         database:
         kubernetes:
+        backup:
       vars:
         # Global settings
         ansible_python_interpreter: /usr/bin/python3

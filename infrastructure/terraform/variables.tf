@@ -66,6 +66,12 @@ variable "k8s_static_cidr" {
   default     = ""
 }
 
+variable "pbs_static_cidr" {
+  description = "Optional static IPv4 with CIDR for PBS VM (e.g., 192.168.1.70/24); leave empty for DHCP"
+  type        = string
+  default     = ""
+}
+
 variable "net_gateway" {
   description = "Gateway IP used when static IPs are set (e.g., 192.168.1.1)"
   type        = string

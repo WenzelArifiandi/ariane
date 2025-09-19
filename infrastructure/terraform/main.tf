@@ -14,6 +14,7 @@ module "postgresql_vm" {
   default_password = "changeme123"
   ip_config        = (var.postgres_static_cidr != "" && var.net_gateway != "") ? "ip=${var.postgres_static_cidr},gw=${var.net_gateway}" : "dhcp"
   bridge           = var.vm_bridge
+  nic_firewall     = false
   tags             = "postgres,database,cell-v0"
 
   # Database-specific optimizations
@@ -38,6 +39,7 @@ module "k8s_vm" {
   default_password = "changeme123"
   ip_config        = (var.k8s_static_cidr != "" && var.net_gateway != "") ? "ip=${var.k8s_static_cidr},gw=${var.net_gateway}" : "dhcp"
   bridge           = var.vm_bridge
+  nic_firewall     = false
   tags             = "k3s,zitadel,apps,cell-v0"
 
   # App VM optimizations
@@ -49,18 +51,45 @@ module "k8s_vm" {
   cache_mode       = "none"
 }
 
+# Proxmox Backup Server VM (étoile.neve)
+module "pbs_vm" {
+  source = "./modules/ubuntu-vm"
+
+  vm_name          = "etoile-pbs"
+  target_node      = var.target_node
+  cores            = 2
+  memory           = 4096   # 4GB RAM
+  disk_size        = "40G"
+  storage_pool     = "local"
+  ssh_public_key   = var.ssh_public_key
+  default_password = "changeme123"
+  ip_config        = (var.pbs_static_cidr != "" && var.net_gateway != "") ? "ip=${var.pbs_static_cidr},gw=${var.net_gateway}" : "dhcp"
+  bridge           = var.vm_bridge
+  nic_firewall     = false
+  tags             = "pbs,backup,etoile,cell-v0"
+
+  # PBS-specific optimizations
+  ballooning       = false  # Disable for backup server
+  cpu_type         = "x86-64-v2"
+  ssd_emulation    = true
+  discard          = true
+  cache_mode       = "writeback"  # Better for backup workloads
+}
+
 # Create enhanced Ansible inventory
 resource "local_file" "ansible_inventory" {
   content = templatefile("${path.module}/templates/inventory.tpl", {
     postgresql_ip = var.postgres_static_cidr != "" ? replace(var.postgres_static_cidr, "/.*", "") : module.postgresql_vm.vm_ip
     k8s_ip        = var.k8s_static_cidr != "" ? replace(var.k8s_static_cidr, "/.*", "") : module.k8s_vm.vm_ip
+    pbs_ip        = var.pbs_static_cidr != "" ? replace(var.pbs_static_cidr, "/.*", "") : module.pbs_vm.vm_ip
     proxmox_host  = var.proxmox_host_ip
   })
   filename = "../ansible/inventory/hosts.yml"
 
   depends_on = [
     module.postgresql_vm,
-    module.k8s_vm
+    module.k8s_vm,
+    module.pbs_vm
   ]
 }
 

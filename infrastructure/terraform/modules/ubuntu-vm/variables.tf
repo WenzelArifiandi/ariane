@@ -96,6 +96,12 @@ variable "bridge" {
   default     = "vmbr0"
 }
 
+variable "nic_firewall" {
+  description = "Enable Proxmox firewall on NIC"
+  type        = bool
+  default     = false
+}
+
 variable "tags" {
   description = "Tags for the VM"
   type        = string

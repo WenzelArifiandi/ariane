@@ -1,7 +1,7 @@
 ---
 - name: Configure PostgreSQL Database Server
   hosts: database
-  become: yes
+  become: true
   vars:
     postgresql_version: "16"
     postgresql_data_directory: "/var/lib/postgresql/16/main"
@@ -35,14 +35,14 @@
 
     - name: Configure PostgreSQL
       template:
-        src: postgresql.conf.j2
+        src: "{{ playbook_dir }}/../templates/postgresql.conf.j2"
         dest: /etc/postgresql/{{ postgresql_version }}/main/postgresql.conf
         backup: yes
       notify: restart postgresql
 
     - name: Configure PostgreSQL authentication
       template:
-        src: pg_hba.conf.j2
+        src: "{{ playbook_dir }}/../templates/pg_hba.conf.j2"
         dest: /etc/postgresql/{{ postgresql_version }}/main/pg_hba.conf
         backup: yes
       notify: restart postgresql
@@ -59,12 +59,12 @@
         state: present
       become_user: postgres
 
-    - name: Create zitadel user
-      postgresql_user:
-        name: postgres
-        password: postgres
+    - name: Ensure postgres role has privileges on zitadel
+      community.postgresql.postgresql_privs:
         db: zitadel
-        priv: ALL
+        roles: postgres
+        type: database
+        privs: ALL
         state: present
       become_user: postgres
 
@@ -75,11 +75,15 @@
         state: restarted
 
 - name: Configure Zitadel Application Server
-  hosts: application
-  become: yes
+  hosts: kubernetes
+  become: true
+  collections:
+    - community.docker
   vars:
     docker_compose_version: "2.24.0"
     zitadel_version: "v2.65.1"
+    include_local_db: false
+    postgresql_host: "{{ hostvars['postgres']['ansible_host'] | default('10.98.0.10') }}"
 
   tasks:
     - name: Update apt cache
@@ -129,36 +133,61 @@
         groups: docker
         append: yes
 
+    - name: Refresh connection to apply docker group membership
+      meta: reset_connection
+
     - name: Create zitadel directory
       file:
         path: /opt/zitadel
         state: directory
         owner: ubuntu
         group: ubuntu
-        mode: '0755'
+        mode: "0755"
 
     - name: Deploy docker-compose.yml
       template:
-        src: docker-compose.yml.j2
+        src: "{{ playbook_dir }}/../templates/docker-compose.yml.j2"
         dest: /opt/zitadel/docker-compose.yml
         owner: ubuntu
         group: ubuntu
-        mode: '0644'
+        mode: "0644"
 
     - name: Deploy Zitadel configuration
       template:
-        src: "{{ item }}.j2"
+        src: "{{ playbook_dir }}/../templates/{{ item }}.j2"
         dest: /opt/zitadel/{{ item }}
         owner: ubuntu
         group: ubuntu
-        mode: '0644'
+        mode: "0644"
       loop:
         - zitadel.yaml
         - defaults.yaml
         - Caddyfile
 
-    - name: Start Zitadel services
-      docker_compose:
+    - name: Install Caddy
+      apt:
+        name: caddy
+        state: present
+
+    - name: Ensure Caddy config dir exists
+      file:
+        path: /etc/caddy
+        state: directory
+        mode: "0755"
+
+    - name: Template Caddyfile to /etc/caddy/Caddyfile
+      template:
+        src: "{{ playbook_dir }}/../templates/Caddyfile.j2"
+        dest: /etc/caddy/Caddyfile
+        mode: "0644"
+
+    - name: Reload Caddy (start if not running)
+      systemd:
+        name: caddy
+        state: restarted
+        enabled: true
+
+    - name: Start Zitadel services (Compose v2)
+      community.docker.docker_compose_v2:
         project_src: /opt/zitadel
         state: present
-      become_user: ubuntu

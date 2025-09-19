@@ -157,10 +157,11 @@ if [[ -f "$INV_FILE" ]]; then
   # Update host IPs for db-postgres and k3s-master
   awk -v pgip="$postgres_ip" -v k8sip="$k8s_ip" '
     BEGIN{in_db=0; in_k3s=0}
-    /db-postgres:/ {in_db=1; in_k3s=0}
-    /k3s-master:/ {in_db=0; in_k3s=1}
+    /^[[:space:]]*postgres:/ {in_db=1; in_k3s=0}
+    /^[[:space:]]*k3s-master:/ {in_db=0; in_k3s=1}
     in_db==1 && /ansible_host:/ { sub(/ansible_host:.*/, "ansible_host: " pgip) }
     in_k3s==1 && /ansible_host:/ { sub(/ansible_host:.*/, "ansible_host: " k8sip) }
+    /zitadel_db_host:/ { sub(/zitadel_db_host:.*/, "zitadel_db_host: " pgip) }
     {print}
   ' "$INV_FILE" > "$INV_FILE.tmp" && mv "$INV_FILE.tmp" "$INV_FILE"
   echo "----- inventory/hosts.yml -----"

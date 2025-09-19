@@ -23,7 +23,7 @@ resource "proxmox_vm_qemu" "ubuntu_vm" {
     id       = 0
     model    = "virtio"
     bridge   = var.bridge
-    firewall = true
+    firewall = var.nic_firewall
   }
 
   # Disk configuration (3.x syntax)
@@ -64,7 +64,6 @@ resource "proxmox_vm_qemu" "ubuntu_vm" {
   # Lifecycle management
   lifecycle {
     ignore_changes = [
-      network,
       cipassword,
       startup,
     ]
