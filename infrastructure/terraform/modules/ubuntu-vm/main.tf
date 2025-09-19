@@ -49,7 +49,6 @@ resource "proxmox_vm_qemu" "ubuntu_vm" {
 
   # Cloud-init configuration
   os_type                  = "cloud-init"
-  cicustom                = "vendor=local:snippets/vendor.yml"
 
   # Cloud-init settings
   ciuser     = "ubuntu"

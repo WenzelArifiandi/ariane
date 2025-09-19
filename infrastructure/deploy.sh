@@ -153,6 +153,26 @@ ansible_deploy() {
     success "Ansible deployment completed"
 }
 
+# Configure only the Proxmox Backup Server (PBS) host(s)
+ansible_deploy_pbs() {
+    log "Configuring Proxmox Backup Server (PBS) with Ansible..."
+    cd "$ANSIBLE_DIR"
+
+    if [[ ! -f "inventory/hosts.yml" ]]; then
+        error "Ansible inventory not found. Run terraform apply first."
+    fi
+
+    # Test connectivity to backup group only
+    log "Testing Ansible connectivity to backup hosts..."
+    ansible backup -i inventory/hosts.yml -m ping
+
+    # Run PBS role playbook
+    log "Running Ansible playbook for PBS..."
+    ansible-playbook -i inventory/hosts.yml playbooks/pbs.yml
+
+    success "PBS configuration completed"
+}
+
 migrate_data() {
     log "Starting data migration from Oracle Cloud..."
     cd "$ANSIBLE_DIR"
@@ -184,6 +204,7 @@ show_help() {
     echo "Commands:"
     echo "  plan     - Run Terraform plan"
     echo "  apply    - Deploy infrastructure with Terraform + Ansible"
+    echo "  apply-pbs|pbs - Configure PBS host(s) only (after inventory exists)"
     echo "  destroy  - Destroy all infrastructure"
     echo "  migrate  - Migrate data from Oracle Cloud"
     echo "  help     - Show this help message"
@@ -205,6 +226,11 @@ main() {
             setup_proxmox_template
             terraform_apply
             ansible_deploy
+            ansible_deploy_pbs
+            ;;
+        "apply-pbs"|"pbs")
+            check_dependencies
+            ansible_deploy_pbs
             ;;
         "destroy")
             check_dependencies
