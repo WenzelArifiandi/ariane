@@ -6,7 +6,7 @@ resource "proxmox_vm_qemu" "template_smoke" {
 
   name        = "template-smoke"
   target_node = var.target_node
-  clone       = "ubuntu-24.04-fix-work"
+  clone       = "ubuntu-24.04-template"
   full_clone  = true
 
   # Minimal resources for testing

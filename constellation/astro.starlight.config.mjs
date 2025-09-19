@@ -17,6 +17,7 @@ export default defineConfig({
         { label: "Authentication", link: "/docs/authentication" },
         { label: "Migration", link: "/docs/migration" },
         { label: "Reference", link: "/docs/reference" },
+        { label: "All Docs", autogenerate: { directory: "all" } },
       ],
       github: {
         repo: "WenzelArifiandi/ariane",
