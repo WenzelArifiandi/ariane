@@ -1,13 +1,12 @@
 # Proxmox Bare Metal Server - Detailed Specifications
 
-> **Server Name**: `neve`
-> **Public IP**: `54.39.102.214`
-> **Provider**: OVH Dedicated Server
+> **Server Name**: `neve` > **Public IP**: `54.39.102.214` > **Provider**: OVH Dedicated Server
 > **Installation Date**: September 18, 2025
 
 ## 🖥️ Hardware Specifications
 
 ### CPU
+
 ```
 Architecture:          x86_64
 CPU(s):               8
@@ -24,6 +23,7 @@ Features:             fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca c
 ```
 
 ### Memory
+
 ```
 Total:     64 GiB (62.49 GiB usable)
 Used:      1.8 GiB (system + Proxmox)
@@ -32,6 +32,7 @@ Swap:      4 GiB total (2 GiB per drive)
 ```
 
 ### Storage Layout
+
 ```
 Storage Type:    NVMe SSD
 Drive Count:     2x 419.2GB NVMe drives
@@ -54,6 +55,7 @@ Partitions:
 ```
 
 ### ZFS Pool
+
 ```
 Pool Name:       data
 Size:           384GB
@@ -67,6 +69,7 @@ Compression:    Available
 ## 🌐 Network Configuration
 
 ### Interfaces
+
 ```
 Interface:  eno1 (active)
 MAC:        a4:bf:01:43:ee:86
@@ -80,6 +83,7 @@ State:      DOWN (available for bonding/backup)
 ```
 
 ### IP Configuration
+
 ```
 IPv4:       54.39.102.214/24
 Gateway:    54.39.102.254
@@ -89,6 +93,7 @@ DNS:        Automatic via DHCP
 ```
 
 ### Network Performance
+
 ```
 Latency to Google:     1.14ms average
 Packet Loss:          0%
@@ -99,6 +104,7 @@ Location:             OVH datacenter
 ## 💿 Operating System
 
 ### Proxmox VE
+
 ```
 Version:        9.0.10
 Repository ID:  deb1ca707ec72a89
@@ -108,6 +114,7 @@ Architecture:   x86_64
 ```
 
 ### System Services
+
 ```
 pve-cluster:    ✅ Active (cluster filesystem)
 pveproxy:       ✅ Active (web interface)
@@ -116,6 +123,7 @@ pvestatd:       ✅ Active (statistics daemon)
 ```
 
 ### Storage Pools
+
 ```
 local:          Local storage (images, backups)
 data:           ZFS pool (VMs, containers)
@@ -124,6 +132,7 @@ data:           ZFS pool (VMs, containers)
 ## 📊 Resource Allocation Planning
 
 ### Available Resources
+
 ```
 CPU Cores:      8 (reserve 1-2 for host)
 RAM:           ~60GB (reserve 2-4GB for host)
@@ -132,6 +141,7 @@ Network:       1 Gbps shared
 ```
 
 ### Recommended VM Sizing
+
 ```
 Small VM:      1-2 cores, 1-2GB RAM, 20GB disk
 Medium VM:     2-4 cores, 4-8GB RAM, 50GB disk
@@ -139,6 +149,7 @@ Large VM:      4-6 cores, 8-16GB RAM, 100GB disk
 ```
 
 ### Container Recommendations
+
 ```
 Lightweight:   0.5-1 core, 512MB-1GB RAM, 5-10GB disk
 Standard:      1-2 cores, 1-2GB RAM, 10-20GB disk
@@ -148,6 +159,7 @@ Database:      2-4 cores, 4-8GB RAM, 50GB+ disk
 ## 🔧 Management Access
 
 ### SSH Access
+
 ```bash
 # Primary method
 ssh root@54.39.102.214
@@ -159,6 +171,7 @@ ssh -i ~/.ssh/id_ed25519 root@54.39.102.214
 ```
 
 ### Web Interface
+
 ```
 URL:            https://54.39.102.214:8006
 Username:       root
@@ -167,6 +180,7 @@ Certificate:    Self-signed (browser warning expected)
 ```
 
 ### API Access
+
 ```bash
 # Using pvesh command-line tool
 ssh root@54.39.102.214 "pvesh get /nodes"
@@ -177,6 +191,7 @@ ssh root@54.39.102.214 "pvesh get /version"
 ## 🛡️ Security Configuration
 
 ### Firewall
+
 ```
 Status:         Proxmox firewall available
 Default:        Proxmox default rules
@@ -184,6 +199,7 @@ Recommendation: Configure firewall rules per VM/container
 ```
 
 ### SSH Security
+
 ```
 Key Type:       ED25519 (modern, secure)
 Passphrase:     Required (stored in ssh-agent)
@@ -192,6 +208,7 @@ Port:          22 (default)
 ```
 
 ### Updates
+
 ```
 Repository:     Proxmox VE (stable)
 Security:       Automatic security updates recommended
@@ -201,6 +218,7 @@ Schedule:       Manual updates preferred for production
 ## 📈 Monitoring & Maintenance
 
 ### Health Checks
+
 ```bash
 # System status
 ssh root@54.39.102.214 "hostname && uptime && free -h"
@@ -216,6 +234,7 @@ ssh root@54.39.102.214 "ip addr && ip route"
 ```
 
 ### Log Locations
+
 ```
 System Logs:        /var/log/syslog
 Proxmox Logs:       /var/log/pve/
@@ -225,6 +244,7 @@ Container Logs:     /var/log/lxc/
 ```
 
 ### Backup Strategy
+
 ```
 Built-in:       Proxmox Backup Server integration available
 Manual:         vzdump command for VM/container backups
@@ -235,6 +255,7 @@ Frequency:      Daily for production, weekly for development
 ## 🚀 Deployment Scenarios
 
 ### Ideal Use Cases
+
 ```
 ✅ Multiple isolated development environments
 ✅ CI/CD runners and build agents
@@ -247,6 +268,7 @@ Frequency:      Daily for production, weekly for development
 ```
 
 ### Performance Expectations
+
 ```
 VM Boot Time:       30-60 seconds
 Container Start:    2-5 seconds
@@ -256,8 +278,31 @@ CPU Performance:    Excellent (Xeon E3)
 Memory:            Abundant (64GB)
 ```
 
+## Current Status Snapshot (Sept 2025)
+
+- Node `neve` is online and healthy; no QEMU VMs or LXC containers are currently present on the host.
+- Verify quickly:
+
+```bash
+ssh root@54.39.102.214 "pvesh get /nodes/neve/qemu --output-format json && echo --- && pvesh get /nodes/neve/lxc --output-format json"
+# => [] and []
+```
+
+- Zitadel is currently serving from a different host/IP. Check where DNS points:
+
+```bash
+dig +short auth.wenzelarifiandi.com A | tail -n 1
+```
+
+When the k3s master VM is provisioned on `neve`, install operations add‑ons:
+
+```bash
+bash scripts/k8s/setup-argo-portainer.sh
+sudo bash scripts/k8s/export-kubeconfig-for-lens.sh /home/ubuntu/k3s.yaml
+```
+
 ---
 
-*Last updated: September 19, 2025*
-*Installation: Fresh Proxmox VE 9.0.10*
-*Hardware: Intel Xeon E3-1270 v6 | 64GB RAM | 2x 419GB NVMe RAID1*
+_Last updated: September 19, 2025_
+_Installation: Fresh Proxmox VE 9.0.10_
+_Hardware: Intel Xeon E3-1270 v6 | 64GB RAM | 2x 419GB NVMe RAID1_

@@ -3,7 +3,7 @@ output "postgresql_vm" {
   value = {
     id     = module.postgresql_vm.vm_id
     name   = module.postgresql_vm.vm_name
-    ip     = module.postgresql_vm.vm_ip
+  ip     = var.postgres_static_cidr != "" ? replace(var.postgres_static_cidr, "/.*", "") : module.postgresql_vm.vm_ip
     ssh    = module.postgresql_vm.ssh_host
     specs  = "4 cores, 12GB RAM, 100GB disk on ZFS"
     role   = "database"
@@ -15,7 +15,7 @@ output "k8s_vm" {
   value = {
     id     = module.k8s_vm.vm_id
     name   = module.k8s_vm.vm_name
-    ip     = module.k8s_vm.vm_ip
+  ip     = var.k8s_static_cidr != "" ? replace(var.k8s_static_cidr, "/.*", "") : module.k8s_vm.vm_ip
     ssh    = module.k8s_vm.ssh_host
     specs  = "4 cores, 8GB RAM, 40GB disk on ZFS"
     role   = "kubernetes"

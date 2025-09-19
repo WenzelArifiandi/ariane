@@ -46,8 +46,9 @@ check_dependencies() {
         error "Ansible not found. Please install Ansible."
     fi
 
+    # terraform.tfvars is optional if TF_VAR_* envs are provided
     if [[ ! -f "$TERRAFORM_DIR/terraform.tfvars" ]]; then
-        error "terraform.tfvars not found. Copy terraform.tfvars.example and configure it."
+        warning "terraform.tfvars not found. Will rely on TF_VAR_* env vars if set."
     fi
 
     success "Dependencies check passed"
@@ -86,6 +87,24 @@ terraform_plan() {
 terraform_apply() {
     log "Applying Terraform configuration..."
     cd "$TERRAFORM_DIR"
+    # Export TF_VAR_* from terraform.tfvars if present
+    if [[ -f "terraform.tfvars" ]]; then
+        # shellcheck disable=SC1091
+        source "$SCRIPT_DIR/../scripts/tf/export-tfvars-env.sh" "$TERRAFORM_DIR/terraform.tfvars" || true
+    fi
+
+    # If token envs are present, unset user/password envs to prevent mixed auth
+    if [[ -n "${TF_VAR_proxmox_api_token_id:-}" && -n "${TF_VAR_proxmox_api_token_secret:-}" ]]; then
+        unset TF_VAR_proxmox_user TF_VAR_proxmox_password || true
+    fi
+
+    # Run Proxmox auth preflight to fail fast on 401
+    if [[ -f "$SCRIPT_DIR/../scripts/check-proxmox-auth.sh" ]]; then
+        log "Preflighting Proxmox API auth..."
+        if ! bash "$SCRIPT_DIR/../scripts/check-proxmox-auth.sh"; then
+            error "Proxmox API authentication failed. See above output. Ensure TF_VAR_proxmox_api_token_id/secret or user/password are set."
+        fi
+    fi
     terraform init
     terraform apply -auto-approve
     success "Terraform apply completed"
@@ -95,6 +114,12 @@ terraform_apply() {
 
     log "Terraform outputs:"
     terraform output
+
+    # Verify VMs are reachable and cloud-init finished
+    if [[ -f "$SCRIPT_DIR/scripts/verify-vms.sh" ]]; then
+        log "Verifying VM readiness (SSH + cloud-init)..."
+        bash "$SCRIPT_DIR/scripts/verify-vms.sh" || warning "Verification reported issues; proceeding to Ansible may fail."
+    fi
 }
 
 terraform_destroy() {

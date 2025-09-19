@@ -90,6 +90,12 @@ variable "ip_config" {
   default     = "dhcp"
 }
 
+variable "bridge" {
+  description = "Linux bridge to attach VM NIC to (e.g., vmbr0 or vmbr1)"
+  type        = string
+  default     = "vmbr0"
+}
+
 variable "tags" {
   description = "Tags for the VM"
   type        = string

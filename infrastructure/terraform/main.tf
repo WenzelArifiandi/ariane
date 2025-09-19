@@ -9,10 +9,11 @@ module "postgresql_vm" {
   cores            = 4
   memory           = 12288  # 12GB RAM
   disk_size        = "100G"
-  storage_pool     = "data/postgres"
+  storage_pool     = "local"
   ssh_public_key   = var.ssh_public_key
   default_password = "changeme123"
-  ip_config        = "dhcp"
+  ip_config        = (var.postgres_static_cidr != "" && var.net_gateway != "") ? "ip=${var.postgres_static_cidr},gw=${var.net_gateway}" : "dhcp"
+  bridge           = var.vm_bridge
   tags             = "postgres,database,cell-v0"
 
   # Database-specific optimizations
@@ -32,10 +33,11 @@ module "k8s_vm" {
   cores            = 4
   memory           = 8192   # 8GB RAM
   disk_size        = "40G"
-  storage_pool     = "data/apps"
+  storage_pool     = "local"
   ssh_public_key   = var.ssh_public_key
   default_password = "changeme123"
-  ip_config        = "dhcp"
+  ip_config        = (var.k8s_static_cidr != "" && var.net_gateway != "") ? "ip=${var.k8s_static_cidr},gw=${var.net_gateway}" : "dhcp"
+  bridge           = var.vm_bridge
   tags             = "k3s,zitadel,apps,cell-v0"
 
   # App VM optimizations
@@ -50,8 +52,9 @@ module "k8s_vm" {
 # Create enhanced Ansible inventory
 resource "local_file" "ansible_inventory" {
   content = templatefile("${path.module}/templates/inventory.tpl", {
-    postgresql_ip = module.postgresql_vm.vm_ip
-    k8s_ip        = module.k8s_vm.vm_ip
+    postgresql_ip = var.postgres_static_cidr != "" ? replace(var.postgres_static_cidr, "/.*", "") : module.postgresql_vm.vm_ip
+    k8s_ip        = var.k8s_static_cidr != "" ? replace(var.k8s_static_cidr, "/.*", "") : module.k8s_vm.vm_ip
+    proxmox_host  = var.proxmox_host_ip
   })
   filename = "../ansible/inventory/hosts.yml"
 

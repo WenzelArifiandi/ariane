@@ -6,6 +6,7 @@ all:
           ansible_host: ${postgresql_ip}
           ansible_user: ubuntu
           ansible_ssh_private_key_file: ~/.ssh/id_ed25519
+          ansible_ssh_common_args: '-o StrictHostKeyChecking=no -o ProxyJump=root@${proxmox_host}'
 
           # PostgreSQL configuration
           postgres_version: "16"
@@ -30,6 +31,7 @@ all:
           ansible_host: ${k8s_ip}
           ansible_user: ubuntu
           ansible_ssh_private_key_file: ~/.ssh/id_ed25519
+          ansible_ssh_common_args: '-o StrictHostKeyChecking=no -o ProxyJump=root@${proxmox_host}'
 
           # K3s configuration
           k3s_role: "master"
@@ -51,7 +53,6 @@ all:
       vars:
         # Global settings
         ansible_python_interpreter: /usr/bin/python3
-        ansible_ssh_common_args: '-o StrictHostKeyChecking=no'
 
         # Cell v0 specific
         cell_name: "v0"

@@ -9,7 +9,7 @@ resource "proxmox_vm_qemu" "ubuntu_vm" {
   memory                   = var.memory
   balloon                  = var.ballooning ? (var.memory_min != null ? var.memory_min : var.memory / 2) : 0
   sockets                  = 1
-  cpu                      = var.cpu_type
+  cpu_type                 = var.cpu_type
   numa                     = false
   hotplug                  = "network,disk,usb"
 
@@ -20,23 +20,23 @@ resource "proxmox_vm_qemu" "ubuntu_vm" {
 
   # Network configuration
   network {
+    id       = 0
     model    = "virtio"
-    bridge   = "vmbr0"
+    bridge   = var.bridge
     firewall = true
   }
 
-  # Disk configuration - enterprise settings
+  # Disk configuration (3.x syntax)
   disks {
     scsi {
       scsi0 {
         disk {
           size       = var.disk_size
           storage    = var.storage_pool
-          type       = "disk"
           format     = "raw"
           cache      = var.cache_mode
-          discard    = var.discard ? "on" : "off"
-          ssd        = var.ssd_emulation ? 1 : 0
+          discard    = var.discard
+          emulatessd = var.ssd_emulation
           iothread   = true
           asyncio    = "native"
         }
@@ -45,11 +45,11 @@ resource "proxmox_vm_qemu" "ubuntu_vm" {
   }
 
   # SCSI controller optimization
-  scsihw = "virtio-scsi-single"
+  scsihw = "virtio-scsi-pci"
 
   # Cloud-init configuration
   os_type                  = "cloud-init"
-  cloudinit_cdrom_storage = "local"
+  cicustom                = "vendor=local:snippets/vendor.yml"
 
   # Cloud-init settings
   ciuser     = "ubuntu"
