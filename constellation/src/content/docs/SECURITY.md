@@ -4,16 +4,6 @@ description: "# Security Policy"
 slug: security
 ---
 
-
-
-
-
-
-
-
-
-
-
 # Security Policy
 
 ## 🛡️ Security Overview

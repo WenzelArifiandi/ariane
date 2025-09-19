@@ -4,16 +4,6 @@ description: "# GitHub Actions Setup Guide"
 slug: setup
 ---
 
-
-
-
-
-
-
-
-
-
-
 # GitHub Actions Setup Guide
 
 This guide will help you configure GitHub Actions for automatic deployment to Oracle Cloud.

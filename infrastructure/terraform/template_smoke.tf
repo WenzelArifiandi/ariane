@@ -10,10 +10,9 @@ resource "proxmox_vm_qemu" "template_smoke" {
   target_node = var.target_node
   clone       = "ubuntu-24.04-template"
   full_clone  = true
-  scsihw      = "virtio-scsi-pci"
+  scsihw      = "virtio-scsi-single"
   bootdisk    = "scsi0"
-
-  boot = "order=scsi0"
+  boot        = "order=scsi0"
 
   # Minimal resources for testing
   sockets = 1
@@ -25,6 +24,18 @@ resource "proxmox_vm_qemu" "template_smoke" {
     id     = 0
     model  = "virtio"
     bridge = var.vm_bridge
+  }
+
+  disks {
+    scsi {
+      scsi0 {
+        disk {
+          size    = "3584M"
+          storage = var.storage_pool
+          discard = true
+        }
+      }
+    }
   }
 
   # Allow overriding the network config so we can pin a static IP during smoke tests
@@ -58,6 +69,27 @@ resource "proxmox_vm_qemu" "template_smoke" {
   }
 
   tags = "smoke-test,temporary"
+}
+
+resource "null_resource" "attach_scsi0" {
+  count = var.enable_smoke_test ? 1 : 0
+
+  triggers = {
+    vmid                = proxmox_vm_qemu.template_smoke[0].vmid
+    host                = var.proxmox_host_ip
+    golden_template_rev = var.force_rebuild_template
+  }
+
+  provisioner "local-exec" {
+    command = <<-EOT
+      set -euo pipefail
+      VMID=${self.triggers.vmid}
+      HOST=${self.triggers.host}
+      ssh -o StrictHostKeyChecking=no root@$HOST "set -euo pipefail; CONF=/etc/pve/qemu-server/$VMID.conf; DISK=\$(awk -F': ' '/^unused[0-9]+: /{print \$2; exit}' \"\$CONF\" || true); if [ -z \"\$DISK\" ]; then exit 0; fi; qm stop $VMID >/dev/null 2>&1 || true; qm set $VMID --scsihw virtio-scsi-single --scsi0 \"\$DISK\" --boot order=scsi0 --bootdisk scsi0; sed -i '/^unused[0-9]\\+: .*/d' \"\$CONF\" || true; qm start $VMID >/dev/null 2>&1 || true"
+    EOT
+  }
+
+  depends_on = [proxmox_vm_qemu.template_smoke]
 }
 
 output "template_smoke_ip" {

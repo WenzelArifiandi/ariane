@@ -4,16 +4,6 @@ description: "# 🏆 Enterprise Security Automation Setup Guide"
 slug: security_automation_setup
 ---
 
-
-
-
-
-
-
-
-
-
-
 # 🏆 Enterprise Security Automation Setup Guide
 
 ## Overview

@@ -1,13 +1,10 @@
 export default {
-  title: 'Ariane',
-  logo: {
-    src: './src/assets/logo.svg',
-    alt: 'Ariane Logo'
-  },
+  title: 'Ariane Docs',
+  // logo: { src: '/logo.svg', alt: 'Ariane' }, // Removed logo to bypass ImageNotFound error
+
+  // Sidebar expects an array. Autogenerate by directory name under src/content/
+  // This must match `src/content/docs`
   sidebar: [
-    {
-      label: 'Docs', // Added label
-      autogenerate: { directory: 'docs' }
-    }
+    { label: 'Docs', autogenerate: { directory: 'docs' } }
   ],
 };

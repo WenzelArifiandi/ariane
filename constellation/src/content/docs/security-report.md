@@ -10,16 +10,6 @@ slug: "security-report"
 
 
 
-
-
-
-
-
-
-
-
-
-
 ## ⚠️ Security Notice
 
 **IMPORTANT**: For critical security vulnerabilities, please use [GitHub Security Advisories](https://github.com/WenzelArifiandi/ariane/security/advisories/new) instead of this public issue template.

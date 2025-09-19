@@ -38,7 +38,7 @@ function walk(dir) {
     if (statSync(fullPath).isDirectory()) {
       walk(fullPath);
     } else if (entry.endsWith(".md") || entry.endsWith(".mdx")) {
-      // Flatten: copy all markdown files directly into src/content/all/
+      // Flatten: copy all markdown files directly into src/content/docs/
       const dest = join(target, basename(fullPath));
       mkdirSync(dirname(dest), { recursive: true });
       copyFileSync(fullPath, dest);
