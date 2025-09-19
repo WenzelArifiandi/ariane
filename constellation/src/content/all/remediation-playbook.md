@@ -4,6 +4,14 @@ description: "# ZITADEL Docker Remediation Quick Commands"
 slug: "remediation-playbook"
 ---
 
+
+
+
+
+
+
+
+
 # ZITADEL Docker Remediation Quick Commands
 
 Copy/paste friendly sequence. Run from `~/zitadel` on the Oracle host.

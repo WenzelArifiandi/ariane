@@ -4,6 +4,14 @@ description: "# Proxmox Bare Metal Server - Detailed Specifications"
 slug: "proxmox-server"
 ---
 
+
+
+
+
+
+
+
+
 # Proxmox Bare Metal Server - Detailed Specifications
 
 > **Server Name**: `neve` > **Public IP**: `54.39.102.214` > **Provider**: OVH Dedicated Server

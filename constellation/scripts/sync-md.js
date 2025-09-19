@@ -12,7 +12,7 @@ import { fileURLToPath } from "node:url";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 const repoRoot = join(__dirname, "../../..");
-const target = join(__dirname, "../src/content/all");
+const target = join(__dirname, "../src/content/docs");
 
 // Clean out old synced files
 rmSync(target, { recursive: true, force: true });

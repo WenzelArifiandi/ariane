@@ -9,7 +9,7 @@ const __dirname = path.dirname(__filename);
 
 // CONFIG
 const ROOT = path.resolve(__dirname, "..", "constellation"); // project root (adjust if script lives elsewhere)
-const CONTENT_DIR = path.join(ROOT, "src", "content", "all");
+const CONTENT_DIR = path.join(ROOT, "src", "content", "docs");
 const GLOB_EXTS = new Set([".md", ".mdx"]);
 
 // tiny yaml helpers (no deps)

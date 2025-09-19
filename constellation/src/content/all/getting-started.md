@@ -6,6 +6,14 @@ slug: "getting-started"
 
 
 
+
+
+
+
+
+
+
+
 # Getting Started
 
 Welcome to the Ariane documentation! This guide will help you set up, deploy, and manage your enterprise infrastructure using Astro Starlight, Vercel, and GitHub Actions.

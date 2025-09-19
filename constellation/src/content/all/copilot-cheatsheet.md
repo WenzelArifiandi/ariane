@@ -4,6 +4,14 @@ description: "# Ariane — AI Agent Quick Cheat Sheet"
 slug: "copilot-cheatsheet"
 ---
 
+
+
+
+
+
+
+
+
 # Ariane — AI Agent Quick Cheat Sheet
 
 Keep `.github/copilot-instructions.md` as the canonical long-form. This is a quick reference for day‑to‑day work.

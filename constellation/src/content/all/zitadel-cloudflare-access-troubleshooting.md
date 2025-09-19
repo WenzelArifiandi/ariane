@@ -4,6 +4,14 @@ description: "# Zitadel + Cloudflare Access: Fix “code 5 Not Found”"
 slug: "zitadel-cloudflare-access-troubleshooting"
 ---
 
+
+
+
+
+
+
+
+
 # Zitadel + Cloudflare Access: Fix “code 5 Not Found”
 
 The error “code 5 Not Found” during sign-in usually means the OIDC app configuration in Zitadel does not match what Cloudflare Access expects. This is almost always a misconfigured Redirect URI or an incorrect Client ID.

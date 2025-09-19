@@ -4,6 +4,14 @@ description: "# Zitadel Authentication Server"
 slug: readme
 ---
 
+
+
+
+
+
+
+
+
 # Zitadel Authentication Server
 
 This directory contains the configuration for the Zitadel authentication server used by the Ariane project.

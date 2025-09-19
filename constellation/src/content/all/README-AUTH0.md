@@ -4,6 +4,14 @@ description: "# Auth0 Approval Flow (Studio + Site)"
 slug: "readme-auth0"
 ---
 
+
+
+
+
+
+
+
+
 # Auth0 Approval Flow (Studio + Site)
 
 This adds a simple bridge so approving a request in Sanity also marks the user as approved in Auth0 (via app_metadata).

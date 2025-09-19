@@ -4,6 +4,14 @@ description: "# Zitadel Profile Update Fix (COMMAND-2M0fs)"
 slug: "zitadel-projection-fix"
 ---
 
+
+
+
+
+
+
+
+
 # Zitadel Profile Update Fix (COMMAND-2M0fs)
 
 **Date:** September 16, 2025

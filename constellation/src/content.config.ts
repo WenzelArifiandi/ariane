@@ -1,13 +1,9 @@
-import { defineCollection, z } from "astro:content";
-import { docsSchema } from "@astrojs/starlight/schema";
+import { defineCollection } from 'astro:content';
+import { docsSchema } from '@astrojs/starlight/schema';
 
-const docs = defineCollection({ type: "content", schema: docsSchema() });
-const all = defineCollection({
-  type: "content", // Ensure @astrojs/content is installed
-  schema: z.object({
-    title: z.string(),
-    description: z.string().optional(),
-  }),
+const docs = defineCollection({
+  type: 'content',
+  schema: docsSchema(),
 });
 
-export const collections = { docs, all };
+export const collections = { docs };

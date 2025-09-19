@@ -4,6 +4,14 @@ description: "# Backblaze B2 Setup for PostgreSQL Backups"
 slug: backblaze_b2
 ---
 
+
+
+
+
+
+
+
+
 # Backblaze B2 Setup for PostgreSQL Backups
 
 This guide configures Backblaze B2 cloud storage for automated PostgreSQL backups using pgBackRest.

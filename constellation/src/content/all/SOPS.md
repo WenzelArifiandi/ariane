@@ -4,6 +4,14 @@ description: "# SOPS Encryption Setup for Cell v0"
 slug: sops
 ---
 
+
+
+
+
+
+
+
+
 # SOPS Encryption Setup for Cell v0
 
 This directory uses SOPS (Secrets OPerationS) for encrypting sensitive configuration values.

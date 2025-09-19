@@ -1,8 +1,16 @@
 ---
 title: Initialize a ZITADEL User (Fix "not initialized" errors)
-description: "# Initialize a ZITADEL User (Fix \"not initialized\" errors)"
+description: "# Initialize a ZITADEL User (Fix \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"not initialized\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\" errors)"
 slug: "zitadel-user-initialization"
 ---
+
+
+
+
+
+
+
+
 
 # Initialize a ZITADEL User (Fix "not initialized" errors)
 

@@ -4,6 +4,14 @@ description: "# Cloudflare API Token Setup"
 slug: cloudflare_api
 ---
 
+
+
+
+
+
+
+
+
 # Cloudflare API Token Setup
 
 This guide walks you through creating a Cloudflare API token for cert-manager to automatically manage Let's Encrypt certificates via DNS-01 challenge.

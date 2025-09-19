@@ -4,6 +4,14 @@ description: "# Security Auto-Fix Script"
 slug: "security-autofix"
 ---
 
+
+
+
+
+
+
+
+
 # Security Auto-Fix Script
 
 This script automatically fetches CodeQL security alerts from GitHub and applies safe, conservative fixes to resolve common vulnerability patterns in TypeScript/JavaScript code.
