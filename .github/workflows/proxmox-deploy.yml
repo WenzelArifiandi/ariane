@@ -4,9 +4,9 @@ on:
   workflow_dispatch:
     inputs:
       action:
-        description: 'Action to perform'
+        description: "Action to perform"
         required: true
-        default: 'plan'
+        default: "plan"
         type: choice
         options:
           - plan
@@ -14,7 +14,7 @@ on:
           - apply-pbs
           - destroy
       target_vm:
-        description: 'Target VM (optional, for single VM operations)'
+        description: "Target VM (optional, for single VM operations)"
         required: false
         type: choice
         options:
@@ -38,7 +38,7 @@ jobs:
     permissions:
       contents: read
       pull-requests: write
-    
+
     defaults:
       run:
         working-directory: infrastructure
@@ -85,12 +85,12 @@ jobs:
           path: infrastructure/terraform/tfplan.txt
 
       - name: Terraform Apply (if requested)
-        if: inputs.action == 'apply'
+        if: inputs.action == 'apply' || inputs.action == 'apply-pbs'
         working-directory: infrastructure/terraform
         run: terraform apply -input=false tfplan
 
       - name: Wait for VMs to be ready
-        if: inputs.action == 'apply'
+        if: inputs.action == 'apply' || inputs.action == 'apply-pbs'
         run: sleep 60
 
       - name: Test Ansible connectivity
@@ -98,19 +98,19 @@ jobs:
         working-directory: infrastructure/ansible
         run: |
           # Test connectivity to all hosts
-          ansible all -i inventory/hosts.yml -m ping --ssh-common-args='-o ConnectTimeout=10'
+          ansible all -i inventory/hosts.yml -m ping --ssh-common-args='-o ConnectTimeout=10' | tee connectivity-test.log
 
       - name: Run Ansible for PBS
         if: inputs.action == 'apply' || inputs.action == 'apply-pbs'
         working-directory: infrastructure/ansible
         run: |
-          ansible-playbook -i inventory/hosts.yml playbooks/pbs.yml
+          ansible-playbook -i inventory/hosts.yml playbooks/pbs.yml | tee pbs-deployment.log
 
       - name: Run Full Ansible Deployment
         if: inputs.action == 'apply'
         working-directory: infrastructure/ansible
         run: |
-          ansible-playbook -i inventory/hosts.yml playbooks/site.yml
+          ansible-playbook -i inventory/hosts.yml playbooks/site.yml | tee full-deployment.log
 
       - name: Terraform Destroy (if requested)
         if: inputs.action == 'destroy'
@@ -124,4 +124,4 @@ jobs:
           name: ansible-logs
           path: |
             infrastructure/ansible/*.log
-            ~/.ansible.log
+            infrastructure/terraform/tfplan.txt
