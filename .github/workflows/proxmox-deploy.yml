@@ -1,0 +1,127 @@
+name: "Proxmox Infrastructure Deployment"
+
+on:
+  workflow_dispatch:
+    inputs:
+      action:
+        description: 'Action to perform'
+        required: true
+        default: 'plan'
+        type: choice
+        options:
+          - plan
+          - apply
+          - apply-pbs
+          - destroy
+      target_vm:
+        description: 'Target VM (optional, for single VM operations)'
+        required: false
+        type: choice
+        options:
+          - all
+          - pbs
+          - postgres
+          - k3s
+
+env:
+  TF_IN_AUTOMATION: true
+  TF_VAR_proxmox_api_url: ${{ secrets.PROXMOX_API_URL }}
+  TF_VAR_proxmox_api_token_id: ${{ secrets.PROXMOX_API_TOKEN_ID }}
+  TF_VAR_proxmox_api_token_secret: ${{ secrets.PROXMOX_API_TOKEN_SECRET }}
+  TF_VAR_proxmox_host_ip: ${{ secrets.PROXMOX_HOST_IP }}
+  TF_VAR_ssh_public_key: ${{ secrets.VM_SSH_PUBLIC_KEY }}
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: prod
+    permissions:
+      contents: read
+      pull-requests: write
+    
+    defaults:
+      run:
+        working-directory: infrastructure
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@651471c36a6092792c552e8b1bef71e592b462d8 # v3.1.1
+        with:
+          terraform_version: 1.9.0
+
+      - name: Setup SSH for Proxmox
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.PROXMOX_SSH_PRIVATE_KEY }}" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          ssh-keyscan -H ${{ secrets.PROXMOX_HOST_IP }} >> ~/.ssh/known_hosts
+
+      - name: Install Ansible
+        run: |
+          python3 -m pip install --upgrade pip
+          pip3 install ansible
+
+      - name: Terraform Init
+        working-directory: infrastructure/terraform
+        run: terraform init
+
+      - name: Terraform Validate
+        working-directory: infrastructure/terraform
+        run: terraform validate
+
+      - name: Terraform Plan
+        working-directory: infrastructure/terraform
+        run: |
+          terraform plan -input=false -out=tfplan
+          terraform show -no-color tfplan > tfplan.txt
+
+      - name: Upload Plan
+        uses: actions/upload-artifact@50769540e7f4bd5e21e526ee35c689e35e0d6874 # v4.4.0
+        with:
+          name: terraform-plan
+          path: infrastructure/terraform/tfplan.txt
+
+      - name: Terraform Apply (if requested)
+        if: inputs.action == 'apply'
+        working-directory: infrastructure/terraform
+        run: terraform apply -input=false tfplan
+
+      - name: Wait for VMs to be ready
+        if: inputs.action == 'apply'
+        run: sleep 60
+
+      - name: Test Ansible connectivity
+        if: inputs.action == 'apply' || inputs.action == 'apply-pbs'
+        working-directory: infrastructure/ansible
+        run: |
+          # Test connectivity to all hosts
+          ansible all -i inventory/hosts.yml -m ping --ssh-common-args='-o ConnectTimeout=10'
+
+      - name: Run Ansible for PBS
+        if: inputs.action == 'apply' || inputs.action == 'apply-pbs'
+        working-directory: infrastructure/ansible
+        run: |
+          ansible-playbook -i inventory/hosts.yml playbooks/pbs.yml
+
+      - name: Run Full Ansible Deployment
+        if: inputs.action == 'apply'
+        working-directory: infrastructure/ansible
+        run: |
+          ansible-playbook -i inventory/hosts.yml playbooks/site.yml
+
+      - name: Terraform Destroy (if requested)
+        if: inputs.action == 'destroy'
+        working-directory: infrastructure/terraform
+        run: terraform destroy -auto-approve
+
+      - name: Upload Ansible Logs
+        if: always()
+        uses: actions/upload-artifact@50769540e7f4bd5e21e526ee35c689e35e0d6874 # v4.4.0
+        with:
+          name: ansible-logs
+          path: |
+            infrastructure/ansible/*.log
+            ~/.ansible.log

@@ -3,7 +3,7 @@ all:
     database:
       hosts:
         postgres:
-          ansible_host: ${postgresql_ip}
+          ansible_host: ${replace(postgresql_ip, "/.*", "")}
           ansible_user: ubuntu
           ansible_ssh_private_key_file: ~/.ssh/id_ed25519
           ansible_ssh_common_args: '-o StrictHostKeyChecking=no -o ProxyJump=root@${proxmox_host}'
@@ -28,7 +28,7 @@ all:
     kubernetes:
       hosts:
         k3s-master:
-          ansible_host: ${k8s_ip}
+          ansible_host: ${replace(k8s_ip, "/.*", "")}
           ansible_user: ubuntu
           ansible_ssh_private_key_file: ~/.ssh/id_ed25519
           ansible_ssh_common_args: '-o StrictHostKeyChecking=no -o ProxyJump=root@${proxmox_host}'
@@ -40,7 +40,7 @@ all:
 
           # Zitadel configuration
           zitadel_domain: "auth.wenzelarifiandi.com"
-          zitadel_db_host: ${postgresql_ip}
+          zitadel_db_host: ${replace(postgresql_ip, "/.*", "")}
 
           # Monitoring
           prometheus_enabled: true
@@ -49,7 +49,7 @@ all:
     backup:
       hosts:
         etoile-pbs:
-          ansible_host: ${pbs_ip}
+          ansible_host: ${replace(pbs_ip, "/.*", "")}
           ansible_user: ubuntu
           ansible_ssh_private_key_file: ~/.ssh/id_ed25519
           ansible_ssh_common_args: '-o StrictHostKeyChecking=no -o ProxyJump=root@${proxmox_host}'
@@ -85,5 +85,5 @@ all:
         # Network security
         firewall_enabled: true
         postgres_allowed_hosts:
-          - ${k8s_ip}
+          - ${replace(k8s_ip, "/.*", "")}
           - "127.0.0.1"

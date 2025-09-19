@@ -1,0 +1,11 @@
+---
+# Configure Proxmox Backup Server (etoile-pbs)
+# Usage:
+#   cd infrastructure/ansible
+#   ansible-playbook -i inventory/hosts.yml playbooks/pbs.yml
+
+- name: Configure Proxmox Backup Server
+  hosts: backup
+  become: true
+  roles:
+    - pbs

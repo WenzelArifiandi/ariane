@@ -73,7 +73,7 @@ module "pbs_vm" {
   cpu_type         = "x86-64-v2"
   ssd_emulation    = true
   discard          = true
-  cache_mode       = "writeback"  # Better for backup workloads
+  cache_mode       = "none"  # Avoid QEMU start issues on some storage backends
 }
 
 # Create enhanced Ansible inventory
