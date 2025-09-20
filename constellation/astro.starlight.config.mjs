@@ -11,6 +11,7 @@ export default {
         { label: "Overview", link: "/" },
         { label: "Setup", link: "/setup" },
         { label: "README", link: "/readme" },
+        { label: "Constellation Management", link: "/constellation_management" },
       ]
     },
     {
