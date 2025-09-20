@@ -73,25 +73,26 @@ variable "cache_mode" {
   default     = "none"
 }
 
-variable "ssh_public_key" {
-  description = "SSH public key"
+variable "bridge" {
+  description = "Linux bridge to attach VM NIC to (e.g., vmbr0 or vmbr1)"
   type        = string
+  default     = "vmbr0"
 }
 
-variable "default_password" {
-  description = "Default password for the user"
-  type        = string
-  sensitive   = true
-}
-
-variable "ip_config" {
-  description = "IP configuration (DHCP or static)"
-  type        = string
-  default     = "dhcp"
+variable "nic_firewall" {
+  description = "Enable Proxmox firewall on NIC"
+  type        = bool
+  default     = false
 }
 
 variable "tags" {
   description = "Tags for the VM"
   type        = string
   default     = "terraform"
+}
+
+variable "macaddr" {
+  description = "Static MAC address for the VM NIC (optional)"
+  type        = string
+  default     = null
 }

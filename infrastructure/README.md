@@ -49,18 +49,38 @@ brew install terraform ansible sops age  # macOS
 ### 2. Required API Tokens
 
 **Cloudflare API Token** with permissions:
+
 - Zone:Zone:Read
 - Zone:DNS:Edit
 - Include specific zone: `wenzelarifiandi.com`
 
 **Backblaze B2 Credentials**:
+
 - Bucket: `ariane-postgres-backups`
 - Application Key with read/write access
 
 ### 3. Configure Secrets
 
+⚠️ **SECURITY: Never commit credentials to Git!**
+
 ```bash
-cd infrastructure/ansible
+cd infrastructure/terraform
+
+# Option 1: Use terraform.tfvars (local development)
+cp terraform.tfvars.example terraform.tfvars
+# Edit terraform.tfvars with actual credentials
+
+# Option 2: Use environment variables (recommended for CI/CD)
+# Prefer API token auth (recommended):
+export TF_VAR_proxmox_api_url="https://54.39.102.214:8006/api2/json"
+export TF_VAR_proxmox_api_token_id="root@pam!terraform"
+export TF_VAR_proxmox_api_token_secret="<SECRET>"
+# Or fallback to user/password:
+# export TF_VAR_proxmox_user="root@pam"
+# export TF_VAR_proxmox_password="<PASSWORD>"
+export TF_VAR_ssh_public_key="$(cat ~/.ssh/id_ed25519.pub)"
+
+cd ../ansible
 ./scripts/setup-sops.sh  # Generate encryption keys
 sops secrets/cell-v0.yml  # Add your API tokens and passwords
 ```
@@ -77,11 +97,52 @@ vim ../ansible/inventory/hosts.yml
 
 cd ../ansible
 ansible-playbook -i inventory/hosts.yml cell-v0.yml
+
+# Optional: Validate Proxmox auth before Terraform
+bash ../../scripts/check-proxmox-auth.sh
+
+# Tip: If you're storing creds in terraform.tfvars, the deploy script will
+# auto-export TF_VAR_* from it before running. You can also do it manually:
+# source ../../scripts/tf/export-tfvars-env.sh $(pwd)/terraform.tfvars
 ```
+
+## 🔒 Security Best Practices
+
+### GitHub Secrets for CI/CD
+
+Set these repository secrets for automated deployments:
+
+- `PROXMOX_PASSWORD` - Proxmox root password
+- `SSH_PUBLIC_KEY` - SSH public key for VM access
+- `SSH_PRIVATE_KEY` - SSH private key for Ansible
+- `SOPS_AGE_KEY` - AGE key for secrets encryption
+
+### Credential Management
+
+- **terraform.tfvars**: Git-ignored, contains sensitive Terraform variables
+- **secrets/cell-v0.yml**: SOPS-encrypted, safe to commit
+- **Environment variables**: Preferred for CI/CD pipelines
 
 ### 5. Update DNS
 
 Point `auth.wenzelarifiandi.com` to the Kubernetes VM IP address.
+
+### Current state vs target (Sept 2025)
+
+- Current: Proxmox `neve` online, but no QEMU VMs/LXCs present. Zitadel serves from another host/IP.
+- Target: Provision `db-postgres` and `k8s-master` VMs on `neve`, deploy Zitadel to k3s, then repoint DNS.
+
+Next steps:
+
+1. `terraform apply` to create VMs on `neve`.
+2. Update `ansible/inventory/hosts.yml` with VM IPs.
+3. `ansible-playbook -i inventory/hosts.yml cell-v0.yml` to configure DB, k3s, and apps.
+4. On `k8s-master`, install add‑ons for operations visibility:
+   ```bash
+   bash scripts/k8s/setup-argo-portainer.sh
+   sudo bash scripts/k8s/export-kubeconfig-for-lens.sh /home/ubuntu/k3s.yaml
+   ```
+5. Update DNS to the k3s ingress/LoadBalancer IP.
 
 ## 📂 Project Structure
 
@@ -135,6 +196,7 @@ qm template 9000
 ### 2. DNS Update (After Migration)
 
 Update DNS records to point to new server:
+
 ```
 auth.wenzelarifiandi.com A 54.39.102.214
 ```
@@ -144,11 +206,13 @@ auth.wenzelarifiandi.com A 54.39.102.214
 The migration process ensures zero downtime:
 
 1. **Backup Phase**
+
    - Stop Zitadel on Oracle Cloud (maintenance mode)
    - Create PostgreSQL dump
    - Backup configuration files
 
 2. **Restore Phase**
+
    - Deploy new infrastructure
    - Restore database to PostgreSQL VM
    - Configure Zitadel with restored data
@@ -161,15 +225,16 @@ The migration process ensures zero downtime:
 ## 📊 Resource Allocation
 
 | Component | Oracle Cloud | Proxmox Target | Improvement |
-|-----------|-------------|----------------|-------------|
-| CPU       | Shared      | 6 cores total  | Dedicated   |
-| RAM       | 956MB       | 12GB total     | 12.5x more |
-| Storage   | 45GB        | 120GB total    | 2.7x more  |
-| Network   | Shared      | 1Gbps          | Dedicated   |
+| --------- | ------------ | -------------- | ----------- |
+| CPU       | Shared       | 6 cores total  | Dedicated   |
+| RAM       | 956MB        | 12GB total     | 12.5x more  |
+| Storage   | 45GB         | 120GB total    | 2.7x more   |
+| Network   | Shared       | 1Gbps          | Dedicated   |
 
 ## 🛠️ Operations
 
 ### View Infrastructure
+
 ```bash
 cd terraform
 terraform show
@@ -177,6 +242,7 @@ terraform output
 ```
 
 ### Access VMs
+
 ```bash
 # SSH to VMs (IPs from terraform output)
 ssh ubuntu@<postgresql-ip>
@@ -184,6 +250,7 @@ ssh ubuntu@<zitadel-ip>
 ```
 
 ### Monitor Services
+
 ```bash
 cd ansible
 ansible all -i inventory/hosts.yml -m shell -a "systemctl status postgresql"
@@ -191,6 +258,7 @@ ansible all -i inventory/hosts.yml -m shell -a "docker compose ps"
 ```
 
 ### Logs
+
 ```bash
 # PostgreSQL logs
 ssh ubuntu@<postgresql-ip> "sudo tail -f /var/log/postgresql/postgresql-16-main.log"
@@ -212,6 +280,7 @@ ssh ubuntu@<zitadel-ip> "cd /opt/zitadel && docker compose logs -f zitadel"
 ### Common Issues
 
 **Terraform fails with API error**
+
 ```bash
 # Check Proxmox API token permissions
 curl -k -H "Authorization: PVEAPIToken=root@pam!terraform:your-secret" \
@@ -219,12 +288,14 @@ curl -k -H "Authorization: PVEAPIToken=root@pam!terraform:your-secret" \
 ```
 
 **VMs don't get IP addresses**
+
 ```bash
 # Check cloud-init on VM
 ssh ubuntu@<vm-ip> "sudo cloud-init status"
 ```
 
 **Ansible connectivity issues**
+
 ```bash
 # Test connectivity
 cd ansible
@@ -232,6 +303,7 @@ ansible all -i inventory/hosts.yml -m ping
 ```
 
 **Migration fails**
+
 ```bash
 # Check Oracle Cloud connectivity
 ssh -i ~/.ssh/oracle_key_correct ubuntu@auth.wenzelarifiandi.com
@@ -240,13 +312,68 @@ ssh -i ~/.ssh/oracle_key_correct ubuntu@auth.wenzelarifiandi.com
 ### Recovery
 
 **Rollback migration**
+
 ```bash
 # Restart Oracle Cloud Zitadel
 ssh -i ~/.ssh/oracle_key_correct ubuntu@auth.wenzelarifiandi.com \
   "cd zitadel && docker-compose up -d zitadel"
 ```
 
-**Destroy and rebuild**
+## ❗ Terraform 401 Authentication Failure (Proxmox)
+
+If you see:
+
+```
+Error: 401 authentication failure
+with provider["registry.terraform.io/telmate/proxmox"], in provider "proxmox"
+```
+
+Fix it by using Proxmox API Token auth:
+
+1. In Proxmox UI: Datacenter → Permissions → API Tokens → Create token for `root@pam` with ID `terraform`.
+
+2. Create or edit `infrastructure/terraform.tfvars` (do not commit secrets):
+
+```hcl
+proxmox_api_url          = "https://54.39.102.214:8006/api2/json"
+proxmox_api_token_id     = "root@pam!terraform"
+proxmox_api_token_secret = "<SECRET>"
+# Optional fallback creds if not using token:
+# proxmox_user     = "root@pam"
+# proxmox_password = "<PASSWORD>"
+```
+
+3. Re-run:
+
+```bash
+cd infrastructure/terraform
+terraform init -upgrade
+terraform apply -auto-approve
+```
+
+Provider note: We pinned the `telmate/proxmox` provider to a stable version due to intermittent 401s on `3.0.1-rc1`. If your lockfile references a different version, reinitialize:
+
+```bash
+cd infrastructure/terraform
+terraform init -upgrade
+terraform providers
+```
+
+Auth precedence: When API token variables are set, we explicitly null-out `pm_user`/`pm_password` to avoid mixed auth. `deploy.sh` also unsets `TF_VAR_proxmox_user/password` when token envs are present.
+
+Or run the top-level apply which now performs a Proxmox auth preflight and auto-exports TF_VARs from your tfvars if present:
+
+```bash
+cd infrastructure
+./deploy.sh apply
+```
+
+Notes:
+
+- Ensure node time is correct (NTP) to avoid auth issues.
+- Self-signed certs are allowed via `pm_tls_insecure = true`.
+  **Destroy and rebuild**
+
 ```bash
 ./deploy.sh destroy
 ./deploy.sh apply
@@ -264,4 +391,4 @@ ssh -i ~/.ssh/oracle_key_correct ubuntu@auth.wenzelarifiandi.com \
 
 **Created**: September 19, 2025
 **Target**: Proxmox VE 9.0.10 (neve server)
-**Migration**: Oracle Cloud → Bare Metal**
+**Migration**: Oracle Cloud → Bare Metal\*\*

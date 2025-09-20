@@ -1,0 +1,89 @@
+name: Manual Proxmox Deployment
+
+on:
+  workflow_dispatch:
+    inputs:
+      action:
+        description: 'Deployment action (plan, apply, or destroy)'
+        required: true
+        default: 'plan'
+        type: 'choice'
+        options:
+          - plan
+          - apply
+          - destroy
+
+jobs:
+  deploy:
+    name: Deploy to Proxmox
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+
+      - name: Setup Ansible
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ansible sshpass
+
+      - name: Setup SSH for Proxmox Host
+        env:
+          PROXMOX_SSH_PRIVATE_KEY: ${{ secrets.PROXMOX_SSH_PRIVATE_KEY }}
+          PROXMOX_HOST_IP: ${{ secrets.PROXMOX_HOST_IP }}
+        run: |
+          mkdir -p ~/.ssh
+          echo "$PROXMOX_SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -H "$PROXMOX_HOST_IP" >> ~/.ssh/known_hosts
+
+      - name: Create Proxmox VM Template (if needed)
+        if: inputs.action == 'apply'
+        env:
+          PROXMOX_SSH_USER: ${{ secrets.PROXMOX_SSH_USER }}
+          PROXMOX_HOST_IP: ${{ secrets.PROXMOX_HOST_IP }}
+        run: |
+          ssh $PROXMOX_SSH_USER@$PROXMOX_HOST_IP "bash -c '
+          if ! qm status 9000 > /dev/null 2>&1; then
+            echo "Template 9000 not found. Creating it now..."
+            wget -O /var/lib/vz/template/iso/ubuntu-24.04-server-cloudimg-amd64.img https://cloud-images.ubuntu.com/releases/24.04/release/ubuntu-24.04-server-cloudimg-amd64.img && \
+            qm create 9000 --name ubuntu-24.04-template --memory 2048 --cores 2 --net0 virtio,bridge=vmbr0 && \
+            qm importdisk 9000 /var/lib/vz/template/iso/ubuntu-24.04-server-cloudimg-amd64.img data && \
+            qm set 9000 --scsihw virtio-scsi-pci --scsi0 data:vm-9000-disk-0 && \
+            qm set 9000 --boot c --bootdisk scsi0 && \
+            qm set 9000 --ide2 data:cloudinit && \
+            qm set 9000 --serial0 socket --vga serial0 && \
+            qm set 9000 --agent enabled=1 && \
+            qm template 9000
+          else
+            echo "VM/Template 9000 already exists. Skipping creation."
+          fi
+          '"
+      
+      - name: Run Terraform
+        id: terraform
+        working-directory: ./infrastructure/terraform
+        env:
+          TF_VAR_proxmox_api_url: ${{ secrets.PROXMOX_API_URL }}
+          TF_VAR_proxmox_user: ${{ secrets.PROXMOX_USER }}
+          TF_VAR_proxmox_password: ${{ secrets.PROXMOX_PASSWORD }}
+          TF_VAR_proxmox_api_token_id: ${{ secrets.PROXMOX_API_TOKEN_ID }}
+          TF_VAR_proxmox_api_token_secret: ${{ secrets.PROXMOX_API_TOKEN_SECRET }}
+          TF_VAR_ssh_public_key: ${{ secrets.VM_SSH_PUBLIC_KEY }}
+        run: |
+          terraform init
+          terraform ${{ inputs.action }} -auto-approve
+
+      - name: Run Ansible
+        if: inputs.action == 'apply'
+        working-directory: ./infrastructure/ansible
+        env:
+          ANSIBLE_HOST_KEY_CHECKING: "False"
+        run: |
+          echo "Waiting for VMs to be ready for Ansible..."
+          sleep 45
+          ansible-playbook -i inventory/hosts.yml playbooks/site.yml
+          ansible-playbook -i inventory/hosts.yml playbooks/pbs.yml

@@ -1,7 +1,9 @@
-# Proxmox Provider Configuration
-proxmox_api_url          = "https://54.39.102.214:8006/api2/json"
-proxmox_api_token_id     = "root@pam!terraform"
-proxmox_api_token_secret = "your-api-token-secret-here"
+# Proxmox Provider Configuration (use either API token OR user/password)
+proxmox_api_url             = "https://54.39.102.214:8006/api2/json"
+proxmox_api_token_id        = "root@pam!terraform"           # optional
+proxmox_api_token_secret    = "your-api-token-secret-here"    # optional
+# proxmox_user               = "root@pam"                      # optional (fallback)
+# proxmox_password           = "your-root-password-here"       # optional (fallback)
 
 # SSH Configuration
 ssh_public_key = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAI... your-public-key-here"

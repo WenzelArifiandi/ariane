@@ -1,0 +1,29 @@
+---
+# Cell v0 Complete Infrastructure Deployment
+- name: Deploy PostgreSQL Database
+  hosts: database
+  become: yes
+  roles:
+    - postgresql
+  tags:
+    - database
+    - postgres
+
+- name: Deploy K3s Kubernetes Cluster
+  hosts: kubernetes
+  become: yes
+  roles:
+    - k3s
+  tags:
+    - kubernetes
+    - k3s
+
+- name: Deploy Zitadel via Helm
+  hosts: kubernetes
+  become: no
+  roles:
+    - zitadel
+  tags:
+    - zitadel
+    - helm
+    - apps

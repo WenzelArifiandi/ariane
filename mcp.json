@@ -3,6 +3,6 @@
     "astro-docs": {
       "type": "http",
       "url": "https://mcp.docs.astro.build/mcp"
-    }
+    },
   }
 }

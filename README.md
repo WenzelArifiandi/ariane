@@ -55,6 +55,7 @@
 ## 🖥️ Infrastructure
 
 ### Proxmox Bare Metal Server
+
 - **Host**: `neve` (54.39.102.214)
 - **Hardware**: Intel Xeon E3-1270 v6 @ 3.8GHz (8 cores) | 64GB RAM | 2x 419GB NVMe RAID1
 - **OS**: Proxmox VE 9.0.10 on Debian 13
@@ -62,9 +63,39 @@
 - **Web UI**: [Proxmox Console](https://54.39.102.214:8006)
 - **SSH**: `ssh root@54.39.102.214`
 
-*See [ops/proxmox-server.md](ops/proxmox-server.md) for detailed specs and [CLAUDE.md](CLAUDE.md) for management workflows.*
+_See [ops/proxmox-server.md](ops/proxmox-server.md) for detailed specs and [CLAUDE.md](CLAUDE.md) for management workflows._
 
 ---
+
+## Current deployment reality (Sept 2025)
+
+- Proxmox host `neve` is online, but currently has no QEMU VMs or LXC containers running. Kubernetes (k3s) and the PostgreSQL VM are not yet provisioned here.
+- Zitadel is healthy and serving from a different host/IP.
+  - DNS now points `auth.wenzelarifiandi.com` to a non-neve IP.
+    ```bash
+    dig +short auth.wenzelarifiandi.com A | tail -n 1
+    # Example observed: 79.72.87.238
+    ```
+  - Proxmox shows no VMs/LXCs on `neve`:
+    ```bash
+    ssh root@54.39.102.214 "pvesh get /nodes/neve/qemu --output-format json && echo --- && pvesh get /nodes/neve/lxc --output-format json"
+    # => [] and []
+    ```
+
+Next steps to move Zitadel to `neve` (at a glance):
+
+- Provision VMs via Terraform, then configure with Ansible (see `infrastructure/` README).
+- On the k3s master VM, run the helper to install Argo CD, Portainer, and metrics-server; export kubeconfig for Lens:
+  ```bash
+  bash scripts/k8s/setup-argo-portainer.sh
+  sudo bash scripts/k8s/export-kubeconfig-for-lens.sh /home/ubuntu/k3s.yaml
+  ```
+- When ready, switch DNS for `auth.wenzelarifiandi.com` to the k3s ingress/LoadBalancer IP.
+
+See also:
+
+- `infrastructure/README.md` → provisioning and cutover
+- `scripts/k8s/README.md` → k3s add‑ons (Argo CD, Portainer, Lens, MetalLB/Ingress notes)
 
 ## Monorepo Overview
 

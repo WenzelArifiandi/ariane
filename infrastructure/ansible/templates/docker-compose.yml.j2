@@ -8,8 +8,10 @@ services:
     volumes:
       - ./zitadel.yaml:/config/zitadel.yaml:ro
       - ./defaults.yaml:/config/defaults.yaml:ro
+{% if include_local_db | default(false) %}
     depends_on:
       - db
+{% endif %}
     healthcheck:
       test:
         [
@@ -29,6 +31,7 @@ services:
     networks:
       - "zitadel"
 
+{%- if include_local_db | default(false) %}
   db:
     restart: "unless-stopped"
     image: postgres:16
@@ -48,9 +51,7 @@ services:
       - "data:/var/lib/postgresql/data:rw"
     networks:
       - "zitadel"
-    # External database - this container is used for local dev only
-    profiles:
-      - "local"
+{%- endif %}
 
   caddy:
     image: caddy:2-alpine
@@ -66,7 +67,6 @@ services:
       - "zitadel"
 
 volumes:
-  data:
   caddy_data:
   caddy_config:
 

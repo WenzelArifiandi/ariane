@@ -1,22 +1,26 @@
 auth.wenzelarifiandi.com {
-    reverse_proxy zitadel:8080
+    encode zstd gzip
+
+    handle_path /healthz {
+        respond 200 "OK"
+    }
+
+        reverse_proxy 127.0.0.1:8080
+
+    # optional: set your email for ACME notifications
+    {% if acme_email is defined and acme_email %}
+    tls {{ acme_email }}
+    {% endif %}
 
     # Security headers
     header {
-        # HSTS
         Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
-        # XSS Protection
         X-Content-Type-Options "nosniff"
         X-Frame-Options "DENY"
         X-XSS-Protection "1; mode=block"
-        # CSP
         Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; connect-src 'self'; frame-ancestors 'none';"
-        # Referrer Policy
         Referrer-Policy "strict-origin-when-cross-origin"
     }
-
-    # Enable compression
-    encode gzip
 
     # Logging
     log {
@@ -26,7 +30,7 @@ auth.wenzelarifiandi.com {
     }
 }
 
-# Redirect www to non-www
+# Redirect www to apex
 www.auth.wenzelarifiandi.com {
     redir https://auth.wenzelarifiandi.com{uri} permanent
 }

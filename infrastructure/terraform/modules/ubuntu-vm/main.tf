@@ -1,42 +1,43 @@
 resource "proxmox_vm_qemu" "ubuntu_vm" {
-  name                      = var.vm_name
-  target_node              = var.target_node
-  clone                    = var.template_name
-  full_clone               = true
+  name        = var.vm_name
+  target_node = var.target_node
+  clone       = var.template_name
+  full_clone  = true
 
   # Hardware configuration
-  cores                    = var.cores
-  memory                   = var.memory
-  balloon                  = var.ballooning ? (var.memory_min != null ? var.memory_min : var.memory / 2) : 0
-  sockets                  = 1
-  cpu                      = var.cpu_type
-  numa                     = false
-  hotplug                  = "network,disk,usb"
+  cores    = var.cores
+  memory   = var.memory
+  balloon  = var.ballooning ? (var.memory_min != null ? var.memory_min : var.memory / 2) : 0
+  sockets  = 1
+  cpu_type = var.cpu_type
+  numa     = false
+  hotplug  = "network,disk,usb"
 
   # Boot configuration
-  boot                     = "order=scsi0"
-  agent                    = 1
-  qemu_os                  = "l26"
+  boot    = "order=scsi0"
+  agent   = 1
+  qemu_os = "l26"
 
   # Network configuration
   network {
+    id       = 0
     model    = "virtio"
-    bridge   = "vmbr0"
-    firewall = true
+    bridge   = var.bridge
+    firewall = var.nic_firewall
+    macaddr  = var.macaddr
   }
 
-  # Disk configuration - enterprise settings
+  # Disk configuration (3.x syntax)
   disks {
     scsi {
       scsi0 {
         disk {
           size       = var.disk_size
           storage    = var.storage_pool
-          type       = "disk"
           format     = "raw"
           cache      = var.cache_mode
-          discard    = var.discard ? "on" : "off"
-          ssd        = var.ssd_emulation ? 1 : 0
+          discard    = var.discard
+          emulatessd = var.ssd_emulation
           iothread   = true
           asyncio    = "native"
         }
@@ -45,29 +46,25 @@ resource "proxmox_vm_qemu" "ubuntu_vm" {
   }
 
   # SCSI controller optimization
-  scsihw = "virtio-scsi-single"
-
-  # Cloud-init configuration
-  os_type                  = "cloud-init"
-  cloudinit_cdrom_storage = "local"
-
-  # Cloud-init settings
-  ciuser     = "ubuntu"
-  cipassword = var.default_password
-  sshkeys    = var.ssh_public_key
-  ipconfig0  = var.ip_config
+  scsihw = "virtio-scsi-pci"
 
   # Performance settings
-  onboot     = true
-  startup    = "order=3,up=30"
+  onboot  = true
+  startup = "order=3,up=30"
+
+  # Serial console for debugging
+  serial {
+    id   = 0
+    type = "socket"
+  }
+
+  vga {
+    type = "serial0"
+  }
 
   # Lifecycle management
   lifecycle {
-    ignore_changes = [
-      network,
-      cipassword,
-      startup,
-    ]
+    ignore_changes = [startup, boot, bootdisk, disks]
   }
 
   # Tags for organization

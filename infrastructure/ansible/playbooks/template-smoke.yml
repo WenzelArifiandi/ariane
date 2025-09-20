@@ -1,0 +1,188 @@
+---
+# Template Smoke Test Playbook
+# Validates the ubuntu-24.04-fix template before deploying production VMs
+
+- name: Template smoke test for ubuntu-24.04-fix
+  hosts: all
+  gather_facts: false
+  become: false
+  vars:
+    expected_ip_pattern: "10\\.98\\.0\\."
+    expected_interface: "ens18"
+    smoke_timeout: 600
+
+  tasks:
+    - name: Wait for SSH to be available
+      wait_for:
+        host: "{{ inventory_hostname }}"
+        port: 22
+        timeout: "{{ smoke_timeout }}"
+        delay: 10
+      delegate_to: localhost
+
+    - name: Test SSH connectivity
+      ping:
+      timeout: 30
+
+    - name: Check cloud-init status
+      command: cloud-init status --long
+      register: cloud_init_status
+      changed_when: false
+      retries: 10
+      delay: 30
+      until: "'status: done' in cloud_init_status.stdout"
+
+    - name: Assert cloud-init completed successfully
+      assert:
+        that:
+          - "'status: done' in cloud_init_status.stdout"
+        fail_msg: "Cloud-init not completed. Status: {{ cloud_init_status.stdout }}"
+        success_msg: "✅ Cloud-init completed successfully"
+
+    - name: Check network interface configuration
+      command: ip -br addr show
+      register: ip_addresses
+      changed_when: false
+
+    - name: Assert network interface has correct IP
+      assert:
+        that:
+          - ip_addresses.stdout is search(expected_interface + '\\s+UP')
+          - ip_addresses.stdout is search(expected_ip_pattern)
+        fail_msg: "Network interface {{ expected_interface }} not configured correctly. Output: {{ ip_addresses.stdout }}"
+        success_msg: "✅ Network interface {{ expected_interface }} configured with correct IP"
+
+    - name: Check qemu-guest-agent service
+      command: systemctl is-active qemu-guest-agent
+      register: qemu_agent_status
+      changed_when: false
+      failed_when: qemu_agent_status.stdout.strip() != 'active'
+
+    - name: Assert qemu-guest-agent is active
+      assert:
+        that:
+          - qemu_agent_status.stdout.strip() == 'active'
+        fail_msg: "QEMU guest agent not active: {{ qemu_agent_status.stdout }}"
+        success_msg: "✅ QEMU guest agent is active"
+
+    - name: Check serial console getty service
+      command: systemctl is-enabled serial-getty@ttyS0.service
+      register: serial_getty_status
+      changed_when: false
+      failed_when: serial_getty_status.stdout.strip() not in ['enabled', 'static']
+
+    - name: Assert serial console is enabled
+      assert:
+        that:
+          - serial_getty_status.stdout.strip() in ['enabled', 'static']
+        fail_msg: "Serial console not enabled: {{ serial_getty_status.stdout }}"
+        success_msg: "✅ Serial console is enabled"
+
+    - name: Test netplan configuration
+      command: netplan generate
+      changed_when: false
+      become: true
+
+    - name: Collect systemd-networkd status
+      command: systemctl status systemd-networkd --no-pager
+      register: networkd_status
+      changed_when: false
+      failed_when: false
+      become: true
+
+    - name: Tail systemd-networkd journal
+      command: journalctl -u systemd-networkd --no-pager -n 50
+      register: networkd_journal
+      changed_when: false
+      failed_when: false
+      become: true
+
+    - name: Show netplan status
+      command: netplan status
+      register: netplan_status
+      changed_when: false
+      failed_when: false
+      become: true
+
+    - name: Show current IP addresses
+      command: ip a
+      register: ip_detailed
+      changed_when: false
+      failed_when: false
+
+    - name: Collect qemu-guest-agent status
+      command: systemctl status qemu-guest-agent --no-pager
+      register: qga_status
+      changed_when: false
+      failed_when: false
+      become: true
+
+    - name: Tail qemu-guest-agent journal
+      command: journalctl -u qemu-guest-agent --no-pager -n 50
+      register: qga_journal
+      changed_when: false
+      failed_when: false
+      become: true
+
+    - name: Check SSH service is running
+      command: systemctl is-active ssh
+      register: ssh_status
+      changed_when: false
+      failed_when: ssh_status.stdout.strip() != 'active'
+
+    - name: Assert SSH service is active
+      assert:
+        that:
+          - ssh_status.stdout.strip() == 'active'
+        fail_msg: "SSH service not active: {{ ssh_status.stdout }}"
+        success_msg: "✅ SSH service is active"
+
+    - name: Check system can reach internet
+      uri:
+        url: "https://1.1.1.1"
+        method: HEAD
+        timeout: 10
+      delegate_to: "{{ inventory_hostname }}"
+
+    - name: Test DNS resolution
+      command: nslookup google.com
+      changed_when: false
+      timeout: 10
+
+    - name: Check disk space
+      command: df -h /
+      register: disk_space
+      changed_when: false
+
+    - name: Check available memory
+      command: free -h
+      register: memory_info
+      changed_when: false
+
+    - name: Display system information
+      debug:
+        msg:
+          - "✅ Template smoke test PASSED!"
+          - "System info:"
+          - "{{ disk_space.stdout_lines }}"
+          - "{{ memory_info.stdout_lines }}"
+          - "Network: {{ ip_addresses.stdout }}"
+          - "Detailed IP info: {{ ip_detailed.stdout_lines | default([]) }}"
+          - "systemd-networkd: {{ networkd_status.stdout_lines | default([]) }}"
+          - "networkd journal tail: {{ (networkd_journal.stdout_lines | default([])) + (networkd_journal.stderr_lines | default([])) }}"
+          - "netplan status: {{ (netplan_status.stdout_lines | default([])) + (netplan_status.stderr_lines | default([])) }}"
+          - "qemu-guest-agent: {{ (qga_status.stdout_lines | default([])) + (qga_status.stderr_lines | default([])) }}"
+          - "qemu-guest-agent journal: {{ (qga_journal.stdout_lines | default([])) + (qga_journal.stderr_lines | default([])) }}"
+          - "Cloud-init: {{ cloud_init_status.stdout.split('\n')[0] }}"
+
+    - name: Final smoke test summary
+      debug:
+        msg:
+          - "🎉 Template ubuntu-24.04-fix is ready for production deployment!"
+          - "✅ Network connectivity: PASS"
+          - "✅ Cloud-init completion: PASS"
+          - "✅ QEMU guest agent: PASS"
+          - "✅ Serial console: PASS"
+          - "✅ SSH service: PASS"
+          - "✅ Internet connectivity: PASS"
+          - "✅ DNS resolution: PASS"
