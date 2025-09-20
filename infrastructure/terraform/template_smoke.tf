@@ -11,8 +11,6 @@ resource "proxmox_vm_qemu" "template_smoke" {
   clone       = "ubuntu-24.04-template"
   full_clone  = true
   scsihw      = "virtio-scsi-single"
-  bootdisk    = "scsi0"
-  boot        = "order=scsi0"
 
   # Minimal resources for testing
   sockets = 1
@@ -24,18 +22,6 @@ resource "proxmox_vm_qemu" "template_smoke" {
     id     = 0
     model  = "virtio"
     bridge = var.vm_bridge
-  }
-
-  disks {
-    scsi {
-      scsi0 {
-        disk {
-          size    = "3584M"
-          storage = var.storage_pool
-          discard = true
-        }
-      }
-    }
   }
 
   # Allow overriding the network config so we can pin a static IP during smoke tests
@@ -62,6 +48,7 @@ resource "proxmox_vm_qemu" "template_smoke" {
   # Lifecycle management
   lifecycle {
     create_before_destroy = true
+    ignore_changes        = [boot, bootdisk, disks]
   }
 
   timeouts {
