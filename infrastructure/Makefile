@@ -2,7 +2,7 @@
 # Provides convenient commands for template testing and deployment
 
 # Configuration
-SMOKE_IP ?= 10.98.0.250
+SMOKE_IP ?= $(shell cd terraform 2>/dev/null && terraform output -raw template_smoke_ip 2>/dev/null || printf '10.98.0.250')
 PROXMOX_HOST ?= 54.39.102.214
 SSH_KEY ?= ~/.ssh/id_ed25519
 ANSIBLE_USER ?= ubuntu
@@ -27,14 +27,16 @@ smoke-up: ## Create smoke test VM
 	@echo "$(BLUE)Creating template smoke test VM...$(RESET)"
 	cd terraform && terraform init -input=false
 	cd terraform && terraform apply -var="enable_smoke_test=true" -target=proxmox_vm_qemu.template_smoke -auto-approve
-	@echo "$(GREEN)✅ Smoke test VM created at $(SMOKE_IP)$(RESET)"
+	@SMOKE_ACTUAL_IP=$$(cd terraform && terraform output -raw template_smoke_ip 2>/dev/null || printf '%s' '$(SMOKE_IP)'); \
+		echo "$(GREEN)✅ Smoke test VM created at $$SMOKE_ACTUAL_IP$(RESET)"
 
 .PHONY: smoke-test
 smoke-test: ## Run Ansible smoke tests against the test VM
 	@echo "$(BLUE)Running Ansible smoke tests...$(RESET)"
 	@sleep 30  # Wait for VM to fully boot
-	cd ansible && ANSIBLE_HOST_KEY_CHECKING=False \
-		ansible-playbook -i "$(SMOKE_IP)," -u $(ANSIBLE_USER) \
+	@SMOKE_ACTUAL_IP=$$(cd terraform && terraform output -raw template_smoke_ip 2>/dev/null || printf '%s' '$(SMOKE_IP)'); \
+		cd ansible && ANSIBLE_HOST_KEY_CHECKING=False \
+		ansible-playbook -i "$$SMOKE_ACTUAL_IP," -u $(ANSIBLE_USER) \
 		--ssh-common-args='-o StrictHostKeyChecking=no -o ProxyJump=root@$(PROXMOX_HOST)' \
 		--private-key $(SSH_KEY) \
 		playbooks/template-smoke.yml
@@ -100,7 +102,8 @@ connect-k3s: ## SSH to Kubernetes VM
 .PHONY: connect-smoke
 connect-smoke: ## SSH to smoke test VM (if running)
 	@echo "$(BLUE)Connecting to smoke test VM...$(RESET)"
-	ssh -o ProxyJump=root@$(PROXMOX_HOST) $(ANSIBLE_USER)@$(SMOKE_IP)
+	SMOKE_ACTUAL_IP=$$(cd terraform && terraform output -raw template_smoke_ip 2>/dev/null || printf '%s' '$(SMOKE_IP)'); \
+	ssh -o ProxyJump=root@$(PROXMOX_HOST) $(ANSIBLE_USER)@$$SMOKE_ACTUAL_IP
 
 # Validation and troubleshooting
 .PHONY: ping-vms

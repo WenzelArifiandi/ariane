@@ -2,7 +2,7 @@ terraform {
   required_version = ">= 1.0"
   required_providers {
     proxmox = {
-      source  = "telmate/proxmox"
+      source = "telmate/proxmox"
       # Use RC version for PVE 9.x compatibility
       version = "3.0.2-rc04"
     }
@@ -13,7 +13,7 @@ terraform {
 locals {
   using_userpass = var.proxmox_user != null && var.proxmox_password != null
   using_token    = var.proxmox_api_token_id != null && var.proxmox_api_token_secret != null
-  
+
   # Validation: exactly one auth method must be provided
   auth_valid = local.using_userpass != local.using_token
 }
@@ -21,7 +21,7 @@ locals {
 # Enforce authentication validation
 resource "null_resource" "auth_guard" {
   count = local.auth_valid ? 0 : 1
-  
+
   provisioner "local-exec" {
     command = "echo 'ERROR: Provide either (user+password) OR (token_id+token_secret), not both or neither' && exit 1"
   }

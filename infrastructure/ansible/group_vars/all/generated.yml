@@ -3,8 +3,8 @@
 
 ---
 # Infrastructure IPs
-postgresql_ip: ""
-k8s_ip: ""
+postgresql_ip: "10.98.0.10"
+k8s_ip: "10.98.0.11"
 
 # Domain configuration
 zitadel_domain: "auth.wenzelarifiandi.com"
@@ -12,7 +12,7 @@ zitadel_external_port: 443
 zitadel_external_secure: true
 
 # Database configuration
-postgres_host: ""
+postgres_host: "10.98.0.10"
 postgres_port: 5432
 postgres_database: "zitadel"
 postgres_user: "zitadel"
@@ -60,10 +60,10 @@ firewall_rules:
       source: "any"
       proto: "tcp"
     - port: 5432
-      source: ""
+      source: "10.98.0.11"
       proto: "tcp"
     - port: 9187
-      source: ""
+      source: "10.98.0.11"
       proto: "tcp"
 
   k3s:

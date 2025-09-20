@@ -306,3 +306,82 @@ sudo bash scripts/k8s/export-kubeconfig-for-lens.sh /home/ubuntu/k3s.yaml
 _Last updated: September 19, 2025_
 _Installation: Fresh Proxmox VE 9.0.10_
 _Hardware: Intel Xeon E3-1270 v6 | 64GB RAM | 2x 419GB NVMe RAID1_
+
+---
+
+## VM Provisioning and SSH Access
+
+### TL;DR for Gemini
+*   **Template name**: doree-ubuntu (VMID 9000).
+*   **Goal**: Reliable clones with working networking + SSH, then deploy observability and the rest of the stack.
+*   **Networking decision**:
+    *   Template is hardened with Netplan (virtio NIC, DHCP enabled), QEMU Guest Agent enabled, OpenSSH enabled.
+    *   Cloud-Init is optional: we only attach it when we want Proxmox to inject ipconfig0/SSH keys. Without `ide2: cloudinit`, `ipconfig0` does nothing.
+*   **Reality of existing VMs**: 100–103 were originally brought up with cloud-init; some had the `ide2` ISO removed later.
+*   **Smoke test disk issue**: Proxmox provider sometimes leaves the cloned disk in `unused0`. We added a post-clone `attach_scsi0` step to force `scsi0`, `boot=order=scsi0`, `scsihw=virtio-scsi-single`.
+
+### Current state
+*   **VMs up**:
+    *   101 db-postgres → 10.98.0.10/24
+    *   102 app-k3s → 10.98.0.11/24
+    *   100 etoile-pbs → 10.98.0.12/24
+    *   103 smoke clone (OK after reattaching scsi0)
+*   **Françoise (VM 200)**: used for observability console. Network works; SSH from Proxmox host works only when a key is present; from the laptop you must use WireGuard or a jump via Proxmox.
+
+### What we expect Gemini to do now
+1.  **Stop assuming password auth**. All VMs are key-only by design.
+2.  **If a VM needs SSH and has no keys yet**:
+    *   **Option A (preferred for ad-hoc fixes)**: attach cloud-init ISO and inject a key once:
+        ```bash
+        qm set 200 --ide2 local:cloudinit \
+          --ipconfig0 ip=10.98.0.200/24,gw=10.98.0.1 \
+          --sshkeys /root/.ssh/authorized_keys
+        qm stop 200 && qm start 200
+        ```
+        (Use an existing `authorized_keys` file on the Proxmox host—don’t paste private keys.)
+    *   **Option B (template-baked)**: console in and add `authorized_keys` under `/home/ubuntu/.ssh/authorized_keys`, ensure `PermitRootLogin prohibit-password` and `PasswordAuthentication no` (default on Ubuntu cloud images).
+3.  **Remember**: `ipconfig0` only works if `ide2` (cloud-init) is present. If we remove `ide2`, the VM falls back to DHCP via Netplan (as baked into the template).
+4.  **Smoke test reliability**: keep the `null_resource attach_scsi0` step after clone to guarantee `scsi0` + `boot=order=scsi0`. Don’t fight the provider’s disk state; just normalize it.
+5.  **Observability access**:
+    *   **Private/admin path**: connect WireGuard (on Proxmox) and browse http://10.98.0.200:3000 (Grafana) etc.
+    *   **Public path**: run `cloudflared` on Françoise to publish selected ports behind Cloudflare Access (no Proxmox port-opens).
+
+### Commands Gemini can run (safe defaults)
+*   **Verify VMs and configs**:
+    ```bash
+    qm list
+    qm config 10{0,1,2,3} | egrep '^(name|boot|bootdisk|scsihw|scsi0|unused|agent|ide2|ipconfig0)'
+    ```
+*   **Reattach a bad clone disk**:
+    ```bash
+    # If unused0 is present and scsi0 missing:
+    qm set 103 --scsihw virtio-scsi-single --scsi0 local:103/vm-103-disk-0.raw --boot order=scsi0
+    qm set 103 --delete unused0
+    ```
+*   **One-time key injection via cloud-init**:
+    ```bash
+    qm set 200 --ide2 local:cloudinit --ipconfig0 ip=10.98.0.200/24,gw=10.98.0.1 --sshkeys /root/.ssh/authorized_keys
+    qm stop 200 && qm start 200
+    ```
+*   **Jump through Proxmox to a VM** (when 10.98.0.x isn’t routed from the laptop):
+    ```bash
+    ssh -J root@54.39.102.214 ubuntu@10.98.0.200
+    ```
+
+### What not to do
+*   Don’t expect `ipconfig0` to work without `ide2: cloudinit`.
+*   Don’t rely on passwords; Ubuntu cloud images ship with password auth disabled.
+*   Don’t remove the `attach_scsi0` hook until the Proxmox provider stops dropping disks into `unused0`.
+
+### If SSH still fails
+*   **From Proxmox host**:
+    ```bash
+    nc -zv 10.98.0.X 22   # confirm port is open
+    qm agent <vmid> ping  # QGA up?
+    ```
+*   **If host key changed**:
+    ```bash
+    ssh-keygen -f /root/.ssh/known_hosts -R 10.98.0.X
+    ```
+*   **If no agent and no key in guest**: attach cloud-init (above) once, then remove it after you’re in.
+

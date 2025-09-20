@@ -9,7 +9,7 @@
   vars:
     expected_ip_pattern: "10\\.98\\.0\\."
     expected_interface: "ens18"
-    smoke_timeout: 300
+    smoke_timeout: 600
 
   tasks:
     - name: Wait for SSH to be available
@@ -83,6 +83,47 @@
       changed_when: false
       become: true
 
+    - name: Collect systemd-networkd status
+      command: systemctl status systemd-networkd --no-pager
+      register: networkd_status
+      changed_when: false
+      failed_when: false
+      become: true
+
+    - name: Tail systemd-networkd journal
+      command: journalctl -u systemd-networkd --no-pager -n 50
+      register: networkd_journal
+      changed_when: false
+      failed_when: false
+      become: true
+
+    - name: Show netplan status
+      command: netplan status
+      register: netplan_status
+      changed_when: false
+      failed_when: false
+      become: true
+
+    - name: Show current IP addresses
+      command: ip a
+      register: ip_detailed
+      changed_when: false
+      failed_when: false
+
+    - name: Collect qemu-guest-agent status
+      command: systemctl status qemu-guest-agent --no-pager
+      register: qga_status
+      changed_when: false
+      failed_when: false
+      become: true
+
+    - name: Tail qemu-guest-agent journal
+      command: journalctl -u qemu-guest-agent --no-pager -n 50
+      register: qga_journal
+      changed_when: false
+      failed_when: false
+      become: true
+
     - name: Check SSH service is running
       command: systemctl is-active ssh
       register: ssh_status
@@ -126,6 +167,12 @@
           - "{{ disk_space.stdout_lines }}"
           - "{{ memory_info.stdout_lines }}"
           - "Network: {{ ip_addresses.stdout }}"
+          - "Detailed IP info: {{ ip_detailed.stdout_lines | default([]) }}"
+          - "systemd-networkd: {{ networkd_status.stdout_lines | default([]) }}"
+          - "networkd journal tail: {{ (networkd_journal.stdout_lines | default([])) + (networkd_journal.stderr_lines | default([])) }}"
+          - "netplan status: {{ (netplan_status.stdout_lines | default([])) + (netplan_status.stderr_lines | default([])) }}"
+          - "qemu-guest-agent: {{ (qga_status.stdout_lines | default([])) + (qga_status.stderr_lines | default([])) }}"
+          - "qemu-guest-agent journal: {{ (qga_journal.stdout_lines | default([])) + (qga_journal.stderr_lines | default([])) }}"
           - "Cloud-init: {{ cloud_init_status.stdout.split('\n')[0] }}"
 
     - name: Final smoke test summary
