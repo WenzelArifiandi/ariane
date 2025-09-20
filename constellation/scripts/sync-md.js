@@ -5,6 +5,9 @@ import {
   mkdirSync,
   copyFileSync,
   rmSync,
+  existsSync,
+  readFileSync,
+  writeFileSync,
 } from "node:fs";
 import { join, dirname, basename } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -14,9 +17,27 @@ const __dirname = dirname(__filename);
 const repoRoot = join(__dirname, "../../..");
 const target = join(__dirname, "../src/content/docs");
 
+// Preserve custom index.mdx if it exists
+const customIndexPath = join(target, "index.mdx");
+let customIndexContent = null;
+if (existsSync(customIndexPath)) {
+  try {
+    customIndexContent = readFileSync(customIndexPath, 'utf8');
+    console.log("💾 Preserving custom index.mdx");
+  } catch (e) {
+    console.log("⚠️  Could not read custom index.mdx");
+  }
+}
+
 // Clean out old synced files
 rmSync(target, { recursive: true, force: true });
 mkdirSync(target, { recursive: true });
+
+// Restore custom index.mdx if it was preserved
+if (customIndexContent) {
+  writeFileSync(customIndexPath, customIndexContent, 'utf8');
+  console.log("✅ Restored custom index.mdx");
+}
 
 const excludeDirs = [
   "node_modules",
@@ -34,12 +55,19 @@ function walk(dir) {
   for (const entry of readdirSync(dir)) {
     if (excludeDirs.includes(entry)) continue;
     const fullPath = join(dir, entry);
-    
+
     if (statSync(fullPath).isDirectory()) {
       walk(fullPath);
     } else if (entry.endsWith(".md") || entry.endsWith(".mdx")) {
       // Flatten: copy all markdown files directly into src/content/docs/
       const dest = join(target, basename(fullPath));
+
+      // Skip copying index.mdx if it already exists (preserve custom homepage)
+      if (basename(fullPath) === "index.mdx" && existsSync(dest)) {
+        console.log("⏭️  Skipping index.mdx (preserving custom homepage)");
+        continue;
+      }
+
       mkdirSync(dirname(dest), { recursive: true });
       copyFileSync(fullPath, dest);
     }
