@@ -8,16 +8,19 @@ proxmox_password = "CHANGE_ME_TO_ACTUAL_PASSWORD"
 # Node Configuration
 target_node = "neve"
 
-# SSH Configuration
-ssh_public_key = "CHANGE_ME_TO_YOUR_PUBLIC_KEY"
-
 # Storage Configuration
 storage_pool = "local"
 
 # ISO Configuration
 iso_file = "local:iso/ubuntu-24.04.1-live-server-amd64.iso"
- 
-# Optional: Static IP addressing (include CIDR)
-# postgres_static_cidr = "192.168.1.50/24"
-# k8s_static_cidr      = "192.168.1.60/24"
-# net_gateway          = "192.168.1.1"
+
+# Static MAC addresses (update if you prefer different values)
+macaddr_db    = "BC:24:11:C1:23:FB"
+macaddr_k3s   = "BC:24:11:16:52:7F"
+macaddr_pbs   = "BC:24:11:5C:06:CB"
+macaddr_smoke = "BC:24:11:39:7C:4D"
+
+# Expected IP addresses (match your DHCP reservations)
+postgres_ip = "10.98.0.10"
+k8s_ip      = "10.98.0.11"
+pbs_ip      = "10.98.0.12"

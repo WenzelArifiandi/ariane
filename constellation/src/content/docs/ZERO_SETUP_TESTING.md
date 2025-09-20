@@ -1,5 +1,5 @@
 ---
-title: ZERO SETUP TESTING
+title: "# ⚡ Zero-Setup / Near-Zero Friction Testing & Security Controls"
 description: "## ⚡ Zero-Setup / Near-Zero Friction Testing & Security Controls"
 slug: zero_setup_testing
 ---

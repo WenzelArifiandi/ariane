@@ -1,7 +1,7 @@
 ---
-title: Test Sync and Deploy
+title: "Test Sync and Deploy"
 description: "# Test Sync and Deploy"
-slug: "new-test-doc"
+slug: new-test-doc
 ---
 
 # Test Sync and Deploy

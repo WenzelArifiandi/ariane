@@ -1,5 +1,5 @@
 ---
-title: "Custom rule or genrule to invoke wasm-bindgen/wasm-pack if needed:"
+title: "# ⚙️ Bazel Adoption Evaluation for Ariane Monorepo"
 description: "## ⚙️ Bazel Adoption Evaluation for Ariane Monorepo"
 slug: bazel_evaluation
 ---

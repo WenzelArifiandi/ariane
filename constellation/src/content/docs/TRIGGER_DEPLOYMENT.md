@@ -1,5 +1,5 @@
 ---
-title: Manual Deployment Trigger
+title: "Manual Deployment Trigger"
 description: "# Manual Deployment Trigger"
 slug: trigger_deployment
 ---

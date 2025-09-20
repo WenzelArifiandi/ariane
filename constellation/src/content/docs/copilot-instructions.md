@@ -1,7 +1,7 @@
 ---
-title: Ariane — Copilot Instructions (concise)
+title: "Ariane — Copilot Instructions (concise)"
 description: "# Ariane — Copilot Instructions (concise)"
-slug: "copilot-instructions"
+slug: copilot-instructions
 ---
 
 # Ariane — Copilot Instructions (concise)

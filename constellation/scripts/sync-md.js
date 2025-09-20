@@ -70,6 +70,24 @@ function walk(dir) {
 
       mkdirSync(dirname(dest), { recursive: true });
       copyFileSync(fullPath, dest);
+
+      // Add frontmatter if missing
+      const content = readFileSync(dest, 'utf8');
+      if (!content.startsWith('---')) {
+        const lines = content.split('\n');
+        const firstLine = lines[0];
+        const title = firstLine.startsWith('#') ? firstLine.slice(1).trim() : basename(fullPath, '.md').replace(/_/g, ' ');
+        const slug = basename(fullPath, '.md').toLowerCase();
+
+        const frontmatter = `---
+title: "${title}"
+description: "${firstLine}"
+slug: ${slug}
+---
+
+`;
+        writeFileSync(dest, frontmatter + content, 'utf8');
+      }
     }
   }
 }

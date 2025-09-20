@@ -32,11 +32,6 @@ variable "proxmox_api_token_secret" {
   sensitive   = true
 }
 
-variable "ssh_public_key" {
-  description = "SSH public key for VM access"
-  type        = string
-}
-
 variable "target_node" {
   description = "Target Proxmox node"
   type        = string
@@ -53,31 +48,6 @@ variable "iso_file" {
   description = "Ubuntu ISO file"
   type        = string
   default     = "local:iso/ubuntu-24.04.1-live-server-amd64.iso"
-}
-
-# Optional static IP configuration (include CIDR in the IP value, e.g., 192.168.1.50/24)
-variable "postgres_static_cidr" {
-  description = "Optional static IPv4 with CIDR for PostgreSQL VM (e.g., 192.168.1.50/24); leave empty for DHCP"
-  type        = string
-  default     = ""
-}
-
-variable "k8s_static_cidr" {
-  description = "Optional static IPv4 with CIDR for K3s VM (e.g., 192.168.1.60/24); leave empty for DHCP"
-  type        = string
-  default     = ""
-}
-
-variable "pbs_static_cidr" {
-  description = "Optional static IPv4 with CIDR for PBS VM (e.g., 192.168.1.70/24); leave empty for DHCP"
-  type        = string
-  default     = ""
-}
-
-variable "net_gateway" {
-  description = "Gateway IP used when static IPs are set (e.g., 192.168.1.1)"
-  type        = string
-  default     = ""
 }
 
 variable "vm_bridge" {
@@ -107,11 +77,47 @@ variable "ssh_private_key_path" {
 variable "force_rebuild_template" {
   description = "Force rebuild of Ubuntu template (change this value to trigger rebuild)"
   type        = string
-  default     = "v3-network-fix"
+  default     = "v4-netplan-clean"
 }
 
-variable "smoke_test_ipconfig" {
-  description = "Optional Proxmox ipconfig0 string for the smoke test VM (e.g., ip=10.98.0.250/24,gw=10.98.0.1). Leave empty to rely on template netplan."
+variable "macaddr_db" {
+  description = "Static MAC address for the database VM"
   type        = string
-  default     = ""
+  default     = "BC:24:11:C1:23:FB"
+}
+
+variable "macaddr_k3s" {
+  description = "Static MAC address for the k3s VM"
+  type        = string
+  default     = "BC:24:11:16:52:7F"
+}
+
+variable "macaddr_pbs" {
+  description = "Static MAC address for the PBS VM"
+  type        = string
+  default     = "BC:24:11:5C:06:CB"
+}
+
+variable "macaddr_smoke" {
+  description = "Static MAC address for the smoke test VM"
+  type        = string
+  default     = "BC:24:11:39:7C:4D"
+}
+
+variable "postgres_ip" {
+  description = "Expected IPv4 address for the PostgreSQL VM"
+  type        = string
+  default     = "10.98.0.10"
+}
+
+variable "k8s_ip" {
+  description = "Expected IPv4 address for the k3s VM"
+  type        = string
+  default     = "10.98.0.11"
+}
+
+variable "pbs_ip" {
+  description = "Expected IPv4 address for the PBS VM"
+  type        = string
+  default     = "10.98.0.12"
 }

@@ -1,5 +1,5 @@
 ---
-title: GitHub Actions Setup Guide
+title: "GitHub Actions Setup Guide"
 description: "# GitHub Actions Setup Guide"
 slug: setup
 ---

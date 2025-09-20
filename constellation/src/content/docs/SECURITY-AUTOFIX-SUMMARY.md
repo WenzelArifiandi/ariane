@@ -1,7 +1,7 @@
 ---
 title: "Security Auto-Fix Implementation Summary"
 description: "# Security Auto-Fix Implementation Summary"
-slug: "security-autofix-summary"
+slug: security-autofix-summary
 ---
 
 # Security Auto-Fix Implementation Summary

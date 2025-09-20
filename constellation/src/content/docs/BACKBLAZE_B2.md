@@ -1,5 +1,5 @@
 ---
-title: Backblaze B2 Setup for PostgreSQL Backups
+title: "Backblaze B2 Setup for PostgreSQL Backups"
 description: "# Backblaze B2 Setup for PostgreSQL Backups"
 slug: backblaze_b2
 ---

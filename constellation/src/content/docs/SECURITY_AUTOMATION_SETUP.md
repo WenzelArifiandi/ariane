@@ -1,5 +1,5 @@
 ---
-title: 🏆 Enterprise Security Automation Setup Guide
+title: "🏆 Enterprise Security Automation Setup Guide"
 description: "# 🏆 Enterprise Security Automation Setup Guide"
 slug: security_automation_setup
 ---

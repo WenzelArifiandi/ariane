@@ -19,13 +19,11 @@ resource "proxmox_vm_qemu" "template_smoke" {
 
   # Network configuration on vmbr1
   network {
-    id     = 0
-    model  = "virtio"
-    bridge = var.vm_bridge
+    id      = 0
+    model   = "virtio"
+    bridge  = var.vm_bridge
+    macaddr = var.macaddr_smoke
   }
-
-  # Allow overriding the network config so we can pin a static IP during smoke tests
-  ipconfig0 = var.smoke_test_ipconfig != "" ? var.smoke_test_ipconfig : null
 
   onboot = true
 
@@ -40,10 +38,6 @@ resource "proxmox_vm_qemu" "template_smoke" {
   }
 
   agent = 1
-
-  # Use same cloud-init config as production VMs
-  cicustom = "meta=local:snippets/meta-9001.yml,user=local:snippets/user-9001.yml"
-  ciuser   = "ubuntu"
 
   # Lifecycle management
   lifecycle {
@@ -85,11 +79,7 @@ output "template_smoke_ip" {
 }
 
 output "template_smoke_status" {
-  value = var.enable_smoke_test ? (
-    var.smoke_test_ipconfig != ""
-    ? "Template smoke test VM created with IP: ${split("/", split("=", split(",", var.smoke_test_ipconfig)[0])[1])[0]}"
-    : "Template smoke test VM created with DHCP IP: ${try(proxmox_vm_qemu.template_smoke[0].default_ipv4_address, "pending")}"
-  ) : "Template smoke test disabled"
+  value = var.enable_smoke_test ? "Template smoke test VM created with IP: ${try(proxmox_vm_qemu.template_smoke[0].default_ipv4_address, "pending")}" : "Template smoke test disabled"
 }
 
 output "template_smoke_vmid" {

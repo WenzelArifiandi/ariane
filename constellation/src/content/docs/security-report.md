@@ -1,14 +1,10 @@
 ---
 name: 🔒 Security Vulnerability Report
-about: "Report a security vulnerability (use this for non-critical issues only)"
-title: "[SECURITY] "
-labels: "['security', 'vulnerability', 'needs-triage']"
-assignees: "['WenzelArifiandi']"
-description: "## ⚠️ Security Notice"
-slug: "security-report"
+about: Report a security vulnerability (use this for non-critical issues only)
+title: '[SECURITY] '
+labels: ['security', 'vulnerability', 'needs-triage']
+assignees: ['WenzelArifiandi']
 ---
-
-
 
 ## ⚠️ Security Notice
 
