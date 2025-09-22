@@ -1,3 +1,9 @@
+---
+title: "Initialize a ZITADEL User (Fix not initialized errors)"
+description: "# Initialize a ZITADEL User (Fix not initialized errors)"
+slug: zitadel-user-initialization
+---
+
 # Initialize a ZITADEL User (Fix not initialized errors)
 
 Short version: flipping DB flags won’t fix this. ZITADEL is event-sourced—states are derived from events (projections). You must create the correct events by using Console or APIs.

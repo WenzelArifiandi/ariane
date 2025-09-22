@@ -1,13 +1,14 @@
 name: 🛡️ Auto Security Fixes (Safe)
 
 on:
-  schedule:
-    # Run daily at 2 AM UTC to check for security issues
-    - cron: "0 2 * * *"
+  # DISABLED: Too frequent, creating duplicate PRs
+  # schedule:
+  #   # Run daily at 2 AM UTC to check for security issues
+  #   - cron: "0 2 * * *"
   workflow_dispatch:
-  # Also run on pushes to main to fix issues immediately
-  push:
-    branches: [main]
+  # DISABLED: Too aggressive on every push
+  # push:
+  #   branches: [main]
   # Disabled: Trigger when Dependabot creates PRs (causing issues with gh commands)
   # pull_request:
   #   types: [opened, synchronize]
@@ -33,6 +34,10 @@ jobs:
     runs-on: ubuntu-latest
     # Run for scheduled runs, manual triggers, and pushes (but not for dependabot PRs)
     if: github.event_name != 'pull_request' || github.actor != 'dependabot[bot]'
+
+    # CRITICAL WARNING: Do NOT downgrade dependencies in this workflow.
+    # Only upgrade to newer, secure, and compatible versions. Never resolve issues by reverting to older versions unless explicitly approved by maintainers.
+    # See .github/copilot-instructions.md for details.
 
     steps:
       - name: 📥 Checkout

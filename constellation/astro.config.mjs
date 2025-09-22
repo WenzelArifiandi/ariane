@@ -3,5 +3,6 @@ import starlight from '@astrojs/starlight';
 import starlightConfig from './astro.starlight.config.mjs';
 
 export default defineConfig({
+  output: 'server',
   integrations: [starlight(starlightConfig)],
 });
