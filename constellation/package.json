@@ -1,0 +1,19 @@
+{
+  "name": "constellation",
+  "type": "module",
+  "version": "0.0.1",
+  "scripts": {
+    "predev": "node scripts/sync-md.js",
+    "prebuild": "node scripts/sync-md.js && node ../tools/fix-frontmatter.mjs",
+    "dev": "astro dev",
+    "start": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro"
+  },
+  "dependencies": {
+    "@astrojs/starlight": "^0.36.0",
+    "astro": "^5.13.9",
+    "sharp": "^0.34.4"
+  }
+}

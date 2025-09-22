@@ -3,7 +3,7 @@ name: "🏆 Enterprise Security Automation"
 on:
   schedule:
     # Run comprehensive security scan twice daily
-    - cron: "0 6,18 * * *"  # 6 AM and 6 PM UTC
+    - cron: "0 6,18 * * *" # 6 AM and 6 PM UTC
   workflow_dispatch:
     inputs:
       security_level:
@@ -193,6 +193,11 @@ jobs:
             echo "🔧 Applying site security fixes..."
             cd site
 
+            # WARNING: Never delete package-lock.json or node_modules in automation!
+            # Only upgrade dependencies, never downgrade unless explicitly approved by maintainers.
+            # npm install and npx npm-check-updates must only be used when lockfile is present and up-to-date.
+            # See .github/copilot-instructions.md for details.
+
             # Install dependencies
             npm ci --silent
 
@@ -213,7 +218,8 @@ jobs:
               "aggressive")
                 npm audit fix --force || true
                 npm update --save || true
-                # Update to latest compatible versions
+                # WARNING: Only upgrade dependencies! Do not downgrade. Lockfile must be present and up-to-date.
+                # npx npm-check-updates and npm install must never be used after deleting lockfiles.
                 npx npm-check-updates -u --target semver || true
                 npm install || true
                 CHANGES_MADE=true
@@ -226,6 +232,11 @@ jobs:
           if [ -f "studio/package.json" ]; then
             echo "🔧 Applying studio security fixes..."
             cd studio
+            # WARNING: Never delete package-lock.json or node_modules in automation!
+            # Only upgrade dependencies, never downgrade unless explicitly approved by maintainers.
+            # npm install and npx npm-check-updates must only be used when lockfile is present and up-to-date.
+            # See .github/copilot-instructions.md for details.
+
             npm ci --silent
 
             case "$SECURITY_LEVEL" in
@@ -239,6 +250,8 @@ jobs:
               "aggressive")
                 npm audit fix --force || true
                 npm update --save || true
+                # WARNING: Only upgrade dependencies! Do not downgrade. Lockfile must be present and up-to-date.
+                # npx npm-check-updates and npm install must never be used after deleting lockfiles.
                 npx npm-check-updates -u --target semver || true
                 npm install || true
                 ;;
@@ -496,4 +509,4 @@ jobs:
         with:
           name: enterprise-security-compliance-${{ github.run_id }}
           path: compliance-report.md
-          retention-days: 365  # Enterprise compliance requirement
+          retention-days: 365 # Enterprise compliance requirement

@@ -1,48 +1,95 @@
-# Ariane AI Agent Instructions (concise)
+# Ariane — Copilot Instructions
 
-Monorepo map (Node 22):
+## Architecture Overview
 
-- `site/` Astro 5 app on Vercel (server output). Auth via middleware. Content via Storyblok; optional Sanity client. Key: `astro.config.mjs`, `src/middleware.ts`, `src/lib/{cfAccess.ts,auth/*,sanity.ts}`, `vercel.json`.
-- `studio/` Sanity Studio (separate deploy, projectId `tz1p3961`). Schemas: `schemas/`, exported in `schemaTypes`. Custom action: `actions/approveAccessRequest.ts`.
-- `zitadel/` Dockerized Zitadel + Postgres + Caddy. Ops scripts and configs.
-- `wasm/` Rust→WASM session signer; JS fallback lives at `site/src/lib/auth/signer.ts`.
-- `tests/` Vitest + MSW + Playwright. `vitest.config.ts` defines aliases `@site`, `@studio`, `@tests`.
+- **Monorepo Structure**:
+  - `site/`: Astro 5 app (Vercel deploy). Auth via middleware. Content from Storyblok (default) and optional Sanity.
+  - `studio/`: Sanity Studio (separate deploy). Schemas in `studio/schemas/**`, exported from `studio/schemaTypes/index.ts`.
+  - `wasm/`: Rust→WASM session signer; JS fallback at `site/src/lib/auth/signer.ts`.
+  - `tests/`: Vitest + MSW + Playwright. Aliases in `vitest.config.ts`: `@site`, `@studio`, `@tests`.
+  - `zitadel/`: Infra config and docs; not required for local site dev.
 
-How it works (auth + content):
+## Key Integration Points
 
-- Middleware (`site/src/middleware.ts`) enforces auth based on `AUTH_MODE`:
-  - `public` (default): allow through.
-  - `app`: require HMAC session cookie (signed by `SESSION_SECRET`, see `signer.ts`).
-  - `cf-access-only`: verify Cloudflare Access JWT via `verifyCfAccessJwt()` with optional group checks (`CF_ACCESS_GROUPS_CLAIM`, `CF_ACCESS_REQUIRED_GROUPS`) and an “approved” claim (`CF_ACCESS_APPROVED_*`). Public paths in `PUBLIC_PATHS` and assets bypass.
-- Storyblok: `@storyblok/astro` configured in `site/astro.config.mjs` (map of blok components). Requires `STORYBLOK_TOKEN` in `site/.env`. Preview param `_storyblok` triggers relaxed framing headers in `addSecurityHeaders()` to allow the editor iframe.
-- Sanity: `site/src/lib/sanity.ts` is guarded; only active when `PUBLIC_SANITY_*` envs are set. Studio is independent and deploys separately.
+- **Middleware**:
 
-Developer workflows:
+  - `site/src/middleware.ts` enforces `AUTH_MODE` (`public`, `app`, `cf-access-only`).
+  - Session cookies signed with `SESSION_SECRET` (see `auth/signer.ts`).
+  - Cloudflare Access JWT verified via `verifyCfAccessJwt()`.
 
-- Local dev: `npm run dev:site` (Astro at `127.0.0.1:4321`). Studio: `npm run dev:studio`. Tunnel: `npm --prefix site run cf:tunnel` (ephemeral) or `cf:tunnel:named` (uses `site/cloudflared/config.yml`). Combined: `npm run dev:bubble`.
-- Build/preview: `npm --prefix site run build` and `preview`. WASM optional: `cd site && npm run wasm:build:signer` to place artifacts in `site/src/lib/wasm/session-signer/`.
-- Tests (root): `npm run test` (unit+integration), `npm run test:e2e` (Playwright), `npm run test:security` (CodeQL autofix validation). MSW is initialized in `tests/setup/vitest.setup.ts`.
-- Deploy gating: `site/vercel.json` `ignoreCommand` builds only when site files change (main or PR with preview forced). PR previews require `deploy-preview` label + Vercel secrets.
+- **Content Sources**:
 
-Key integration points:
+  - Storyblok via `@storyblok/astro` (`STORYBLOK_TOKEN` in `site/.env`).
+  - Sanity: read via `site/src/lib/sanity.ts`, server writes via `site/src/lib/sanityServer.ts`.
 
-- API routes under `site/src/pages/api/**`:
-  - GitHub OAuth: `/api/oauth/github/{start,callback}.ts`
+- **API Routes**:
+
+  - OAuth: `/api/oauth/github/{start,callback}.ts`
   - WebAuthn: `/api/auth/{registration-options,verify-registration,authentication-options,verify-authentication}.ts`
-  - Session: `/api/auth/session.ts`, logout, approval-status, access-request email; diagnostics: `/api/diag` and `/api/oidc/diag`.
-- Security headers added centrally by `addSecurityHeaders()`; for Storyblok preview, CSP `frame-ancestors` allows `*.storyblok.com`.
+  - Session & access: `/api/auth/{session,logout,approval-status,request-access}.ts`
+  - Diagnostics: `/api/diag`, `/api/oidc/diag`
 
-Conventions and gotchas:
+- **Security Headers**:
+  - Centralized in `addSecurityHeaders()` (middleware) and `site/vercel.json` (deploy-time).
+  - Do not duplicate headers elsewhere.
 
-- Public domain safety: on `wenzelarifiandi.com`, `determineAuthMode()` forces `public` even if `AUTH_MODE=app`.
-- Env you’ll commonly need: `AUTH_MODE`, `SESSION_SECRET`, `STORYBLOK_TOKEN`, `CF_ACCESS_*`, optional `PUBLIC_SANITY_*`.
-- Path aliases in tests: import from `@site`, `@studio`, `@tests`; E2E assumes site is running on port 4321.
+## Developer Workflows
 
-Ops and troubleshooting (quick):
+- **Local Dev**:
 
-- Tunnel flaky? Restart: `pkill cloudflared` then `npm --prefix site run cf:tunnel:named`.
-- Preview not deploying? Ensure PR touches `site/**`, label `deploy-preview`, and Vercel tokens are configured; see `site/vercel.json`.
-- WASM signer missing? It silently falls back to Node crypto; build via `npm --prefix site run wasm:build:signer` for perf.
-- Zitadel/infra status and remediation: `scripts/deployment-status.sh`, docs in `ops/` and `zitadel/README.md`.
+  - `npm run dev:site` (http://127.0.0.1:4321)
+  - `npm run dev:studio`
+  - Tunnel: `npm --prefix site run cf:tunnel` or `cf:tunnel:named`
+  - Combo: `npm run dev:bubble`
 
-Feedback: If any area needs deeper detail (e.g., CF Access group mapping, Studio webhook flow, or Storyblok component mapping), tell me what to expand next.
+- **Build/Preview**:
+
+  - `npm --prefix site run build` then `npm --prefix site run preview`
+  - Optional WASM: `npm --prefix site run wasm:build:signer`
+
+- **Testing**:
+
+  - Root: `npm run test` (unit+integration), `npm run test:e2e` (Playwright), `npm run test:security`
+  - MSW bootstraps in `tests/setup/vitest.setup.ts`
+  - E2E expects server at port 4321
+
+- **Vercel Gating**:
+  - `site/vercel.json` `ignoreCommand` builds only when `site/**` changes on `main` or PR preview is forced (label `deploy-preview` via CI).
+
+## Conventions & Gotchas
+
+- On `wenzelarifiandi.com` domains, `determineAuthMode()` forces `public` even if `AUTH_MODE=app`.
+- Common env: `AUTH_MODE`, `SESSION_SECRET`, `STORYBLOK_TOKEN`, `CF_ACCESS_*`, optional `PUBLIC_SANITY_*`, `SANITY_WRITE_TOKEN`.
+- Sanity queries: `site/src/lib/queries.ts`; fetch via `fetchSanity()`.
+- Security headers: modify only in middleware or `site/vercel.json`.
+- Tests/e2e expect port `4321`.
+
+## Ops Quick Notes
+
+- Tunnel flaky? `pkill cloudflared` then `npm --prefix site run cf:tunnel:named`.
+- Preview not deploying? Ensure PR touches `site/**`, add label `deploy-preview`, configure Vercel tokens.
+- Infra and Zitadel runbooks: `ops/`, `zitadel/README.md`.
+
+## Automated Dependency Management — Critical Warning
+
+- **Do NOT downgrade dependencies in automated PRs or workflows.**
+  - Recent issues have been caused by GitHub Actions (Gemini or security auto-fix flows) creating PRs that resolve problems by lowering dependency versions. This is not allowed and can introduce security or compatibility risks.
+- **When updating dependencies:**
+  - Only upgrade to newer, secure, and compatible versions.
+  - Never resolve issues by reverting to older versions unless explicitly approved by maintainers.
+- **Workflow logic:**
+  - Audit `.github/workflows/*` for any steps that run `npm install`, `npm update`, or use tools that may downgrade dependencies.
+  - Ensure all automated fixes and PRs only propose upgrades or security patches, not downgrades.
+- **If you find a workflow or script that downgrades dependencies, fix it immediately and document the change.**
+
+**Example:**
+
+> ❌ Wrong: `npm install some-package@1.0.0` (if latest is 2.x)
+> ✅ Correct: `npm install some-package@latest` or upgrade to a secure version
+
+Add a comment in workflow files to warn future agents and contributors.
+
+---
+
+**Feedback requested:**  
+Are there any sections that need more detail, or specific patterns you want documented further? Let me know if anything is unclear or missing.

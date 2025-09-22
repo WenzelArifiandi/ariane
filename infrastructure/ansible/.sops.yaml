@@ -1,0 +1,14 @@
+---
+# SOPS configuration for Cell v0 secrets encryption
+# Uses age encryption for better security and GitHub Actions compatibility
+
+creation_rules:
+  - path_regex: secrets/.*\.yml$
+    age: >-
+      age1hl8zdfp4q9p5k2m7x8j3w6v9r2n4t8s5l1c9b6h3f0d7e4a2z8x5y7w0q3m1n6k4s2
+  - path_regex: group_vars/.*/secrets\.yml$
+    age: >-
+      age1hl8zdfp4q9p5k2m7x8j3w6v9r2n4t8s5l1c9b6h3f0d7e4a2z8x5y7w0q3m1n6k4s2
+  - path_regex: host_vars/.*/secrets\.yml$
+    age: >-
+      age1hl8zdfp4q9p5k2m7x8j3w6v9r2n4t8s5l1c9b6h3f0d7e4a2z8x5y7w0q3m1n6k4s2

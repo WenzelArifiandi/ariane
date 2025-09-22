@@ -1,0 +1,40 @@
+---
+import InlineEditor from './InlineEditor.astro';
+
+export interface Props {
+  filePath?: string;
+}
+
+const { filePath } = Astro.props;
+
+// Auto-detect file path from URL if not provided
+const currentFilePath = filePath || (() => {
+  const url = Astro.url.pathname;
+
+  // Convert URL to file path
+  if (url === '/') return 'src/content/docs/index.mdx';
+
+  // Remove leading slash and convert to file path
+  const cleanPath = url.replace(/^\//, '').replace(/\/$/, '');
+  return `src/content/docs/${cleanPath}.md`;
+})();
+
+// Try to read the actual file content for editing
+let fileContent = '';
+try {
+  // This will only work at build time or in development
+  // In production, we'll need to fetch it via API
+  if (import.meta.env.DEV) {
+    // During development, we can read the file
+    const fs = await import('node:fs/promises');
+    const path = await import('node:path');
+    const fullPath = path.join(process.cwd(), currentFilePath);
+    fileContent = await fs.readFile(fullPath, 'utf-8');
+  }
+} catch (error) {
+  // Fallback: we'll fetch content via API when editing
+  console.log('Could not read file at build time, will fetch when editing');
+}
+---
+
+<InlineEditor filePath={currentFilePath} content={fileContent} />

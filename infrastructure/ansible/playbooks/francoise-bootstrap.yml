@@ -1,0 +1,191 @@
+---
+- name: Bootstrap Françoise Observability Console
+  hosts: francoise
+  become: yes
+  vars:
+    francoise_ip: "10.98.0.200"
+
+  tasks:
+    - name: Wait for SSH to be available
+      wait_for_connection:
+        delay: 10
+        timeout: 300
+
+    - name: Update apt cache
+      apt:
+        update_cache: yes
+        cache_valid_time: 3600
+
+    - name: Install required packages
+      apt:
+        name:
+          - docker.io
+          - docker-compose-plugin
+          - curl
+          - wget
+          - git
+        state: present
+
+    - name: Enable and start Docker
+      systemd:
+        name: docker
+        enabled: yes
+        state: started
+
+    - name: Add ubuntu user to docker group
+      user:
+        name: ubuntu
+        groups: docker
+        append: yes
+
+    - name: Create observability directories
+      file:
+        path: "{{ item }}"
+        state: directory
+        owner: ubuntu
+        group: ubuntu
+        mode: '0755'
+      loop:
+        - /home/ubuntu/observability-stack
+        - /home/ubuntu/observability-stack/rules
+        - /home/ubuntu/observability-stack/grafana
+        - /home/ubuntu/observability-stack/grafana/provisioning
+        - /home/ubuntu/observability-stack/grafana/dashboards
+        - /var/log/terraform
+        - /var/log/ansible
+
+    - name: Copy observability configuration files
+      copy:
+        src: "{{ item.src }}"
+        dest: "{{ item.dest }}"
+        owner: ubuntu
+        group: ubuntu
+        mode: '0644'
+      loop:
+        - { src: "../francoise-observability/docker-compose.yml", dest: "/home/ubuntu/observability-stack/docker-compose.yml" }
+        - { src: "../francoise-observability/prometheus.yml", dest: "/home/ubuntu/observability-stack/prometheus.yml" }
+        - { src: "../francoise-observability/loki.yml", dest: "/home/ubuntu/observability-stack/loki.yml" }
+        - { src: "../francoise-observability/promtail.yml", dest: "/home/ubuntu/observability-stack/promtail.yml" }
+        - { src: "../francoise-observability/alertmanager.yml", dest: "/home/ubuntu/observability-stack/alertmanager.yml" }
+
+    - name: Copy Prometheus rules
+      copy:
+        src: "../francoise-observability/rules/"
+        dest: "/home/ubuntu/observability-stack/rules/"
+        owner: ubuntu
+        group: ubuntu
+        mode: '0644'
+
+    - name: Set up Grafana datasources
+      copy:
+        content: |
+          apiVersion: 1
+          datasources:
+            - name: Prometheus
+              type: prometheus
+              access: proxy
+              url: http://prometheus:9090
+              isDefault: true
+            - name: Loki
+              type: loki
+              access: proxy
+              url: http://loki:3100
+        dest: /home/ubuntu/observability-stack/grafana/provisioning/datasources.yml
+        owner: ubuntu
+        group: ubuntu
+        mode: '0644'
+
+    - name: Create infrastructure dashboard
+      copy:
+        content: |
+          {
+            "dashboard": {
+              "id": null,
+              "title": "Neve Infrastructure Overview",
+              "tags": ["infrastructure", "proxmox"],
+              "timezone": "browser",
+              "panels": [
+                {
+                  "id": 1,
+                  "title": "VM Status",
+                  "type": "stat",
+                  "targets": [
+                    {
+                      "expr": "up",
+                      "legendFormat": "{{instance}} - {{role}}"
+                    }
+                  ],
+                  "gridPos": {"h": 8, "w": 24, "x": 0, "y": 0}
+                },
+                {
+                  "id": 2,
+                  "title": "CPU Usage",
+                  "type": "graph",
+                  "targets": [
+                    {
+                      "expr": "100 - (avg by(instance) (irate(node_cpu_seconds_total{mode=\"idle\"}[5m])) * 100)",
+                      "legendFormat": "{{instance}}"
+                    }
+                  ],
+                  "gridPos": {"h": 8, "w": 12, "x": 0, "y": 8}
+                },
+                {
+                  "id": 3,
+                  "title": "Memory Usage",
+                  "type": "graph",
+                  "targets": [
+                    {
+                      "expr": "(node_memory_MemTotal_bytes - node_memory_MemAvailable_bytes) / node_memory_MemTotal_bytes * 100",
+                      "legendFormat": "{{instance}}"
+                    }
+                  ],
+                  "gridPos": {"h": 8, "w": 12, "x": 12, "y": 8}
+                }
+              ],
+              "time": {
+                "from": "now-1h",
+                "to": "now"
+              },
+              "refresh": "5s"
+            }
+          }
+        dest: /home/ubuntu/observability-stack/grafana/dashboards/infrastructure.json
+        owner: ubuntu
+        group: ubuntu
+        mode: '0644'
+
+    - name: Start observability stack
+      command: docker compose up -d
+      args:
+        chdir: /home/ubuntu/observability-stack
+      become_user: ubuntu
+
+    - name: Wait for services to be ready
+      wait_for:
+        host: "{{ francoise_ip }}"
+        port: "{{ item }}"
+        delay: 10
+        timeout: 60
+      loop:
+        - 3000  # Grafana
+        - 9090  # Prometheus
+        - 3100  # Loki
+        - 9093  # Alertmanager
+
+    - name: Show observability stack status
+      command: docker compose ps
+      args:
+        chdir: /home/ubuntu/observability-stack
+      become_user: ubuntu
+      register: docker_status
+
+    - name: Display success message
+      debug:
+        msg:
+          - "🎉 Françoise Observability Stack is ready!"
+          - "📊 Grafana: http://{{ francoise_ip }}:3000 (admin/admin123)"
+          - "📈 Prometheus: http://{{ francoise_ip }}:9090"
+          - "📝 Loki: http://{{ francoise_ip }}:3100"
+          - "🚨 Alertmanager: http://{{ francoise_ip }}:9093"
+          - "Container Status:"
+          - "{{ docker_status.stdout }}"

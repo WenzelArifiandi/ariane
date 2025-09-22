@@ -1,0 +1,26 @@
+# Proxmox API Configuration
+# SECURITY: Copy this file to terraform.tfvars and set actual values
+# Or use environment variables: export TF_VAR_proxmox_password="your_password"
+proxmox_api_url  = "https://54.39.102.214:8006/api2/json"
+proxmox_user     = "root@pam"
+proxmox_password = "CHANGE_ME_TO_ACTUAL_PASSWORD"
+
+# Node Configuration
+target_node = "neve"
+
+# Storage Configuration
+storage_pool = "local"
+
+# ISO Configuration
+iso_file = "local:iso/ubuntu-24.04.1-live-server-amd64.iso"
+
+# Static MAC addresses (update if you prefer different values)
+macaddr_db    = "BC:24:11:C1:23:FB"
+macaddr_k3s   = "BC:24:11:16:52:7F"
+macaddr_pbs   = "BC:24:11:5C:06:CB"
+macaddr_smoke = "BC:24:11:39:7C:4D"
+
+# Expected IP addresses (match your DHCP reservations)
+postgres_ip = "10.98.0.10"
+k8s_ip      = "10.98.0.11"
+pbs_ip      = "10.98.0.12"

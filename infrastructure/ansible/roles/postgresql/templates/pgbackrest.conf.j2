@@ -1,0 +1,76 @@
+# pgBackRest Configuration for Cell v0
+# Enterprise backup solution with PITR support
+
+[global]
+repo1-type={{ backup_storage_type | default('s3') }}
+repo1-retention-full={{ backup_retention_days | default(14) }}
+repo1-retention-diff=4
+repo1-compression-type=zstd
+repo1-compression-level=6
+repo1-bundle=y
+repo1-block=y
+
+# Archive settings
+archive-async=y
+archive-get-queue-max=1000000
+archive-push-queue-max=1000000
+start-fast=y
+stop-auto=y
+
+# Performance settings
+process-max={{ ansible_processor_vcpus }}
+compress-level=6
+compress-level-network=3
+
+# Logging
+log-level-console=info
+log-level-file=detail
+log-level-stderr=off
+log-path=/var/log/pgbackrest
+log-timestamp=n
+
+# Lock settings
+lock-path=/var/spool/pgbackrest
+
+{% if backup_storage_type == 's3' or backup_storage_type is not defined %}
+# S3 configuration
+repo1-s3-endpoint={{ s3_endpoint | default('s3.amazonaws.com') }}
+repo1-s3-bucket={{ s3_bucket }}
+repo1-s3-region={{ s3_region | default('us-east-1') }}
+repo1-s3-key={{ s3_access_key }}
+repo1-s3-key-secret={{ s3_secret_key }}
+{% if s3_endpoint != 's3.amazonaws.com' %}
+repo1-s3-verify-tls=n
+{% endif %}
+{% endif %}
+
+{% if backup_storage_type == 'b2' %}
+# Backblaze B2 configuration
+repo1-s3-endpoint={{ b2_endpoint }}
+repo1-s3-bucket={{ b2_bucket }}
+repo1-s3-region={{ b2_region | default('us-west-000') }}
+repo1-s3-key={{ b2_key_id }}
+repo1-s3-key-secret={{ b2_application_key }}
+repo1-s3-uri-style=path
+repo1-s3-verify-tls=y
+{% endif %}
+
+# Database stanza
+[{{ pgbackrest_stanza }}]
+pg1-path={{ postgres_data_dir }}
+pg1-port=5432
+pg1-socket-path=/var/run/postgresql
+
+# Recovery settings
+recovery-option=standby_mode=off
+
+# Backup settings
+backup-standby=n
+
+# Differential backup settings
+resume=n
+checksum-page=y
+
+# Archive settings specific to this stanza
+archive-copy=n
+archive-check=y

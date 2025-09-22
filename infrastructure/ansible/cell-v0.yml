@@ -1,0 +1,130 @@
+---
+# Cell v0 Deployment Playbook
+# Complete infrastructure deployment for Ariane authentication stack
+# Prerequisites: VMs created via Terraform, SOPS secrets configured
+
+- name: Deploy Cell v0 - PostgreSQL Database
+  hosts: postgresql
+  become: yes
+  vars:
+    # Database configuration
+    postgres_version: 16
+    postgres_port: 5432
+    postgres_data_dir: /mnt/data/postgresql/16/main
+    postgres_log_dir: /var/log/postgresql
+
+    # Performance tuning for 12GB RAM VM
+    postgres_shared_buffers: "4GB"
+    postgres_effective_cache_size: "10GB"
+    postgres_work_mem: "32MB"
+    postgres_maintenance_work_mem: "512MB"
+    postgres_checkpoint_completion_target: 0.9
+    postgres_wal_buffers: "64MB"
+    postgres_random_page_cost: 1.1
+    postgres_effective_io_concurrency: 200
+
+    # Security configuration
+    postgres_allowed_hosts:
+      - "{{ hostvars[groups['kubernetes'][0]]['ansible_default_ipv4']['address'] }}"
+
+    # Database and user for Zitadel
+    zitadel_db_name: "zitadel"
+    zitadel_db_user: "zitadel"
+
+    # Backup configuration
+    pgbackrest_enabled: true
+    pgbackrest_retention_full: 2
+    pgbackrest_retention_diff: 7
+    pgbackrest_retention_archive: 14
+
+    # Monitoring
+    postgres_exporter_enabled: true
+    postgres_exporter_port: 9187
+
+  roles:
+    - postgresql
+
+  post_tasks:
+    - name: Verify PostgreSQL is running
+      systemd:
+        name: postgresql
+        state: started
+
+    - name: Test database connection
+      postgresql_ping:
+        db: "{{ zitadel_db_name }}"
+        login_user: "{{ zitadel_db_user }}"
+        login_password: "{{ zitadel_db_password }}"
+        login_host: localhost
+      become_user: postgres
+
+- name: Deploy Cell v0 - Kubernetes and Applications
+  hosts: kubernetes
+  become: yes
+  vars:
+    # k3s configuration
+    k3s_version: "v1.29.0+k3s1"
+    helm_version: "3.14.0"
+
+    # Domain configuration
+    zitadel_domain: "auth.wenzelarifiandi.com"
+
+    # PostgreSQL connection (from database host)
+    postgres_host: "{{ hostvars[groups['postgresql'][0]]['ansible_default_ipv4']['address'] }}"
+    postgres_port: 5432
+    postgres_database: "zitadel"
+    postgres_user: "zitadel"
+
+    # Monitoring configuration
+    prometheus_retention: "30d"
+
+    # Firewall rules for k8s services
+    k8s_firewall_rules:
+      - port: "6443"
+        proto: "tcp"
+        src: "{{ ansible_default_ipv4.network }}/{{ ansible_default_ipv4.netmask }}"
+      - port: "30080"
+        proto: "tcp"
+      - port: "30443"
+        proto: "tcp"
+      - port: "30090"
+        proto: "tcp"
+        src: "{{ ansible_default_ipv4.network }}/{{ ansible_default_ipv4.netmask }}"
+      - port: "30000"
+        proto: "tcp"
+        src: "{{ ansible_default_ipv4.network }}/{{ ansible_default_ipv4.netmask }}"
+
+  roles:
+    - k3s
+
+  post_tasks:
+    - name: Wait for Zitadel to be ready
+      uri:
+        url: "https://{{ zitadel_domain }}/debug/healthz"
+        method: GET
+        status_code: 200
+      retries: 30
+      delay: 10
+      delegate_to: localhost
+      when: zitadel_domain is defined
+
+    - name: Display deployment summary
+      debug:
+        msg: |
+          🎉 Cell v0 deployment completed successfully!
+
+          Services:
+          - PostgreSQL: {{ postgres_host }}:{{ postgres_port }}
+          - Zitadel: https://{{ zitadel_domain }}
+          - Prometheus: http://{{ ansible_default_ipv4.address }}:30090
+          - Grafana: http://{{ ansible_default_ipv4.address }}:30000
+
+          Credentials:
+          - Grafana Admin: admin / {{ grafana_admin_password }}
+          - PostgreSQL: Check encrypted secrets
+
+          Next Steps:
+          1. Update DNS: {{ zitadel_domain }} -> {{ ansible_default_ipv4.address }}
+          2. Test Zitadel login and OIDC flows
+          3. Configure backup verification
+          4. Set up monitoring alerts

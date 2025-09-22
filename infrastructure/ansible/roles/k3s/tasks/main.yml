@@ -1,0 +1,286 @@
+---
+# k3s Kubernetes cluster with Helm deployments for Cell v0
+# Includes: nginx-ingress, cert-manager, external-dns, Prometheus, Grafana, Zitadel
+
+- name: Update apt cache
+  apt:
+    update_cache: yes
+    cache_valid_time: 3600
+
+- name: Install dependencies
+  apt:
+    name:
+      - curl
+      - wget
+      - apt-transport-https
+      - ca-certificates
+      - gnupg
+      - lsb-release
+      - jq
+      - yq
+      - git
+    state: present
+
+- name: Create k3s config directory
+  file:
+    path: /etc/rancher/k3s
+    state: directory
+    mode: '0755'
+
+- name: Configure k3s
+  template:
+    src: config.yaml.j2
+    dest: /etc/rancher/k3s/config.yaml
+    mode: '0600'
+
+- name: Download k3s installation script
+  get_url:
+    url: https://get.k3s.io
+    dest: /tmp/k3s-install.sh
+    mode: '0755'
+
+- name: Install k3s
+  shell: |
+    INSTALL_K3S_VERSION={{ k3s_version | default('v1.29.0+k3s1') }} \
+    K3S_CONFIG_FILE=/etc/rancher/k3s/config.yaml \
+    /tmp/k3s-install.sh
+  args:
+    creates: /usr/local/bin/k3s
+
+- name: Wait for k3s to be ready
+  wait_for:
+    port: 6443
+    host: localhost
+    timeout: 120
+
+- name: Create .kube directory for ubuntu user
+  file:
+    path: /home/ubuntu/.kube
+    state: directory
+    owner: ubuntu
+    group: ubuntu
+    mode: '0755'
+
+- name: Create kubeconfig for ubuntu user
+  copy:
+    src: /etc/rancher/k3s/k3s.yaml
+    dest: /home/ubuntu/.kube/config
+    owner: ubuntu
+    group: ubuntu
+    mode: '0600'
+    remote_src: yes
+
+- name: Create .kube directory for ubuntu user
+  file:
+    path: /home/ubuntu/.kube
+    state: directory
+    owner: ubuntu
+    group: ubuntu
+    mode: '0755'
+
+- name: Download Helm
+  get_url:
+    url: "https://get.helm.sh/helm-v{{ helm_version | default('3.14.0') }}-linux-amd64.tar.gz"
+    dest: /tmp/helm.tar.gz
+
+- name: Extract and install Helm
+  unarchive:
+    src: /tmp/helm.tar.gz
+    dest: /tmp
+    remote_src: yes
+
+- name: Install Helm binary
+  copy:
+    src: /tmp/linux-amd64/helm
+    dest: /usr/local/bin/helm
+    mode: '0755'
+    remote_src: yes
+
+- name: Add Helm repositories
+  kubernetes.core.helm_repository:
+    name: "{{ item.name }}"
+    repo_url: "{{ item.url }}"
+    kubeconfig: /etc/rancher/k3s/k3s.yaml
+  loop:
+    - name: ingress-nginx
+      url: https://kubernetes.github.io/ingress-nginx
+    - name: jetstack
+      url: https://charts.jetstack.io
+    - name: bitnami
+      url: https://charts.bitnami.com/bitnami
+    - name: prometheus-community
+      url: https://prometheus-community.github.io/helm-charts
+    - name: grafana
+      url: https://grafana.github.io/helm-charts
+    - name: zitadel
+      url: https://charts.zitadel.com
+
+- name: Update Helm repositories
+  kubernetes.core.helm:
+    name: dummy
+    chart_ref: stable/dummy
+    release_namespace: kube-system
+    kubeconfig: /etc/rancher/k3s/k3s.yaml
+    state: absent
+    update_repo_cache: yes
+
+- name: Create namespaces
+  kubernetes.core.k8s:
+    name: "{{ item }}"
+    api_version: v1
+    kind: Namespace
+    state: present
+    kubeconfig: /etc/rancher/k3s/k3s.yaml
+  loop:
+    - ingress-nginx
+    - cert-manager
+    - monitoring
+    - zitadel
+
+- name: Deploy nginx-ingress
+  kubernetes.core.helm:
+    name: ingress-nginx
+    chart_ref: ingress-nginx/ingress-nginx
+    release_namespace: ingress-nginx
+    kubeconfig: /etc/rancher/k3s/k3s.yaml
+    values:
+      controller:
+        service:
+          type: NodePort
+          nodePorts:
+            http: 30080
+            https: 30443
+        config:
+          use-real-ip: "true"
+          real-ip-header: "X-Forwarded-For"
+        extraArgs:
+          default-ssl-certificate: "cert-manager/wildcard-tls"
+
+- name: Install cert-manager CRDs
+  kubernetes.core.k8s:
+    state: present
+    definition:
+      apiVersion: v1
+      kind: List
+      items: "{{ lookup('url', 'https://github.com/cert-manager/cert-manager/releases/download/v1.13.3/cert-manager.crds.yaml', split_lines=False) | from_yaml_all | list }}"
+    kubeconfig: /etc/rancher/k3s/k3s.yaml
+
+- name: Deploy cert-manager
+  kubernetes.core.helm:
+    name: cert-manager
+    chart_ref: jetstack/cert-manager
+    release_namespace: cert-manager
+    kubeconfig: /etc/rancher/k3s/k3s.yaml
+    values:
+      installCRDs: false
+      global:
+        leaderElection:
+          namespace: cert-manager
+
+- name: Create Cloudflare API secret for cert-manager
+  kubernetes.core.k8s:
+    definition:
+      apiVersion: v1
+      kind: Secret
+      metadata:
+        name: cloudflare-api-token
+        namespace: cert-manager
+      type: Opaque
+      data:
+        api-token: "{{ cloudflare_api_token | b64encode }}"
+    kubeconfig: /etc/rancher/k3s/k3s.yaml
+
+- name: Create ClusterIssuer for Let's Encrypt
+  kubernetes.core.k8s:
+    definition:
+      apiVersion: cert-manager.io/v1
+      kind: ClusterIssuer
+      metadata:
+        name: letsencrypt-production
+      spec:
+        acme:
+          server: https://acme-v02.api.letsencrypt.org/directory
+          email: "{{ acme_email }}"
+          privateKeySecretRef:
+            name: letsencrypt-production
+          solvers:
+          - dns01:
+              cloudflare:
+                apiTokenSecretRef:
+                  name: cloudflare-api-token
+                  key: api-token
+    kubeconfig: /etc/rancher/k3s/k3s.yaml
+
+- name: Deploy Prometheus
+  kubernetes.core.helm:
+    name: prometheus
+    chart_ref: prometheus-community/kube-prometheus-stack
+    release_namespace: monitoring
+    kubeconfig: /etc/rancher/k3s/k3s.yaml
+    values:
+      prometheus:
+        service:
+          type: NodePort
+          nodePort: 30090
+        prometheusSpec:
+          retention: "{{ prometheus_retention | default('30d') }}"
+          storageSpec:
+            volumeClaimTemplate:
+              spec:
+                accessModes: ["ReadWriteOnce"]
+                resources:
+                  requests:
+                    storage: 50Gi
+          additionalScrapeConfigs:
+            - job_name: 'postgres-exporter'
+              static_configs:
+                - targets: ['{{ postgres_host }}:{{ postgres_exporter_port | default(9187) }}']
+      grafana:
+        service:
+          type: NodePort
+          nodePort: 30000
+        adminPassword: "{{ grafana_admin_password }}"
+        persistence:
+          enabled: true
+          size: 10Gi
+
+- name: Wait for cert-manager to be ready
+  kubernetes.core.k8s_info:
+    api_version: apps/v1
+    kind: Deployment
+    name: cert-manager
+    namespace: cert-manager
+    kubeconfig: /etc/rancher/k3s/k3s.yaml
+    wait: true
+    wait_condition:
+      type: Available
+      status: "True"
+    wait_timeout: 300
+
+- name: Deploy Zitadel
+  kubernetes.core.helm:
+    name: zitadel
+    chart_ref: zitadel/zitadel
+    release_namespace: zitadel
+    kubeconfig: /etc/rancher/k3s/k3s.yaml
+    values: "{{ zitadel_helm_values }}"
+
+- name: Configure firewall rules
+  ufw:
+    rule: allow
+    port: "{{ item.port }}"
+    proto: "{{ item.proto }}"
+    src: "{{ item.src | default('any') }}"
+  loop: "{{ k8s_firewall_rules }}"
+  when: firewall_enabled | default(true)
+
+- name: Display cluster info
+  debug:
+    msg: |
+      k3s cluster deployed successfully!
+
+      Access:
+      - Kubeconfig: scp ubuntu@{{ ansible_host }}:~/.kube/config ~/.kube/config-cell-v0
+      - Prometheus: http://{{ ansible_host }}:30090
+      - Grafana: http://{{ ansible_host }}:30000 (admin/{{ grafana_admin_password }})
+      - Zitadel: https://{{ zitadel_domain }} (after DNS update)

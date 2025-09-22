@@ -1,0 +1,27 @@
+---
+- name: restart postgresql
+  systemd:
+    name: postgresql
+    state: restarted
+    daemon_reload: yes
+
+- name: reload postgresql
+  systemd:
+    name: postgresql
+    state: reloaded
+
+- name: restart pgbouncer
+  systemd:
+    name: pgbouncer
+    state: restarted
+    daemon_reload: yes
+
+- name: restart postgres-exporter
+  systemd:
+    name: postgres-exporter
+    state: restarted
+    daemon_reload: yes
+
+- name: reload systemd
+  systemd:
+    daemon_reload: yes

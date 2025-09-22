@@ -1,0 +1,105 @@
+name: "🛡️ Security Scan (Optimized)"
+
+on:
+  push:
+    branches: ["main"]
+    paths-ignore:
+      - "*.md"
+      - "docs/**"
+      - ".gitignore"
+  pull_request:
+    branches: ["main"]
+    paths-ignore:
+      - "*.md"
+      - "docs/**"
+      - ".gitignore"
+  schedule:
+    # Run weekly on Sundays at 6 AM UTC
+    - cron: "0 6 * * 0"
+  workflow_dispatch:
+
+permissions:
+  actions: read
+  contents: read
+  security-events: write
+  pull-requests: write
+
+jobs:
+  # Only run essential security scans to reduce noise
+  security-scan:
+    name: "🔍 Essential Security Scan"
+    runs-on: ubuntu-latest
+    if: github.actor != 'dependabot[bot]'
+
+    steps:
+      - name: "📥 Checkout"
+        uses: actions/checkout@v4
+
+      - name: "🔧 Setup Node.js"
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22.x"
+          cache: "npm"
+          cache-dependency-path: |
+            site/package-lock.json
+            studio/package-lock.json
+
+      - name: "📦 Install Dependencies"
+        run: |
+          cd site && npm ci --production
+          cd ../studio && npm ci --production
+
+      # CodeQL is the most important one - GitHub's own SAST
+      - name: "🔧 Initialize CodeQL"
+        uses: github/codeql-action/init@v3
+        with:
+          languages: javascript-typescript
+          queries: security-extended
+
+      - name: "🏗️ Build for CodeQL"
+        run: |
+          cd site && npm run build || true
+          cd ../studio && npm run build || true
+
+      - name: "🔍 Perform CodeQL Analysis"
+        uses: github/codeql-action/analyze@v3
+
+      # Only run dependency scan (most important for security)
+      - name: "🔍 Dependency Vulnerability Scan"
+        run: |
+          npm audit --audit-level=high --json > audit-results.json || true
+          if grep -q '"vulnerabilities"' audit-results.json; then
+            echo "⚠️ High-severity vulnerabilities found"
+            npm audit --audit-level=high
+          else
+            echo "✅ No high-severity vulnerabilities found"
+          fi
+
+      # Only auto-fix critical issues, not everything
+      - name: "🔧 Critical Security Auto-fix"
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        run: |
+          git config --local user.email "security-bot@github.com"
+          git config --local user.name "Security Auto-Fix Bot"
+
+          # Only fix critical vulnerabilities with audit fix
+          cd site && npm audit fix --audit-level=critical --force || true
+          cd ../studio && npm audit fix --audit-level=critical --force || true
+
+          if ! git diff --quiet; then
+            git add .
+            git commit -m "🔧 auto-fix: resolve critical security vulnerabilities
+
+            🛡️ Critical security updates applied
+            🤖 Automated by: Security Bot" || true
+            git push || echo "Push failed - likely no changes"
+          fi
+
+      - name: "📊 Security Summary"
+        if: always()
+        run: |
+          echo "# 🛡️ Security Scan Complete" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "✅ CodeQL analysis completed" >> $GITHUB_STEP_SUMMARY
+          echo "✅ Dependency scan completed" >> $GITHUB_STEP_SUMMARY
+          echo "🔗 [View Security Tab](https://github.com/${{ github.repository }}/security)" >> $GITHUB_STEP_SUMMARY

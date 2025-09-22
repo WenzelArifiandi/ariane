@@ -1,0 +1,81 @@
+# Generated environment variables from Terraform
+# This file is auto-generated - do not edit manually
+
+---
+# Infrastructure IPs
+postgresql_ip: "${postgresql_ip}"
+k8s_ip: "${k8s_ip}"
+
+# Domain configuration
+zitadel_domain: "${domain}"
+zitadel_external_port: 443
+zitadel_external_secure: true
+
+# Database configuration
+postgres_host: "${postgresql_ip}"
+postgres_port: 5432
+postgres_database: "zitadel"
+postgres_user: "zitadel"
+
+# Storage configuration
+postgres_data_directory: "/var/lib/postgresql/16/main"
+postgres_backup_directory: "/var/lib/postgresql/backups"
+
+# Performance tuning for 12-16GB RAM + NVMe
+postgres_tuning:
+  shared_buffers: "4GB"
+  effective_cache_size: "10GB"
+  work_mem: "32MB"
+  maintenance_work_mem: "1GB"
+  wal_level: "replica"
+  max_wal_size: "8GB"
+  checkpoint_completion_target: 0.9
+  random_page_cost: 1.1
+  effective_io_concurrency: 200
+
+# K3s configuration
+k3s_version: "v1.29.0+k3s1"
+k3s_datastore_endpoint: ""
+k3s_disable_components:
+  - traefik  # We'll use nginx-ingress
+k3s_extra_server_args:
+  - "--disable=traefik"
+  - "--write-kubeconfig-mode=644"
+
+# Monitoring
+monitoring_namespace: "monitoring"
+prometheus_retention: "30d"
+grafana_admin_password: "admin"  # Change via SOPS
+
+# Backup configuration
+backup_schedule:
+  full_backup: "0 2 * * 0"     # Weekly full backup
+  incremental: "0 2 * * 1-6"   # Daily incremental
+  wal_archive: true
+
+# Security
+firewall_rules:
+  postgresql:
+    - port: 22
+      source: "any"
+      proto: "tcp"
+    - port: 5432
+      source: "${k8s_ip}"
+      proto: "tcp"
+    - port: 9187
+      source: "${k8s_ip}"
+      proto: "tcp"
+
+  k3s:
+    - port: 22
+      source: "any"
+      proto: "tcp"
+    - port: 80
+      source: "any"
+      proto: "tcp"
+    - port: 443
+      source: "any"
+      proto: "tcp"
+    - port: 6443
+      source: "any"
+      proto: "tcp"

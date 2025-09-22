@@ -1,0 +1,86 @@
+groups:
+  - name: infrastructure.rules
+    rules:
+      # VM Health Alerts
+      - alert: VMDown
+        expr: up == 0
+        for: 5m
+        labels:
+          severity: critical
+        annotations:
+          summary: "VM {{ $labels.instance }} is down"
+          description: "VM {{ $labels.instance }} has been down for more than 5 minutes"
+
+      - alert: HighCPUUsage
+        expr: 100 - (avg by(instance) (irate(node_cpu_seconds_total{mode="idle"}[5m])) * 100) > 80
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High CPU usage on {{ $labels.instance }}"
+          description: "CPU usage is above 80% for 10 minutes on {{ $labels.instance }}"
+
+      - alert: HighMemoryUsage
+        expr: (node_memory_MemTotal_bytes - node_memory_MemAvailable_bytes) / node_memory_MemTotal_bytes * 100 > 85
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High memory usage on {{ $labels.instance }}"
+          description: "Memory usage is above 85% on {{ $labels.instance }}"
+
+      - alert: LowDiskSpace
+        expr: (node_filesystem_size_bytes - node_filesystem_free_bytes) / node_filesystem_size_bytes * 100 > 90
+        for: 15m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Low disk space on {{ $labels.instance }}"
+          description: "Disk usage is above 90% on {{ $labels.instance }} filesystem {{ $labels.mountpoint }}"
+
+      # Infrastructure-specific alerts
+      - alert: DatabaseVMDown
+        expr: up{role="database"} == 0
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Database VM is down"
+          description: "PostgreSQL VM {{ $labels.instance }} is unreachable"
+
+      - alert: KubernetesVMDown
+        expr: up{role="kubernetes"} == 0
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Kubernetes VM is down"
+          description: "K8s VM {{ $labels.instance }} is unreachable"
+
+      - alert: BackupVMDown
+        expr: up{role="backup"} == 0
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Backup VM is down"
+          description: "PBS VM {{ $labels.instance }} is unreachable"
+
+      # Terraform/Ansible job monitoring
+      - alert: TerraformJobFailed
+        expr: increase(terraform_apply_failures_total[1h]) > 0
+        for: 1m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Terraform apply failed"
+          description: "Terraform deployment has failed {{ $value }} times in the last hour"
+
+      - alert: AnsibleJobFailed
+        expr: increase(ansible_playbook_failures_total[1h]) > 0
+        for: 1m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Ansible playbook failed"
+          description: "Ansible playbook has failed {{ $value }} times in the last hour"

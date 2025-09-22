@@ -1,0 +1,106 @@
+Database:
+  Host: {{ postgresql_host | default('localhost') }}
+  Port: 5432
+  Database: zitadel
+  Username: postgres
+  Password: postgres
+  SSLMode: disable
+  MaxOpenConns: 20
+  MaxIdleConns: 10
+  MaxConnLifetime: 30m
+  MaxConnIdleTime: 5m
+
+ExternalDomain: auth.wenzelarifiandi.com
+ExternalPort: 443
+ExternalSecure: true
+
+TLS:
+  Enabled: false
+
+HTTP:
+  Port: 8080
+
+Log:
+  Level: info
+  Formatter: text
+
+SystemDefaults:
+  SecretGenerators:
+    MachineKeySize: 2048
+  Multifactors:
+    OTP:
+      CryptoMFA:
+        KeySize: 6
+
+DefaultInstance:
+  InstanceName: "ZITADEL"
+  DefaultLanguage: "en"
+
+  Org:
+    Name: "ZITADEL"
+
+  SecretGenerators:
+    ClientSecret:
+      Length: 64
+    InitializeUserCode:
+      Length: 6
+      Expiry: 72h
+    EmailVerificationCode:
+      Length: 6
+      Expiry: 1h
+    PhoneVerificationCode:
+      Length: 6
+      Expiry: 1h
+    PasswordVerificationCode:
+      Length: 6
+      Expiry: 1h
+    PasswordlessInitCode:
+      Length: 64
+      Expiry: 1h
+    DomainVerification:
+      Length: 32
+      Expiry: 24h
+    OTPSMS:
+      Length: 8
+      Expiry: 5m
+    OTPEmail:
+      Length: 8
+      Expiry: 5m
+
+  PasswordComplexityPolicy:
+    MinLength: 8
+    HasLowercase: true
+    HasUppercase: true
+    HasNumber: true
+    HasSymbol: false
+
+  LabelPolicy:
+    PrimaryColor: "#5469d4"
+    BackgroundColor: "#fafafa"
+    WarnColor: "#cd3d56"
+    FontColor: "#000000"
+    LogoURL: ""
+    IconURL: ""
+
+  LoginPolicy:
+    AllowUsernamePassword: true
+    AllowRegister: true
+    AllowExternalIDP: false
+    ForceMFA: false
+    HidePasswordReset: false
+    IgnoreUnknownUsernames: false
+
+  LockoutPolicy:
+    MaxPasswordAttempts: 5
+    MaxOTPAttempts: 3
+    ShouldShowLockoutFailure: true
+
+  PrivacyPolicy:
+    TOSLink: ""
+    PrivacyLink: ""
+    HelpLink: ""
+
+Actions:
+  HTTP:
+    Headers:
+      Content-Type: "application/json"

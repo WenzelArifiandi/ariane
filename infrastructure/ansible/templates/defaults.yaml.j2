@@ -1,0 +1,33 @@
+# ZITADEL runtime defaults
+# This file contains default settings that override built-in defaults
+
+Database:
+  MaxOpenConns: 25
+  MaxIdleConns: 5
+  MaxConnLifetime: 1h
+  MaxConnIdleTime: 300s
+
+WebAuthNName: "ZITADEL"
+
+Log:
+  Level: "info"
+  Formatter: "text"
+
+Port: 8080
+TLS:
+  Enabled: false
+
+FirstInstance:
+  Org:
+    Machine:
+      Machine:
+        Username: "zitadel-admin-sa"
+        Name: "Admin Service Account"
+      MachineKey:
+        Type: 1  # 1 = JSON, 2 = JWT
+  SecretGenerators:
+    PasswordSaltCost: 14
+
+DefaultInstance:
+  SecretGenerators:
+    PasswordSaltCost: 14

@@ -1,0 +1,197 @@
+---
+import type { Props } from '@astrojs/starlight/props';
+import Default from '@astrojs/starlight/components/Header.astro';
+---
+
+<Default {...Astro.props} />
+
+<script>
+  document.addEventListener('DOMContentLoaded', async () => {
+    // Check authentication status
+    let isAuthenticated = false;
+    let userEmail = null;
+
+    try {
+      const response = await fetch('/api/auth-check');
+      const data = await response.json();
+      isAuthenticated = data.authenticated;
+      userEmail = data.email;
+    } catch (error) {
+      console.log('Could not check authentication:', error);
+    }
+
+    // Find the right-group div in the header to inject our buttons
+    const rightGroup = document.querySelector('.right-group');
+    if (!rightGroup) {
+      console.log('Could not find right-group element');
+      return;
+    }
+
+    // Create our auth buttons container
+    const container = document.createElement('div');
+    container.className = 'auth-buttons';
+    container.id = 'auth-nav-buttons';
+
+    if (isAuthenticated) {
+      // Show user info and edit button
+      container.innerHTML = `
+        <div class="user-chip">
+          <span class="material-symbols-rounded">account_circle</span>
+          <span>${userEmail?.split('@')[0] || 'User'}</span>
+        </div>
+        <a href="/edit${window.location.pathname}" class="edit-btn">
+          <span class="material-symbols-rounded">edit</span>
+          <span>Edit</span>
+        </a>
+      `;
+    } else {
+      // Show sign in button
+      container.innerHTML = `
+        <button class="sign-in-btn">
+          <span class="material-symbols-rounded">login</span>
+          <span>Sign in</span>
+        </button>
+      `;
+    }
+
+    // Insert at the beginning of the right-group (before theme selector)
+    rightGroup.insertBefore(container, rightGroup.firstChild);
+
+    // Attach click handler for sign-in button (avoid inline onclick which expects a global function)
+    const signInBtn = container.querySelector('.sign-in-btn');
+    if (signInBtn) {
+      signInBtn.addEventListener('click', handleSignIn);
+    }
+  });
+
+  // Handle sign in - redirect to a protected page to trigger CF Access
+  function handleSignIn() {
+    // Redirect to the edit page which will trigger Cloudflare Access
+    window.location.href = `/edit${window.location.pathname}`;
+  }
+</script>
+
+<style is:global>
+  .auth-buttons {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .user-chip {
+    background: var(--sl-color-bg-nav);
+    color: var(--sl-color-gray-1);
+    padding: 0.5rem 0.875rem;
+    border-radius: 1.5rem;
+    font-family: var(--sl-font);
+    font-size: var(--sl-text-sm);
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    border: 1px solid var(--sl-color-gray-5);
+    box-shadow: 0 1px 3px rgb(0 0 0 / 0.12), 0 1px 2px rgb(0 0 0 / 0.24);
+  }
+
+  /* Material Design 3 Expressive Button Styling with high specificity */
+  .auth-buttons .edit-btn,
+  .auth-buttons .sign-in-btn {
+    /* M3 Primary Filled Button with Expressive styling */
+    background: linear-gradient(135deg, #6750a4 0%, #7c4dff 100%) !important;
+    color: #ffffff !important;
+    padding: 0.75rem 1.5rem !important;
+    border-radius: 2rem !important;
+    font-family: var(--sl-font) !important;
+    font-size: 0.875rem !important;
+    font-weight: 700 !important;
+    letter-spacing: 0.025em !important;
+    text-transform: uppercase !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 0.625rem !important;
+    text-decoration: none !important;
+    border: none !important;
+    cursor: pointer !important;
+    position: relative !important;
+    overflow: hidden !important;
+    transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) !important;
+    box-shadow:
+      0 4px 8px rgba(103, 80, 164, 0.3),
+      0 2px 4px rgba(0, 0, 0, 0.15),
+      inset 0 1px 0 rgba(255, 255, 255, 0.2) !important;
+    transform: translateZ(0) scale(1) !important;
+    backdrop-filter: blur(10px) !important;
+  }
+
+  /* M3 Expressive hover states with dramatic elevation */
+  .auth-buttons .edit-btn:hover,
+  .auth-buttons .sign-in-btn:hover {
+    background: linear-gradient(135deg, #7c4dff 0%, #9575cd 100%) !important;
+    transform: translateY(-4px) scale(1.05) !important;
+    box-shadow:
+      0 12px 24px rgba(103, 80, 164, 0.4),
+      0 6px 12px rgba(0, 0, 0, 0.2),
+      inset 0 1px 0 rgba(255, 255, 255, 0.3) !important;
+    filter: brightness(1.1) saturate(1.2) !important;
+  }
+
+  .auth-buttons .edit-btn:active,
+  .auth-buttons .sign-in-btn:active {
+    transform: translateY(-1px) scale(1.02) !important;
+    transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    box-shadow:
+      0 6px 12px rgba(103, 80, 164, 0.35),
+      0 3px 6px rgba(0, 0, 0, 0.18),
+      inset 0 1px 0 rgba(255, 255, 255, 0.25) !important;
+  }
+
+  /* M3 Enhanced Ripple effect */
+  .auth-buttons .edit-btn::before,
+  .auth-buttons .sign-in-btn::before {
+    content: '' !important;
+    position: absolute !important;
+    top: 50% !important;
+    left: 50% !important;
+    width: 0 !important;
+    height: 0 !important;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.4) 0%, rgba(255, 255, 255, 0.1) 40%, transparent 70%) !important;
+    border-radius: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    transition: width 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94), height 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) !important;
+    pointer-events: none !important;
+    opacity: 0 !important;
+  }
+
+  .auth-buttons .edit-btn:active::before,
+  .auth-buttons .sign-in-btn:active::before {
+    width: 200px !important;
+    height: 200px !important;
+    opacity: 1 !important;
+    transition: width 0.3s ease, height 0.3s ease, opacity 0.1s ease !important;
+  }
+
+  /* Floating animation for extra expressiveness */
+  /* Floating animation for extra expressiveness - disabled for a subtler, less 'levitating' effect */
+  @keyframes float {
+    0%, 100% { transform: translateY(0px) scale(1) !important; }
+    50% { transform: translateY(-1px) scale(1.005) !important; }
+  }
+
+  .auth-buttons .edit-btn,
+  .auth-buttons .sign-in-btn {
+    /* disable continuous float animation for a more grounded look */
+    animation: none !important;
+  }
+
+  .auth-buttons .edit-btn:hover,
+  .auth-buttons .sign-in-btn:hover {
+    animation: none !important;
+  }
+
+  /* Material Symbols with proper M3 styling */
+  .material-symbols-rounded {
+    font-variation-settings: 'FILL' 0, 'wght' 500, 'GRAD' 0, 'opsz' 20;
+    font-size: 1.125rem;
+    line-height: 1;
+  }
+</style>

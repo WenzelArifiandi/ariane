@@ -1,0 +1,25 @@
+[Unit]
+Description=Prometheus PostgreSQL Exporter
+Documentation=https://github.com/prometheus-community/postgres_exporter
+Wants=network-online.target
+After=network-online.target
+AssertFileIsExecutable=/usr/local/bin/postgres_exporter
+
+[Service]
+Type=simple
+User=postgres_exporter
+Group=postgres_exporter
+ExecStart=/usr/local/bin/postgres_exporter
+SyslogIdentifier=postgres_exporter
+Restart=always
+RestartSec=1
+StartLimitInterval=0
+
+Environment=DATA_SOURCE_NAME="postgresql://postgres_exporter:{{ postgres_exporter_password }}@localhost:5432/postgres?sslmode=disable"
+Environment=PG_EXPORTER_WEB_LISTEN_ADDRESS=":{{ postgres_exporter_port | default(9187) }}"
+Environment=PG_EXPORTER_EXTEND_QUERY_PATH=""
+Environment=PG_EXPORTER_DISABLE_DEFAULT_METRICS="false"
+Environment=PG_EXPORTER_DISABLE_SETTINGS_METRICS="false"
+
+[Install]
+WantedBy=multi-user.target
