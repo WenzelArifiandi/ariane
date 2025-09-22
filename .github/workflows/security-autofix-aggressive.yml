@@ -13,9 +13,10 @@ on:
           - medium
           - high
           - all
-  schedule:
-    # Run weekly on Sundays at 2 AM UTC
-    - cron: "0 2 * * 0"
+  # DISABLED: Too aggressive, creating too many PRs
+  # schedule:
+  #   # Run weekly on Sundays at 2 AM UTC
+  #   - cron: "0 2 * * 0"
 
 permissions:
   contents: write
@@ -34,6 +35,10 @@ jobs:
     name: "🛠️ Aggressive Security Fixes"
     runs-on: ubuntu-latest
     if: github.actor != 'dependabot[bot]'
+
+    # CRITICAL WARNING: Do NOT downgrade dependencies in this workflow.
+    # Only upgrade to newer, secure, and compatible versions. Never resolve issues by reverting to older versions unless explicitly approved by maintainers.
+    # See .github/copilot-instructions.md for details.
 
     steps:
       - name: "📥 Checkout"

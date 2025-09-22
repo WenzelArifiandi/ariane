@@ -3,6 +3,12 @@ export default {
   title: "Ariane Docs",
   // logo: { src: "/logo.svg", alt: "Ariane" }, // Temporarily removed due to build issues
 
+  // Custom components
+  components: {
+    Head: './src/components/Head.astro',
+    Header: './src/components/Header.astro',
+  },
+
   // Manual sidebar for Starlight 0.36.x
   sidebar: [
     {
