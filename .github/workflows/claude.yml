@@ -12,7 +12,7 @@ permissions:
 
 jobs:
   claude:
-    if: github.event_name == 'workflow_dispatch' || github.event.comment.body != ''
+    if: github.event_name == 'workflow_dispatch' || (github.event.comment.body != '' && contains(github.event.comment.body, '/claude'))
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
