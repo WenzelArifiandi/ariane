@@ -1,7 +1,8 @@
 ---
 const links = [
-  { label: 'Work', href: '#work' },
-  { label: 'About', href: '#about' },
+  { label: 'Hello', href: '#hello' },
+  { label: 'Playground', href: '#playground' },
+  { label: 'Field Notes', href: '#field-notes' },
   { label: 'Contact', href: '#contact' },
 ]
 const studioHref = import.meta.env.DEV ? 'http://localhost:3333/' : 'https://studio.wenzelarifiandi.com';
@@ -17,17 +18,17 @@ const cfLogoutHref: string = '/signout';
   <div class="max-w-screen-2xl mx-auto">
     <div class="nav-inner flex items-center justify-between gap-5 px-4 py-3 relative overflow-hidden isolate">
 
-      <a href="/" class="font-semibold tracking-wide text-ink no-underline relative z-10">Wenzel Arifiandi</a>
+      <a href="/" class="brand relative z-10">Wenzel Arifiandi</a>
 
       <ul class="flex items-center gap-3 sm:gap-4 flex-nowrap list-none m-0 p-0 min-w-0 relative z-10">
         {links.map((l) => (
           <li class="whitespace-nowrap">
-            <a href={l.href} class="text-ink no-underline font-semibold px-2 py-2">{l.label}</a>
+            <a href={l.href} class="nav-link">{l.label}</a>
           </li>
         ))}
 
         <li id="studio-link" class="hidden whitespace-nowrap">
-          <a href={studioHref} class="text-ink no-underline font-semibold px-2 py-2">Studio</a>
+          <a href={studioHref} class="nav-link">Studio</a>
         </li>
 
         {isAccessOnly && (
@@ -142,13 +143,34 @@ const cfLogoutHref: string = '/signout';
     transform: translateY(-1px);
   }
 
-  /* M3 hover behavior for nav links */
-  .nav-inner a:not(.chip-m3) {
-    border-radius: 10px;
-    transition: background 0.2s ease, color 0.2s ease;
+  /* Brand styling */
+  .brand {
+    font-weight: 600;
+    letter-spacing: .2px;
+    color: var(--ariane-text-ink, var(--ink));
+    text-decoration: none !important;
   }
 
-  .nav-inner a:not(.chip-m3):hover {
+  .brand:hover,
+  .brand:focus,
+  .brand:focus-visible {
+    text-decoration: none !important;
+  }
+
+  /* Nav link styling - original neat appearance */
+  .nav-link {
+    color: var(--ariane-text-ink, var(--ink));
+    text-decoration: none;
+    font-weight: 600;
+    white-space: nowrap;
+    padding: 8px 10px;
+    border-radius: 10px;
+    transition: background 0.2s ease, color 0.2s ease;
+    font-size: var(--body, 1rem);
+    line-height: 1.2;
+  }
+
+  .nav-link:hover {
     background: var(--ariane-hover-wash, rgba(255,255,255,.15));
     color: var(--ariane-text-ink-dim, rgba(0,0,0,.8));
   }
