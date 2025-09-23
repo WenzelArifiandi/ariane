@@ -1,0 +1,122 @@
+name: Lighthouse CI
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main]
+
+jobs:
+  lighthouse:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: |
+            package-lock.json
+            site/package-lock.json
+
+      - name: Install root dependencies
+        run: npm ci
+
+      - name: Install site dependencies
+        run: |
+          cd site
+          npm ci
+
+      - name: Build site
+        run: |
+          cd site
+          npm run build
+
+      - name: Serve site and run Lighthouse CI
+        run: |
+          cd site
+          npm install -g @lhci/cli@0.13.x
+          npm install -g serve
+
+          # Start the server in background
+          serve dist -l 4321 &
+
+          # Wait for server to be ready
+          npx wait-on http://localhost:4321
+
+          # Run Lighthouse CI
+          lhci autorun
+
+      - name: Upload Lighthouse results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: lighthouse-results
+          path: .lighthouseci/
+
+  # Optional: Comment PR with results
+  lighthouse-comment:
+    runs-on: ubuntu-latest
+    needs: lighthouse
+    if: github.event_name == 'pull_request'
+    steps:
+      - name: Download Lighthouse results
+        uses: actions/download-artifact@v4
+        with:
+          name: lighthouse-results
+          path: .lighthouseci/
+
+      - name: Comment PR with Lighthouse results
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const path = require('path');
+
+            try {
+              // Find the latest Lighthouse report
+              const lhciDir = '.lighthouseci';
+              const files = fs.readdirSync(lhciDir);
+              const manifestFile = files.find(f => f.includes('manifest.json'));
+
+              if (manifestFile) {
+                const manifest = JSON.parse(fs.readFileSync(path.join(lhciDir, manifestFile), 'utf8'));
+                const reportPath = manifest[0]?.jsonPath;
+
+                if (reportPath && fs.existsSync(reportPath)) {
+                  const report = JSON.parse(fs.readFileSync(reportPath, 'utf8'));
+                  const scores = report.categories;
+
+                  const formatScore = (score) => {
+                    if (score === null) return 'N/A';
+                    const percentage = Math.round(score * 100);
+                    const emoji = percentage >= 90 ? '🟢' : percentage >= 50 ? '🟡' : '🔴';
+                    return `${emoji} ${percentage}`;
+                  };
+
+                  const comment = `## 🏃‍♂️ Lighthouse Performance Report
+
+| Category | Score |
+|----------|-------|
+| Performance | ${formatScore(scores.performance?.score)} |
+| Accessibility | ${formatScore(scores.accessibility?.score)} |
+| Best Practices | ${formatScore(scores['best-practices']?.score)} |
+| SEO | ${formatScore(scores.seo?.score)} |
+| PWA | ${formatScore(scores.pwa?.score)} |
+
+*Report generated for commit ${context.sha.slice(0, 7)}*`;
+
+                  github.rest.issues.createComment({
+                    issue_number: context.issue.number,
+                    owner: context.repo.owner,
+                    repo: context.repo.repo,
+                    body: comment
+                  });
+                }
+              }
+            } catch (error) {
+              console.error('Error processing Lighthouse results:', error);
+            }
