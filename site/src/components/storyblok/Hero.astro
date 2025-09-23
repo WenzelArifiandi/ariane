@@ -38,6 +38,8 @@ const { blok } = Astro.props
       align-items: center;
       min-height: 80vh;
       padding: 4rem 0;
+      /* Ensure text on mauve/purple background is visible */
+      color: #fff;
     }
 
     .hero__inner {
@@ -56,7 +58,7 @@ const { blok } = Astro.props
 
     .hero__subtitle {
       font-size: var(--body);
-      color: color-mix(in oklab, var(--ink), black 25%);
+      color: inherit;
       margin-bottom: 2rem;
       line-height: 1.6;
     }

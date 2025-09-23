@@ -59,6 +59,8 @@ const ctaLabel = "See Work";
     /* Sakura → Mauve diagonal */
     background:
       linear-gradient(135deg, var(--sakura) 0%, var(--mauve) 100%);
+    /* Ensure text on the purple gradient is visible */
+    color: #fff;
   }
 
   /* Slim creator bar that reveals above content */
@@ -135,11 +137,11 @@ const ctaLabel = "See Work";
     font-size: clamp(3.5rem, 6vw + 0.5rem, 6.5rem);
     line-height: 1.03;
     letter-spacing: -0.02em;
-    color: color-mix(in oklab, var(--ink), black 10%);
+    color: inherit;
   }
   .hero__subtitle {
     font-size: clamp(1.05rem, .6vw + 1rem, 1.25rem);
-    color: color-mix(in oklab, var(--ink), black 20%);
+    color: inherit;
     max-width: 38ch;
   }
 
