@@ -1,10 +1,8 @@
 ---
-title: Cloudflare Access with GitHub (OIDC)
+title: "Cloudflare Access with GitHub (OIDC)"
 description: "# Cloudflare Access with GitHub (OIDC)"
-slug: "cloudflare-access-github"
+slug: cloudflare-access-github
 ---
-
-
 
 # Cloudflare Access with GitHub (OIDC)
 

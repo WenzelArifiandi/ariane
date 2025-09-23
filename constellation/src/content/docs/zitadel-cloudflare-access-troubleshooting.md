@@ -1,10 +1,8 @@
 ---
 title: "Zitadel + Cloudflare Access: Fix “code 5 Not Found”"
 description: "# Zitadel + Cloudflare Access: Fix “code 5 Not Found”"
-slug: "zitadel-cloudflare-access-troubleshooting"
+slug: zitadel-cloudflare-access-troubleshooting
 ---
-
-
 
 # Zitadel + Cloudflare Access: Fix “code 5 Not Found”
 

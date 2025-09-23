@@ -5,7 +5,6 @@ import StoryblokComponent from '@storyblok/astro/StoryblokComponent.astro'
 import Base from '../layouts/Base.astro'
 import Nav from '../components/Nav.astro'
 import Footer from '../components/Footer.astro'
-import LiquidGlassHybridIsland from '../components/LiquidGlassHybridIsland.jsx'
 import '../styles/global.css'
 
 const storyblokApi = useStoryblokApi()
@@ -57,19 +56,37 @@ const email = 'hello@wenzelarifiandi.com'
     </section>
   )}
 
-  <!-- Liquid Glass Component -->
-  <LiquidGlassHybridIsland client:load
-    blur={30}
-    saturation={1.8}
-    thickness={0.6}
-    specularIntensity={0.22}
-    radiusPx={28}
-    target="body" />
+
+  <!-- Demo content to test navbar scroll effect -->
+  <section class="container align-hero">
+    <div class="section__inner">
+      <h2>About</h2>
+      <p>This space is still growing—can't wait to share more soon.</p>
+      <br><br><br><br><br><br><br><br><br><br>
+    </div>
+  </section>
+
+  <section class="container align-hero">
+    <div class="section__inner">
+      <h2>Work</h2>
+      <p>Fun things are on their way. Promise it'll be worth the wait.</p>
+      <br><br><br><br><br><br><br><br><br><br>
+    </div>
+  </section>
+
+  <section class="container align-hero">
+    <div class="section__inner">
+      <h2>Skills</h2>
+      <p>Bit of a blank canvas right now—but it's starting to take shape.</p>
+      <br><br><br><br><br><br><br><br><br><br>
+    </div>
+  </section>
 
   <section id="contact" class="container align-hero">
     <div class="section__inner">
       <h2>Contact</h2>
       <p class="muted">Email me at <a href={`mailto:${email}`} class="accent">{email}</a>.</p>
+      <br><br><br><br><br><br><br><br><br><br>
     </div>
   </section>
   <Footer />
@@ -84,8 +101,8 @@ const email = 'hello@wenzelarifiandi.com'
 
   /* Background for glass effect */
   body {
-    background: #FEFBFF !important;
-    background-color: #FEFBFF !important;
+    background: var(--ariane-bg-main) !important;
+    background-color: var(--ariane-bg-main) !important;
     min-height: 100vh;
   }
 </style>

@@ -1,10 +1,8 @@
 ---
-title: Constellation – Ariane Docs
+title: "Constellation – Ariane Docs"
 description: "# Constellation – Ariane Docs"
 slug: gemini
 ---
-
-
 
 # Constellation – Ariane Docs
 

@@ -1,0 +1,43 @@
+/* Central color management for Ariane project */
+:root {
+  /* Primary backgrounds */
+  --ariane-bg-main: #FEFBFF;
+  /* Main background - soft blush-white */
+  --ariane-bg-accent: #F8F2FA;
+  /* Accent background - off-white with lavender hint */
+
+  /* Perfect periwinkle frosted glass navbar - follows design spec exactly */
+  --ariane-glass-tint: rgba(150, 165, 255, 0.22);
+  /* airy periwinkle wash */
+  --ariane-glass-tint-scrolled: rgba(150, 165, 255, 0.32);
+  /* denser on scroll */
+  --ariane-glass-blur: 22px;
+  --ariane-glass-radius: 18px;
+  --ariane-glass-edge-bright: rgba(255, 255, 255, 0.55);
+  /* pearly top edge */
+  --ariane-glass-edge-dim: rgba(255, 255, 255, 0.18);
+  /* subtle bottom edge */
+  --ariane-glass-shadow-soft: rgba(94, 88, 130, 0.18);
+  /* lavender-gray shadow */
+
+  /* Text colors - inky navy for elegance */
+  --ariane-text-ink: #3D418F;
+  /* rich periwinkle-indigo core */
+
+  --ariane-text-ink-dim: #2B2F73;
+  /* deeper, moodier indigo for hover/focus — darker, not grayer */
+
+  --ariane-hover-wash: rgba(100, 110, 255, 0.28);
+  /* vivid electric-periwinkle glow, a little bolder so it pops */
+
+  /* Text hierarchy - centralized control for all text types */
+  --ariane-body-text: #2A2A35;         /* softened near-black; reads black but with a lilac undertone */
+  --ariane-heading-text: #3D418F;      /* your chosen periwinkle-indigo ink — tie headings to navbar */
+  --ariane-subtext: #5A5A75;           /* secondary info; softer gray-lavender for captions or meta */
+  --ariane-link-text: #3D418F;         /* match heading/nav ink; hover can bloom lighter periwinkle */
+  --ariane-text-main: #2A2A35;         /* Main body text - maps to body-text for compatibility */
+
+  /* Legacy variables for compatibility */
+  --ink: var(--ariane-text-ink);
+  --page: var(--ariane-bg-main);
+}

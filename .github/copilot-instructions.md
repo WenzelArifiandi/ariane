@@ -1,95 +1,47 @@
-# Ariane — Copilot Instructions
+# Ariane — Copilot instructions (concise)
 
-## Architecture Overview
+This file is the canonical short guide for automated coding agents working in this monorepo. Keep it brief, concrete, and repository-specific.
 
-- **Monorepo Structure**:
-  - `site/`: Astro 5 app (Vercel deploy). Auth via middleware. Content from Storyblok (default) and optional Sanity.
-  - `studio/`: Sanity Studio (separate deploy). Schemas in `studio/schemas/**`, exported from `studio/schemaTypes/index.ts`.
-  - `wasm/`: Rust→WASM session signer; JS fallback at `site/src/lib/auth/signer.ts`.
-  - `tests/`: Vitest + MSW + Playwright. Aliases in `vitest.config.ts`: `@site`, `@studio`, `@tests`.
-  - `zitadel/`: Infra config and docs; not required for local site dev.
+Key layout
 
-## Key Integration Points
+- `site/` — Astro 5 frontend (Vercel). Auth and edge behaviour live in `site/src/middleware.ts`.
+- `studio/` — Sanity Studio; schemas under `studio/schemas/**` and `studio/schemaTypes/index.ts`.
+- `wasm/` — optional Rust→WASM signer; JS fallback is `site/src/lib/auth/signer.ts` (see `preloadSignerWasm()` comment).
 
-- **Middleware**:
+Auth & security
 
-  - `site/src/middleware.ts` enforces `AUTH_MODE` (`public`, `app`, `cf-access-only`).
-  - Session cookies signed with `SESSION_SECRET` (see `auth/signer.ts`).
-  - Cloudflare Access JWT verified via `verifyCfAccessJwt()`.
+- Middleware entry: `site/src/middleware.ts` — respects `AUTH_MODE` (`public|app|cf-access-only`) and centralises security headers via `addSecurityHeaders()`; do not duplicate header logic elsewhere.
+- Session signing: `site/src/lib/auth/signer.ts` (WASM optional). Tests set `SESSION_SECRET` in `tests/setup/vitest.setup.ts`.
+- Cloudflare Access: helpers in `site/src/lib/cfAccess.ts` and JWT verification called from middleware.
 
-- **Content Sources**:
+Developer workflows (concrete commands)
 
-  - Storyblok via `@storyblok/astro` (`STORYBLOK_TOKEN` in `site/.env`).
-  - Sanity: read via `site/src/lib/sanity.ts`, server writes via `site/src/lib/sanityServer.ts`.
+- Local site dev: `npm run dev:site` (listens on `127.0.0.1:4321`).
+- Studio dev: `npm run dev:studio`.
+- Build/preview site: `npm --prefix site run build` then `npm --prefix site run preview`.
+- WASM signer build (optional): `npm --prefix site run wasm:build:signer`.
+- Tests: run `npm run test` (root). E2E Playwright expects the site on port `4321`.
 
-- **API Routes**:
+Conventions & examples to follow
 
-  - OAuth: `/api/oauth/github/{start,callback}.ts`
-  - WebAuthn: `/api/auth/{registration-options,verify-registration,authentication-options,verify-authentication}.ts`
-  - Session & access: `/api/auth/{session,logout,approval-status,request-access}.ts`
-  - Diagnostics: `/api/diag`, `/api/oidc/diag`
+- Don’t change security headers except in `addSecurityHeaders()` (middleware) or `site/vercel.json` (deploy headers). Example: `site/vercel.json` uses an `ignoreCommand` to gate deploys.
+- Use `process.env` names consistently: `AUTH_MODE`, `SESSION_SECRET`, `STORYBLOK_TOKEN`, `CF_ACCESS_*`, `PUBLIC_SANITY_*`, `SANITY_WRITE_TOKEN`.
+- Optional WASM: code uses dynamic import to make WASM optional for contributors without Rust toolchains — keep that pattern when editing `site/src/lib/auth/signer.ts`.
+- Tests: MSW bootstraps in `tests/setup/vitest.setup.ts`; mock Node `crypto` and DOM observers there.
 
-- **Security Headers**:
-  - Centralized in `addSecurityHeaders()` (middleware) and `site/vercel.json` (deploy-time).
-  - Do not duplicate headers elsewhere.
+Automation & dependency policy (must preserve)
 
-## Developer Workflows
+- DO NOT accept automated PRs that downgrade dependencies. If a workflow or autofix proposes a downgrade, update the workflow and leave a comment documenting why downgrades are disallowed.
+- Check `.github/workflows/*` for scripts that run `npm install`/`npm update` and ensure they only upgrade to secure versions.
 
-- **Local Dev**:
+Where to look when stuck
 
-  - `npm run dev:site` (http://127.0.0.1:4321)
-  - `npm run dev:studio`
-  - Tunnel: `npm --prefix site run cf:tunnel` or `cf:tunnel:named`
-  - Combo: `npm run dev:bubble`
+- Auth/edge bugs: `site/src/middleware.ts`, `site/src/lib/auth/*`, `site/src/lib/cfAccess.ts`.
+- Content sources: `site/src/lib/sanity.ts`, `site/src/lib/sanityServer.ts`, Storyblok integrations in `site/src/components/**`.
+- Tests & mocks: `tests/` (MSW handlers in `tests/setup/msw.ts`), vitest config in `vitest.config.ts`.
 
-- **Build/Preview**:
-
-  - `npm --prefix site run build` then `npm --prefix site run preview`
-  - Optional WASM: `npm --prefix site run wasm:build:signer`
-
-- **Testing**:
-
-  - Root: `npm run test` (unit+integration), `npm run test:e2e` (Playwright), `npm run test:security`
-  - MSW bootstraps in `tests/setup/vitest.setup.ts`
-  - E2E expects server at port 4321
-
-- **Vercel Gating**:
-  - `site/vercel.json` `ignoreCommand` builds only when `site/**` changes on `main` or PR preview is forced (label `deploy-preview` via CI).
-
-## Conventions & Gotchas
-
-- On `wenzelarifiandi.com` domains, `determineAuthMode()` forces `public` even if `AUTH_MODE=app`.
-- Common env: `AUTH_MODE`, `SESSION_SECRET`, `STORYBLOK_TOKEN`, `CF_ACCESS_*`, optional `PUBLIC_SANITY_*`, `SANITY_WRITE_TOKEN`.
-- Sanity queries: `site/src/lib/queries.ts`; fetch via `fetchSanity()`.
-- Security headers: modify only in middleware or `site/vercel.json`.
-- Tests/e2e expect port `4321`.
-
-## Ops Quick Notes
-
-- Tunnel flaky? `pkill cloudflared` then `npm --prefix site run cf:tunnel:named`.
-- Preview not deploying? Ensure PR touches `site/**`, add label `deploy-preview`, configure Vercel tokens.
-- Infra and Zitadel runbooks: `ops/`, `zitadel/README.md`.
-
-## Automated Dependency Management — Critical Warning
-
-- **Do NOT downgrade dependencies in automated PRs or workflows.**
-  - Recent issues have been caused by GitHub Actions (Gemini or security auto-fix flows) creating PRs that resolve problems by lowering dependency versions. This is not allowed and can introduce security or compatibility risks.
-- **When updating dependencies:**
-  - Only upgrade to newer, secure, and compatible versions.
-  - Never resolve issues by reverting to older versions unless explicitly approved by maintainers.
-- **Workflow logic:**
-  - Audit `.github/workflows/*` for any steps that run `npm install`, `npm update`, or use tools that may downgrade dependencies.
-  - Ensure all automated fixes and PRs only propose upgrades or security patches, not downgrades.
-- **If you find a workflow or script that downgrades dependencies, fix it immediately and document the change.**
-
-**Example:**
-
-> ❌ Wrong: `npm install some-package@1.0.0` (if latest is 2.x)
-> ✅ Correct: `npm install some-package@latest` or upgrade to a secure version
-
-Add a comment in workflow files to warn future agents and contributors.
+If you update this file, keep it short and preserve the dependency-downgrade warning at the bottom.
 
 ---
 
-**Feedback requested:**  
-Are there any sections that need more detail, or specific patterns you want documented further? Let me know if anything is unclear or missing.
+Feedback: anything missing or unclear? Reply with areas you want expanded (examples, file snippets, or workflow edits).

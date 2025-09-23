@@ -4,8 +4,6 @@ description: "# Claude Code Instructions & Infrastructure Management"
 slug: claude
 ---
 
-
-
 # Claude Code Instructions & Infrastructure Management
 
 > **⚠️ IMPORTANT**: This document contains SSH access info and server management commands for Claude Code assistance.

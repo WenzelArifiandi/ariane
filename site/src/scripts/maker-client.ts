@@ -67,7 +67,7 @@ async function mountAccessUI(prefill?: string) {
   wrap.className = "access-ui";
   // Create elements safely using DOM methods instead of innerHTML to prevent XSS
   const card = document.createElement("div");
-  card.className = "liquid-glass access-card m3-card";
+  card.className = "access-card m3-card";
 
   const head = document.createElement("div");
   head.className = "head";
@@ -130,7 +130,7 @@ async function mountAccessUI(prefill?: string) {
       body: JSON.stringify({ email }),
     });
     wrap.innerHTML =
-      "<div class='liquid-glass access-card m3-card'><div class='head'><span class='material-symbols-rounded' aria-hidden='true'>check_circle</span><div class='titles'><div class='title'>Request sent</div><div class='support'>Thanks — I’ll review and let you know soon.</div></div></div></div>";
+      "<div class='access-card m3-card'><div class='head'><span class='material-symbols-rounded' aria-hidden='true'>check_circle</span><div class='titles'><div class='title'>Request sent</div><div class='support'>Thanks — I'll review and let you know soon.</div></div></div></div>";
   });
   // focus
   const emailEl = wrap.querySelector("#email") as HTMLInputElement | null;

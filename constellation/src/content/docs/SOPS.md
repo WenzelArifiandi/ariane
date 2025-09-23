@@ -1,10 +1,8 @@
 ---
-title: SOPS Encryption Setup for Cell v0
+title: "SOPS Encryption Setup for Cell v0"
 description: "# SOPS Encryption Setup for Cell v0"
 slug: sops
 ---
-
-
 
 # SOPS Encryption Setup for Cell v0
 

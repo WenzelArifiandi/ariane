@@ -18,6 +18,7 @@ export default {
         { label: "Setup", link: "/setup" },
         { label: "README", link: "/readme" },
         { label: "Constellation Management", link: "/constellation_management" },
+        { label: "Color System", link: "/color-system" },
       ]
     },
     {

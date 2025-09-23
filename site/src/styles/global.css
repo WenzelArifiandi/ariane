@@ -5,9 +5,9 @@
 
 /* Design tokens */
 :root {
-  /* Core neutrals */
-  --ink: #101114;
-  --page: #FEFBFF;
+  /* Core neutrals (now managed in colors.css) */
+  --ink: var(--ariane-text-ink);
+  --page: var(--ariane-bg-main);
   /* Layout */
   --pad-x: clamp(1rem, 4vw, 2rem);
 
@@ -126,13 +126,13 @@
 /* Elegant link color + underline only on hover (not for buttons) */
 @layer components {
   a:not(.btn) {
-    color: color-mix(in oklab, #7150D9, black 12%);
+    color: var(--ariane-link-text);
     text-decoration: none;
   }
 
   a:not(.btn):hover {
     text-decoration: underline;
-    text-decoration-color: color-mix(in oklab, #7150D9, black 12%);
+    text-decoration-color: var(--ariane-link-text);
     text-underline-offset: 3px;
   }
 }
