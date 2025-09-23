@@ -37,19 +37,19 @@ const email = 'hello@wenzelarifiandi.com'
     story.content ? (
       <StoryblokComponent blok={story.content as any} />
     ) : (
-      <section class="container align-hero"><div class="section__inner"><p>No content available.</p></div></section>
+      <section class="max-w-[1100px] mx-auto px-pad-x pt-20"><div><p>No content available.</p></div></section>
     )
   ) : error ? (
-    <section class="container align-hero">
-      <div class="section__inner">
+    <section class="max-w-[1100px] mx-auto px-pad-x pt-20">
+      <div>
         <h1>Content Not Available</h1>
         <p>We couldn't load the homepage content.</p>
         <p><small>Error: {error}</small></p>
       </div>
     </section>
   ) : (
-    <section class="container align-hero">
-      <div class="section__inner">
+    <section class="max-w-[1100px] mx-auto px-pad-x pt-20">
+      <div>
         <h1>Loading…</h1>
         <p>Fetching content from Storyblok…</p>
       </div>
@@ -58,32 +58,32 @@ const email = 'hello@wenzelarifiandi.com'
 
 
   <!-- Main content sections -->
-  <section id="hello" class="container align-hero">
-    <div class="section__inner">
+  <section id="hello" class="max-w-[1100px] mx-auto px-pad-x pt-20">
+    <div>
       <h2>Hello</h2>
       <p class="muted">Glad you're here!</p>
       <br><br><br><br><br><br><br><br><br><br>
     </div>
   </section>
 
-  <section id="playground" class="container align-hero">
-    <div class="section__inner">
+  <section id="playground" class="max-w-[1100px] mx-auto px-pad-x pt-20">
+    <div>
       <h2>Playground</h2>
       <p class="muted">Getting started...</p>
       <br><br><br><br><br><br><br><br><br><br>
     </div>
   </section>
 
-  <section id="field-notes" class="container align-hero">
-    <div class="section__inner">
+  <section id="field-notes" class="max-w-[1100px] mx-auto px-pad-x pt-20">
+    <div>
       <h2>Field Notes</h2>
       <p class="muted">It's coming together...</p>
       <br><br><br><br><br><br><br><br><br><br>
     </div>
   </section>
 
-  <section id="contact" class="container align-hero">
-    <div class="section__inner">
+  <section id="contact" class="max-w-[1100px] mx-auto px-pad-x pt-20">
+    <div>
       <h2>Contact</h2>
       <p class="muted">Email me at <a href={`mailto:${email}`} class="accent">{email}</a>.</p>
       <br><br><br><br><br><br><br><br><br><br>
@@ -93,17 +93,20 @@ const email = 'hello@wenzelarifiandi.com'
 </Base>
 
 <style>
-  .wrap { max-width: 1100px; margin: 3rem auto; padding: 0 var(--pad-x); }
   h2 { font-size: var(--h2); letter-spacing: -0.01em; margin-bottom: .5rem; color: var(--ariane-heading-text); }
   .muted { color: var(--ariane-subtext); }
   .accent { color: var(--ariane-link-text); }
-  .section__inner { }
-  #contact { padding-block: 28px; padding-bottom: clamp(64px, 10vw, 120px); }
+  #contact { padding-bottom: clamp(64px, 10vw, 120px); }
 
   /* Background for glass effect */
   body {
     background: var(--ariane-bg-main) !important;
     background-color: var(--ariane-bg-main) !important;
     min-height: 100vh;
+  }
+
+  /* Scroll offset to account for sticky navbar */
+  html {
+    scroll-padding-top: 100px;
   }
 </style>
