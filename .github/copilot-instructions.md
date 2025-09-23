@@ -4,41 +4,55 @@ This file is the canonical short guide for automated coding agents working in th
 
 Key layout
 
-- `site/` — Astro 5 frontend (Vercel). Auth and edge behaviour live in `site/src/middleware.ts`.
-- `studio/` — Sanity Studio; schemas under `studio/schemas/**` and `studio/schemaTypes/index.ts`.
-- `wasm/` — optional Rust→WASM signer; JS fallback is `site/src/lib/auth/signer.ts` (see `preloadSignerWasm()` comment).
+- `site/` — Astro 5 frontend (Vercel). Pages: `site/src/pages/**`. API routes: `site/src/pages/api/**`. Middleware & edge logic: `site/src/middleware.ts`.
+- `studio/` — Sanity Studio (v4). Schemas: `studio/schemas/**`. Export list: `studio/schemaTypes/index.ts`.
+- `wasm/` — optional Rust→WASM signer; JS fallback: `site/src/lib/auth/signer.ts` (see `preloadSignerWasm()` comment).
 
-Auth & security
+Auth & security (high priority)
 
-- Middleware entry: `site/src/middleware.ts` — respects `AUTH_MODE` (`public|app|cf-access-only`) and centralises security headers via `addSecurityHeaders()`; do not duplicate header logic elsewhere.
+- Middleware entry: `site/src/middleware.ts` — respects `AUTH_MODE` (`public|app|cf-access-only`) and centralises security headers via `addSecurityHeaders()`. Do not duplicate header logic elsewhere.
 - Session signing: `site/src/lib/auth/signer.ts` (WASM optional). Tests set `SESSION_SECRET` in `tests/setup/vitest.setup.ts`.
-- Cloudflare Access: helpers in `site/src/lib/cfAccess.ts` and JWT verification called from middleware.
+- Cloudflare Access helpers: `site/src/lib/cfAccess.ts` — used from middleware to verify Access JWTs and optional group gating.
 
 Developer workflows (concrete commands)
 
-- Local site dev: `npm run dev:site` (listens on `127.0.0.1:4321`).
-- Studio dev: `npm run dev:studio`.
-- Build/preview site: `npm --prefix site run build` then `npm --prefix site run preview`.
+- Local site dev: `npm run dev:site` (site serves on `127.0.0.1:4321`).
+- Studio dev: `npm run dev:studio` (Sanity Studio).
+- Build/preview site: `npm --prefix site run build` && `npm --prefix site run preview`.
 - WASM signer build (optional): `npm --prefix site run wasm:build:signer`.
-- Tests: run `npm run test` (root). E2E Playwright expects the site on port `4321`.
+- Run tests (root): `npm run test`. Note: Playwright E2E expects the site on port `4321`.
 
-Conventions & examples to follow
+Quick map & common files
 
-- Don’t change security headers except in `addSecurityHeaders()` (middleware) or `site/vercel.json` (deploy headers). Example: `site/vercel.json` uses an `ignoreCommand` to gate deploys.
-- Use `process.env` names consistently: `AUTH_MODE`, `SESSION_SECRET`, `STORYBLOK_TOKEN`, `CF_ACCESS_*`, `PUBLIC_SANITY_*`, `SANITY_WRITE_TOKEN`.
-- Optional WASM: code uses dynamic import to make WASM optional for contributors without Rust toolchains — keep that pattern when editing `site/src/lib/auth/signer.ts`.
-- Tests: MSW bootstraps in `tests/setup/vitest.setup.ts`; mock Node `crypto` and DOM observers there.
+- Sanity reads: `site/src/lib/sanity.ts` — use `fetchSanity<T>(groq, params)` (CDN, published). Writes/server: `site/src/lib/sanityServer.ts` (requires `SANITY_WRITE_TOKEN`).
+- Queries centralised: `site/src/lib/queries.ts` — import queries from here; avoid inlining long GROQ expressions.
+- Pages examples: `site/src/pages/work/index.astro` (list projects), `site/src/pages/work/[slug].astro` (project details).
+- Auth endpoints: `site/src/pages/api/auth/**` (OAuth/session handlers). Cookie signing uses `site/src/lib/auth/signer.ts`.
+
+Conventions & project-specific patterns
+
+- Security headers: only change via `addSecurityHeaders()` in middleware or `site/vercel.json` deploy headers. `site/vercel.json` uses `ignoreCommand` to skip builds when irrelevant files change.
+- Optional WASM pattern: dynamic import + JS fallback used in `site/src/lib/auth/signer.ts` to keep local dev simple for contributors without Rust toolchains.
+- Environment names used consistently: `AUTH_MODE`, `SESSION_SECRET`, `STORYBLOK_TOKEN`, `CF_ACCESS_*`, `PUBLIC_SANITY_*`, `SANITY_WRITE_TOKEN`.
+- Tests & mocks: MSW bootstraps in `tests/setup/vitest.setup.ts`; node `crypto` and DOM observers are mocked there — follow that setup when adding tests.
+
+Sanity content workflow (how to add a type)
+
+1. Add a schema file under `studio/schemas/` and export it in `studio/schemaTypes/index.ts`.
+2. Add a GROQ query to `site/src/lib/queries.ts`.
+3. Use `fetchSanity` in pages/components (e.g., `site/src/pages/...`) to render content.
 
 Automation & dependency policy (must preserve)
 
-- DO NOT accept automated PRs that downgrade dependencies. If a workflow or autofix proposes a downgrade, update the workflow and leave a comment documenting why downgrades are disallowed.
-- Check `.github/workflows/*` for scripts that run `npm install`/`npm update` and ensure they only upgrade to secure versions.
+- DO NOT accept automated PRs that downgrade dependencies. If a workflow or autofix proposes a downgrade, update the workflow and leave a comment explaining why downgrades are disallowed.
+- Inspect `.github/workflows/*` before changing dependency automation; some workflows intentionally gate upgrades.
 
 Where to look when stuck
 
 - Auth/edge bugs: `site/src/middleware.ts`, `site/src/lib/auth/*`, `site/src/lib/cfAccess.ts`.
-- Content sources: `site/src/lib/sanity.ts`, `site/src/lib/sanityServer.ts`, Storyblok integrations in `site/src/components/**`.
-- Tests & mocks: `tests/` (MSW handlers in `tests/setup/msw.ts`), vitest config in `vitest.config.ts`.
+- Content sources & queries: `site/src/lib/sanity.ts`, `site/src/lib/sanityServer.ts`, `site/src/lib/queries.ts`.
+- Pages & components: `site/src/pages/**`, `site/src/components/**` (Storyblok integrations live under components).
+- Tests & mocks: `tests/` (MSW handlers in `tests/setup/msw.ts`), vitest config `vitest.config.ts`.
 
 If you update this file, keep it short and preserve the dependency-downgrade warning at the bottom.
 
