@@ -13,10 +13,10 @@ const studioHref = import.meta.env.DEV ? 'http://localhost:3333/' : 'https://stu
     <div class="nav-inner flex items-center justify-between gap-3 md:gap-4 px-pad-x py-3 relative overflow-hidden isolate">
 
       <!-- Brand -->
-      <a href="/" class="brand relative z-10 text-base md:text-[17px] leading-tight">Wenzel Arifiandi</a>
+      <a href="/" class="brand relative z-10 text-[17px] sm:text-[18px] md:text-[19px] lg:text-[20px] font-medium leading-tight">Wenzel Arifiandi</a>
 
       <!-- Desktop links -->
-      <ul class="hidden lg:flex items-center gap-4 lg:gap-5 text-[15px] lg:text-base leading-tight list-none m-0 p-0 relative z-10">
+      <ul class="hidden lg:flex items-center gap-4 lg:gap-5 text-[15px] sm:text-[16px] md:text-[17px] lg:text-[18px] font-medium leading-tight list-none m-0 p-0 relative z-10">
         {links.map(l => (
           <li class="whitespace-nowrap">
             <a class="nav-link" href={l.href}>{l.label}</a>
@@ -28,9 +28,9 @@ const studioHref = import.meta.env.DEV ? 'http://localhost:3333/' : 'https://stu
       </ul>
 
       <!-- Right: Maker (lg+), Explore (<lg) -->
-      <div class="flex items-center gap-2 relative z-10">
+      <div class="flex items-center relative z-10 min-w-0 flex-shrink-0">
         <!-- Maker button (desktop only) -->
-        <button id="creator-toggle" class="hidden lg:inline-flex chip-m3 items-center gap-2 px-3 md:px-4 py-2 text-[15px] md:text-base leading-tight"
+        <button id="creator-toggle" class="hidden lg:inline-flex chip-m3 items-center gap-2 px-4 py-2 text-[16px] font-medium leading-tight"
                 aria-haspopup="true" aria-expanded="false" aria-controls="creator-sheet" title="Maker">
           <!-- M3 sparkle icon -->
           <span class="material-symbols-rounded text-white" style="font-size: 18px;">auto_awesome</span>
@@ -40,7 +40,7 @@ const studioHref = import.meta.env.DEV ? 'http://localhost:3333/' : 'https://stu
         <!-- Explore button (mobile/tablet) -->
         <button
           id="explore-toggle"
-          class="lg:hidden chip-m3 inline-flex items-center gap-2 px-3 py-2 text-[15px] leading-tight
+          class="lg:hidden chip-m3 inline-flex items-center gap-1.5 px-2.5 sm:px-3 py-2 text-[14px] sm:text-[15px] font-medium leading-tight
                  transition-[transform,box-shadow] duration-200 ease-[cubic-bezier(0.2,0,0,1)]
                  active:scale-[0.98] active:shadow-sm"
           aria-controls="mobile-menu"
@@ -49,8 +49,9 @@ const studioHref = import.meta.env.DEV ? 'http://localhost:3333/' : 'https://stu
           type="button"
         >
           <!-- M3 compass icon -->
-          <span class="material-symbols-rounded text-white" style="font-size: 18px;">explore</span>
-          <span>Explore</span>
+          <span class="material-symbols-rounded text-white" style="font-size: 16px;">explore</span>
+          <span class="hidden xs:inline sm:inline">Explore</span>
+          <span class="xs:hidden sm:hidden">Menu</span>
         </button>
       </div>
 

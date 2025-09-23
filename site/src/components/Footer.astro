@@ -1,5 +1,5 @@
 ---
-// Using Material Design 3 icons instead of astro-icon
+import { Instagram, Linkedin, Github } from 'lucide-astro';
 ---
 
 <footer class="footer border-t border-gray-200 not-prose">
@@ -12,17 +12,17 @@
         <ul class="socials">
           <li>
             <a aria-label="Instagram" href="https://www.instagram.com/wenzelarifiandi/" class="social-btn">
-              <span class="material-symbols-rounded" style="font-size: 20px;">photo_camera</span>
+              <Instagram size={20} />
             </a>
           </li>
           <li>
             <a aria-label="LinkedIn" href="https://www.linkedin.com/in/wenzelarifiandi/" class="social-btn">
-              <span class="material-symbols-rounded" style="font-size: 20px;">work</span>
+              <Linkedin size={20} />
             </a>
           </li>
           <li>
             <a aria-label="GitHub" href="https://github.com/WenzelArifiandi/ariane" class="social-btn">
-              <span class="material-symbols-rounded" style="font-size: 20px;">code</span>
+              <Github size={20} />
             </a>
           </li>
         </ul>

@@ -47,6 +47,7 @@
     "astro-icon": "^1.1.5",
     "groq": "^4.9.0",
     "jose": "^6.1.0",
+    "lucide-astro": "^0.544.0",
     "postprocessing": "^6.27.0",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",

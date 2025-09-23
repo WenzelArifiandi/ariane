@@ -5,13 +5,15 @@ import typographyPlugin from '@tailwindcss/typography';
 export default {
   content: ['./src/**/*.{astro,html,js,jsx,json,md,mdx,svelte,ts,tsx,vue}'],
   theme: {
+    screens: {
+      'xs': '475px',
+      ...defaultTheme.screens,
+    },
     extend: {
       colors: {
         primary: 'var(--aw-color-primary)',
         secondary: 'var(--aw-color-secondary)',
-        accent: 'var(--aw-color-accent)',
         default: 'var(--aw-color-text-default)',
-        muted: 'var(--aw-color-text-muted)',
         // Custom palette from global.css
         wisteria: '#8b7cf0',
         lilac: '#eee9ff',
