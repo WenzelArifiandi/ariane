@@ -15,7 +15,7 @@ const cfLogoutHref: string = '/signout';
 ---
 
 <nav class="sticky top-3 z-50 mx-auto my-3 px-3 sm:px-7" data-access-only={isAccessOnly ? 'true' : 'false'} data-app-auth={isAppAuth ? 'true' : 'false'}>
-  <div class="nav-container">
+  <div class="max-w-[1100px] mx-auto">
     <div class="nav-inner flex items-center justify-between gap-5 px-4 py-3 relative overflow-hidden isolate">
 
       <a href="/" class="brand relative z-10">Wenzel Arifiandi</a>
@@ -48,10 +48,6 @@ const cfLogoutHref: string = '/signout';
 
 <style>
   /* Apple liquid glass navbar with M3 expressive design */
-  .nav-container {
-    max-width: 1100px;
-    margin: 0 auto;
-  }
 
   .nav-inner {
     border-radius: var(--ariane-glass-radius, 20px);
