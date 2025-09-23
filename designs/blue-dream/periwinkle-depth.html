@@ -1,0 +1,296 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Periwinkle Starsea — Depth</title>
+    <style>
+        :root {
+            /* Periwinkle palette */
+            --p0: #dfe2ff;
+            /* high haze */
+            --p1: #c4c9ff;
+            /* mid-high */
+            --p2: #a7b0ff;
+            /* mid */
+            --p3: #8e97ef;
+            /* mid-low */
+            --p4: #6f76dc;
+            /* deep periwinkle */
+            --cool: #9fd7ff;
+            /* icy cyan kiss */
+            --warm: #ffd3f6;
+            /* pink-lilac kiss */
+            --star: #fff;
+
+            /* twinkle window */
+            --tw-min: .28;
+            --tw-max: .95;
+        }
+
+        /* Base: rich color stack + blend grading for depth */
+        html,
+        body {
+            height: 100%
+        }
+
+        body {
+            margin: 0;
+            color: #fff;
+            overflow-x: hidden;
+            background:
+                /* 1) deep floor glow (gives vertical depth) */
+                radial-gradient(90vmax 55vmax at 50% 110%, rgba(111, 118, 220, .55), transparent 65%),
+                /* 2) “warm dusk” lift near horizon */
+                radial-gradient(60vmax 35vmax at 65% 90%, rgba(255, 211, 246, .25), transparent 70%),
+                /* 3) cool polar glow higher up */
+                radial-gradient(80vmax 50vmax at 30% 20%, rgba(159, 215, 255, .18), transparent 70%),
+                /* 4) subtle conic wash for curvature */
+                conic-gradient(from 200deg at 50% 45%, rgba(255, 255, 255, .06), rgba(0, 0, 0, 0) 35%, rgba(255, 255, 255, .04) 65%, rgba(0, 0, 0, 0) 100%),
+                /* 5) main vertical sky */
+                linear-gradient(180deg, var(--p0) 0%, var(--p1) 20%, var(--p2) 45%, var(--p3) 70%, var(--p4) 100%);
+            background-attachment: fixed, fixed, fixed, fixed, fixed;
+            background-blend-mode: screen, screen, screen, soft-light, normal;
+            /* color-grading */
+        }
+
+        /* Soft vignette for infinity */
+        .vignette {
+            position: fixed;
+            inset: -3vmax;
+            pointer-events: none;
+            background:
+                radial-gradient(120vmax 95vmax at 50% 40%, transparent 60%, rgba(15, 16, 40, .28) 85%, rgba(8, 8, 24, .52) 100%);
+            mix-blend-mode: multiply;
+        }
+
+        /* --- Nebula clouds (pure CSS, no images) --- */
+        .nebula {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            mix-blend-mode: screen;
+            filter: blur(18px);
+            background:
+                radial-gradient(45vmax 28vmax at 20% 60%, rgba(255, 230, 255, .16), transparent 70%),
+                radial-gradient(55vmax 35vmax at 80% 35%, rgba(190, 200, 255, .14), transparent 72%),
+                radial-gradient(40vmax 26vmax at 60% 65%, rgba(255, 190, 255, .10), transparent 70%),
+                radial-gradient(35vmax 22vmax at 30% 30%, rgba(170, 220, 255, .12), transparent 75%);
+            animation: floatNebula 38s ease-in-out infinite alternate;
+        }
+
+        @keyframes floatNebula {
+            from {
+                transform: translateY(-1.2vh) scale(1);
+                opacity: .95;
+            }
+
+            to {
+                transform: translateY(1.2vh) scale(1.02);
+                opacity: 1;
+            }
+        }
+
+        /* --- Starfields (three depths + chroma variation) --- */
+        .layer {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            transform: translateZ(0);
+        }
+
+        /* tiny distant field */
+        .s1::before,
+        .s2::before,
+        .s3::before,
+        .bokeh::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            background: var(--star);
+        }
+
+        /* Build constellations with box-shadows (sample set; viewport-relative) */
+        .s1::before {
+            width: 1px;
+            height: 1px;
+            opacity: .85;
+            filter: drop-shadow(0 0 .7px var(--star));
+            box-shadow:
+                2vw 8vh 0 0 var(--star), 8vw 40vh 0 0 var(--star), 14vw 72vh 0 0 var(--star),
+                22vw 26vh 0 0 var(--star), 28vw 60vh 0 0 var(--star), 33vw 18vh 0 0 var(--star),
+                41vw 82vh 0 0 var(--star), 49vw 34vh 0 0 var(--star), 57vw 12vh 0 0 var(--star),
+                66vw 68vh 0 0 var(--star), 72vw 21vh 0 0 var(--star), 78vw 55vh 0 0 var(--star),
+                84vw 16vh 0 0 var(--star), 90vw 80vh 0 0 var(--star), 96vw 44vh 0 0 var(--star),
+                5vw 92vh 0 0 var(--star), 18vw 51vh 0 0 var(--star), 38vw 48vh 0 0 var(--star),
+                47vw 63vh 0 0 var(--star), 71vw 39vh 0 0 var(--star), 88vw 58vh 0 0 var(--star);
+            animation: twinkle 7.5s ease-in-out infinite alternate;
+        }
+
+        .s2::before {
+            width: 1.5px;
+            height: 1.5px;
+            opacity: .9;
+            filter: drop-shadow(0 0 1.2px var(--star));
+            box-shadow:
+                6vw 22vh 0 0 var(--star), 16vw 66vh 0 0 var(--star), 27vw 28vh 0 0 var(--star),
+                41vw 78vh 0 0 var(--star), 52vw 22vh 0 0 var(--star), 63vw 74vh 0 0 var(--star),
+                76vw 33vh 0 0 var(--star), 90vw 12vh 0 0 var(--star), 12vw 88vh 0 0 var(--star),
+                39vw 54vh 0 0 var(--star), 58vw 46vh 0 0 var(--star), 82vw 64vh 0 0 var(--star);
+            animation: twinkle 5.8s ease-in-out infinite alternate-reverse;
+        }
+
+        /* nearby bright + subtle warm/cool tint using multiple shadows */
+        .s3::before {
+            width: 2px;
+            height: 2px;
+            border-radius: 50%;
+            opacity: .95;
+            box-shadow:
+                9vw 32vh 0 0 var(--star), 22vw 82vh 0 0 var(--star),
+                45vw 18vh 0 0 var(--star), 69vw 58vh 0 0 var(--star),
+                84vw 28vh 0 0 var(--star), 30vw 88vh 0 0 var(--star);
+            filter:
+                drop-shadow(0 0 2px var(--star)) drop-shadow(0 0 8px rgba(255, 255, 255, .25)) drop-shadow(0 0 14px rgba(159, 215, 255, .16));
+            /* cool halo */
+            animation: twinkle 4.2s ease-in-out infinite alternate;
+        }
+
+        /* slow parallax drift per depth */
+        .s1 {
+            animation: drift 120s linear infinite;
+        }
+
+        .s2 {
+            animation: drift 90s linear infinite reverse;
+        }
+
+        .s3 {
+            animation: drift 70s linear infinite;
+        }
+
+        @keyframes drift {
+            from {
+                transform: translateY(0)
+            }
+
+            to {
+                transform: translateY(-5vh)
+            }
+        }
+
+        @keyframes twinkle {
+            from {
+                opacity: var(--tw-min);
+                transform: scale(1);
+            }
+
+            to {
+                opacity: var(--tw-max);
+                transform: scale(1.07);
+            }
+        }
+
+        /* --- Bokeh glints (bigger, blurred, rare) --- */
+        .bokeh {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            mix-blend-mode: screen;
+        }
+
+        .bokeh::before {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            box-shadow:
+                15vw 65vh 0 8px rgba(255, 255, 255, .06),
+                62vw 30vh 0 10px rgba(255, 255, 255, .05),
+                78vw 78vh 0 12px rgba(255, 230, 255, .05),
+                35vw 20vh 0 9px rgba(200, 230, 255, .05);
+            filter: blur(10px);
+            animation: pulse 9s ease-in-out infinite alternate;
+        }
+
+        @keyframes pulse {
+            from {
+                opacity: .25;
+                transform: scale(1)
+            }
+
+            to {
+                opacity: .5;
+                transform: scale(1.08)
+            }
+        }
+
+        /* Grain (micro-dither without images) for richness */
+        .grain {
+            position: fixed;
+            inset: -2px;
+            pointer-events: none;
+            opacity: .08;
+            mix-blend-mode: soft-light;
+            background:
+                repeating-radial-gradient(circle at 30% 40%, rgba(255, 255, 255, .6) 0 1px, rgba(0, 0, 0, 0) 1px 3px),
+                repeating-radial-gradient(circle at 70% 60%, rgba(0, 0, 0, .6) 0 1px, rgba(0, 0, 0, 0) 1px 3px);
+            filter: blur(.7px);
+        }
+
+        /* Content (for demo) */
+        main {
+            position: relative;
+            z-index: 2;
+            min-height: 100svh;
+            display: grid;
+            place-items: center;
+            text-align: center;
+            padding: 10vmin 4vmin;
+        }
+
+        h1 {
+            margin: 0 0 .35em;
+            text-shadow: 0 2px 18px rgba(180, 190, 255, .55), 0 0 2px rgba(0, 0, 0, .25)
+        }
+
+        p {
+            max-width: 62ch;
+            margin: 0 auto;
+            opacity: .92;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, .25)
+        }
+
+        /* Motion sensitivity */
+        @media (prefers-reduced-motion: reduce) {
+
+            .nebula,
+            .s1,
+            .s2,
+            .s3,
+            .bokeh::before {
+                animation: none;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Depth stack -->
+    <div class="nebula"></div>
+    <div class="layer s1"></div>
+    <div class="layer s2"></div>
+    <div class="layer s3"></div>
+    <div class="bokeh"></div>
+    <div class="grain"></div>
+    <div class="vignette"></div>
+
+    <main>
+        <h1>Periwinkle Starsea</h1>
+        <p>All HTML + CSS. Layered gradients (with blend-modes), drifting nebula, parallax starfields, and soft bokeh
+            glints—for that “how is this so deep?” feeling.</p>
+    </main>
+</body>
+
+</html>

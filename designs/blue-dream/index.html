@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Blue Dream — background demo</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        html,
+        body {
+            height: 100%;
+            margin: 0;
+            font-family: Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial
+        }
+
+        .page {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 3rem
+        }
+
+        .demo-card {
+            width: min(900px, 94%);
+            max-width: 980px
+        }
+
+        .title {
+            font-size: 2rem;
+            margin: 0 0 .5rem;
+            color: #0b1a3a
+        }
+
+        .lead {
+            color: #10224a;
+            opacity: 0.95
+        }
+    </style>
+</head>
+
+<body>
+    <canvas id="bd-shader"
+        style="position:fixed;inset:0;z-index:0;pointer-events:none;opacity:0;transition:opacity .45s ease"></canvas>
+    <main id="pageRoot" class="page bg-blue-dream bg-blue-dream--muted" style="position:relative;z-index:1">
+        <section class="demo-card card-sheen" style="position:relative">
+            <h1 class="title">Blue Dream — background</h1>
+            <p class="lead">Layered gradients with faceted crystal accents and a soft star field. Drop
+                <code>.bg-blue-dream</code> on any container.
+            </p>
+            <div style="margin-top:1rem;display:flex;gap:.5rem;align-items:center">
+                <span style="font-size:.9rem;color:#23324f">Preview:</span>
+                <button id="btnSoft" style="padding:.35rem .5rem;border-radius:8px">Soft</button>
+                <button id="btnVivid" style="padding:.35rem .5rem;border-radius:8px">Vivid</button>
+                <button id="btnDeep" style="padding:.35rem .5rem;border-radius:8px">Deep</button>
+            </div>
+            <p style="margin-top:1rem">Example usage in Ariane's layout: add the CSS file, then in your page root
+                element use <code>&lt;div class="bg-blue-dream"&gt;...&lt;/div&gt;</code>.</p>
+        </section>
+    </main>
+    <script>
+        const root = document.getElementById('pageRoot');
+        document.getElementById('btnSoft').addEventListener('click', () => {
+            root.classList.remove('bg-blue-dream--vivid', 'bg-blue-dream--deep');
+        });
+        document.getElementById('btnVivid').addEventListener('click', () => {
+            root.classList.add('bg-blue-dream--vivid');
+            root.classList.remove('bg-blue-dream--deep');
+        });
+        document.getElementById('btnDeep').addEventListener('click', () => {
+            root.classList.add('bg-blue-dream--deep');
+            root.classList.remove('bg-blue-dream--vivid');
+        });
+    </script>
+    <script src="blue-dream-shader.js"></script>
+    <script>
+        // shader toggle
+        const canvas = document.getElementById('bd-shader');
+        let shaderInstance = null;
+        const btnShader = document.createElement('button');
+        btnShader.textContent = 'Shader ON';
+        btnShader.style.cssText = 'position:fixed;right:1rem;bottom:1rem;padding:.5rem .7rem;border-radius:10px;z-index:20';
+        document.body.appendChild(btnShader);
+
+        btnShader.addEventListener('click', () => {
+            if (canvas.style.opacity === '0' || canvas.style.opacity === '') {
+                // enable shader
+                canvas.style.opacity = '1';
+                canvas.style.pointerEvents = 'auto';
+                root.classList.add('using-shader');
+                if (!shaderInstance) { shaderInstance = initBlueDreamShader(canvas); }
+                btnShader.textContent = 'Shader OFF';
+            } else {
+                // disable
+                canvas.style.opacity = '0';
+                canvas.style.pointerEvents = 'none';
+                root.classList.remove('using-shader');
+                btnShader.textContent = 'Shader ON';
+            }
+        });
+    </script>
+</body>
+
+</html>

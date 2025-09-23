@@ -1,8 +1,10 @@
 ---
-title: "Ariane — Copilot Instructions"
+title: Ariane — Copilot Instructions
 description: "# Ariane — Copilot Instructions"
-slug: copilot-instructions
+slug: "copilot-instructions"
 ---
+
+
 
 # Ariane — Copilot Instructions
 
@@ -89,6 +91,7 @@ slug: copilot-instructions
 - **If you find a workflow or script that downgrades dependencies, fix it immediately and document the change.**
 
 **Example:**
+
 > ❌ Wrong: `npm install some-package@1.0.0` (if latest is 2.x)
 > ✅ Correct: `npm install some-package@latest` or upgrade to a secure version
 

@@ -1,0 +1,384 @@
+---
+/* Periwinkle WebGPU sky with WebGL fallback.
+   Usage: <PeriwinkleWebGPU client:load />
+*/
+---
+
+<style>
+  .sky-wrap{
+    position:fixed; inset:0; z-index:-1; pointer-events:none;
+    background: linear-gradient(to bottom, #dfe2ff 0%, #aab2ff 60%, #7d86e2 100%);
+  }
+  canvas{
+    display:block;
+    width:100%;
+    height:100%;
+    min-height:100vh;
+    min-width:100vw;
+  }
+</style>
+
+<div class="sky-wrap" aria-hidden="true">
+  <canvas class="periwinkle-canvas"></canvas>
+</div>
+
+<script type="module">
+  const canvas = document.querySelector('.periwinkle-canvas');
+  const prefersReduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // ----------------------------
+  // 1) WEBGPU PRIMARY RENDERER
+  // ----------------------------
+  async function bootWebGPU(){
+    if(!('gpu' in navigator)) throw new Error('WebGPU not supported');
+
+    const adapter = await navigator.gpu.requestAdapter({ powerPreference: 'high-performance' });
+    if(!adapter) throw new Error('No GPU adapter');
+    const device = await adapter.requestDevice();
+
+    // Add comprehensive error handling
+    device.addEventListener('uncapturederror', (event) => {
+      console.error('WebGPU uncaptured error:', event.error);
+    });
+
+    device.lost.then((info) => {
+      console.error('WebGPU device lost:', info);
+    });
+    const context = canvas.getContext('webgpu');
+
+    function resize(){
+      const dpr = Math.min(devicePixelRatio, 2);
+      const w = Math.max(1, canvas.clientWidth);
+      const h = Math.max(1, canvas.clientHeight);
+      canvas.width  = Math.floor(w * dpr);
+      canvas.height = Math.floor(h * dpr);
+      context.configure({
+        device,
+        format: navigator.gpu.getPreferredCanvasFormat(),
+        alphaMode: 'opaque',
+        usage: GPUTextureUsage.RENDER_ATTACHMENT,
+      });
+    }
+    new ResizeObserver(resize).observe(canvas);
+    resize();
+
+    // Uniforms
+    const uniformBufferSize = 4 * ( // float32 count
+      1 +     // time
+      2 +     // mouse
+      1 +     // scroll
+      2       // viewport (w, h)
+    );
+    const uniformBuffer = device.createBuffer({
+      size: uniformBufferSize * 4,
+      usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST
+    });
+
+    // Full periwinkle starfield with WebGPU + WGSL shaders
+    const code = /* wgsl */`
+      struct UBO {
+        time   : f32,
+        mouse  : vec2<f32>,
+        scroll : f32,
+        view   : vec2<f32>,
+      }
+      @group(0) @binding(0) var<uniform> u : UBO;
+
+      // Hash & value noise for procedural generation
+      fn hash(p: vec2<f32>) -> f32 {
+        let h = dot(p, vec2<f32>(127.1, 311.7));
+        return fract(sin(h) * 43758.5453);
+      }
+
+      fn noise(p: vec2<f32>) -> f32 {
+        let i = floor(p);
+        let f = fract(p);
+        let a = hash(i);
+        let b = hash(i + vec2<f32>(1.0, 0.0));
+        let c = hash(i + vec2<f32>(0.0, 1.0));
+        let d = hash(i + vec2<f32>(1.0, 1.0));
+        let u = f * f * (3.0 - 2.0 * f);
+        return mix(mix(a, b, u.x), mix(c, d, u.x), u.y);
+      }
+
+      // Fractal brownian motion for nebula
+      fn fbm(p: vec2<f32>) -> f32 {
+        var v = 0.0;
+        var a = 0.5;
+        var s = p;
+        for (var i = 0; i < 5; i = i + 1) {
+          v = v + a * noise(s);
+          s = s * 2.0;
+          a = a * 0.5;
+        }
+        return v;
+      }
+
+      // Sparse star distribution with twinkling
+      fn starLayer(uv: vec2<f32>, scale: f32, power: f32, twFreq: f32, twAmp: f32) -> f32 {
+        let n = noise(uv * scale);
+        let s = pow(max(n - 0.75, 0.0) * 4.0, power);
+        let tw = 1.0 + twAmp * sin(u.time * twFreq + n * 12.0);
+        return s * tw;
+      }
+
+      @vertex
+      fn v(@builtin(vertex_index) vi: u32) -> @builtin(position) vec4<f32> {
+        var pos = array<vec2<f32>, 3>(
+          vec2<f32>(-1.0, -3.0),
+          vec2<f32>( 3.0,  1.0),
+          vec2<f32>(-1.0,  1.0)
+        );
+        return vec4<f32>(pos[vi], 0.0, 1.0);
+      }
+
+      @fragment
+      fn f(@builtin(position) fragCoord: vec4<f32>) -> @location(0) vec4<f32> {
+        let res = u.view;
+        let uv = clamp(vec2<f32>(fragCoord.x / res.x, fragCoord.y / res.y), vec2<f32>(0.0), vec2<f32>(1.0));
+
+        // Safe parallax via mouse + scroll
+        let mouse_safe = clamp(u.mouse, vec2<f32>(0.0), vec2<f32>(1.0));
+        let scroll_safe = clamp(u.scroll, 0.0, 1.0);
+        let par = (mouse_safe - vec2<f32>(0.5, 0.5)) * 0.03 + vec2<f32>(0.0, scroll_safe * 0.015);
+        let suv = clamp(uv + par, vec2<f32>(0.0), vec2<f32>(1.0));
+
+        // Multi-stop periwinkle gradient
+        let h = clamp(suv.y, 0.0, 1.0);
+        let p0 = vec3<f32>(0.875, 0.886, 1.000); // #dfe2ff
+        let p1 = vec3<f32>(0.667, 0.690, 1.000); // #aab2ff
+        let p2 = vec3<f32>(0.490, 0.525, 0.886); // #7d86e2
+        var sky = mix(p2, p1, smoothstep(0.0, 0.6, h));
+        sky = mix(sky, p0, smoothstep(0.4, 1.0, h));
+        sky = clamp(sky, vec3<f32>(0.0), vec3<f32>(1.0)); // Guard the base
+
+        // STEP 1: Add just nebula - test if this works
+        var p = suv * 2.0; // Very small domain
+        let t = u.time * 0.03; // Slow animation
+
+        // Simple noise-based nebula
+        let n1 = clamp(hash(p + vec2<f32>(t, -t * 0.5)), 0.0, 1.0);
+        let nebula_strength = n1 * 0.15; // Very subtle
+
+        // Add subtle cool tint to nebula areas
+        let nebula_color = vec3<f32>(0.7, 0.8, 1.0) * nebula_strength;
+        var col = sky + nebula_color;
+        col = clamp(col, vec3<f32>(0.0), vec3<f32>(1.5));
+
+        // STEP 2: Stars disabled for now - testing nebula first
+        // (will add stars back once nebula works)
+
+        // Safe vignette
+        let d_vec = suv - vec2<f32>(0.5, 0.5);
+        let d = clamp(length(d_vec), 0.0, 1.0);
+        let vig = smoothstep(0.9, 0.3, d);
+        vig = clamp(vig, 0.0, 1.0);
+        col *= mix(0.85, 1.0, vig);
+
+        // Final safety clamp and mild tone curve
+        col = clamp(col, vec3<f32>(0.0), vec3<f32>(2.0));
+        let tone_input = max(col, vec3<f32>(1e-6));
+        col = pow(tone_input, vec3<f32>(0.95));
+        col = clamp(col, vec3<f32>(0.0), vec3<f32>(1.0));
+
+        return vec4<f32>(col, 1.0);
+      }
+    `;
+
+    const module = device.createShaderModule({ code });
+
+    // Check for shader compilation errors
+    const compilationInfo = await module.getCompilationInfo();
+    console.log('Shader compilation info:', compilationInfo);
+    for (const message of compilationInfo.messages) {
+      console.log('Shader compilation:', message.type, message.message, message.lineNum, message.linePos);
+    }
+    if (compilationInfo.messages.length === 0) {
+      console.log('Shader compiled successfully with no messages');
+    }
+
+    console.log('Creating bind group layout...');
+    const bindGroupLayout = device.createBindGroupLayout({
+      entries: [{
+        binding: 0,
+        visibility: GPUShaderStage.FRAGMENT,
+        buffer: {
+          type: 'uniform',
+          minBindingSize: uniformBufferSize * 4
+        }
+      }]
+    });
+    console.log('Bind group layout created:', bindGroupLayout);
+
+    console.log('Creating pipeline layout...');
+    const pipelineLayout = device.createPipelineLayout({
+      bindGroupLayouts: [bindGroupLayout]
+    });
+    console.log('Pipeline layout created:', pipelineLayout);
+
+    console.log('Creating render pipeline...');
+    const pipeline = await device.createRenderPipelineAsync({
+      layout: pipelineLayout,
+      vertex: { module, entryPoint: 'v' },
+      fragment: {
+        module, entryPoint: 'f',
+        targets: [{ format: navigator.gpu.getPreferredCanvasFormat() }]
+      },
+      primitive: { topology: 'triangle-list' }
+    }).catch(error => {
+      console.error('Pipeline creation failed:', error);
+      console.error('Error details:', error.message, error.stack);
+      throw error;
+    });
+    console.log('Pipeline created successfully:', pipeline);
+
+    console.log('Creating bind group...');
+    const bindGroup = device.createBindGroup({
+      layout: bindGroupLayout,
+      entries: [{ binding: 0, resource: { buffer: uniformBuffer }}]
+    });
+    console.log('Bind group created:', bindGroup);
+
+    // Pointer + scroll for parallax
+    const mouse = { x: 0.5, y: 0.5 };
+    addEventListener('pointermove', (e)=>{
+      mouse.x = e.clientX / innerWidth;
+      mouse.y = e.clientY / innerHeight;
+    }, { passive: true });
+
+    let scroll = 0;
+    addEventListener('scroll', ()=>{
+      const max = Math.max(1, document.body.scrollHeight - innerHeight);
+      scroll = scrollY / max;
+    }, { passive: true });
+
+    const start = performance.now();
+    let frameCount = 0;
+    function frame(){
+      const now = performance.now();
+      const time = prefersReduced ? 0 : (now - start) / 1000;
+
+      // update uniforms
+      const view = new Float32Array([canvas.width, canvas.height]);
+      const u = new Float32Array([
+        time,
+        mouse.x, (1 - mouse.y),
+        scroll,
+        view[0], view[1]
+      ]);
+
+      // Debug uniform values
+      if (frameCount <= 3) {
+        console.log(`Uniform values: time=${time}, mouse=${mouse.x},${mouse.y}, scroll=${scroll}, view=${view[0]},${view[1]}`);
+      }
+
+      device.queue.writeBuffer(uniformBuffer, 0, u.buffer);
+
+      // render
+      try {
+        const encoder = device.createCommandEncoder();
+        const currentTexture = context.getCurrentTexture();
+        const pass = encoder.beginRenderPass({
+          colorAttachments: [{
+            view: currentTexture.createView(),
+            clearValue: { r: 0.7, g: 0.75, b: 1.0, a: 1.0 }, // bright periwinkle clear
+            loadOp: 'clear',
+            storeOp: 'store'
+          }]
+        });
+        pass.setPipeline(pipeline);
+        pass.setBindGroup(0, bindGroup);
+        pass.draw(3, 1, 0, 0); // fullscreen triangle
+        pass.end();
+
+        const commandBuffer = encoder.finish();
+        device.queue.submit([commandBuffer]);
+
+        // Force error checking (removed await since this function isn't async)
+        device.queue.onSubmittedWorkDone().catch(error => {
+          console.error('Queue submission error:', error);
+        });
+      } catch (error) {
+        console.error('Render error:', error);
+      }
+
+      // Debug first few frames
+      frameCount++;
+      if (frameCount <= 3) {
+        console.log(`Frame ${frameCount}: time=${time}, canvas=${canvas.width}x${canvas.height}, mouse=${mouse.x},${mouse.y}`);
+      }
+
+      if (!prefersReduced) requestAnimationFrame(frame);
+    }
+    frame();
+  }
+
+  // ----------------------------
+  // 2) WEBGL FALLBACK (Three.js)
+  // ----------------------------
+  async function bootWebGL(){
+    // Simple, tiny fallback: solid periwinkle (keeps page pretty).
+    const ctx = canvas.getContext('2d');
+    function fill(){
+      canvas.width = canvas.clientWidth * Math.min(devicePixelRatio, 2);
+      canvas.height = canvas.clientHeight * Math.min(devicePixelRatio, 2);
+      const g = ctx.createLinearGradient(0,0,0,canvas.height);
+      g.addColorStop(0,   '#dfe2ff');
+      g.addColorStop(0.6, '#aab2ff');
+      g.addColorStop(1,   '#7d86e2');
+      ctx.fillStyle = g;
+      ctx.fillRect(0,0,canvas.width,canvas.height);
+    }
+    new ResizeObserver(fill).observe(canvas);
+    fill();
+  }
+
+  // Wait for DOM to be ready
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+
+  async function init() {
+    console.log('Initializing periwinkle sky...');
+    console.log('Canvas element:', canvas);
+
+    if (!canvas) {
+      console.error('Canvas not found!');
+      return;
+    }
+
+    console.log('Canvas dimensions:', canvas.clientWidth, 'x', canvas.clientHeight);
+
+    // Set canvas size immediately for visibility
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    // Boot with WebGPU, fallback to WebGL if needed
+    try {
+      console.log('Attempting WebGPU...');
+      await bootWebGPU();
+      console.log('WebGPU initialized successfully!');
+    } catch (e) {
+      console.warn('WebGPU unavailable, using fallback:', e?.message || e);
+      try {
+        await bootWebGL();
+        console.log('Canvas fallback initialized successfully!');
+      } catch (fallbackError) {
+        console.error('Both WebGPU and fallback failed:', fallbackError);
+        // Draw a simple gradient directly
+        const ctx = canvas.getContext('2d');
+        if (ctx) {
+          const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
+          gradient.addColorStop(0, '#dfe2ff');
+          gradient.addColorStop(0.6, '#aab2ff');
+          gradient.addColorStop(1, '#7d86e2');
+          ctx.fillStyle = gradient;
+          ctx.fillRect(0, 0, canvas.width, canvas.height);
+          console.log('Applied emergency gradient fallback');
+        }
+      }
+    }
+  }
+</script>
