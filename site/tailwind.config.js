@@ -33,9 +33,9 @@ export default {
         'accent-hover': 'var(--ariane-link-hover)',
       },
       fontFamily: {
-        sans: ['Inter Variable', 'Inter', 'ui-sans-serif', 'system-ui', ...defaultTheme.fontFamily.sans],
-        serif: ['Inter Variable', 'Inter', 'ui-sans-serif', 'system-ui', ...defaultTheme.fontFamily.serif],
-        heading: ['Inter Variable', 'Inter', 'ui-sans-serif', 'system-ui', ...defaultTheme.fontFamily.sans],
+        sans: [...defaultTheme.fontFamily.sans],
+        serif: [...defaultTheme.fontFamily.serif],
+        heading: [...defaultTheme.fontFamily.sans],
       },
       spacing: {
         'pad-x': 'clamp(1rem, 4vw, 2rem)',
@@ -44,6 +44,9 @@ export default {
         '22': '5.5rem', // 88px
         '26': '6.5rem', // 104px
         '28': '7rem',   // 112px
+        // Navigation spacing tokens
+        'nav-gap': '0.625rem', // 10px - gap between nav items
+        'nav-gap-md': '0.75rem', // 12px - gap on md+ screens
       },
       borderRadius: {
         'hero': '28px',
@@ -60,6 +63,15 @@ export default {
         'display': ['clamp(3.5rem, 5vw + 1rem, 6rem)', { lineHeight: '1.02', letterSpacing: '-0.02em' }],
         'heading': ['clamp(1.75rem, 1.6vw + 1rem, 2.25rem)', { lineHeight: '1.2' }],
         'body': ['clamp(1.1rem, 0.3vw + 1rem, 1.25rem)', { lineHeight: '1.65' }],
+        // Navigation typography tokens
+        'nav-brand-sm': ['17px', { lineHeight: '1.1', letterSpacing: '-0.01em', fontWeight: '600' }],
+        'nav-brand-md': ['18px', { lineHeight: '1.1', letterSpacing: '-0.01em', fontWeight: '600' }],
+        'nav-brand-lg': ['19px', { lineHeight: '1.1', letterSpacing: '-0.01em', fontWeight: '600' }],
+        'nav-brand-xl': ['20px', { lineHeight: '1.1', letterSpacing: '-0.01em', fontWeight: '600' }],
+        'nav-link': ['16px', { lineHeight: '1.1', letterSpacing: '-0.005em', fontWeight: '500' }],
+        'nav-link-md': ['17px', { lineHeight: '1.1', letterSpacing: '-0.005em', fontWeight: '500' }],
+        'nav-link-lg': ['18px', { lineHeight: '1.1', letterSpacing: '-0.005em', fontWeight: '500' }],
+        'nav-link-xl': ['19px', { lineHeight: '1.1', letterSpacing: '-0.005em', fontWeight: '500' }],
       },
       maxWidth: {
         'container': '1100px',

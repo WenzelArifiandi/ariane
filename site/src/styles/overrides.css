@@ -11,13 +11,13 @@
         font-family: inherit !important;
     }
 
-    /* Force Material Web components to use Inter in shadow DOM */
+    /* Force Material Web components to use system fonts in shadow DOM */
     md-outlined-text-field::part(input-field),
     md-outlined-text-field::part(label),
     md-outlined-text-field::part(supporting-text),
     md-filled-button::part(button),
     md-filled-button::part(label) {
-        font-family: 'Inter Variable', 'Inter', ui-sans-serif, system-ui, sans-serif !important;
+        font-family: ui-sans-serif, system-ui, sans-serif !important;
     }
 
     /*
@@ -42,7 +42,7 @@
         padding: var(--space-3) calc(var(--space-4) - 0.1rem);
         border-radius: 14px;
         max-width: 720px;
-        font-family: 'Inter Variable', 'Inter', ui-sans-serif, system-ui, sans-serif !important;
+        font-family: ui-sans-serif, system-ui, sans-serif !important;
     }
 
 }
