@@ -15,22 +15,19 @@ const cfLogoutHref: string = '/signout';
 
 <nav class="sticky top-3 z-50 mx-auto my-3 px-3 sm:px-7" data-access-only={isAccessOnly ? 'true' : 'false'} data-app-auth={isAppAuth ? 'true' : 'false'}>
   <div class="max-w-screen-2xl mx-auto">
-    <div class="nav-inner flex items-center justify-between gap-5 px-4 py-3 rounded-2xl backdrop-blur-md border border-white/30 bg-white/10 shadow-lg relative overflow-hidden isolate">
-      <!-- Glass effect overlays -->
-      <div class="absolute inset-0 pointer-events-none bg-gradient-to-br from-white/25 via-white/18 to-transparent mix-blend-screen"></div>
-      <div class="absolute inset-0 rounded-inherit border border-indigo-200/35 pointer-events-none"></div>
+    <div class="nav-inner flex items-center justify-between gap-5 px-4 py-3 relative overflow-hidden isolate">
 
       <a href="/" class="font-semibold tracking-wide text-ink no-underline relative z-10">Wenzel Arifiandi</a>
 
       <ul class="flex items-center gap-3 sm:gap-4 flex-nowrap list-none m-0 p-0 min-w-0 relative z-10">
         {links.map((l) => (
           <li class="whitespace-nowrap">
-            <a href={l.href} class="text-ink no-underline font-semibold px-2 py-2 rounded-lg hover:bg-white/20 hover:text-ink/80 transition-all">{l.label}</a>
+            <a href={l.href} class="text-ink no-underline font-semibold px-2 py-2">{l.label}</a>
           </li>
         ))}
 
         <li id="studio-link" class="hidden whitespace-nowrap">
-          <a href={studioHref} class="text-ink no-underline font-semibold px-2 py-2 rounded-lg hover:bg-white/20 hover:text-ink/80 transition-all">Studio</a>
+          <a href={studioHref} class="text-ink no-underline font-semibold px-2 py-2">Studio</a>
         </li>
 
         {isAccessOnly && (
@@ -61,7 +58,7 @@ const cfLogoutHref: string = '/signout';
         )}
 
         <li class="relative">
-          <button id="creator-toggle" class="chip-m3 inline-flex items-center gap-2 bg-primary text-white rounded-full px-3 py-2 font-semibold shadow-md hover:shadow-lg hover:-translate-y-0.5 transition-all max-w-full overflow-hidden text-ellipsis flex-shrink-0"
+          <button id="creator-toggle" class="chip-m3 inline-flex items-center gap-2"
                   aria-haspopup="true" aria-expanded="false" aria-controls="creator-sheet" title="Maker">
             <svg class="w-4 h-4 text-white" aria-hidden="true" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path d="M11 2l1.2 3.6L16 7l-3.8 1.4L11 12 9.8 8.4 6 7l3.8-1.4L11 2zM19 10l.8 2.4L22 13l-2.2.6L19 16l-.8-2.4L16 13l2.2-.6L19 10zM6 14l1 3 3 1-3 1-1 3-1-3-3-1 3-1 1-3z" fill="currentColor"/>
@@ -76,17 +73,102 @@ const cfLogoutHref: string = '/signout';
 
 
 <style>
+  /* Apple liquid glass navbar with M3 expressive design */
+  .nav-inner {
+    border-radius: var(--ariane-glass-radius, 20px);
+    background: var(--ariane-glass-tint, rgba(255,255,255,0.1));
+    -webkit-backdrop-filter: blur(var(--ariane-glass-blur, 20px));
+    backdrop-filter: blur(var(--ariane-glass-blur, 20px));
+    border: 1px solid rgba(255,255,255,.30);
+    box-shadow:
+      0 1px 0 0 var(--ariane-glass-edge-bright, rgba(255,255,255,.2)) inset,
+      0 -1px 0 0 var(--ariane-glass-edge-dim, rgba(120,120,160,.15)) inset,
+      0 10px 26px var(--ariane-glass-shadow-soft, rgba(0,0,0,.1));
+  }
+
+  /* Liquid glass overlay effects */
+  .nav-inner::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background:
+      radial-gradient(120% 60% at 0% 0%, rgba(255,255,255,.25) 0%, transparent 55%),
+      linear-gradient(180deg, rgba(255,255,255,.18) 0%, transparent 45%),
+      linear-gradient(90deg, rgba(255,255,255,.12), transparent 35%, transparent 65%, rgba(255,255,255,.10));
+    mix-blend-mode: screen;
+    border-radius: inherit;
+  }
+
+  .nav-inner::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    box-shadow: 0 0 0 1px rgba(170,180,255,.35) inset;
+    pointer-events: none;
+  }
+
   /* Scrolled state enhancement */
   .scrolled .nav-inner {
-    @apply bg-white/20 shadow-xl;
+    background: var(--ariane-glass-tint-scrolled, rgba(255,255,255,0.15));
+    box-shadow:
+      0 1px 0 0 rgba(255,255,255,.16) inset,
+      0 -1px 0 0 rgba(120,120,160,.20) inset,
+      0 14px 30px var(--ariane-glass-shadow-soft, rgba(0,0,0,.15));
+  }
+
+  /* M3 expressive chip with proper styling */
+  .chip-m3 {
+    background: var(--md-sys-color-primary, #7150D9);
+    color: var(--md-sys-color-on-primary, #fff);
+    border: 0;
+    border-radius: 999px;
+    padding: .45rem .8rem;
+    box-shadow: var(--md-sys-elevation-1, 0 6px 20px rgba(0,0,0,.06));
+    cursor: pointer;
+    font-weight: 650;
+    white-space: nowrap;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    flex: 0 1 auto;
+    transition: transform var(--md-sys-motion-duration-short, 200ms) var(--md-sys-motion-ease-standard, ease-out),
+                box-shadow var(--md-sys-motion-duration-short, 200ms) var(--md-sys-motion-ease-standard, ease-out);
+  }
+
+  .chip-m3:hover {
+    box-shadow: var(--md-sys-elevation-2, 0 12px 28px rgba(0,0,0,.08));
+    transform: translateY(-1px);
+  }
+
+  /* M3 hover behavior for nav links */
+  .nav-inner a:not(.chip-m3) {
+    border-radius: 10px;
+    transition: background 0.2s ease, color 0.2s ease;
+  }
+
+  .nav-inner a:not(.chip-m3):hover {
+    background: var(--ariane-hover-wash, rgba(255,255,255,.15));
+    color: var(--ariane-text-ink-dim, rgba(0,0,0,.8));
   }
 
   /* Compact state for narrow screens */
   .chip-m3.compact .label {
-    @apply hidden;
+    display: none;
   }
   .chip-m3.compact {
-    @apply px-2;
+    padding: .45rem .6rem;
+  }
+
+  /* Responsive label hiding */
+  @media (max-width: 500px) {
+    .chip-m3 .label {
+      display: none;
+    }
+    .chip-m3 {
+      padding: .45rem .6rem;
+    }
   }
 </style>
 
