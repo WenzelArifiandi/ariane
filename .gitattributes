@@ -1,0 +1,44 @@
+# GitHub Linguist overrides for Ariane
+# Mark non-source, generated, or archived content as vendored so language stats focus on the site code (Astro/Tailwind/CSS)
+
+# Folders that are documentation, archived, or tooling
+constellation/** linguist-vendored
+docs/** linguist-vendored
+docs-app/** linguist-vendored
+infrastructure/** linguist-vendored
+ops/** linguist-vendored
+playwright-report/** linguist-vendored
+test-results/** linguist-vendored
+tests/** linguist-vendored
+wasm/** linguist-vendored
+zitadel/** linguist-vendored
+
+# Node and build artifacts
+node_modules/** linguist-vendored
+package-lock.json linguist-vendored
+*.lock linguist-vendored
+.parcel-cache/** linguist-vendored
+
+# Generated build output
+site/.astro/** linguist-vendored
+site/dist/** linguist-vendored
+docs-app/.astro/** linguist-vendored
+
+# Misc generated / binary files
+*.min.js linguist-vendored
+*.map linguist-vendored
+*.log linguist-vendored
+*.tar.gz linguist-vendored
+
+# Treat most Markdown and docs as vendored (we keep a small docs/ surface but don't want them to dominate stats)
+**/*.md linguist-vendored
+
+# Explicitly mark the main site source as NOT vendored so Linguist counts it
+site/** linguist-language=Astro
+site/src/** linguist-language=Astro
+site/src/**/*.astro linguist-language=Astro
+site/src/**/*.ts linguist-language=TypeScript
+site/src/**/*.js linguist-language=JavaScript
+site/src/**/*.css linguist-language=CSS
+
+# If you want specific sub-folders to count, remove the relevant lines above or mark them with linguist-vendored=! (rare)
