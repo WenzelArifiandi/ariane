@@ -29,15 +29,27 @@ export default {
       },
       spacing: {
         'pad-x': 'clamp(1rem, 4vw, 2rem)',
+        '18': '4.5rem', // 72px for navbar height spacing
+        '20': '5rem',   // 80px for section top padding
       },
       borderRadius: {
         'hero': '28px',
+        'glass': 'var(--ariane-glass-radius, 20px)',
+        'card': '14px',
       },
       minHeight: {
         'hero': 'clamp(360px, 56vh, 640px)',
       },
       backgroundImage: {
         'gradient-radial': 'radial-gradient(60% 60% at 50% 0%, var(--tw-gradient-stops))',
+      },
+      fontSize: {
+        'display': ['clamp(3rem, 3.5vw + 1rem, 5rem)', { lineHeight: '1.02', letterSpacing: '-0.02em' }],
+        'heading': ['clamp(1.5rem, 1.5vw + 1rem, 2rem)', { lineHeight: '1.2' }],
+        'body': ['clamp(1rem, 0.2vw + 0.9rem, 1.125rem)', { lineHeight: '1.5' }],
+      },
+      maxWidth: {
+        'container': '1100px',
       },
       animation: {
         fade: 'fadeInUp 1s both',
