@@ -4,11 +4,11 @@ import { Icon } from 'astro-icon/components';
 
 <footer class="footer border-t border-gray-200 not-prose">
   <div class="max-w-container mx-auto px-pad-x py-8 md:py-12">
-    <div class="grid grid-cols-12 gap-4 gap-y-8 sm:gap-8">
-      <div class="col-span-12 lg:col-span-6">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 gap-y-8 sm:gap-8">
+      <div class="flex items-center">
         <a class="brand" href="/">Wenzel Arifiandi</a>
       </div>
-      <div class="col-span-12 lg:col-span-6 flex items-center justify-start lg:justify-end">
+      <div class="flex items-center justify-start lg:justify-end">
         <ul class="socials">
           <li>
             <a aria-label="Instagram" href="https://www.instagram.com/wenzelarifiandi/" class="social-btn">
@@ -38,7 +38,7 @@ import { Icon } from 'astro-icon/components';
 <style>
   .footer { background: var(--ariane-bg-accent); }
   .brand { font-weight: 700; font-size: 1.125rem; text-decoration: none; color: inherit; }
-  .socials { display:flex; gap:.25rem; align-items:center; list-style:none; margin:0; padding:0; }
+  .socials { display:flex; gap:.25rem; align-items:center; list-style:none; margin:0; padding:0; flex-wrap:wrap; }
   .social-btn { color: var(--ariane-text-ink); padding:.5rem; border-radius: .5rem; display:inline-flex; align-items:center; transition: all 0.2s ease; }
   .social-btn:hover { background: var(--ariane-hover-wash); color: var(--ariane-text-ink-dim); }
   .link { color: var(--ariane-link-text)}

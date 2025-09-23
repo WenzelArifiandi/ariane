@@ -2,52 +2,9 @@
 @layer overrides {
 
     /*
-  FORCE INTER FONT EVERYWHERE - HIGHEST PRIORITY
-  This block ensures that the Inter font is applied globally, overriding any
-  other font settings. The `!important` rule is used to ensure that this
-  style has the highest specificity.
-*/
-    *,
-    *::before,
-    *::after,
-    input,
-    textarea,
-    select,
-    button,
-    md-outlined-text-field,
-    md-filled-button,
-    .access-card,
-    .access-ui,
-    .btn,
-    .chip {
-        font-family: 'Inter Variable', 'Inter', ui-sans-serif, system-ui, sans-serif !important;
-    }
-
-    /*
-  EXCEPTION: Material Symbols icons must use their own font
-  This ensures that icon elements use the Material Symbols font instead of Inter
-*/
-    .material-symbols-rounded {
-        font-family: 'Material Symbols Rounded' !important;
-        font-weight: normal !important;
-        font-style: normal !important;
-        font-size: 24px !important;
-        line-height: 1 !important;
-        letter-spacing: normal !important;
-        text-transform: none !important;
-        display: inline-block !important;
-        white-space: nowrap !important;
-        word-wrap: normal !important;
-        direction: ltr !important;
-        -webkit-font-feature-settings: 'liga' !important;
-        font-feature-settings: 'liga' !important;
-        -webkit-font-smoothing: antialiased !important;
-    }
-
-    /*
-  FORCE INTER FOR MATERIAL WEB COMPONENTS
-  This targets the Material Web components and their shadow DOM parts to
-  ensure they inherit the Inter font, fixing the serif font issue.
+  FORCE INTER FOR MATERIAL WEB COMPONENTS ONLY
+  This targets specific Material Web components that need font inheritance.
+  General font setup is handled in global.css base layer.
 */
     md-outlined-text-field,
     md-filled-button {
@@ -64,10 +21,8 @@
     }
 
     /*
-  FORCE TIGHT SPACING
-  These rules reduce padding and margins on key components to create a
-  tighter, more professional layout. The `!important` rule is used to
-  override any existing spacing styles.
+  CREATOR/ACCESS COMPONENT SPACING
+  Specific overrides for creator bar and access components.
 */
     .creator-bar {
         padding: var(--space-2) 0;
@@ -87,18 +42,7 @@
         padding: var(--space-3) calc(var(--space-4) - 0.1rem);
         border-radius: 14px;
         max-width: 720px;
-    }
-
-    .hero {
-        margin: calc(var(--space-3) + .05rem) 0 var(--space-4) 0;
-        min-height: clamp(320px, 50vh, 600px);
-    }
-
-    /* Ensure Hero title is visibly large across breakpoints */
-    .hero__title {
-        font-size: clamp(3.75rem, 6.5vw + 0.25rem, 7rem);
-        line-height: 1.02;
-        letter-spacing: -0.02em;
+        font-family: 'Inter Variable', 'Inter', ui-sans-serif, system-ui, sans-serif !important;
     }
 
 }
