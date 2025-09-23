@@ -50,7 +50,7 @@
 }
 
 /* src/styles/global.css */
-/* Tailwind base disabled to mirror AstroWind applyBaseStyles:false */
+/* Tailwind base now enabled - preserving Inter font and optimizations */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;

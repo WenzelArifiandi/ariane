@@ -40,7 +40,7 @@ export default defineConfig({
     port: 4321,
   },
   integrations: [
-    tailwind({ applyBaseStyles: false }),
+    tailwind({ applyBaseStyles: true }),
     icon(),
     react(),
     storyblok({
