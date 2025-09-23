@@ -101,25 +101,4 @@
         letter-spacing: -0.02em;
     }
 
-    /* Fix passkey button functionality and layout */
-    #creator-passkey {
-        cursor: pointer !important;
-        pointer-events: auto !important;
-    }
-
-    #creator-passkey:hover {
-        transform: translateY(-1px) !important;
-    }
-
-    /* Fix small screen layout - make button text shorter */
-    @media (max-width: 640px) {
-        #creator-passkey .label {
-            display: none !important;
-        }
-
-        #creator-passkey::after {
-            content: "Sign in" !important;
-            margin-left: 0.5rem !important;
-        }
-    }
 }

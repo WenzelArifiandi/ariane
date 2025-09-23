@@ -31,8 +31,7 @@ slug: copilot-instructions
 - **API Routes**:
 
   - OAuth: `/api/oauth/github/{start,callback}.ts`
-  - WebAuthn: `/api/auth/{registration-options,verify-registration,authentication-options,verify-authentication}.ts`
-  - Session & access: `/api/auth/{session,logout,approval-status,request-access}.ts`
+  - Session helpers: `/api/auth/{session,logout,request-access}.ts`
   - Diagnostics: `/api/diag`, `/api/oidc/diag`
 
 - **Security Headers**:
