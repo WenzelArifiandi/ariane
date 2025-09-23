@@ -57,7 +57,7 @@ export default {
       fontSize: {
         'display': ['clamp(3.5rem, 5vw + 1rem, 6rem)', { lineHeight: '1.02', letterSpacing: '-0.02em' }],
         'heading': ['clamp(1.75rem, 1.6vw + 1rem, 2.25rem)', { lineHeight: '1.2' }],
-        'body': ['clamp(1.0625rem, 0.25vw + 0.95rem, 1.2rem)', { lineHeight: '1.6' }],
+        'body': ['clamp(1.1rem, 0.3vw + 1rem, 1.25rem)', { lineHeight: '1.65' }],
       },
       maxWidth: {
         'container': '1100px',

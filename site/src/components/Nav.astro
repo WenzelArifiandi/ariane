@@ -1,46 +1,115 @@
 ---
 const links = [
-  { label: 'Hello', href: '#hello' },
-  { label: 'Playground', href: '#playground' },
-  { label: 'Field Notes', href: '#field-notes' },
-  { label: 'Contact', href: '#contact' },
-]
+  { href: '#hello', label: 'Hello' },
+  { href: '#playground', label: 'Playground' },
+  { href: '#field-notes', label: 'Field Notes' },
+  { href: '#contact', label: 'Contact' },
+];
 const studioHref = import.meta.env.DEV ? 'http://localhost:3333/' : 'https://studio.wenzelarifiandi.com';
-// In dev tunnel, we may rely solely on Cloudflare Access (no app OAuth)
-const AUTH_MODE = ((import.meta as unknown as { env?: Record<string, unknown> }).env?.AUTH_MODE as string) ?? process.env.AUTH_MODE;
-const isAccessOnly = AUTH_MODE === 'cf-access-only';
-const isAppAuth = AUTH_MODE === 'app';
-// Use Access-first zero-UI signout route; it logs out of Cloudflare Access, then (optionally) Auth0 via /post-access-logout, and returns to root to trigger login.
-const cfLogoutHref: string = '/signout';
 ---
 
-<nav class="sticky top-3 z-50 mx-auto my-3 px-3 sm:px-7" data-access-only={isAccessOnly ? 'true' : 'false'} data-app-auth={isAppAuth ? 'true' : 'false'}>
+<nav class="sticky top-3 z-50 mx-auto my-3 px-3 sm:px-7">
   <div class="max-w-container mx-auto">
-    <div class="nav-inner flex items-center justify-between gap-5 px-pad-x py-3 relative overflow-hidden isolate">
+    <div class="nav-inner flex items-center justify-between gap-3 md:gap-4 px-pad-x py-3 relative overflow-hidden isolate">
 
-      <a href="/" class="brand relative z-10">Wenzel Arifiandi</a>
+      <!-- Brand -->
+      <a href="/" class="brand relative z-10 text-base md:text-[17px] leading-tight">Wenzel Arifiandi</a>
 
-      <ul class="flex items-center gap-3 sm:gap-4 flex-nowrap list-none m-0 p-0 min-w-0 relative z-10">
-        {links.map((l) => (
+      <!-- Desktop links -->
+      <ul class="hidden lg:flex items-center gap-4 lg:gap-5 text-[15px] lg:text-base leading-tight list-none m-0 p-0 relative z-10">
+        {links.map(l => (
           <li class="whitespace-nowrap">
-            <a href={l.href} class="nav-link">{l.label}</a>
+            <a class="nav-link" href={l.href}>{l.label}</a>
           </li>
         ))}
-
         <li class="whitespace-nowrap">
-          <a href={studioHref} class="nav-link">Studio</a>
-        </li>
-
-        <li class="relative">
-          <button id="creator-toggle" class="chip-m3 inline-flex items-center gap-2"
-                  aria-haspopup="true" aria-expanded="false" aria-controls="creator-sheet" title="Maker">
-            <svg class="w-4 h-4 text-white" aria-hidden="true" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M11 2l1.2 3.6L16 7l-3.8 1.4L11 12 9.8 8.4 6 7l3.8-1.4L11 2zM19 10l.8 2.4L22 13l-2.2.6L19 16l-.8-2.4L16 13l2.2-.6L19 10zM6 14l1 3 3 1-3 1-1 3-1-3-3-1 3-1 1-3z" fill="currentColor"/>
-            </svg>
-            <span class="label lg:inline hidden whitespace-nowrap">Maker</span>
-          </button>
+          <a class="nav-link" href={studioHref}>Studio</a>
         </li>
       </ul>
+
+      <!-- Right: Maker (lg+), Explore (<lg) -->
+      <div class="flex items-center gap-2 relative z-10">
+        <!-- Maker button (desktop only) -->
+        <button id="creator-toggle" class="hidden lg:inline-flex chip-m3 items-center gap-2 px-3 md:px-4 py-2 text-[15px] md:text-base leading-tight"
+                aria-haspopup="true" aria-expanded="false" aria-controls="creator-sheet" title="Maker">
+          <!-- M3 sparkle icon -->
+          <span class="material-symbols-rounded text-white" style="font-size: 18px;">auto_awesome</span>
+          <span class="label whitespace-nowrap">Maker</span>
+        </button>
+
+        <!-- Explore button (mobile/tablet) -->
+        <button
+          id="explore-toggle"
+          class="lg:hidden chip-m3 inline-flex items-center gap-2 px-3 py-2 text-[15px] leading-tight
+                 transition-[transform,box-shadow] duration-200 ease-[cubic-bezier(0.2,0,0,1)]
+                 active:scale-[0.98] active:shadow-sm"
+          aria-controls="mobile-menu"
+          aria-expanded="false"
+          aria-haspopup="true"
+          type="button"
+        >
+          <!-- M3 compass icon -->
+          <span class="material-symbols-rounded text-white" style="font-size: 18px;">explore</span>
+          <span>Explore</span>
+        </button>
+      </div>
+
+      <!-- Mobile drop panel -->
+      <div id="mobile-menu"
+           class="lg:hidden absolute left-0 right-0 top-full mt-2 px-3 sm:px-7"
+           hidden>
+        <div
+          class="nav-panel rounded-2xl border shadow-lg backdrop-blur bg-white/80
+                 origin-top will-change-transform will-change-opacity
+                 transition-[opacity,transform] duration-[420ms]
+                 ease-[cubic-bezier(0.2,1.2,0.35,1)]
+                 opacity-0 -translate-y-4 scale-[0.97]"
+          data-anim
+          aria-hidden="true"
+          role="menu"
+        >
+          <ul class="py-2">
+            <!-- Staggered menu items -->
+            <li class="transition-opacity duration-300 delay-75 opacity-0 data-[open=true]:opacity-100">
+              <a class="mobile-menu-item" role="menuitem" href="#hello">
+                <span class="material-symbols-rounded">waving_hand</span>
+                <span>Hello</span>
+              </a>
+            </li>
+            <li class="transition-opacity duration-300 delay-100 opacity-0 data-[open=true]:opacity-100">
+              <a class="mobile-menu-item" role="menuitem" href="#playground">
+                <span class="material-symbols-rounded">science</span>
+                <span>Playground</span>
+              </a>
+            </li>
+            <li class="transition-opacity duration-300 delay-125 opacity-0 data-[open=true]:opacity-100">
+              <a class="mobile-menu-item" role="menuitem" href="#field-notes">
+                <span class="material-symbols-rounded">edit_note</span>
+                <span>Field Notes</span>
+              </a>
+            </li>
+            <li class="transition-opacity duration-300 delay-150 opacity-0 data-[open=true]:opacity-100">
+              <a class="mobile-menu-item" role="menuitem" href="#contact">
+                <span class="material-symbols-rounded">mail</span>
+                <span>Contact</span>
+              </a>
+            </li>
+            <li class="transition-opacity duration-300 delay-200 opacity-0 data-[open=true]:opacity-100">
+              <a class="mobile-menu-item" role="menuitem" href={studioHref}>
+                <span class="material-symbols-rounded">palette</span>
+                <span>Studio</span>
+              </a>
+            </li>
+            <li class="transition-opacity duration-300 delay-225 opacity-0 data-[open=true]:opacity-100">
+              <button class="mobile-menu-item w-full text-left" role="menuitem"
+                      onclick="document.getElementById('creator-toggle')?.click?.()">
+                <span class="material-symbols-rounded">auto_awesome</span>
+                <span>Maker</span>
+              </button>
+            </li>
+          </ul>
+        </div>
+      </div>
     </div>
   </div>
 </nav>
@@ -153,6 +222,44 @@ const cfLogoutHref: string = '/signout';
     text-decoration: none !important;
   }
 
+  /* Mobile menu panel */
+  .nav-panel {
+    background: var(--ariane-glass-tint, rgba(255,255,255,0.85));
+    border: 1px solid rgba(255,255,255,.30);
+    box-shadow:
+      0 1px 0 0 var(--ariane-glass-edge-bright, rgba(255,255,255,.2)) inset,
+      0 -1px 0 0 var(--ariane-glass-edge-dim, rgba(120,120,160,.15)) inset,
+      0 10px 26px var(--ariane-glass-shadow-soft, rgba(0,0,0,.1));
+  }
+
+  /* Mobile menu items (card-style) */
+  .mobile-menu-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 1rem;
+    margin: 0.25rem 0.5rem;
+    border-radius: 12px;
+    color: var(--ariane-body-text);
+    text-decoration: none;
+    transition: all 0.2s ease;
+    font-size: var(--body);
+    line-height: 1.2;
+  }
+
+  .mobile-menu-item:hover,
+  .mobile-menu-item:focus {
+    background: var(--ariane-hover-wash, rgba(255,255,255,.15));
+    color: var(--ariane-text-ink-dim);
+    text-decoration: none;
+    transform: translateY(-1px);
+  }
+
+  .mobile-menu-item .material-symbols-rounded {
+    color: var(--ariane-text-ink);
+    font-size: 20px;
+  }
+
   /* Compact state for narrow screens */
   .chip-m3.compact .label {
     display: none;
@@ -174,8 +281,8 @@ const cfLogoutHref: string = '/signout';
 
 <script type="module" is:inline>
   const qs = (s) => document.querySelector(s);
-  const toggle = qs('#creator-toggle');
   const navInner = qs('.nav-inner');
+
   // Darkens the glass as you scroll down
   const onScroll = () => {
     if (window.scrollY > 24) {
@@ -187,42 +294,78 @@ const cfLogoutHref: string = '/signout';
   addEventListener('scroll', onScroll, { passive: true });
   onScroll();
 
-toggle?.addEventListener('click', () => {
+  // Creator toggle functionality (desktop)
+  const creatorToggle = qs('#creator-toggle');
+  creatorToggle?.addEventListener('click', () => {
     const html = document.documentElement;
     const open = html.getAttribute('data-creator') === 'open';
     html.setAttribute('data-creator', open ? 'closed' : 'open');
-    toggle.setAttribute('aria-expanded', String(!open));
+    creatorToggle.setAttribute('aria-expanded', String(!open));
     window.dispatchEvent(new CustomEvent('toggle-creator', { detail: { open: !open } }));
   });
 
-  // Compact the chip based on actual available space, not only viewport width
-  const makerChip = toggle;
-  let rafId = 0;
-  function measureAndToggle() {
-    if (!navInner || !makerChip) return;
-    // Show full label for accurate measurement
-    makerChip.classList.remove('compact');
-    // Use a small threshold to avoid subpixel false positives
-    const overflow = Math.ceil(navInner.scrollWidth - navInner.clientWidth);
-    const needsCompact = overflow > 12; // require a meaningful overflow
-    makerChip.classList.toggle('compact', needsCompact);
+  // M3 Expressive Mobile Menu
+  const exploreBtn = qs('#explore-toggle');
+  const mobileMenuWrap = qs('#mobile-menu');
+  const mobileMenuPanel = mobileMenuWrap?.querySelector('[data-anim]');
+  const menuItems = mobileMenuWrap?.querySelectorAll('li');
+
+  function setItemsOpen(open) {
+    menuItems?.forEach(li => li.setAttribute('data-open', open ? 'true' : 'false'));
   }
-  function scheduleMeasure() {
-    if (rafId) cancelAnimationFrame(rafId);
-    rafId = requestAnimationFrame(measureAndToggle);
+
+  function openMobileMenu(open) {
+    if (!exploreBtn || !mobileMenuWrap || !mobileMenuPanel) return;
+
+    exploreBtn.setAttribute('aria-expanded', String(open));
+
+    if (open) {
+      mobileMenuWrap.hidden = false;
+      // ENTER (M3 expressive): overshooty, longer duration
+      mobileMenuPanel.style.transitionTimingFunction = 'cubic-bezier(0.2, 1.2, 0.35, 1)';
+      mobileMenuPanel.style.transitionDuration = '420ms';
+      requestAnimationFrame(() => {
+        mobileMenuPanel.classList.remove('opacity-0', '-translate-y-4', 'scale-[0.97]');
+        mobileMenuPanel.classList.add('opacity-100', 'translate-y-0', 'scale-100');
+        setItemsOpen(true);
+      });
+    } else {
+      // EXIT: snappier, no overshoot
+      mobileMenuPanel.style.transitionTimingFunction = 'cubic-bezier(0.3, 0, 0.8, 0.15)';
+      mobileMenuPanel.style.transitionDuration = '280ms';
+      mobileMenuPanel.classList.add('opacity-0', '-translate-y-4', 'scale-[0.97]');
+      mobileMenuPanel.classList.remove('opacity-100', 'translate-y-0', 'scale-100');
+      setItemsOpen(false);
+      mobileMenuPanel.addEventListener('transitionend', () => (mobileMenuWrap.hidden = true), { once: true });
+    }
   }
-  // Initial pass
-  scheduleMeasure();
-  // On container resize
-  let ro;
-  if ('ResizeObserver' in window && navInner) {
-    ro = new ResizeObserver(scheduleMeasure);
-    ro.observe(navInner);
-  } else {
-    window.addEventListener('resize', scheduleMeasure);
-  }
-  // After fonts are ready (icon/text width may change)
-  if (document.fonts && document.fonts.ready) {
-    document.fonts.ready.then(scheduleMeasure).catch(() => {});
-  }
+
+  // Mobile menu event listeners
+  exploreBtn?.addEventListener('click', () => {
+    const isOpen = exploreBtn.getAttribute('aria-expanded') === 'true';
+    openMobileMenu(!isOpen);
+  });
+
+  // Click outside / Esc to close
+  document.addEventListener('click', (e) => {
+    if (!mobileMenuWrap?.hidden &&
+        !mobileMenuWrap.contains(e.target) &&
+        e.target !== exploreBtn &&
+        !exploreBtn?.contains(e.target)) {
+      openMobileMenu(false);
+    }
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      openMobileMenu(false);
+    }
+  });
+
+  // Close mobile menu when clicking a link
+  mobileMenuWrap?.addEventListener('click', (e) => {
+    if (e.target.tagName === 'A') {
+      openMobileMenu(false);
+    }
+  });
 </script>
