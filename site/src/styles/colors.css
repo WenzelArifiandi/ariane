@@ -21,21 +21,31 @@
   /* lavender-gray shadow */
 
   /* Text colors - inky navy for elegance */
-  --ariane-text-ink: #3D418F;
-  /* rich periwinkle-indigo core */
+  --ariane-text-ink: #4C02E8;
+  /* radiant periwinkle core — luminous, confident */
 
-  --ariane-text-ink-dim: #2B2F73;
-  /* deeper, moodier indigo for hover/focus — darker, not grayer */
+  --ariane-text-ink-dim: #3602B5;
+  /* deeper violet-indigo — feels like a natural “shadow” of #4C02E8, not just darker */
 
-  --ariane-hover-wash: rgba(100, 110, 255, 0.28);
-  /* vivid electric-periwinkle glow, a little bolder so it pops */
+  --ariane-hover-wash: rgba(118, 77, 255, 0.32);
+  /* glowing violet wash — lifts the ink with shimmer, not sadness */
 
-  /* Text hierarchy - centralized control for all text types */
-  --ariane-body-text: #2A2A35;         /* softened near-black; reads black but with a lilac undertone */
-  --ariane-heading-text: #3D418F;      /* your chosen periwinkle-indigo ink — tie headings to navbar */
-  --ariane-subtext: #5A5A75;           /* secondary info; softer gray-lavender for captions or meta */
-  --ariane-link-text: #3D418F;         /* match heading/nav ink; hover can bloom lighter periwinkle */
-  --ariane-text-main: #2A2A35;         /* Main body text - maps to body-text for compatibility */
+  --ariane-body-text: #2A2A35;
+  /* deep inky indigo — stable, grounded, clear */
+
+  --ariane-heading-text: #4C02E8;
+  /* vibrant cosmic periwinkle — radiant, unshy, deeply you */
+
+  --ariane-subtext: #2A2A35;
+  /* same tone as body — keeps things calm and intentional */
+
+  --ariane-link-text: #4C02E8;
+  /* sparkling periwinkle for interactive elements — joyful but readable */
+
+  --ariane-link-hover: #A89CFF;
+  /* gentle glimmer — gives glow without being loud */
+  --ariane-text-main: #2A2A35;
+  /* Main body text - maps to body-text for compatibility */
 
   /* Legacy variables for compatibility */
   --ink: var(--ariane-text-ink);

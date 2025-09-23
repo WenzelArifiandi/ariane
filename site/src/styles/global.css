@@ -131,8 +131,9 @@
   }
 
   a:not(.btn):hover {
+    color: var(--ariane-link-hover);
     text-decoration: underline;
-    text-decoration-color: var(--ariane-link-text);
+    text-decoration-color: var(--ariane-link-hover);
     text-underline-offset: 3px;
   }
 }
