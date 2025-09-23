@@ -143,13 +143,13 @@ const cfLogoutHref: string = '/signout';
 .creator-wrap { position: relative; }
 </style>
 
-<script type="module">
+<script type="module" is:inline>
   const qs = (s) => document.querySelector(s);
   const toggle = qs('#creator-toggle');
   const navInner = qs('.nav-inner');
   const studio = qs('#studio-link');
   const navEl = qs('nav.nav');
-  const ACCESS_ONLY = navEl?.dataset?.accessOnly === 'true';
+  // const ACCESS_ONLY = navEl?.dataset?.accessOnly === 'true'; // Unused for now
   const APP_AUTH = navEl?.dataset?.appAuth === 'true';
 
   async function refreshAuth() {

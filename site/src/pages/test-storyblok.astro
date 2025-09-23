@@ -13,7 +13,7 @@ try {
   apiResponse = data
 } catch (error) {
   tokenStatus = 'Failed ❌'
-  apiResponse = error.message
+  apiResponse = error instanceof Error ? error.message : String(error)
 }
 ---
 

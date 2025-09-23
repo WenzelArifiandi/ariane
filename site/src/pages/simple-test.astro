@@ -13,7 +13,7 @@ try {
     result = `❌ Token failed: ${data.error || 'Unknown error'}`
   }
 } catch (error) {
-  result = `❌ Network error: ${error.message}`
+  result = `❌ Network error: ${error instanceof Error ? error.message : String(error)}`
 }
 ---
 
