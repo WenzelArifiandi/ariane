@@ -1,8 +1,10 @@
 ---
 title: "Security Auto-Fix Script"
 description: "# Security Auto-Fix Script"
-slug: security-autofix
+slug: "security-autofix"
 ---
+
+
 
 # Security Auto-Fix Script
 

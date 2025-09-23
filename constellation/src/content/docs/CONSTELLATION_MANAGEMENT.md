@@ -1,7 +1,10 @@
 ---
-title: "Constellation Documentation Management Guide"
+title: Constellation Documentation Management Guide
 description: "How to add, edit, and manage documentation in the Constellation site"
+slug: constellation_management
 ---
+
+
 
 # Constellation Documentation Management Guide
 

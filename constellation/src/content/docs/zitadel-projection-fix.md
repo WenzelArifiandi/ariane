@@ -1,8 +1,10 @@
 ---
 title: "Zitadel Profile Update Fix (COMMAND-2M0fs)"
 description: "# Zitadel Profile Update Fix (COMMAND-2M0fs)"
-slug: zitadel-projection-fix
+slug: "zitadel-projection-fix"
 ---
+
+
 
 # Zitadel Profile Update Fix (COMMAND-2M0fs)
 

@@ -1,0 +1,293 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Periwinkle Wonder Sky</title>
+    <style>
+        /* ---------- Tunables ---------- */
+        :root {
+            --sky-0: #cfd3ff;
+            /* top: pale periwinkle */
+            --sky-1: #aeb6ff;
+            /* mid */
+            --sky-2: #8b92ea;
+            /* lower mid */
+            --sky-3: #747bd6;
+            /* horizon */
+            --glow-1: rgba(255, 240, 255, .35);
+            /* soft lilac glow */
+            --glow-2: rgba(180, 200, 255, .25);
+            /* icy blue glow */
+            --star: #ffffff;
+            /* star color */
+            --twinkle-min: .35;
+            /* twinkle range */
+            --twinkle-max: .9;
+        }
+
+        /* Reset */
+        * {
+            box-sizing: border-box;
+        }
+
+        html,
+        body {
+            height: 100%;
+        }
+
+        body {
+            margin: 0;
+            color: #fff;
+            font: 16px/1.4 ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+            overflow-x: hidden;
+            background:
+                /* Volumetric “rays” (conic gradients, blurred) */
+                radial-gradient(150vmax 80vmax at 70% 15%, var(--glow-1), transparent 60%),
+                radial-gradient(120vmax 90vmax at 25% 25%, var(--glow-2), transparent 60%),
+                /* Dusk gradient */
+                linear-gradient(180deg, var(--sky-0) 0%, var(--sky-1) 30%, var(--sky-2) 60%, var(--sky-3) 100%);
+            background-attachment: fixed, fixed, fixed;
+            min-height: 100%;
+        }
+
+        /* A subtle vignette to feel deep/infinite */
+        .vignette {
+            position: fixed;
+            inset: -2vmax;
+            pointer-events: none;
+            background: radial-gradient(120vmax 80vmax at 50% 40%, transparent 55%, rgba(20, 20, 40, .25) 85%, rgba(10, 10, 30, .5) 100%);
+            mix-blend-mode: multiply;
+        }
+
+        /* ---------- Starfields (3 layers) ---------- */
+        .stars,
+        .stars:before,
+        .stars:after {
+            position: fixed;
+            inset: 0;
+            content: "";
+            pointer-events: none;
+        }
+
+        /* Build thousands of stars from box-shadow “constellations”.
+     We draw one tiny dot and clone it many times via box-shadow. */
+        .layer {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            transform: translateZ(0);
+            /* force compositing; smoother on GPU */
+        }
+
+        /* Small distant stars */
+        .s1::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 1px;
+            height: 1px;
+            background: var(--star);
+            box-shadow:
+                2vw 10vh 0 0 var(--star), 8vw 40vh 0 0 var(--star), 12vw 75vh 0 0 var(--star),
+                18vw 22vh 0 0 var(--star), 24vw 60vh 0 0 var(--star), 30vw 15vh 0 0 var(--star),
+                36vw 85vh 0 0 var(--star), 42vw 35vh 0 0 var(--star), 50vw 10vh 0 0 var(--star),
+                55vw 70vh 0 0 var(--star), 62vw 25vh 0 0 var(--star), 68vw 55vh 0 0 var(--star),
+                74vw 18vh 0 0 var(--star), 80vw 82vh 0 0 var(--star), 86vw 48vh 0 0 var(--star),
+                92vw 30vh 0 0 var(--star), 96vw 66vh 0 0 var(--star), 5vw 90vh 0 0 var(--star),
+                14vw 50vh 0 0 var(--star), 28vw 45vh 0 0 var(--star), 33vw 72vh 0 0 var(--star),
+                47vw 62vh 0 0 var(--star), 71vw 39vh 0 0 var(--star), 88vw 58vh 0 0 var(--star);
+            opacity: .9;
+            animation: twinkle 7s ease-in-out infinite alternate;
+            filter: drop-shadow(0 0 .6px var(--star));
+        }
+
+        /* Medium stars */
+        .s2::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 1.5px;
+            height: 1.5px;
+            background: var(--star);
+            box-shadow:
+                6vw 20vh 0 0 var(--star), 15vw 65vh 0 0 var(--star), 27vw 28vh 0 0 var(--star),
+                41vw 78vh 0 0 var(--star), 52vw 22vh 0 0 var(--star), 63vw 74vh 0 0 var(--star),
+                76vw 33vh 0 0 var(--star), 90vw 12vh 0 0 var(--star), 12vw 88vh 0 0 var(--star),
+                39vw 54vh 0 0 var(--star), 58vw 46vh 0 0 var(--star), 82vw 64vh 0 0 var(--star);
+            opacity: .85;
+            animation: twinkle 5.5s ease-in-out infinite alternate-reverse;
+            filter: drop-shadow(0 0 1px var(--star));
+        }
+
+        /* Nearby bright stars with subtle “spark” */
+        .s3::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 2px;
+            height: 2px;
+            background: var(--star);
+            border-radius: 50%;
+            box-shadow:
+                9vw 32vh 0 0 var(--star), 22vw 82vh 0 0 var(--star), 45vw 18vh 0 0 var(--star),
+                69vw 58vh 0 0 var(--star), 84vw 28vh 0 0 var(--star), 30vw 88vh 0 0 var(--star);
+            opacity: .9;
+            animation: twinkle 4s ease-in-out infinite alternate;
+            filter: drop-shadow(0 0 2px var(--star)) drop-shadow(0 0 6px rgba(255, 255, 255, .2));
+        }
+
+        /* Gentle vertical drift to create “alive” feeling (no JS) */
+        .s1 {
+            animation: drift 120s linear infinite;
+        }
+
+        .s2 {
+            animation: drift 90s linear infinite reverse;
+        }
+
+        .s3 {
+            animation: drift 60s linear infinite;
+        }
+
+        @keyframes drift {
+            from {
+                transform: translateY(0);
+            }
+
+            to {
+                transform: translateY(-4vh);
+            }
+        }
+
+        /* Twinkle between two opacities for sparkle */
+        @keyframes twinkle {
+            from {
+                opacity: var(--twinkle-min);
+                transform: scale(1);
+            }
+
+            to {
+                opacity: var(--twinkle-max);
+                transform: scale(1.06);
+            }
+        }
+
+        /* Optional: a couple of soft aurora swaths (“raytraced-ish” blooms) */
+        .aurora {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            background:
+                radial-gradient(60vmax 30vmax at 20% 65%, rgba(255, 255, 255, .18), transparent 60%),
+                radial-gradient(70vmax 40vmax at 80% 40%, rgba(230, 210, 255, .14), transparent 65%),
+                conic-gradient(from 210deg at 60% 35%, rgba(255, 255, 255, .06), transparent 40%, rgba(255, 255, 255, .08) 60%, transparent 85%, rgba(255, 255, 255, .06));
+            filter: blur(18px) saturate(110%);
+            mix-blend-mode: screen;
+            animation: breathe 28s ease-in-out infinite alternate;
+        }
+
+        @keyframes breathe {
+            from {
+                transform: translateY(-1vh) scale(1);
+                opacity: .9;
+            }
+
+            to {
+                transform: translateY(1vh) scale(1.02);
+                opacity: 1;
+            }
+        }
+
+        /* Accessibility: respect reduced motion */
+        @media (prefers-reduced-motion: reduce) {
+
+            .s1,
+            .s2,
+            .s3,
+            .s1::before,
+            .s2::before,
+            .s3::before,
+            .aurora {
+                animation: none;
+            }
+        }
+
+        /* Demo content area */
+        main {
+            position: relative;
+            z-index: 1;
+            display: grid;
+            place-items: center;
+            min-height: 100svh;
+            text-align: center;
+            padding: 8vmin 4vmin;
+        }
+
+        h1 {
+            margin: 0 0 .25em;
+            font-weight: 700;
+            letter-spacing: .02em;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, .25), 0 0 24px rgba(200, 210, 255, .5);
+        }
+
+        p {
+            max-width: 60ch;
+            margin: 0 auto;
+            opacity: .9;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, .2);
+        }
+
+        .chip {
+            margin-top: 2rem;
+            display: inline-block;
+            padding: .6rem 1rem;
+            border-radius: 999px;
+            backdrop-filter: blur(6px);
+            background: linear-gradient(to bottom right, rgba(255, 255, 255, .22), rgba(255, 255, 255, .06));
+            border: 1px solid rgba(255, 255, 255, .25);
+        }
+    </style>
+</head>
+
+<body>
+    <!-- layers -->
+    <div class="aurora"></div>
+    <div class="layer s1"></div>
+    <div class="layer s2"></div>
+    <div class="layer s3"></div>
+    <div class="vignette"></div>
+
+    <main>
+        <section class="panel" style="min-height:100vh;display:grid;place-items:center;">
+            <div>
+                <h1>Periwinkle, Endless, Wonder</h1>
+                <p>Just HTML &amp; CSS: layered gradients, conic-ray glows, and twinkling starfields—no images, no
+                    JavaScript.</p>
+                <span class="chip">feel free to scroll… it subtly drifts 💫</span>
+            </div>
+        </section>
+
+        <section class="panel" style="min-height:100vh;display:grid;place-items:center;">
+            <div>
+                <h2 style="margin:0 0 .5rem;">Deep Horizons</h2>
+                <p style="max-width:48ch;opacity:.95">Scroll to watch the aurora breathe and the stars gently drift —
+                    the layers are fixed to create depth while content moves.</p>
+            </div>
+        </section>
+
+        <section class="panel" style="min-height:100vh;display:grid;place-items:center;">
+            <div>
+                <h2 style="margin:0 0 .5rem;">A Quiet Night</h2>
+                <p style="max-width:48ch;opacity:.95">This demo is purely CSS — plug it into your site background or use
+                    it full-bleed for hero sections.</p>
+            </div>
+        </section>
+    </main>
+</body>
+
+</html>

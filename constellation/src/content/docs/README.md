@@ -1,8 +1,10 @@
 ---
-title: "Zitadel Authentication Server"
+title: Zitadel Authentication Server
 description: "# Zitadel Authentication Server"
 slug: readme
 ---
+
+
 
 # Zitadel Authentication Server
 

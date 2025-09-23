@@ -51,7 +51,9 @@
     "jose": "^6.1.0",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
-    "vite": "^7.1.6"
+    "vite": "^7.1.6",
+    "three": "^0.162.0",
+    "postprocessing": "^6.27.0"
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.4",

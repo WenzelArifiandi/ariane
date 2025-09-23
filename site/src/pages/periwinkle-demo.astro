@@ -1,0 +1,258 @@
+---
+import PeriwinkleWebGPU from "../components/PeriwinkleWebGPU.astro";
+---
+
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Periwinkle WebGPU Demo</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    .demo-content {
+      position: relative;
+      z-index: 1;
+      min-height: 300vh;
+      color: white;
+      text-shadow: 0 2px 16px rgba(150, 160, 255, 0.6);
+      padding: 2rem;
+    }
+
+    .hero {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      text-align: center;
+      padding: 2rem;
+    }
+
+    .hero h1 {
+      font-size: clamp(2.5rem, 8vw, 6rem);
+      font-weight: 100;
+      margin-bottom: 1rem;
+      letter-spacing: -0.02em;
+      background: linear-gradient(135deg, #fff 0%, #e6e9ff 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero p {
+      font-size: clamp(1.2rem, 3vw, 1.8rem);
+      font-weight: 300;
+      opacity: 0.9;
+      max-width: 600px;
+      margin-bottom: 3rem;
+    }
+
+    .features {
+      display: grid;
+      gap: 3rem;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 4rem 2rem;
+    }
+
+    .feature {
+      background: rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(12px);
+      border-radius: 16px;
+      padding: 2.5rem;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      transition: transform 0.3s ease, background 0.3s ease;
+    }
+
+    .feature:hover {
+      transform: translateY(-4px);
+      background: rgba(255, 255, 255, 0.12);
+    }
+
+    .feature h3 {
+      font-size: 1.5rem;
+      margin-bottom: 1rem;
+      color: #e6e9ff;
+    }
+
+    .feature p {
+      opacity: 0.85;
+      line-height: 1.7;
+    }
+
+    .tech-details {
+      max-width: 800px;
+      margin: 4rem auto;
+      padding: 2rem;
+      background: rgba(0, 0, 0, 0.3);
+      backdrop-filter: blur(16px);
+      border-radius: 20px;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+    }
+
+    .tech-details h2 {
+      color: #e6e9ff;
+      margin-bottom: 1.5rem;
+      text-align: center;
+    }
+
+    .tech-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1.5rem;
+      list-style: none;
+    }
+
+    .tech-list li {
+      padding: 1rem;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 8px;
+      border-left: 3px solid #aab2ff;
+    }
+
+    .interaction-guide {
+      text-align: center;
+      padding: 4rem 2rem;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .interaction-guide h2 {
+      color: #e6e9ff;
+      margin-bottom: 2rem;
+    }
+
+    .guide-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1.5rem;
+      margin-top: 2rem;
+    }
+
+    .guide-item {
+      padding: 1.5rem;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+    }
+
+    .guide-item strong {
+      color: #e6e9ff;
+      display: block;
+      margin-bottom: 0.5rem;
+    }
+
+    @media (max-width: 768px) {
+      .features {
+        padding: 2rem 1rem;
+      }
+
+      .feature {
+        padding: 1.5rem;
+      }
+
+      .tech-details {
+        margin: 2rem 1rem;
+        padding: 1.5rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <PeriwinkleWebGPU />
+
+  <div class="demo-content">
+    <section class="hero">
+      <h1>Periwinkle Dreams</h1>
+      <p>Experience the wonder of WebGPU rendering with procedural nebulas, sparkling stars, and interactive parallax effects</p>
+    </section>
+
+    <section class="features">
+      <div class="feature">
+        <h3>✨ WebGPU Powered</h3>
+        <p>Utilizes cutting-edge WebGPU technology with WGSL shaders for maximum performance and stunning visual effects. Automatically falls back to WebGL when WebGPU isn't available.</p>
+      </div>
+
+      <div class="feature">
+        <h3>🌌 Procedural Nebula</h3>
+        <p>Dynamic fractal brownian motion (FBM) generates ethereal nebula patterns that shift and flow in real-time, creating an ever-changing cosmic backdrop.</p>
+      </div>
+
+      <div class="feature">
+        <h3>⭐ Multi-Scale Stars</h3>
+        <p>Three layers of procedurally generated stars with different scales and twinkling frequencies create depth and richness in the stellar field.</p>
+      </div>
+
+      <div class="feature">
+        <h3>🎭 Interactive Parallax</h3>
+        <p>Mouse movement and scroll position influence the parallax effect, making the cosmic environment respond to your exploration.</p>
+      </div>
+    </section>
+
+    <section class="interaction-guide">
+      <h2>Interactive Features</h2>
+      <p>The starfield responds to your interaction:</p>
+
+      <div class="guide-grid">
+        <div class="guide-item">
+          <strong>Mouse Movement</strong>
+          Move your cursor to create subtle parallax shifts in the nebula and stars
+        </div>
+
+        <div class="guide-item">
+          <strong>Scroll Position</strong>
+          Scroll up and down to see the cosmic backdrop shift with depth
+        </div>
+
+        <div class="guide-item">
+          <strong>Reduced Motion</strong>
+          Automatically respects your accessibility preferences for reduced motion
+        </div>
+
+        <div class="guide-item">
+          <strong>Responsive Design</strong>
+          Adapts to different screen sizes and pixel densities for optimal quality
+        </div>
+      </div>
+    </section>
+
+    <section class="tech-details">
+      <h2>Technical Implementation</h2>
+      <ul class="tech-list">
+        <li><strong>WebGPU Compute:</strong> Hardware-accelerated rendering with modern GPU pipeline</li>
+        <li><strong>WGSL Shaders:</strong> Custom vertex and fragment shaders written in WebGPU Shading Language</li>
+        <li><strong>Procedural Generation:</strong> Real-time noise functions for nebula and star patterns</li>
+        <li><strong>Fallback Support:</strong> Graceful degradation to Canvas 2D when WebGPU unavailable</li>
+        <li><strong>Performance Optimized:</strong> 60fps rendering with minimal CPU overhead</li>
+        <li><strong>Accessibility:</strong> Respects prefers-reduced-motion settings</li>
+      </ul>
+    </section>
+
+    <section style="padding: 4rem 2rem; text-align: center;">
+      <h2 style="color: #e6e9ff; margin-bottom: 1rem;">Keep Scrolling</h2>
+      <p style="opacity: 0.8;">Notice how the cosmic backdrop shifts as you explore...</p>
+    </section>
+
+    <section style="padding: 4rem 2rem; text-align: center;">
+      <h2 style="color: #e6e9ff; margin-bottom: 1rem;">Endless Wonder</h2>
+      <p style="opacity: 0.8; max-width: 600px; margin: 0 auto;">
+        This WebGPU-powered starfield demonstrates the potential of modern web graphics.
+        The combination of procedural generation, real-time rendering, and interactive
+        effects creates an immersive experience that pushes the boundaries of what's
+        possible in the browser.
+      </p>
+    </section>
+  </div>
+</body>
+</html>

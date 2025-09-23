@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Periwinkle Starsea — Standalone</title>
+    <style>
+        :root {
+            --bg: #9098f0
+        }
+
+        html,
+        body {
+            height: 100%;
+            margin: 0;
+            background: var(--bg);
+        }
+
+        .sky-wrap {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
+            background: var(--bg)
+        }
+
+        canvas {
+            width: 100%;
+            height: 100%;
+            display: block
+        }
+
+        .fallback {
+            position: relative;
+            z-index: 1;
+            color: #fff;
+            display: grid;
+            place-items: center;
+            min-height: 100vh;
+            padding: 6vmin;
+            text-align: center
+        }
+
+        .notice {
+            font-size: 14px;
+            opacity: .9;
+            margin-top: .85rem
+        }
+    </style>
+</head>
+
+<body>
+    <div class="sky-wrap" aria-hidden="true">
+        <canvas id="periwinkle-sky"></canvas>
+    </div>
+
+    <main class="fallback">
+        <div>
+            <h1>Periwinkle Starsea</h1>
+            <p class="notice">If the scene doesn't animate, either your browser blocked modules from CDN or JavaScript
+                is disabled. Scroll or move your mouse to test parallax.</p>
+        </div>
+    </main>
+
+    <script type="module">
+        // Lightweight standalone that imports three + postprocessing from esm.sh
+        // This keeps the file self-contained and easy to open locally.
+        try {
+            // Import modules from CDN and normalize shape: some CDNs expose a `default` export,
+            // others expose named exports directly. Ensure `THREE` and postprocessing symbols
+            // are available regardless of the module wrapper.
+            const threeModule = await import('https://esm.sh/three@0.162.0').catch(e => { throw e });
+            const THREE = (threeModule && threeModule.default) ? threeModule.default : threeModule;
+
+            const canvas = document.getElementById('periwinkle-sky');
+            const renderer = new THREE.WebGLRenderer({ canvas, antialias: false, powerPreference: 'high-performance' });
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+            renderer.setSize(innerWidth, innerHeight);
+            if (renderer.outputColorSpace) renderer.outputColorSpace = THREE.SRGBColorSpace;
+
+            const scene = new THREE.Scene();
+            const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
+
+            const quadGeo = new THREE.PlaneGeometry(2, 2);
+            const nebulaMat = new THREE.ShaderMaterial({
+                uniforms: { uTime: { value: 0 }, uMouse: { value: new THREE.Vector2(.5, .5) }, uScroll: { value: 0 } },
+                vertexShader: `varying vec2 vUv; void main(){ vUv=uv; gl_Position=vec4(position,1.0); }`,
+                fragmentShader: `precision highp float; varying vec2 vUv; uniform float uTime; uniform vec2 uMouse; uniform float uScroll;
+        float hash(vec2 p){ return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);} float noise(vec2 p){ vec2 i=floor(p), f=fract(p); float a=hash(i), b=hash(i+vec2(1.0,0.0)), c=hash(i+vec2(0.0,1.0)), d=hash(i+vec2(1.0,1.0)); vec2 u=f*f*(3.0-2.0*f); return mix(a,b,u.x) + (c-a)*u.y*(1.0-u.x) + (d-b)*u.x*u.y; }
+        float fbm(vec2 p){ float v=0.0; float a=0.5; for(int i=0;i<6;i++){ v+=a*noise(p); p*=2.0; a*=0.5; } return v; }
+        void main(){ vec2 uv=vUv; vec2 par=(uMouse-0.5)*0.03 + vec2(0.0,uScroll*0.02); uv+=par; float h=smoothstep(0.0,1.0,uv.y); vec3 sky=mix(vec3(0.49,0.51,0.99), vec3(0.66,0.69,1.0), h); sky = mix(sky, vec3(0.87,0.88,1.0), smoothstep(0.4,1.0,h)); vec2 p=(uv*3.0); float t=uTime*0.05; float n=fbm(p+vec2(t,-t*0.7)); float m=fbm(p*0.7-vec2(t*0.6,t*0.4)); float neb=pow(smoothstep(0.45,1.0,n*0.6+m*0.7),1.6); vec3 tint = mix(vec3(0.62,0.84,1.0), vec3(1.0,0.83,0.96), smoothstep(0.2,0.9,n)); vec3 color = sky + neb*0.8*tint; vec2 d = uv-0.5; float vig = smoothstep(0.95,0.5,dot(d,d)*1.8); color *= mix(1.0,0.75,vig); gl_FragColor=vec4(color,1.0);} `,
+                depthTest: false, depthWrite: false
+            });
+            const quad = new THREE.Mesh(quadGeo, nebulaMat); scene.add(quad);
+
+            // stars
+            const starCount = 1200;
+            const pGeom = new THREE.BufferGeometry(); const positions = new Float32Array(starCount * 3); const sizes = new Float32Array(starCount); const tints = new Float32Array(starCount * 3);
+            for (let i = 0; i < starCount; i++) { positions[i * 3 + 0] = (Math.random() * 2 - 1); positions[i * 3 + 1] = (Math.random() * 2 - 1); positions[i * 3 + 2] = 0; sizes[i] = Math.pow(Math.random(), 2) * 2 + 0.5; const cr = Math.random() * 0.25 + 0.75; tints[i * 3 + 0] = 1.0; tints[i * 3 + 1] = cr; tints[i * 3 + 2] = cr * 1.1; }
+            pGeom.setAttribute('position', new THREE.BufferAttribute(positions, 3)); pGeom.setAttribute('size', new THREE.BufferAttribute(sizes, 1)); pGeom.setAttribute('tint', new THREE.BufferAttribute(tints, 3));
+
+            const starMat = new THREE.ShaderMaterial({
+                transparent: true, blending: THREE.AdditiveBlending, depthWrite: false,
+                uniforms: { uTime: { value: 0 }, uParallax: { value: new THREE.Vector2(0, 0) } },
+                vertexShader: `attribute float size; attribute vec3 tint; varying vec3 vTint; uniform vec2 uParallax; void main(){ vTint=tint; vec3 p=position; p.xy += uParallax*0.12; gl_Position=vec4(p,1.0); gl_PointSize=size*1.8*(1.0+(p.y+1.0)*0.15);} `,
+                fragmentShader: `precision highp float; uniform float uTime; varying vec3 vTint; void main(){ vec2 uv=gl_PointCoord-0.5; float r=length(uv); float core=smoothstep(0.5,0.0,r); float tw=0.65+0.35*sin(uTime*3.0+(uv.x+uv.y)*40.0); vec3 col=vTint*(1.2*tw); gl_FragColor=vec4(col,core); }`
+            });
+            const points = new THREE.Points(pGeom, starMat); scene.add(points);
+
+            // No postprocessing in the lightweight standalone (keeps compatibility).
+            let useComposer = false;
+
+            const mouse = new THREE.Vector2(.5, .5); window.addEventListener('pointermove', e => { mouse.x = e.clientX / innerWidth; mouse.y = e.clientY / innerHeight; }, { passive: true });
+            let scrollY = 0; window.addEventListener('scroll', () => { scrollY = window.scrollY / Math.max(1, document.body.scrollHeight - window.innerHeight); }, { passive: true });
+
+            const clock = new THREE.Clock();
+            function tick() {
+                const t = clock.getElapsedTime();
+                nebulaMat.uniforms.uTime.value = t;
+                nebulaMat.uniforms.uMouse.value.set(mouse.x, 1 - mouse.y);
+                nebulaMat.uniforms.uScroll.value = scrollY;
+                starMat.uniforms.uTime.value = t;
+                starMat.uniforms.uParallax.value.set(mouse.x - 0.5, (0.5 - mouse.y) + scrollY * 0.35);
+                // Direct render path (broad compatibility)
+                renderer.render(scene, camera);
+                requestAnimationFrame(tick);
+            }
+            tick();
+
+            window.addEventListener('resize', () => {
+                renderer.setSize(innerWidth, innerHeight);
+                if (useComposer && composer && typeof composer.setSize === 'function') composer.setSize(innerWidth, innerHeight);
+            }, { passive: true });
+
+        } catch (err) {
+            // More helpful diagnostics for common failures (CORS, blocked CDN, older browsers)
+            console.error('Periwinkle standalone failed to load modules or initialize WebGL', err);
+            const notice = document.querySelector('.notice');
+            if (notice) {
+                notice.textContent = 'Could not load WebGL modules or initialize the renderer; falling back to static background. Try running a local HTTP server or open in a modern browser (ESM + CORS supported). See console for details.';
+            }
+        }
+    </script>
+
+</body>
+
+</html>
