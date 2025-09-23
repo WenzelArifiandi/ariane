@@ -37,56 +37,56 @@ const email = 'hello@wenzelarifiandi.com'
     story.content ? (
       <StoryblokComponent blok={story.content as any} />
     ) : (
-      <section class="max-w-container mx-auto px-pad-x pt-20"><div><p>No content available.</p></div></section>
+      <section class="max-w-container mx-auto px-pad-x py-16 md:py-24 lg:py-28"><div class="space-y-6"><p class="text-body text-text-main">No content available.</p></div></section>
     )
   ) : error ? (
-    <section class="max-w-container mx-auto px-pad-x pt-20">
-      <div>
-        <h1 class="text-display">Content Not Available</h1>
-        <p class="text-body">We couldn't load the homepage content.</p>
-        <p class="text-sm"><small>Error: {error}</small></p>
+    <section class="max-w-container mx-auto px-pad-x py-16 md:py-24 lg:py-28">
+      <div class="space-y-6">
+        <h1 class="text-display text-text-heading">Content Not Available</h1>
+        <p class="text-body text-text-main">We couldn't load the homepage content.</p>
+        <p class="text-sm text-muted"><small>Error: {error}</small></p>
       </div>
     </section>
   ) : (
-    <section class="max-w-container mx-auto px-pad-x pt-20">
-      <div>
-        <h1 class="text-display">Loading…</h1>
-        <p class="text-body">Fetching content from Storyblok…</p>
+    <section class="max-w-container mx-auto px-pad-x py-16 md:py-24 lg:py-28">
+      <div class="space-y-6">
+        <h1 class="text-display text-text-heading">Loading…</h1>
+        <p class="text-body text-text-main">Fetching content from Storyblok…</p>
       </div>
     </section>
   )}
 
 
   <!-- Main content sections -->
-  <section id="hello" class="max-w-container mx-auto px-pad-x pt-20">
-    <div>
-      <h2 class="text-heading">Hello</h2>
-      <p class="muted">Glad you're here!</p>
-      <div class="h-96"></div>
+  <section id="hello" class="max-w-container mx-auto px-pad-x py-16 md:py-24 lg:py-28">
+    <div class="space-y-6">
+      <h2 class="text-heading text-text-heading">Hello</h2>
+      <p class="text-body text-muted">Glad you're here!</p>
+      <div class="h-80 md:h-96"></div>
     </div>
   </section>
 
-  <section id="playground" class="max-w-container mx-auto px-pad-x pt-20">
-    <div>
-      <h2 class="text-heading">Playground</h2>
-      <p class="muted">Getting started...</p>
-      <div class="h-96"></div>
+  <section id="playground" class="max-w-container mx-auto px-pad-x py-16 md:py-24 lg:py-28">
+    <div class="space-y-6">
+      <h2 class="text-heading text-text-heading">Playground</h2>
+      <p class="text-body text-muted">Getting started...</p>
+      <div class="h-80 md:h-96"></div>
     </div>
   </section>
 
-  <section id="field-notes" class="max-w-container mx-auto px-pad-x pt-20">
-    <div>
-      <h2 class="text-heading">Field Notes</h2>
-      <p class="muted">It's coming together...</p>
-      <div class="h-96"></div>
+  <section id="field-notes" class="max-w-container mx-auto px-pad-x py-16 md:py-24 lg:py-28">
+    <div class="space-y-6">
+      <h2 class="text-heading text-text-heading">Field Notes</h2>
+      <p class="text-body text-muted">It's coming together...</p>
+      <div class="h-80 md:h-96"></div>
     </div>
   </section>
 
-  <section id="contact" class="max-w-container mx-auto px-pad-x pt-20">
-    <div>
-      <h2 class="text-heading">Contact</h2>
-      <p class="text-body muted">Email me at <a href={`mailto:${email}`} class="accent">{email}</a>.</p>
-      <div class="h-96"></div>
+  <section id="contact" class="max-w-container mx-auto px-pad-x py-16 md:py-24 lg:py-28">
+    <div class="space-y-6">
+      <h2 class="text-heading text-text-heading">Contact</h2>
+      <p class="text-body text-muted">Email me at <a href={`mailto:${email}`} class="text-accent hover:text-accent-hover">{email}</a>.</p>
+      <div class="h-80 md:h-96"></div>
     </div>
   </section>
   <Footer />

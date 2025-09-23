@@ -21,6 +21,14 @@ export default {
         // Layout colors
         ink: 'var(--ink)',
         page: 'var(--page)',
+        // Ariane design system colors
+        'ink-primary': 'var(--ariane-text-ink)',
+        'ink-dim': 'var(--ariane-text-ink-dim)',
+        'text-main': 'var(--ariane-body-text)',
+        'text-heading': 'var(--ariane-heading-text)',
+        muted: 'var(--ariane-subtext)',
+        accent: 'var(--ariane-link-text)',
+        'accent-hover': 'var(--ariane-link-hover)',
       },
       fontFamily: {
         sans: ['Inter Variable', 'Inter', 'ui-sans-serif', 'system-ui', ...defaultTheme.fontFamily.sans],
@@ -31,6 +39,9 @@ export default {
         'pad-x': 'clamp(1rem, 4vw, 2rem)',
         '18': '4.5rem', // 72px for navbar height spacing
         '20': '5rem',   // 80px for section top padding
+        '22': '5.5rem', // 88px
+        '26': '6.5rem', // 104px
+        '28': '7rem',   // 112px
       },
       borderRadius: {
         'hero': '28px',
@@ -44,9 +55,9 @@ export default {
         'gradient-radial': 'radial-gradient(60% 60% at 50% 0%, var(--tw-gradient-stops))',
       },
       fontSize: {
-        'display': ['clamp(3rem, 3.5vw + 1rem, 5rem)', { lineHeight: '1.02', letterSpacing: '-0.02em' }],
-        'heading': ['clamp(1.5rem, 1.5vw + 1rem, 2rem)', { lineHeight: '1.2' }],
-        'body': ['clamp(1rem, 0.2vw + 0.9rem, 1.125rem)', { lineHeight: '1.5' }],
+        'display': ['clamp(3.5rem, 5vw + 1rem, 6rem)', { lineHeight: '1.02', letterSpacing: '-0.02em' }],
+        'heading': ['clamp(1.75rem, 1.6vw + 1rem, 2.25rem)', { lineHeight: '1.2' }],
+        'body': ['clamp(1.0625rem, 0.25vw + 0.95rem, 1.2rem)', { lineHeight: '1.6' }],
       },
       maxWidth: {
         'container': '1100px',
