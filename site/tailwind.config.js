@@ -33,9 +33,10 @@ export default {
         'accent-hover': 'var(--ariane-link-hover)',
       },
       fontFamily: {
-        sans: [...defaultTheme.fontFamily.sans],
+        sans: ['Google Sans'],
         serif: [...defaultTheme.fontFamily.serif],
-        heading: [...defaultTheme.fontFamily.sans],
+        heading: ['Google Sans'],
+        'google-sans': ['Google Sans'],
       },
       spacing: {
         'pad-x': 'clamp(1rem, 4vw, 2rem)',

@@ -2,6 +2,7 @@
 @layer reset, base, tokens, app-components, components, utilities, overrides;
 
 @import './m3-tokens.css';
+@import './google-sans.css';
 
 /* Design tokens */
 :root {
@@ -34,8 +35,8 @@
     src: url('/fonts/material-symbols-rounded.woff2') format('woff2');
     font-weight: 100 700;
     font-style: normal;
-    font-display: block;
-    /* avoid showing placeholder text for icons */
+    font-display: swap;
+    /* use fallback immediately then swap when loaded */
   }
 }
 

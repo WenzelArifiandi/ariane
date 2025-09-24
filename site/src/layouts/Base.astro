@@ -55,6 +55,10 @@ const pageUrl = pathname ? new URL(pathname, siteUrl).toString() : siteUrl
     <link rel="canonical" href={pageUrl} />
     <link rel="icon" href="/favicon.svg" />
     <link rel="preload" as="image" href="/favicon.svg" imagesrcset="/favicon.svg" />
+    <!-- Preload Google Sans fonts for better LCP -->
+    <link rel="preload" as="font" type="font/truetype" href="/fonts/google-sans-regular.ttf" crossorigin />
+    <link rel="preload" as="font" type="font/truetype" href="/fonts/google-sans-medium.ttf" crossorigin />
+    <link rel="preload" as="font" type="font/truetype" href="/fonts/google-sans-bold.ttf" crossorigin />
   <!-- Material Symbols: prefer local font when PUBLIC_USE_LOCAL_ICONS=true; otherwise load from Google Fonts -->
   {((import.meta as any).env?.PUBLIC_USE_LOCAL_ICONS || process.env.PUBLIC_USE_LOCAL_ICONS) ? (
     <>
@@ -83,7 +87,7 @@ const pageUrl = pathname ? new URL(pathname, siteUrl).toString() : siteUrl
     </style>
     <AWCustomStyles />
   </head>
-  <body class="antialiased text-default bg-page tracking-tight">
+  <body class="font-sans antialiased text-default bg-page tracking-tight">
     <slot />
     {import.meta.env.PROD && <Analytics />}
     {import.meta.env.PROD && <SpeedInsights />}

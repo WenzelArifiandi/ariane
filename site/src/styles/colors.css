@@ -21,8 +21,8 @@
   /* lavender-gray shadow */
 
   /* Text colors - inky navy for elegance */
-  --ariane-text-ink: #4C02E8;
-  /* radiant periwinkle core — luminous, confident */
+  --ariane-text-ink: #3602B5;
+  /* deep violet-indigo — elegant, confident */
 
   --ariane-text-ink-dim: #3602B5;
   /* deeper violet-indigo — feels like a natural “shadow” of #4C02E8, not just darker */
@@ -33,14 +33,14 @@
   --ariane-body-text: #2A2A35;
   /* deep inky indigo — stable, grounded, clear */
 
-  --ariane-heading-text: #4C02E8;
-  /* vibrant cosmic periwinkle — radiant, unshy, deeply you */
+  --ariane-heading-text: #3602B5;
+  /* elegant violet-indigo — refined, confident */
 
   --ariane-subtext: #2A2A35;
   /* same tone as body — keeps things calm and intentional */
 
-  --ariane-link-text: #4C02E8;
-  /* sparkling periwinkle for interactive elements — joyful but readable */
+  --ariane-link-text: #3602B5;
+  /* elegant violet-indigo for interactive elements — refined but readable */
 
   --ariane-link-hover: #A89CFF;
   /* gentle glimmer — gives glow without being loud */

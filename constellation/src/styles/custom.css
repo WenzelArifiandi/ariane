@@ -1,5 +1,36 @@
 /* Custom styles for Ariane Constellation docs - using centralized colors */
 
+/* Google Sans - Font definition for Constellation */
+@font-face {
+  font-family: 'Google Sans';
+  src: url('/fonts/google-sans-regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+  font-feature-settings: "kern", "liga", "calt";
+  font-synthesis-weight: none;
+}
+
+@font-face {
+  font-family: 'Google Sans';
+  src: url('/fonts/google-sans-medium.ttf') format('truetype');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+  font-feature-settings: "kern", "liga", "calt";
+  font-synthesis-weight: none;
+}
+
+@font-face {
+  font-family: 'Google Sans';
+  src: url('/fonts/google-sans-bold.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+  font-feature-settings: "kern", "liga", "calt";
+  font-synthesis-weight: none;
+}
+
 /* Import Ariane colors - removed broken import */
 
 /* Ariane colors for constellation - matching centralized system */
@@ -19,6 +50,9 @@
   --sl-color-bg-sidebar: var(--ariane-bg-accent) !important;
   --sl-color-text: var(--ariane-body-text) !important;
   --sl-color-text-accent: var(--ariane-heading-text) !important;
+  /* Set Google Sans as the default font - no fallbacks as requested */
+  --sl-font: 'Google Sans' !important;
+  --sl-font-system: 'Google Sans' !important;
 }
 
 /* Override Starlight background colors */
@@ -53,4 +87,9 @@ body {
 
 [data-theme="light"] .sidebar {
   background-color: var(--ariane-bg-accent) !important;
+}
+
+/* Target markdown content only if Starlight vars don't work everywhere */
+.sl-markdown-content {
+  font-family: 'Google Sans';
 }

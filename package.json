@@ -1,13 +1,15 @@
 {
   "name": "ariane-monorepo",
   "private": true,
-  "version": "0.0.0",
+  "version": "1.0.0",
   "type": "module",
   "engines": {
     "node": "22.x"
   },
   "scripts": {
     "dev": "npm run dev:site",
+    "dev:both": "npx --prefix site concurrently -k -n site,constellation -c auto \"npm run dev:site\" \"npm run dev:constellation\"",
+    "dev:constellation": "npm --prefix constellation run dev",
     "dev:bubble": "npm --prefix site run dev:bubble:cf:named",
     "env:site:init": "bash -lc 'cd site && cp -n .env.example .env || true && echo \"Created site/.env (or it already exists).\"'",
     "env:site:open": "bash -lc 'open site/.env'",
@@ -32,7 +34,11 @@
     "test:ui": "vitest --ui tests/unit tests/integration",
     "test:security": "npm run security:autofix:test",
     "test:performance": "lighthouse-ci",
-    "test:all": "npm run test && npm run test:e2e && npm run test:security && npm run test:performance"
+    "test:all": "npm run test && npm run test:e2e && npm run test:security && npm run test:performance",
+    "version:patch": "npm version patch",
+    "version:minor": "npm version minor",
+    "version:major": "npm version major",
+    "version:show": "node -p require('./package.json').version"
   },
   "devDependencies": {
     "@playwright/test": "^1.48.0",
