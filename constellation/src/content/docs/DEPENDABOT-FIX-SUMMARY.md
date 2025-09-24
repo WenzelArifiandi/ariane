@@ -1,10 +1,8 @@
 ---
-title: Dependabot PR Fixes Summary
+title: "Dependabot PR Fixes Summary"
 description: "# Dependabot PR Fixes Summary"
-slug: "dependabot-fix-summary"
+slug: dependabot-fix-summary
 ---
-
-
 
 # Dependabot PR Fixes Summary
 

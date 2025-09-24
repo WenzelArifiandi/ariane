@@ -5,248 +5,74 @@ const ctaHref = "#work";
 const ctaLabel = "See Work";
 ---
 
-  <div class="creator-bar">
-    <div class="creator-bar__inner container align-hero">
-      <div class="creator-bar__text"><svg class="text-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><path d="M11 2l1.2 3.6L16 7l-3.8 1.4L11 12 9.8 8.4 6 7l3.8-1.4L11 2zM19 10l.8 2.4L22 13l-2.2.6L19 16l-.8-2.4L16 13l2.2-.6L19 10zM6 14l1 3 3 1-3 1-1 3-1-3-3-1 3-1 1-3z" fill="currentColor"/></svg><span class="text-label">Entering Wenzel's maker space</span></div>
-      <div class="creator-bar__actions">
-        <button id="creator-passkey" class="btn m3 small" data-mode="signin">
-          <svg class="icon" width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><path d="M12 2a8 8 0 00-8 8v2a6 6 0 006 6h0" stroke="currentColor" stroke-width="2" fill="none"/><path d="M12 6a4 4 0 00-4 4v2a8 8 0 008 8h0" stroke="currentColor" stroke-width="2" fill="none"/></svg>
-          <span class="label">Sign in with passkey</span>
-        </button>
+  <div class="creator-bar max-h-0 overflow-hidden bg-page opacity-0" style="--p: 0">
+    <div class="grid grid-cols-1 sm:grid-cols-[1fr_auto] gap-4 items-center max-w-screen-2xl mx-auto px-pad-x">
+      <div class="inline-flex items-center gap-2 font-semibold opacity-90">
+        <svg class="text-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><path d="M11 2l1.2 3.6L16 7l-3.8 1.4L11 12 9.8 8.4 6 7l3.8-1.4L11 2zM19 10l.8 2.4L22 13l-2.2.6L19 16l-.8-2.4L16 13l2.2-.6L19 10zM6 14l1 3 3 1-3 1-1 3-1-3-3-1 3-1 1-3z" fill="currentColor"/></svg>
+        <span>Entering Wenzel's maker space</span>
       </div>
-  </div>
+      <div class="inline-flex gap-4 items-center justify-self-start sm:justify-self-end">
+        <span class="font-medium text-sm text-ink/80">Access is managed via Cloudflare Access + ZITADEL.</span>
+      </div>
+    </div>
   </div>
 
 <!-- Dedicated mount point for access request UI -->
-<div id="access-mount" class="access-mount container align-hero"></div>
+<div id="access-mount" class="py-3 max-w-screen-2xl mx-auto px-pad-x"></div>
 
-<section class="container align-hero">
-  <div class="hero">
-    <div class="hero__inner">
-    <h1 class="hero__title">{title}</h1>
-    <p class="hero__subtitle">{subtitle}</p>
-    <a class="btn m3" href={ctaHref}>{ctaLabel}</a>
+<section class="max-w-screen-2xl mx-auto px-pad-x">
+  <div class="relative isolate rounded-hero overflow-hidden my-4 min-h-hero bg-gradient-to-br from-sakura to-mauve text-white">
+    <!-- Glossy bloom effect -->
+    <div class="absolute inset-x-[-20%] top-[-30%] h-4/5 bg-gradient-radial from-white/55 via-white/15 to-transparent pointer-events-none mix-blend-soft-light"></div>
+
+    <div class="relative z-10 py-14 px-pad-x grid gap-4">
+      <h1 class="text-6xl sm:text-7xl lg:text-8xl font-normal leading-[1.02] tracking-tight">{title}</h1>
+      <p class="text-lg sm:text-xl max-w-prose">{subtitle}</p>
+      <a class="inline-flex items-center gap-2 bg-primary text-white rounded-full px-4 py-3 font-semibold w-fit shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all" href={ctaHref}>{ctaLabel}</a>
     </div>
   </div>
 </section>
 
 <style>
-  @layer app-components {
-  /* Typography: enforce Inter everywhere, including Material Web host/parts */
-  :host, :root, .hero, .creator-bar, .access-ui, .access-card, .btn, .chip, input, button {
-    font-family: 'Inter Variable', 'Inter', ui-sans-serif, system-ui !important;
-  }
-  md-outlined-text-field,
-  md-filled-button { font-family: inherit !important; font-size: 1rem; font-weight: 500; }
-  md-outlined-text-field::part(input-field),
-  md-filled-button::part(button) { font-family: inherit !important; }
-  /* Soft mauve token (fallback) if you don’t already have it */
-  :root { --mauve: #b99ad9; }
-
-  @supports (color: oklch(0.7 0.1 0)) {
-    :root { --mauve: oklch(0.80 0.07 315); } /* muted mauve, not “dead”, not neon */
-  }
-
-  .hero {
-    position: relative;
-    isolation: isolate;
-    border-radius: 28px;
-    overflow: hidden;
-    margin: 1rem 0 1.25rem;
-    /* width is handled by .container */
-    min-height: clamp(360px, 56svh, 640px);
-
-    /* Sakura → Mauve diagonal */
-    background:
-      linear-gradient(135deg, var(--sakura) 0%, var(--mauve) 100%);
-  }
-
-  /* Slim creator bar that reveals above content */
+  /* Spring animation for creator bar */
   .creator-bar {
-    --p: 0; /* spring-driven progress (0..1) */
-    max-height: calc(72px * var(--p));
-    overflow: hidden;
-    background: var(--page);
-    /* remove divider line to avoid “line under strip” */
-    opacity: var(--p);
+    max-height: calc(72px * var(--p, 0));
+    opacity: var(--p, 0);
   }
 
-  .creator-bar__inner { display: grid; grid-template-columns: 1fr auto; gap: var(--space-3); align-items: center; }
-  .creator-bar__text { font-weight: 650; opacity: .9; font-size: var(--body); display:inline-flex; align-items:center; gap: var(--space-2); }
-  .creator-bar__actions { display: inline-flex; gap: var(--space-3); align-items: center; padding-right: 1px; }
-  .access-ui { margin-left: 1rem; }
-  .access-card { display:flex; flex-wrap:wrap; align-items:center; gap:.5rem; background: color-mix(in oklab, var(--page), black 3%); border-radius: 999px; padding: .35rem .6rem; }
-  .access-copy { display:flex; gap:.5rem; align-items:center; }
-  .access-card .title { font-weight: 650; }
-  .access-card .muted { opacity:.8; font-size: .9em; }
-  .access-card form.inline {
-    display: flex;
-    gap: 1.5rem;
-    align-items: center;
-    margin-left: 0;
-  }
-  .access-card input[type="email"] {
-    appearance: none;
-    border: 1px solid color-mix(in oklab, var(--ink), transparent 80%);
-    background: white;
-    color: inherit;
-  padding: 1rem 1.25rem;
-    border-radius: 999px;
-    font-family: 'Inter Variable', 'Inter', ui-sans-serif, system-ui;
-    font-size: 1rem;
-    min-width: 18ch;
-    font-weight: 500;
-  }
-  .btn.small { padding: .6rem 1rem; border-radius: 999px; font-size: 1rem; line-height: 1.2; border: 0; font-weight: 600; }
-  .access-ui {
-  margin-left: 0;
-    font-family: 'Inter Variable', 'Inter', ui-sans-serif, system-ui;
-  }
-  .access-card { padding: .6rem .8rem; gap: .6rem; }
-  .creator-bar .btn.m3 { border: 0; box-shadow: none; }
-  @media (max-width: 640px) {
-    .creator-bar__inner { grid-template-columns: 1fr; }
-    .creator-bar__actions { justify-self: start; }
-    #creator-passkey .label { display: none; }
-    #creator-passkey { padding-left: var(--space-2); padding-right: var(--space-2); }
-  }
-  .material-symbols-rounded { font-variation-settings: 'FILL' 0, 'wght' 500, 'GRAD' 0, 'opsz' 24; font-size: 20px; display: inline-flex; align-items: center; }
-
-  /* Radial glossy bloom */
-  .hero::after {
-    content: "";
-    position: absolute; inset: -30% -20% auto -20%;
-    height: 80%;
-    background:
-      radial-gradient(60% 60% at 50% 0%,
-        rgba(255,255,255,.55) 0%,
-        rgba(255,255,255,.15) 40%,
-        transparent 70%);
-    pointer-events: none;
-    mix-blend-mode: soft-light;
-  }
-
-  .hero__inner { position: relative; z-index: 1; padding-block: 56px; display: grid; gap: 1rem; padding-inline: var(--pad-x); }
-
-  /* Fallback: if JS spring doesn’t run, honor attribute toggle */
-  html[data-creator="open"] .creator-bar { --p: 1; max-height: 72px; opacity: 1; }
-  .hero__title {
-    /* Bigger than global --h1 for punchy hero */
-    font-size: clamp(3.5rem, 6vw + 0.5rem, 6.5rem);
-    line-height: 1.03;
-    letter-spacing: -0.02em;
-    color: color-mix(in oklab, var(--ink), black 10%);
-  }
-  .hero__subtitle {
-    font-size: clamp(1.05rem, .6vw + 1rem, 1.25rem);
-    color: color-mix(in oklab, var(--ink), black 20%);
-    max-width: 38ch;
-  }
-
-  /* Buttons inherit global M3 pill styling; keep spacing helpers */
-  .btn { display:inline-flex; align-items:center; gap:.6rem; padding:.75rem 1rem; width: fit-content; }
-
-  /* Material 3 overrides (scoped in this component so they beat global) */
-  .btn.m3 { background: var(--md-sys-color-primary, #7150D9); color: var(--md-sys-color-on-primary, #fff); border-radius: 999px; box-shadow: var(--md-sys-elevation-1, 0 6px 20px rgba(0,0,0,.06)); }
-  .btn.m3::after { content: none; }
-  .btn.m3:hover {
-    transform: translateY(-1px);
-    box-shadow: var(--md-sys-elevation-2, 0 12px 28px rgba(0,0,0,.08));
-  }
-  .btn.m3:focus-visible {
-    outline: 2px solid color-mix(in oklab, var(--md-sys-color-primary, var(--wisteria)), white 20%);
-    outline-offset: 3px;
-  }
-
-  /* rounded top stays because bar has same radius as hero */
-  .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
-  .access-ui form.inline { display: flex; gap: .75rem; align-items: center; margin-left: 0; flex-wrap: wrap; }
-  .access-ui input[type="email"] { padding: .75rem 1rem; border-radius: 999px; border: 1px solid color-mix(in oklab, var(--ink), transparent 80%); background: #fff; color: var(--ink); min-width: 20ch; }
-  /* When access UI is open, let the bar grow and show contents */
-  .creator-bar.access-open { --p: 1; max-height: none; opacity: 1; overflow: visible; padding-block: .75rem; margin-bottom: .5rem; }
-  .creator-bar.access-open .creator-bar__actions { grid-column: 1 / -1; justify-content: flex-start; gap: var(--space-3); }
-  .creator-bar.access-open .access-ui { margin-left: 0; width: 100%; }
-  .creator-bar.access-open .access-card { border-radius: 16px; padding: .75rem 1rem; }
-  .creator-bar.access-open .access-card form.inline { margin-left: 0; }
-  .creator-bar.access-open .access-card input[type="email"] { flex: 1 1 280px; min-width: 240px; }
-
-  /* Dedicated access mount styles (below the bar, above hero) */
-  .access-mount { padding-block: .75rem 1rem; }
-  .access-mount .access-ui { margin-left: 0; width: 100%; }
-  .access-mount .access-card {
-    width: 100%;
-    max-width: 760px;
-  border-radius: 16px;
-  padding: .75rem 1rem;
-    margin-inline: 0;
-    background: var(--page);
-    box-shadow: var(--md-sys-elevation-1, 0 6px 20px rgba(0,0,0,.06));
-    border: 1px solid color-mix(in oklab, var(--ink), transparent 90%);
-    display: grid;
-    gap: .75rem;
-    /* Enable container queries for responsive form layout */
-    container-type: inline-size;
-  }
-    .access-mount .access-card .head { display:flex; align-items:center; gap:1rem; }
-  .access-mount .access-card .material-symbols-rounded { color: var(--md-sys-color-primary, #7150D9); }
-    .access-mount .access-card .title { font-weight: 700; font-size: 1.1em; }
-    .access-mount .access-card .support { color: color-mix(in oklab, var(--ink), black 25%); font-size: 1rem; line-height: 1.5; }
-  .access-mount .access-card .form { display:grid; gap: var(--space-3); grid-template-columns: 1fr auto; align-items: end; margin-top: .25rem; }
-  .access-mount .access-card .label { font-size:.85rem; color: color-mix(in oklab, var(--ink), black 40%); }
-    .access-mount .access-card .field { width: 100%; padding:.8rem 1rem; border-radius: 14px; border: 1px solid color-mix(in oklab, var(--ink), transparent 80%); background: #fff; color: var(--ink); font: inherit; font-size: 1rem; }
-  .access-mount .access-card .btn.m3 { height: 44px; align-self:end; padding: 0 1.25rem; }
-  /* Container-query the access form instead of viewport-only */
-  @container (max-width: 520px) {
-    .access-mount .access-card .form { grid-template-columns: 1fr; }
-    .access-mount .access-card .btn.m3 { width: 100%; }
-  }
-
-  @media (min-width: 860px) {
-    .creator-bar.access-open .creator-bar__actions { flex-basis: auto; order: 0; }
-    .creator-bar.access-open .access-ui { width: auto; }
-  }
+  /* Fallback: if JS spring doesn't run, honor attribute toggle */
+  html[data-creator="open"] .creator-bar {
+    --p: 1;
+    max-height: 72px;
+    opacity: 1;
   }
 </style>
-<script type="module">
-  const qs = (s) => document.querySelector(s);
-  const passkeyBtn = qs('#creator-passkey');
-  const logoutBtn = qs('#creator-logout');
-
-  async function refreshAuth() {
-    try {
-      const res = await fetch('/api/auth/session');
-      const data = await res.json();
-      const authed = !!data?.authenticated;
-      if (passkeyBtn) {
-        passkeyBtn.querySelector('.label').textContent = authed ? 'You\'re signed in' : 'Sign in with passkey';
-        passkeyBtn.toggleAttribute('disabled', authed);
-      }
-      if (logoutBtn) logoutBtn.style.display = authed ? '' : 'none';
-    } catch {}
-  }
-
-  (async () => { await refreshAuth(); })();
-
+<script type="module" is:inline>
   // Expressive spring for the bar (fast spatial)
   let raf = 0; let current = 0; let target = 0; let lastTs = 0;
   const SPRING = { stiffness: 540, damping: 32 };
+  const creatorBar = document.querySelector('.creator-bar');
+
   function tick(ts){
     if(!lastTs) lastTs = ts; const dt = Math.min(32, ts - lastTs); lastTs = ts;
     const delta = target - current;
     const accel = delta * SPRING.stiffness - current * SPRING.damping;
     current += accel * (dt / 1000);
     current = Math.max(0, Math.min(1, current));
-    document.querySelector('.creator-bar')?.style.setProperty('--p', String(current));
-    if (Math.abs(delta) > 0.002) { raf = requestAnimationFrame(tick); } else { current = target; document.querySelector('.creator-bar')?.style.setProperty('--p', String(target)); raf = 0; lastTs = 0; }
+    creatorBar?.style.setProperty('--p', String(current));
+    if (Math.abs(delta) > 0.002) {
+      raf = requestAnimationFrame(tick);
+    } else {
+      current = target;
+      creatorBar?.style.setProperty('--p', String(target));
+      raf = 0;
+      lastTs = 0;
+    }
   }
 
-  // Passkey logic moved to maker-client.ts
-
-  // Support toggling via Creator chip in nav
   window.addEventListener('toggle-creator', (ev) => {
     const open = ev.detail?.open;
     target = open ? 1 : 0;
     if (!raf) raf = requestAnimationFrame(tick);
-    if (open) passkeyBtn?.focus?.();
   });
 </script>

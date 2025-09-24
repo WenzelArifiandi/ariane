@@ -7,7 +7,7 @@
 <style>
   .sky-wrap{
     position:fixed; inset:0; z-index:-1; pointer-events:none;
-    background: linear-gradient(to bottom, #dfe2ff 0%, #aab2ff 60%, #7d86e2 100%);
+    background:#8e97ef;
   }
   canvas{
     display:block;
@@ -19,11 +19,11 @@
 </style>
 
 <div class="sky-wrap" aria-hidden="true">
-  <canvas class="periwinkle-canvas"></canvas>
+  <canvas id="periwinkle-sky"></canvas>
 </div>
 
-<script type="module">
-  const canvas = document.querySelector('.periwinkle-canvas');
+<script type="module" is:inline>
+  const canvas = document.getElementById('periwinkle-sky');
   const prefersReduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   // ----------------------------
@@ -62,32 +62,45 @@
     new ResizeObserver(resize).observe(canvas);
     resize();
 
-    // Uniforms
-    const uniformBufferSize = 4 * ( // float32 count
-      1 +     // time
-      2 +     // mouse
-      1 +     // scroll
-      2       // viewport (w, h)
-    );
+    // Uniforms (std140 aligned: 8 floats -> 32 bytes)
+    const uniformFloatCount = 8;
+    const uniformBufferSize = uniformFloatCount * 4;
     const uniformBuffer = device.createBuffer({
-      size: uniformBufferSize * 4,
+      size: uniformBufferSize,
       usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST
     });
+    const uniformData = new Float32Array(uniformFloatCount);
 
     // Full periwinkle starfield with WebGPU + WGSL shaders
     const code = /* wgsl */`
       struct UBO {
-        time   : f32,
-        mouse  : vec2<f32>,
-        scroll : f32,
-        view   : vec2<f32>,
+        time      : f32,
+        padTime   : f32,
+        mouse     : vec2<f32>,
+        scroll    : f32,
+        padScroll : f32,
+        view      : vec2<f32>,
       }
       @group(0) @binding(0) var<uniform> u : UBO;
 
-      // Hash & value noise for procedural generation
       fn hash(p: vec2<f32>) -> f32 {
         let h = dot(p, vec2<f32>(127.1, 311.7));
         return fract(sin(h) * 43758.5453);
+      }
+
+      fn hash3(p: vec2<f32>) -> vec3<f32> {
+        let dots = vec3<f32>(
+          dot(p, vec2<f32>(127.1, 311.7)),
+          dot(p, vec2<f32>(269.5, 183.3)),
+          dot(p, vec2<f32>(419.2, 371.9))
+        );
+        return fract(sin(dots) * 43758.5453);
+      }
+
+      fn rotate(p: vec2<f32>, angle: f32) -> vec2<f32> {
+        let s = sin(angle);
+        let c = cos(angle);
+        return vec2<f32>(p.x * c - p.y * s, p.x * s + p.y * c);
       }
 
       fn noise(p: vec2<f32>) -> f32 {
@@ -98,28 +111,71 @@
         let c = hash(i + vec2<f32>(0.0, 1.0));
         let d = hash(i + vec2<f32>(1.0, 1.0));
         let u = f * f * (3.0 - 2.0 * f);
-        return mix(mix(a, b, u.x), mix(c, d, u.x), u.y);
+        let xmix = mix(a, b, u.x);
+        let ymix = mix(c, d, u.x);
+        return mix(xmix, ymix, u.y);
       }
 
-      // Fractal brownian motion for nebula
       fn fbm(p: vec2<f32>) -> f32 {
-        var v = 0.0;
-        var a = 0.5;
-        var s = p;
+        var value = 0.0;
+        var amplitude = 0.5;
+        var shift = p;
         for (var i = 0; i < 5; i = i + 1) {
-          v = v + a * noise(s);
-          s = s * 2.0;
-          a = a * 0.5;
+          value = value + amplitude * noise(shift);
+          shift = shift * 2.0;
+          amplitude = amplitude * 0.5;
         }
-        return v;
+        return value;
       }
 
-      // Sparse star distribution with twinkling
-      fn starLayer(uv: vec2<f32>, scale: f32, power: f32, twFreq: f32, twAmp: f32) -> f32 {
-        let n = noise(uv * scale);
-        let s = pow(max(n - 0.75, 0.0) * 4.0, power);
-        let tw = 1.0 + twAmp * sin(u.time * twFreq + n * 12.0);
-        return s * tw;
+      fn starLayer(uv: vec2<f32>, scale: f32, brightness: f32, sharpness: f32, twFreq: f32, twAmp: f32, cutoff: f32) -> f32 {
+        let st = uv * scale;
+        let cell = floor(st);
+        let local = fract(st);
+        let rnd = hash3(cell);
+        let hasStar = step(cutoff, rnd.x);
+        let starPos = local - vec2<f32>(rnd.y, rnd.z);
+        let dist = length(starPos);
+        let core = pow(max(0.0, 1.0 - dist * sharpness), 12.0);
+        let cross = max(0.0, 1.0 - abs(starPos.x) * sharpness * 0.8) * max(0.0, 1.0 - abs(starPos.y) * sharpness * 0.8);
+        let sparkle = max(core, cross * 0.6);
+        let twinkle = 1.0 + twAmp * sin(u.time * twFreq + rnd.x * 6.28318);
+        return hasStar * sparkle * brightness * twinkle;
+      }
+
+      fn bokehGlow(uv: vec2<f32>, time: f32) -> vec3<f32> {
+        let glints = array<vec4<f32>, 5>(
+          vec4<f32>(0.22, 0.28, 0.42, 0.25),
+          vec4<f32>(0.68, 0.18, 0.38, 0.18),
+          vec4<f32>(0.82, 0.72, 0.50, 0.22),
+          vec4<f32>(0.12, 0.78, 0.36, 0.15),
+          vec4<f32>(0.48, 0.52, 0.47, 0.28)
+        );
+        var glow = vec3<f32>(0.0);
+        for (var i = 0; i < 5; i = i + 1) {
+          let g = glints[i];
+          let wobble = vec2<f32>(
+            sin((0.18 + 0.05 * f32(i)) * time + f32(i) * 1.7),
+            cos((0.22 + 0.04 * f32(i)) * time + f32(i) * 1.1)
+          ) * 0.025;
+          let pos = vec2<f32>(g.x, g.y) + wobble;
+          let diff = uv - pos;
+          let dist = length(diff) / max(g.z, 1e-3);
+          let intensity = exp(-dist * dist * 4.0) * g.w;
+          glow = glow + vec3<f32>(0.85, 0.75, 1.0) * intensity;
+        }
+        return glow;
+      }
+
+      fn filmic(col: vec3<f32>) -> vec3<f32> {
+        let a = 2.51;
+        let b = 0.03;
+        let c = 2.43;
+        let d = 0.59;
+        let e = 0.14;
+        let colA = col * (a * col + vec3<f32>(b));
+        let colB = col * (c * col + vec3<f32>(d)) + vec3<f32>(e);
+        return clamp(colA / colB, vec3<f32>(0.0), vec3<f32>(1.0));
       }
 
       @vertex
@@ -134,54 +190,52 @@
 
       @fragment
       fn f(@builtin(position) fragCoord: vec4<f32>) -> @location(0) vec4<f32> {
-        let res = u.view;
-        let uv = clamp(vec2<f32>(fragCoord.x / res.x, fragCoord.y / res.y), vec2<f32>(0.0), vec2<f32>(1.0));
-
-        // Safe parallax via mouse + scroll
+        let res = max(u.view, vec2<f32>(1.0, 1.0));
+        let uv = fragCoord.xy / res;
         let mouse_safe = clamp(u.mouse, vec2<f32>(0.0), vec2<f32>(1.0));
         let scroll_safe = clamp(u.scroll, 0.0, 1.0);
-        let par = (mouse_safe - vec2<f32>(0.5, 0.5)) * 0.03 + vec2<f32>(0.0, scroll_safe * 0.015);
+        let par = (mouse_safe - vec2<f32>(0.5, 0.5)) * vec2<f32>(0.05, 0.035) + vec2<f32>(0.0, scroll_safe * 0.02);
         let suv = clamp(uv + par, vec2<f32>(0.0), vec2<f32>(1.0));
 
-        // Multi-stop periwinkle gradient
+        // Periwinkle gradient base
         let h = clamp(suv.y, 0.0, 1.0);
-        let p0 = vec3<f32>(0.875, 0.886, 1.000); // #dfe2ff
-        let p1 = vec3<f32>(0.667, 0.690, 1.000); // #aab2ff
-        let p2 = vec3<f32>(0.490, 0.525, 0.886); // #7d86e2
+        let p0 = vec3<f32>(0.840, 0.860, 1.000);
+        let p1 = vec3<f32>(0.640, 0.690, 1.000);
+        let p2 = vec3<f32>(0.470, 0.500, 0.880);
         var sky = mix(p2, p1, smoothstep(0.0, 0.6, h));
-        sky = mix(sky, p0, smoothstep(0.4, 1.0, h));
-        sky = clamp(sky, vec3<f32>(0.0), vec3<f32>(1.0)); // Guard the base
+        sky = mix(sky, p0, smoothstep(0.35, 1.0, h));
 
-        // STEP 1: Add just nebula - test if this works
-        var p = suv * 2.0; // Very small domain
-        let t = u.time * 0.03; // Slow animation
+        // Nebula flow using FBM
+        let aspect = res.x / res.y;
+        let centered = (suv - vec2<f32>(0.5, 0.5)) * vec2<f32>(aspect, 1.0);
+        let flow = vec2<f32>(u.time * 0.045, -u.time * 0.028);
+        let neb_sample = rotate(centered * 1.6 + flow, 0.32);
+        var neb = fbm(neb_sample);
+        neb = neb * 0.62 + fbm(neb_sample * 1.9 - flow * 0.8) * 0.38;
+        neb = pow(clamp(neb, 0.0, 1.0), 1.7);
+        let nebula_hue = mix(vec3<f32>(0.320, 0.380, 0.950), vec3<f32>(0.900, 0.500, 0.850), smoothstep(-0.3, 0.55, centered.y + scroll_safe * 0.4));
+        var col = sky + nebula_hue * neb * 0.75;
 
-        // Simple noise-based nebula
-        let n1 = clamp(hash(p + vec2<f32>(t, -t * 0.5)), 0.0, 1.0);
-        let nebula_strength = n1 * 0.15; // Very subtle
+        // Multi-scale stars with twinkling
+        let star_uv = centered * 1.4 + vec2<f32>(0.0, scroll_safe * 0.6);
+        let tiny = starLayer(star_uv, 120.0, 0.65, 18.0, 5.5, 0.35, 0.82);
+        let medium = starLayer(star_uv + vec2<f32>(0.12, -0.05), 55.0, 0.90, 14.0, 3.6, 0.40, 0.74);
+        let large = starLayer(star_uv * 0.8 + vec2<f32>(-0.15, 0.10), 24.0, 1.20, 9.0, 2.4, 0.45, 0.60);
+        col = col + vec3<f32>(0.95, 0.96, 1.00) * (tiny * 0.6 + medium * 0.85 + large * 1.4);
 
-        // Add subtle cool tint to nebula areas
-        let nebula_color = vec3<f32>(0.7, 0.8, 1.0) * nebula_strength;
-        var col = sky + nebula_color;
-        col = clamp(col, vec3<f32>(0.0), vec3<f32>(1.5));
+        // Soft bokeh glints
+        col = col + bokehGlow(suv, u.time);
 
-        // STEP 2: Stars disabled for now - testing nebula first
-        // (will add stars back once nebula works)
+        // Cinematic vignette
+        let vignette_coord = (suv - vec2<f32>(0.5, 0.5)) * vec2<f32>(aspect * 0.85, 0.85);
+        let vignette = smoothstep(0.95, 0.25, length(vignette_coord));
+        col = col * mix(0.78, 1.02, vignette);
 
-        // Safe vignette
-        let d_vec = suv - vec2<f32>(0.5, 0.5);
-        let d = clamp(length(d_vec), 0.0, 1.0);
-        let vig = smoothstep(0.9, 0.3, d);
-        vig = clamp(vig, 0.0, 1.0);
-        col *= mix(0.85, 1.0, vig);
+        // Filmic tone mapping & gentle gamma
+        col = filmic(max(col, vec3<f32>(0.0)));
+        col = pow(col, vec3<f32>(0.95));
 
-        // Final safety clamp and mild tone curve
-        col = clamp(col, vec3<f32>(0.0), vec3<f32>(2.0));
-        let tone_input = max(col, vec3<f32>(1e-6));
-        col = pow(tone_input, vec3<f32>(0.95));
-        col = clamp(col, vec3<f32>(0.0), vec3<f32>(1.0));
-
-        return vec4<f32>(col, 1.0);
+        return vec4<f32>(clamp(col, vec3<f32>(0.0), vec3<f32>(1.0)), 1.0);
       }
     `;
 
@@ -204,7 +258,7 @@
         visibility: GPUShaderStage.FRAGMENT,
         buffer: {
           type: 'uniform',
-          minBindingSize: uniformBufferSize * 4
+          minBindingSize: uniformBufferSize
         }
       }]
     });
@@ -259,20 +313,21 @@
       const time = prefersReduced ? 0 : (now - start) / 1000;
 
       // update uniforms
-      const view = new Float32Array([canvas.width, canvas.height]);
-      const u = new Float32Array([
-        time,
-        mouse.x, (1 - mouse.y),
-        scroll,
-        view[0], view[1]
-      ]);
+      uniformData[0] = time;
+      uniformData[1] = 0.0; // padding for std140 alignment
+      uniformData[2] = mouse.x;
+      uniformData[3] = 1 - mouse.y;
+      uniformData[4] = scroll;
+      uniformData[5] = 0.0; // padding for std140 alignment
+      uniformData[6] = canvas.width;
+      uniformData[7] = canvas.height;
 
       // Debug uniform values
       if (frameCount <= 3) {
-        console.log(`Uniform values: time=${time}, mouse=${mouse.x},${mouse.y}, scroll=${scroll}, view=${view[0]},${view[1]}`);
+        console.log(`Uniform values: time=${time}, mouse=${mouse.x},${mouse.y}, scroll=${scroll}, view=${canvas.width},${canvas.height}`);
       }
 
-      device.queue.writeBuffer(uniformBuffer, 0, u.buffer);
+      device.queue.writeBuffer(uniformBuffer, 0, uniformData);
 
       // render
       try {
@@ -317,20 +372,222 @@
   // 2) WEBGL FALLBACK (Three.js)
   // ----------------------------
   async function bootWebGL(){
-    // Simple, tiny fallback: solid periwinkle (keeps page pretty).
-    const ctx = canvas.getContext('2d');
-    function fill(){
-      canvas.width = canvas.clientWidth * Math.min(devicePixelRatio, 2);
-      canvas.height = canvas.clientHeight * Math.min(devicePixelRatio, 2);
-      const g = ctx.createLinearGradient(0,0,0,canvas.height);
-      g.addColorStop(0,   '#dfe2ff');
-      g.addColorStop(0.6, '#aab2ff');
-      g.addColorStop(1,   '#7d86e2');
-      ctx.fillStyle = g;
-      ctx.fillRect(0,0,canvas.width,canvas.height);
+    const THREE = await import('three');
+    const { EffectComposer, RenderPass, EffectPass, BloomEffect } = await import('postprocessing');
+
+    const renderer = new THREE.WebGLRenderer({
+      canvas,
+      antialias: false,
+      alpha: false,
+      powerPreference: 'high-performance'
+    });
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.setSize(window.innerWidth, window.innerHeight, false);
+    if ('outputColorSpace' in renderer) {
+      renderer.outputColorSpace = THREE.SRGBColorSpace;
     }
-    new ResizeObserver(fill).observe(canvas);
-    fill();
+
+    const scene = new THREE.Scene();
+    const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
+
+    const quadGeo = new THREE.PlaneGeometry(2, 2);
+    const nebulaMat = new THREE.ShaderMaterial({
+      uniforms: {
+        uTime: { value: 0 },
+        uPeriwinkleA: { value: new THREE.Color('#dfe2ff') },
+        uPeriwinkleB: { value: new THREE.Color('#aab2ff') },
+        uPeriwinkleC: { value: new THREE.Color('#7d86e2') },
+        uWarm: { value: new THREE.Color('#ffd3f6') },
+        uCool: { value: new THREE.Color('#9fd7ff') },
+        uNoiseScale: { value: 1.2 },
+        uNebulaStrength: { value: 0.8 },
+        uVignette: { value: 0.5 },
+        uMouse: { value: new THREE.Vector2(0.5, 0.5) },
+        uScroll: { value: 0 }
+      },
+      vertexShader: `
+        varying vec2 vUv;
+        void main(){
+          vUv = uv;
+          gl_Position = vec4(position, 1.0);
+        }
+      `,
+      fragmentShader: `
+        precision highp float;
+        varying vec2 vUv;
+
+        uniform float uTime;
+        uniform vec3 uPeriwinkleA, uPeriwinkleB, uPeriwinkleC, uWarm, uCool;
+        uniform float uNoiseScale, uNebulaStrength, uVignette;
+        uniform vec2 uMouse;
+        uniform float uScroll;
+
+        float hash(vec2 p){ return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }
+        float noise(vec2 p){
+          vec2 i = floor(p), f = fract(p);
+          float a = hash(i);
+          float b = hash(i + vec2(1.0, 0.0));
+          float c = hash(i + vec2(0.0, 1.0));
+          float d = hash(i + vec2(1.0, 1.0));
+          vec2 u = f*f*(3.0-2.0*f);
+          return mix(a, b, u.x) + (c - a)*u.y*(1.0 - u.x) + (d - b)*u.x*u.y;
+        }
+        float fbm(vec2 p){
+          float v = 0.0;
+          float a = 0.5;
+          for(int i=0;i<6;i++){
+            v += a * noise(p);
+            p *= 2.0;
+            a *= 0.5;
+          }
+          return v;
+        }
+
+        void main(){
+          vec2 uv = vUv;
+          vec2 par = (uMouse - 0.5) * 0.03 + vec2(0.0, uScroll * 0.015);
+          uv += par;
+
+          float h = smoothstep(0.0, 1.0, uv.y);
+          vec3 sky = mix(uPeriwinkleC, uPeriwinkleB, h);
+          sky = mix(sky, uPeriwinkleA, smoothstep(0.4, 1.0, h));
+
+          vec2 p = (uv * 3.0) / max(uNoiseScale, 1e-3);
+          float t = uTime * 0.05;
+          float n = fbm(p + vec2(t, -t * 0.7));
+          float m = fbm(p * 0.7 - vec2(t * 0.6, t * 0.4));
+          float neb = pow(smoothstep(0.45, 1.0, n * 0.6 + m * 0.7), 1.6);
+
+          vec3 tint = mix(uCool, uWarm, smoothstep(0.2, 0.9, n));
+          vec3 color = sky + neb * uNebulaStrength * tint;
+
+          vec2 d = uv - 0.5;
+          float vig = smoothstep(0.95, uVignette, dot(d, d) * 1.8);
+          color *= mix(1.0, 0.75, vig);
+
+          gl_FragColor = vec4(color, 1.0);
+        }
+      `,
+      depthTest: false,
+      depthWrite: false
+    });
+
+    const quad = new THREE.Mesh(quadGeo, nebulaMat);
+    scene.add(quad);
+
+    const starCount = 3500;
+    const starGeometry = new THREE.BufferGeometry();
+    const positions = new Float32Array(starCount * 3);
+    const sizes = new Float32Array(starCount);
+    const tints = new Float32Array(starCount * 3);
+
+    const coolStar = new THREE.Color('#dff2ff');
+    const warmStar = new THREE.Color('#fff0ff');
+    for (let i = 0; i < starCount; i++) {
+      const idx = i * 3;
+      positions[idx + 0] = Math.random() * 2 - 1;
+      positions[idx + 1] = Math.random() * 2 - 1;
+      positions[idx + 2] = 0;
+      sizes[i] = Math.pow(Math.random(), 2.0) * 2.2 + 0.6;
+      const tint = coolStar.clone().lerp(warmStar, Math.random());
+      tints[idx + 0] = tint.r;
+      tints[idx + 1] = tint.g;
+      tints[idx + 2] = tint.b;
+    }
+    starGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+    starGeometry.setAttribute('size', new THREE.BufferAttribute(sizes, 1));
+    starGeometry.setAttribute('tint', new THREE.BufferAttribute(tints, 3));
+
+    const starMaterial = new THREE.ShaderMaterial({
+      transparent: true,
+      blending: THREE.AdditiveBlending,
+      depthWrite: false,
+      uniforms: {
+        uTime: { value: 0 },
+        uParallax: { value: new THREE.Vector2() }
+      },
+      vertexShader: `
+        attribute float size;
+        attribute vec3 tint;
+        varying vec3 vTint;
+        uniform vec2 uParallax;
+        void main(){
+          vTint = tint;
+          vec3 pos = position;
+          pos.xy += uParallax * 0.12;
+          gl_Position = vec4(pos, 1.0);
+          gl_PointSize = size * 1.8 * (1.0 + (pos.y + 1.0) * 0.15);
+        }
+      `,
+      fragmentShader: `
+        precision highp float;
+        varying vec3 vTint;
+        uniform float uTime;
+        void main(){
+          vec2 uv = gl_PointCoord - 0.5;
+          float r = length(uv);
+          float core = smoothstep(0.5, 0.0, r);
+          float tw = 0.65 + 0.35 * sin(uTime * 3.0 + (uv.x + uv.y) * 40.0);
+          vec3 col = vTint * (1.2 * tw);
+          gl_FragColor = vec4(col, core);
+        }
+      `
+    });
+
+    const stars = new THREE.Points(starGeometry, starMaterial);
+    scene.add(stars);
+
+    const composer = new EffectComposer(renderer);
+    const renderPass = new RenderPass(scene, camera);
+    const bloom = new BloomEffect({
+      intensity: 0.6,
+      luminanceThreshold: 0.0,
+      luminanceSmoothing: 0.5,
+      radius: 0.9
+    });
+    const effectPass = new EffectPass(camera, bloom);
+    composer.addPass(renderPass);
+    composer.addPass(effectPass);
+
+    function handleResize(){
+      const w = window.innerWidth;
+      const h = window.innerHeight;
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+      renderer.setSize(w, h, false);
+      composer.setSize(w, h);
+    }
+    window.addEventListener('resize', handleResize);
+    handleResize();
+
+    const mouse = new THREE.Vector2(0.5, 0.5);
+    window.addEventListener('pointermove', (event)=>{
+      mouse.x = event.clientX / window.innerWidth;
+      mouse.y = event.clientY / window.innerHeight;
+    }, { passive: true });
+
+    let scrollNorm = 0;
+    window.addEventListener('scroll', ()=>{
+      const max = Math.max(1, document.body.scrollHeight - window.innerHeight);
+      scrollNorm = window.scrollY / max;
+    }, { passive: true });
+
+    const start = performance.now();
+    function renderFrame(){
+      const now = performance.now();
+      const t = prefersReduced ? 0 : (now - start) / 1000;
+
+      nebulaMat.uniforms.uTime.value = t;
+      nebulaMat.uniforms.uMouse.value.set(mouse.x, 1 - mouse.y);
+      nebulaMat.uniforms.uScroll.value = scrollNorm;
+
+      starMaterial.uniforms.uTime.value = t;
+      starMaterial.uniforms.uParallax.value.set(mouse.x - 0.5, (0.5 - mouse.y) + scrollNorm * 0.35);
+
+      composer.render();
+      if (!prefersReduced) requestAnimationFrame(renderFrame);
+    }
+
+    renderFrame();
   }
 
   // Wait for DOM to be ready

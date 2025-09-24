@@ -1,116 +1,176 @@
 ---
 const links = [
-  { label: 'Work', href: '#work' },
-  { label: 'About', href: '#about' },
-  { label: 'Contact', href: '#contact' },
-]
+  { href: '#hello', label: 'Hello' },
+  { href: '#playground', label: 'Playground' },
+  { href: '#field-notes', label: 'Field Notes' },
+  { href: '#contact', label: 'Contact' },
+];
 const studioHref = import.meta.env.DEV ? 'http://localhost:3333/' : 'https://studio.wenzelarifiandi.com';
-// In dev tunnel, we may rely solely on Cloudflare Access (no app OAuth)
-const AUTH_MODE = ((import.meta as unknown as { env?: Record<string, unknown> }).env?.AUTH_MODE as string) ?? process.env.AUTH_MODE;
-const isAccessOnly = AUTH_MODE === 'cf-access-only';
-const isAppAuth = AUTH_MODE === 'app';
-// Use Access-first zero-UI signout route; it logs out of Cloudflare Access, then (optionally) Auth0 via /post-access-logout, and returns to root to trigger login.
-const cfLogoutHref: string = '/signout';
 ---
 
-<nav class="nav" data-access-only={isAccessOnly ? 'true' : 'false'} data-app-auth={isAppAuth ? 'true' : 'false'}>
-  <div class="container align-hero">
-    <div class="nav-inner glass">
-      <a href="/" class="brand">Wenzel Arifiandi</a>
-      <ul class="links">
-        {links.map((l) => (
-          <li><a href={l.href}>{l.label}</a></li>
+<nav class="sticky top-3 z-50 mx-auto my-3 px-3 sm:px-7">
+  <div class="max-w-container mx-auto">
+    <div class="nav-inner flex items-center justify-between gap-nav md:gap-nav-md px-pad-x py-3 relative overflow-hidden isolate">
+
+      <!-- Brand -->
+      <a href="/" class="brand relative z-10 text-nav-brand-sm md:text-nav-brand-md lg:text-nav-brand-lg xl:text-nav-brand-xl">Wenzel Arifiandi</a>
+
+      <!-- Desktop links -->
+      <ul class="hidden lg:flex items-center gap-nav lg:gap-nav-md text-nav-link md:text-nav-link-md lg:text-nav-link-lg xl:text-nav-link-xl list-none m-0 p-0 relative z-10">
+        {links.map(l => (
+          <li class="whitespace-nowrap">
+            <a class="nav-link" href={l.href}>{l.label}</a>
+          </li>
         ))}
-  <li id="studio-link" style="display:none"><a href={studioHref}>Studio</a></li>
-  {isAccessOnly && (
-    <li id="cf-signout-link">
-  <a id="cf-logout" class="nav-action shrinkable" href={cfLogoutHref || '/signout'} title="Sign out">
-        <svg class="icon-svg" aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M10 17l-1.4-1.4L12.2 12 8.6 8.4 10 7l5 5-5 5z" fill="currentColor"/>
-          <path d="M4 5h6v2H6v10h4v2H4a2 2 0 01-2-2V7a2 2 0 012-2z" fill="currentColor"/>
-        </svg>
-        <span class="label">Sign out</span>
-      </a>
-    </li>
-  )}
-  {isAppAuth && (
-    <li id="signin-link" style="display:none"><a href="/api/oauth/github/start?redirect=/">Sign in</a></li>
-  )}
-  {isAppAuth && (
-      <li id="signout-link" style="display:none">
-        <form method="get" action="/api/auth/logout">
-          <input type="hidden" name="next" value={Astro.url?.pathname + (Astro.url?.search || '') || '/'} />
-          <button class="btn m3" style="background:#ef4444">Sign out</button>
-        </form>
-      </li>
-  )}
-        <li class="creator-wrap">
-          <button id="creator-toggle" class="chip m3" aria-haspopup="true" aria-expanded="false" aria-controls="creator-sheet" title="Maker">
-            <svg class="icon-svg" aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M11 2l1.2 3.6L16 7l-3.8 1.4L11 12 9.8 8.4 6 7l3.8-1.4L11 2zM19 10l.8 2.4L22 13l-2.2.6L19 16l-.8-2.4L16 13l2.2-.6L19 10zM6 14l1 3 3 1-3 1-1 3-1-3-3-1 3-1 1-3z" fill="currentColor"/>
-            </svg>
-            <span class="label">Maker</span>
-          </button>
+        <li class="whitespace-nowrap">
+          <a class="nav-link" href={studioHref}>Studio</a>
         </li>
       </ul>
+
+      <!-- Right: Explore (mobile) + Maker (always visible) -->
+      <div class="flex items-center gap-2 relative z-10 flex-shrink-0">
+        <!-- Explore button (mobile only, to the left of Maker) -->
+        <button
+          id="explore-toggle"
+          class="lg:hidden chip-m3 inline-flex items-center gap-1.5 px-2.5 py-2 text-sm font-medium
+                 transition-[transform,box-shadow] duration-200 ease-[cubic-bezier(0.2,0,0,1)]
+                 active:scale-[0.98] active:shadow-sm"
+          aria-controls="mobile-menu"
+          aria-expanded="false"
+          aria-haspopup="true"
+          type="button"
+        >
+          <!-- M3 compass icon -->
+          <span class="material-symbols-rounded text-white" style="font-size: 16px;">explore</span>
+          <span class="hidden xs:inline">Explore</span>
+          <span class="xs:hidden">Menu</span>
+        </button>
+
+        <!-- Maker button (always visible at all screen sizes) -->
+        <button id="creator-toggle" class="chip-m3 inline-flex items-center gap-2 px-3 md:px-4 py-2 text-sm md:text-base font-medium"
+                aria-haspopup="true" aria-expanded="false" aria-controls="creator-sheet" title="Maker">
+          <!-- M3 sparkle icon -->
+          <span class="material-symbols-rounded text-white" style="font-size: 18px;">auto_awesome</span>
+          <span class="label hidden sm:inline whitespace-nowrap">Maker</span>
+        </button>
+      </div>
+
+      <!-- Mobile drop panel -->
+      <div id="mobile-menu"
+           class="lg:hidden absolute left-0 right-0 top-full mt-2 px-3 sm:px-7"
+           hidden>
+        <div
+          class="nav-panel rounded-2xl border shadow-lg backdrop-blur bg-white/80
+                 origin-top will-change-transform will-change-opacity
+                 transition-[opacity,transform] duration-[420ms]
+                 ease-[cubic-bezier(0.2,1.2,0.35,1)]
+                 opacity-0 -translate-y-4 scale-[0.97]"
+          data-anim
+          aria-hidden="true"
+          role="menu"
+        >
+          <ul class="py-2">
+            <!-- Staggered menu items -->
+            <li class="transition-opacity duration-300 delay-75 opacity-0 data-[open=true]:opacity-100">
+              <a class="mobile-menu-item" role="menuitem" href="#hello">
+                <span class="material-symbols-rounded">waving_hand</span>
+                <span>Hello</span>
+              </a>
+            </li>
+            <li class="transition-opacity duration-300 delay-100 opacity-0 data-[open=true]:opacity-100">
+              <a class="mobile-menu-item" role="menuitem" href="#playground">
+                <span class="material-symbols-rounded">science</span>
+                <span>Playground</span>
+              </a>
+            </li>
+            <li class="transition-opacity duration-300 delay-125 opacity-0 data-[open=true]:opacity-100">
+              <a class="mobile-menu-item" role="menuitem" href="#field-notes">
+                <span class="material-symbols-rounded">edit_note</span>
+                <span>Field Notes</span>
+              </a>
+            </li>
+            <li class="transition-opacity duration-300 delay-150 opacity-0 data-[open=true]:opacity-100">
+              <a class="mobile-menu-item" role="menuitem" href="#contact">
+                <span class="material-symbols-rounded">mail</span>
+                <span>Contact</span>
+              </a>
+            </li>
+            <li class="transition-opacity duration-300 delay-200 opacity-0 data-[open=true]:opacity-100">
+              <a class="mobile-menu-item" role="menuitem" href={studioHref}>
+                <span class="material-symbols-rounded">palette</span>
+                <span>Studio</span>
+              </a>
+            </li>
+            <li class="transition-opacity duration-300 delay-225 opacity-0 data-[open=true]:opacity-100">
+              <button class="mobile-menu-item w-full text-left" role="menuitem"
+                      onclick="document.getElementById('creator-toggle')?.click?.()">
+                <span class="material-symbols-rounded">auto_awesome</span>
+                <span>Maker</span>
+              </button>
+            </li>
+          </ul>
+        </div>
+      </div>
     </div>
   </div>
 </nav>
 
 
 <style>
-  .nav { position: sticky; top: var(--nav-offset, 24px); z-index: 50; margin: var(--nav-offset, 24px) auto .75rem; }
-  .nav-inner { width: 100%; display: flex; align-items: center; justify-content: space-between; padding-block: .7rem; border-radius: 999px; padding-left: var(--pad-x); padding-right: var(--pad-x); }
-  /* Allow links row to shrink without forcing overflow */
-  .nav-inner .links { min-width: 0; }
-  .glass {
-    background: linear-gradient(to bottom, rgba(255,255,255,.7), rgba(255,255,255,.5));
-    backdrop-filter: saturate(140%) blur(10px);
-    -webkit-backdrop-filter: saturate(140%) blur(10px);
-    border: 1px solid rgba(255,255,255,.35);
-    box-shadow: 0 8px 24px rgba(0,0,0,.06);
-  }
-  .brand {
-    font-weight: 700;
-    letter-spacing: .2px;
-    color: var(--ink);
-  }
-  .links {
-    display: flex; gap: 1rem; align-items: center; flex-wrap: nowrap;
-    list-style: none; /* remove bullets */
-    margin: 0; padding: 0; /* remove default UL indent */
-  }
-  .links li { list-style: none; white-space: nowrap; }
-  .links a {
-    color: var(--ink);
-    opacity: .8;
-    text-decoration: none;
-    font-weight: 600;
-    white-space: nowrap;
-  }
-  .links a:hover { opacity: 1; }
-  /* — minimal fixes only — */
+  /* Apple liquid glass navbar with M3 expressive design */
 
-/* 1) Kill underline on the brand link (e.g., “Ariane”) */
-.brand {
-  text-decoration: none !important;
-}
-.brand:hover,
-.brand:focus,
-.brand:focus-visible {
-  text-decoration: none !important;
-}
+  .nav-inner {
+    border-radius: var(--ariane-glass-radius, 20px);
+    background: var(--ariane-glass-tint, rgba(255,255,255,0.1));
+    -webkit-backdrop-filter: blur(var(--ariane-glass-blur, 20px));
+    backdrop-filter: blur(var(--ariane-glass-blur, 20px));
+    border: 1px solid rgba(255,255,255,.30);
+    box-shadow:
+      0 1px 0 0 var(--ariane-glass-edge-bright, rgba(255,255,255,.2)) inset,
+      0 -1px 0 0 var(--ariane-glass-edge-dim, rgba(120,120,160,.15)) inset,
+      0 10px 26px var(--ariane-glass-shadow-soft, rgba(0,0,0,.1));
+  }
 
-/* M3 expressive: chip */
-.links a, .chip.m3, .btn.m3 { font-size: var(--body); line-height: 1.2; font-family: inherit; }
+  /* Liquid glass overlay effects */
+  .nav-inner::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background:
+      radial-gradient(120% 60% at 0% 0%, rgba(255,255,255,.25) 0%, transparent 55%),
+      linear-gradient(180deg, rgba(255,255,255,.18) 0%, transparent 45%),
+      linear-gradient(90deg, rgba(255,255,255,.12), transparent 35%, transparent 65%, rgba(255,255,255,.10));
+    mix-blend-mode: screen;
+    border-radius: inherit;
+  }
 
-  .chip.m3 {
-    background: var(--md-sys-color-primary);
-    color: var(--md-sys-color-on-primary);
+  .nav-inner::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    box-shadow: 0 0 0 1px rgba(170,180,255,.35) inset;
+    pointer-events: none;
+  }
+
+  /* Scrolled state enhancement */
+  .scrolled .nav-inner {
+    background: var(--ariane-glass-tint-scrolled, rgba(255,255,255,0.15));
+    box-shadow:
+      0 1px 0 0 rgba(255,255,255,.16) inset,
+      0 -1px 0 0 rgba(120,120,160,.20) inset,
+      0 14px 30px var(--ariane-glass-shadow-soft, rgba(0,0,0,.15));
+  }
+
+  /* M3 expressive chip with proper styling */
+  .chip-m3 {
+    background: var(--md-sys-color-primary, #7150D9);
+    color: var(--md-sys-color-on-primary, #fff);
     border: 0;
     border-radius: 999px;
     padding: .45rem .8rem;
-    box-shadow: var(--md-sys-elevation-1);
+    box-shadow: var(--md-sys-elevation-1, 0 6px 20px rgba(0,0,0,.06));
     cursor: pointer;
     font-weight: 650;
     white-space: nowrap;
@@ -118,130 +178,195 @@ const cfLogoutHref: string = '/signout';
     overflow: hidden;
     text-overflow: ellipsis;
     flex: 0 1 auto;
-    transition: transform var(--md-sys-motion-duration-short) var(--md-sys-motion-ease-standard), box-shadow var(--md-sys-motion-duration-short) var(--md-sys-motion-ease-standard);
+    transition: transform var(--md-sys-motion-duration-short, 200ms) var(--md-sys-motion-ease-standard, ease-out),
+                box-shadow var(--md-sys-motion-duration-short, 200ms) var(--md-sys-motion-ease-standard, ease-out);
   }
-.chip.m3:hover { box-shadow: var(--md-sys-elevation-2); transform: translateY(-1px); }
-  .chip.m3 .material-symbols-rounded { color: #fff; font-variation-settings: 'FILL' 1, 'wght' 600, 'GRAD' 0, 'opsz' 24; font-size: 18px; vertical-align: -2px; margin-right: .35rem; }
-  .chip.m3 .icon-svg { color: #fff; display:inline-block; vertical-align:-2px; margin-right: .35rem; }
 
-  /* Prevent nav actions from wrapping to a second line */
-  .links { flex-wrap: nowrap; }
-  .links .nav-action { display: inline-flex; align-items: center; gap: .35rem; padding: .4rem .6rem; border-radius: 999px; }
-  .links .nav-action .label { white-space: nowrap; }
-  @media (max-width: 560px) {
-    .links { gap: .5rem; }
-    .links .nav-action.shrinkable .label { display: none; }
+  .chip-m3:hover {
+    box-shadow: var(--md-sys-elevation-2, 0 12px 28px rgba(0,0,0,.08));
+    transform: translateY(-1px);
   }
-@media (max-width: 500px) {
-  .chip.m3 .label { display: none; }
-  .chip.m3 { padding: .45rem .6rem; }
-}
-/* JS may add .compact when measuring wrap */
-.chip.m3.compact .label { display: none; }
-.chip.m3.compact { padding: .45rem .6rem; }
 
-.creator-wrap { position: relative; }
+  /* Brand styling */
+  .brand {
+    font-weight: 600;
+    letter-spacing: .2px;
+    color: var(--ariane-text-ink, var(--ink));
+    text-decoration: none !important;
+  }
+
+  .brand:hover,
+  .brand:focus,
+  .brand:focus-visible {
+    text-decoration: none !important;
+  }
+
+  /* Nav link styling - original neat appearance */
+  .nav-link {
+    color: var(--ariane-text-ink, var(--ink));
+    text-decoration: none !important;
+    font-weight: 600;
+    white-space: nowrap;
+    padding: 8px 10px;
+    border-radius: 10px;
+    transition: background 0.2s ease, color 0.2s ease;
+    font-size: var(--body, 1rem);
+    line-height: 1.2;
+  }
+
+  .nav-link:hover,
+  .nav-link:focus,
+  .nav-link:visited,
+  .nav-link:active {
+    background: var(--ariane-hover-wash, rgba(255,255,255,.15));
+    color: var(--ariane-text-ink-dim, rgba(0,0,0,.8));
+    text-decoration: none !important;
+  }
+
+  /* Mobile menu panel */
+  .nav-panel {
+    background: var(--ariane-glass-tint, rgba(255,255,255,0.85));
+    border: 1px solid rgba(255,255,255,.30);
+    box-shadow:
+      0 1px 0 0 var(--ariane-glass-edge-bright, rgba(255,255,255,.2)) inset,
+      0 -1px 0 0 var(--ariane-glass-edge-dim, rgba(120,120,160,.15)) inset,
+      0 10px 26px var(--ariane-glass-shadow-soft, rgba(0,0,0,.1));
+  }
+
+  /* Mobile menu items (card-style) */
+  .mobile-menu-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 1rem;
+    margin: 0.25rem 0.5rem;
+    border-radius: 12px;
+    color: var(--ariane-body-text);
+    text-decoration: none;
+    transition: all 0.2s ease;
+    font-size: var(--body);
+    line-height: 1.2;
+  }
+
+  .mobile-menu-item:hover,
+  .mobile-menu-item:focus {
+    background: var(--ariane-hover-wash, rgba(255,255,255,.15));
+    color: var(--ariane-text-ink-dim);
+    text-decoration: none;
+    transform: translateY(-1px);
+  }
+
+  .mobile-menu-item .material-symbols-rounded {
+    color: var(--ariane-text-ink);
+    font-size: 20px;
+  }
+
+  /* Compact state for narrow screens */
+  .chip-m3.compact .label {
+    display: none;
+  }
+  .chip-m3.compact {
+    padding: .45rem .6rem;
+  }
+
+  /* Responsive label hiding */
+  @media (max-width: 500px) {
+    .chip-m3 .label {
+      display: none;
+    }
+    .chip-m3 {
+      padding: .45rem .6rem;
+    }
+  }
 </style>
 
-<script type="module">
+<script type="module" is:inline>
   const qs = (s) => document.querySelector(s);
-  const toggle = qs('#creator-toggle');
   const navInner = qs('.nav-inner');
-  const studio = qs('#studio-link');
-  const navEl = qs('nav.nav');
-  const ACCESS_ONLY = navEl?.dataset?.accessOnly === 'true';
-  const APP_AUTH = navEl?.dataset?.appAuth === 'true';
 
-  async function refreshAuth() {
-    try {
-      const res = await fetch('/api/auth/session');
-      const data = await res.json();
-      const authed = !!data?.authenticated;
-      if (studio) studio.style.display = authed ? '' : 'none';
-      const signin = qs('#signin-link');
-      const signout = qs('#signout-link');
-      if (signin) signin.style.display = authed ? 'none' : '';
-      if (signout) signout.style.display = authed ? '' : 'none';
-    } catch {}
-  }
+  // Darkens the glass as you scroll down
+  const onScroll = () => {
+    if (window.scrollY > 24) {
+      document.documentElement.classList.add('scrolled');
+    } else {
+      document.documentElement.classList.remove('scrolled');
+    }
+  };
+  addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
 
-toggle?.addEventListener('click', () => {
+  // Creator toggle functionality (desktop)
+  const creatorToggle = qs('#creator-toggle');
+  creatorToggle?.addEventListener('click', () => {
     const html = document.documentElement;
     const open = html.getAttribute('data-creator') === 'open';
     html.setAttribute('data-creator', open ? 'closed' : 'open');
-    toggle.setAttribute('aria-expanded', String(!open));
+    creatorToggle.setAttribute('aria-expanded', String(!open));
     window.dispatchEvent(new CustomEvent('toggle-creator', { detail: { open: !open } }));
   });
 
-  // In Access-only mode, there is no app session concept to fetch
-  if (APP_AUTH) {
-    (async () => { await refreshAuth(); })();
-  } else {
-    // Hide auth UI if it somehow exists
-    const signin = qs('#signin-link');
-    const signout = qs('#signout-link');
-    if (signin) signin.remove();
-    if (signout) signout.remove();
-    // Ensure Studio link is visible in Access-only mode
-    if (studio) studio.style.display = '';
-    // If link targets our zero-UI flow (/signout) or IdP URL, leave it; otherwise ensure absolute returnTo for CF logout URLs
-    const cfLogout = qs('#cf-logout');
-    if (cfLogout) {
-      try {
-        const origin = window.location.origin;
-        const href = cfLogout.getAttribute('href') || '';
-        if (href.startsWith('https://') || href.startsWith('http://') || href.startsWith('/signout')) {
-          // keep as-is
-        } else if (href.startsWith('/cdn-cgi/access/logout')) {
-          const u = new URL(href, origin);
-          if (!u.searchParams.has('returnTo')) {
-            const rt = new URL('/logged-out', origin).toString();
-            u.searchParams.set('returnTo', rt);
-          }
-          cfLogout.setAttribute('href', u.toString());
-        } else {
-          // If it's /signout, keep as-is
-          if (!href) cfLogout.setAttribute('href', '/signout');
-        }
-        // Fallback: force full-page navigation on click
-        cfLogout.addEventListener('click', () => {
-          try {
-            const href = cfLogout.getAttribute('href');
-            if (href) window.location.href = href;
-          } catch {}
-        }, { once: true });
-      } catch {}
+  // M3 Expressive Mobile Menu
+  const exploreBtn = qs('#explore-toggle');
+  const mobileMenuWrap = qs('#mobile-menu');
+  const mobileMenuPanel = mobileMenuWrap?.querySelector('[data-anim]');
+  const menuItems = mobileMenuWrap?.querySelectorAll('li');
+
+  function setItemsOpen(open) {
+    menuItems?.forEach(li => li.setAttribute('data-open', open ? 'true' : 'false'));
+  }
+
+  function openMobileMenu(open) {
+    if (!exploreBtn || !mobileMenuWrap || !mobileMenuPanel) return;
+
+    exploreBtn.setAttribute('aria-expanded', String(open));
+
+    if (open) {
+      mobileMenuWrap.hidden = false;
+      // ENTER (M3 expressive): overshooty, longer duration
+      mobileMenuPanel.style.transitionTimingFunction = 'cubic-bezier(0.2, 1.2, 0.35, 1)';
+      mobileMenuPanel.style.transitionDuration = '420ms';
+      requestAnimationFrame(() => {
+        mobileMenuPanel.classList.remove('opacity-0', '-translate-y-4', 'scale-[0.97]');
+        mobileMenuPanel.classList.add('opacity-100', 'translate-y-0', 'scale-100');
+        setItemsOpen(true);
+      });
+    } else {
+      // EXIT: snappier, no overshoot
+      mobileMenuPanel.style.transitionTimingFunction = 'cubic-bezier(0.3, 0, 0.8, 0.15)';
+      mobileMenuPanel.style.transitionDuration = '280ms';
+      mobileMenuPanel.classList.add('opacity-0', '-translate-y-4', 'scale-[0.97]');
+      mobileMenuPanel.classList.remove('opacity-100', 'translate-y-0', 'scale-100');
+      setItemsOpen(false);
+      mobileMenuPanel.addEventListener('transitionend', () => (mobileMenuWrap.hidden = true), { once: true });
     }
   }
 
-  // Compact the chip based on actual available space, not only viewport width
-  const makerChip = toggle;
-  let rafId = 0;
-  function measureAndToggle() {
-    if (!navInner || !makerChip) return;
-    // Show full label for accurate measurement
-    makerChip.classList.remove('compact');
-    // Use a small threshold to avoid subpixel false positives
-    const overflow = Math.ceil(navInner.scrollWidth - navInner.clientWidth);
-    const needsCompact = overflow > 12; // require a meaningful overflow
-    makerChip.classList.toggle('compact', needsCompact);
-  }
-  function scheduleMeasure() {
-    if (rafId) cancelAnimationFrame(rafId);
-    rafId = requestAnimationFrame(measureAndToggle);
-  }
-  // Initial pass
-  scheduleMeasure();
-  // On container resize
-  let ro;
-  if ('ResizeObserver' in window && navInner) {
-    ro = new ResizeObserver(scheduleMeasure);
-    ro.observe(navInner);
-  } else {
-    window.addEventListener('resize', scheduleMeasure);
-  }
-  // After fonts are ready (icon/text width may change)
-  if (document.fonts && document.fonts.ready) {
-    document.fonts.ready.then(scheduleMeasure).catch(() => {});
-  }
+  // Mobile menu event listeners
+  exploreBtn?.addEventListener('click', () => {
+    const isOpen = exploreBtn.getAttribute('aria-expanded') === 'true';
+    openMobileMenu(!isOpen);
+  });
+
+  // Click outside / Esc to close
+  document.addEventListener('click', (e) => {
+    if (!mobileMenuWrap?.hidden &&
+        !mobileMenuWrap.contains(e.target) &&
+        e.target !== exploreBtn &&
+        !exploreBtn?.contains(e.target)) {
+      openMobileMenu(false);
+    }
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      openMobileMenu(false);
+    }
+  });
+
+  // Close mobile menu when clicking a link
+  mobileMenuWrap?.addEventListener('click', (e) => {
+    if (e.target.tagName === 'A') {
+      openMobileMenu(false);
+    }
+  });
 </script>

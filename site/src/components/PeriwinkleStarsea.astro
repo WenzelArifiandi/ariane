@@ -9,7 +9,7 @@
     inset: 0;
     z-index: -1;       /* behind everything */
     pointer-events: none;
-    background: #9098f0; /* fallback color while GL warms up */
+    background: #F8F1F6; /* fallback color while GL warms up */
   }
   canvas {
     display: block;
@@ -22,7 +22,7 @@
   <canvas id="periwinkle-sky"></canvas>
 </div>
 
-<script type="module">
+<script type="module" is:inline>
   // Respect reduced motion
   const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 

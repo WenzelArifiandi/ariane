@@ -1,6 +1,6 @@
 /* Light theme */
 :root[data-theme="light"]{
-  --md-sys-color-primary: #7150D9;
+  --md-sys-color-primary: #3602B5;
   --md-sys-color-on-primary: #fff;
   --md-sys-color-surface: var(--page);
   --md-sys-color-on-surface: var(--ink);
@@ -15,7 +15,7 @@
 
 /* Dark theme */
 :root[data-theme="dark"]{
-  --md-sys-color-primary: color-mix(in oklab, #7150D9, white 10%);
+  --md-sys-color-primary: color-mix(in oklab, #3602B5, white 10%);
   --md-sys-color-on-primary: #111;
   --md-sys-color-surface: #0f0f12;
   --md-sys-color-on-surface: #e8e8ee;

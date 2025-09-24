@@ -6,7 +6,6 @@ import Project from '../components/storyblok/Project.astro'
 import Base from '../layouts/Base.astro'
 import Nav from '../components/Nav.astro'
 import Footer from '../components/Footer.astro'
-import LiquidGlassHybridIsland from '../components/LiquidGlassHybridIsland.jsx'
 
 const page = {
   title: 'Home - Wenzel Arifiandi',
@@ -57,14 +56,6 @@ try {
     </section>
   )}
 
-  <!-- Keep the liquid glass component -->
-  <LiquidGlassHybridIsland client:load
-    blur={30}
-    saturation={1.8}
-    thickness={0.6}
-    specularIntensity={0.22}
-    radiusPx={28}
-    target="body" />
 
   <Footer />
 </Base>

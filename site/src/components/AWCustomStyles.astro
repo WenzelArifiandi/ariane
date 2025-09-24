@@ -1,20 +1,20 @@
 ---
-import '@fontsource-variable/inter';
+// Switched to Tailwind's default font stack - no more Inter Variable
 ---
 
 <style is:inline>
   :root {
-    --aw-font-sans: 'Inter Variable';
-    --aw-font-serif: 'Inter Variable';
-    --aw-font-heading: 'Inter Variable';
+    --aw-font-sans: ui-sans-serif, system-ui, sans-serif;
+    --aw-font-serif: ui-serif, Georgia, Cambria, serif;
+    --aw-font-heading: ui-sans-serif, system-ui, sans-serif;
 
     --aw-color-primary: rgb(1 97 239);
     --aw-color-secondary: rgb(1 84 207);
     --aw-color-accent: rgb(109 40 217);
 
-    --aw-color-text-heading: rgb(0 0 0);
-    --aw-color-text-default: rgb(16 16 16);
-    --aw-color-text-muted: rgb(16 16 16 / 66%);
+    --aw-color-text-heading: var(--ariane-heading-text);
+    --aw-color-text-default: var(--ariane-body-text);
+    --aw-color-text-muted: var(--ariane-subtext);
     --aw-color-bg-page: rgb(255 255 255);
 
     --aw-color-bg-page-dark: rgb(3 6 32);
@@ -25,9 +25,9 @@ import '@fontsource-variable/inter';
   }
 
   .dark {
-    --aw-font-sans: 'Inter Variable';
-    --aw-font-serif: 'Inter Variable';
-    --aw-font-heading: 'Inter Variable';
+    --aw-font-sans: ui-sans-serif, system-ui, sans-serif;
+    --aw-font-serif: ui-serif, Georgia, Cambria, serif;
+    --aw-font-heading: ui-sans-serif, system-ui, sans-serif;
 
     --aw-color-primary: rgb(1 97 239);
     --aw-color-secondary: rgb(1 84 207);
@@ -54,7 +54,7 @@ import '@fontsource-variable/inter';
   .container { max-width: 1100px; margin-inline: auto; padding-inline: var(--pad-x); }
   .container-xl { max-width: 1200px; margin-inline: auto; padding-inline: var(--pad-x); }
   .wrap, .page-wrap { max-width: 1100px; margin-left: auto; margin-right: auto; padding-left: var(--pad-x); padding-right: var(--pad-x); }
-  .align-hero { padding-left: var(--pad-x); }
+  .align-hero { }
 
   /* Pill buttons/chips parity */
   .btn { display:inline-flex; align-items:center; gap:.5rem; padding:.7rem 1rem; border-radius:999px; border:0; text-decoration:none; -webkit-appearance:none; appearance:none; }

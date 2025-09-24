@@ -1,10 +1,8 @@
 ---
-title: Cloudflare Access with GitHub (OIDC)
+title: "Cloudflare Access with GitHub (OIDC)"
 description: "# Cloudflare Access with GitHub (OIDC)"
-slug: "cloudflare-access-github"
+slug: cloudflare-access-github
 ---
-
-
 
 # Cloudflare Access with GitHub (OIDC)
 
@@ -83,7 +81,7 @@ Visit `https://tunnel.wenzelarifiandi.com`. You should see the Cloudflare Access
 
 ## Security notes
 
-- Prefer hardware security keys/passkeys. Cloudflare Access enforces this at the edge; your app still uses passkeys internally for app accounts.
+- Enforce hardware security keys via Cloudflare Access policies; application authentication now relies on Access + ZITADEL upstream.
 - Keep One‑time PIN disabled except for a break‑glass rule.
 - You can later switch or add IdPs (Azure AD/Okta) without changing this repo—only Access settings.
 

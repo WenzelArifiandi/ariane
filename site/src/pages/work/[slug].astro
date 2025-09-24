@@ -34,14 +34,21 @@ try {
             dlg.className = 'lb-backdrop';
             dlg.innerHTML = `<div class="lb-frame"><img id="lb-img" class="lb-img" alt="" /><button class="lb-btn lb-close" aria-label="Close">✕</button></div>`;
             document.body.appendChild(dlg);
-            const imgEl = dlg.querySelector('#lb-img');
-            function openLightbox(src, alt) {
-              imgEl.src = src; imgEl.alt = alt || '';
+            const imgEl = dlg.querySelector('#lb-img') as HTMLImageElement;
+            function openLightbox(src: string, alt: string) {
+              if (imgEl) {
+                imgEl.src = src;
+                imgEl.alt = alt || '';
+              }
               if (!dlg.open) dlg.showModal();
             }
             document.addEventListener('click', (e) => {
-              const a = e.target?.closest?.('[data-lightbox]');
-              if (a) { e.preventDefault(); openLightbox(a.getAttribute('href'), a.getAttribute('data-alt') || ''); }
+              const target = e.target as Element;
+              const a = target?.closest?.('[data-lightbox]') as HTMLAnchorElement;
+              if (a) {
+                e.preventDefault();
+                openLightbox(a.getAttribute('href') || '', a.getAttribute('data-alt') || '');
+              }
             });
             dlg.addEventListener('click', (e) => { if (e.target === dlg) dlg.close(); });
             dlg.querySelector('.lb-close')?.addEventListener('click', (e) => { e.stopPropagation(); dlg.close(); });

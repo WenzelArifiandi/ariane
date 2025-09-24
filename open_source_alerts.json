@@ -1,7 +1,0 @@
-{
-  "number": 22,
-  "rule": "js/file-system-race",
-  "severity": "warning",
-  "path": "site/src/lib/auth/store.ts",
-  "line": 25
-}

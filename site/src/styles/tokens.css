@@ -39,37 +39,6 @@
     }
   }
 
-  /* Apple-style Liquid Glass container */
-  .liquid-glass {
-    position: relative;
-    border-radius: var(--radius-xl);
-    background: linear-gradient(180deg,
-        color-mix(in oklab, var(--brand-surface), white 6%) 0%,
-        color-mix(in oklab, var(--brand-surface), black 4%) 100%);
-    border: 1px solid color-mix(in oklab, var(--brand-ink), transparent 90%);
-    backdrop-filter: saturate(140%) blur(22px);
-    -webkit-backdrop-filter: saturate(140%) blur(22px);
-    box-shadow: var(--shadow-3);
-    overflow: hidden;
-  }
-
-  .liquid-glass::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background: radial-gradient(120% 60% at 20% 0%, rgba(255, 255, 255, .30), rgba(255, 255, 255, 0) 60%);
-    mix-blend-mode: soft-light;
-    pointer-events: none;
-  }
-
-  .liquid-glass::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background-image: url('/noise.svg');
-    opacity: .06;
-    pointer-events: none;
-  }
 
   /* Access card layout helpers (shared) */
   .access-card {
