@@ -17,7 +17,7 @@ export default defineConfig({
       const CF_TUNNEL_HOST = import.meta.env.CF_TUNNEL_HOST;
       const useTunnel = Boolean(CF_TUNNEL_HOST);
       return {
-        host: "127.0.0.1",
+        host: "localhost",
         port: 4321,
         strictPort: true,
         // Allow all hosts in dev so Cloudflare Tunnel can forward requests with your domain.
@@ -36,7 +36,7 @@ export default defineConfig({
     })(),
   },
   server: {
-    host: "127.0.0.1",
+    host: "localhost",
     port: 4321,
   },
   integrations: [

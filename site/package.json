@@ -11,7 +11,7 @@
     "wasm:rebuild:signer": "npm run wasm:clean:signer && npm run wasm:build:signer",
     "dev:kill": "bash -lc 'pkill -f \"astro dev\" || true; lsof -t -i:4321 | xargs kill -9 2>/dev/null || true'",
     "predev": "npm run dev:kill",
-    "dev": "astro dev --host 127.0.0.1 --port 4321",
+    "dev": "astro dev --port 4321",
     "predev:cf": "npm run dev:kill",
     "dev:cf": "CF_TUNNEL_HOST=tunnel.wenzelarifiandi.com astro dev --host 127.0.0.1 --port 4321",
     "dev:lan": "astro dev --host 0.0.0.0 --port 4321",
