@@ -4,6 +4,10 @@ import typographyPlugin from '@tailwindcss/typography';
 
 export default {
   content: ['./src/**/*.{astro,html,js,jsx,json,md,mdx,svelte,ts,tsx,vue}'],
+  safelist: [
+    'opacity-100', 'translate-y-0', 'scale-100',
+    'opacity-0',   '-translate-y-4', 'scale-[0.97]',
+  ],
   theme: {
     screens: {
       'xs': '475px',
@@ -69,10 +73,10 @@ export default {
         'nav-brand-md': ['18px', { lineHeight: '1.1', letterSpacing: '-0.01em', fontWeight: '600' }],
         'nav-brand-lg': ['19px', { lineHeight: '1.1', letterSpacing: '-0.01em', fontWeight: '600' }],
         'nav-brand-xl': ['20px', { lineHeight: '1.1', letterSpacing: '-0.01em', fontWeight: '600' }],
-        'nav-link': ['16px', { lineHeight: '1.1', letterSpacing: '-0.005em', fontWeight: '500' }],
-        'nav-link-md': ['17px', { lineHeight: '1.1', letterSpacing: '-0.005em', fontWeight: '500' }],
-        'nav-link-lg': ['18px', { lineHeight: '1.1', letterSpacing: '-0.005em', fontWeight: '500' }],
-        'nav-link-xl': ['19px', { lineHeight: '1.1', letterSpacing: '-0.005em', fontWeight: '500' }],
+        'nav-link': ['17px', { lineHeight: '1.1', letterSpacing: '-0.005em', fontWeight: '500' }],
+        'nav-link-md': ['18px', { lineHeight: '1.1', letterSpacing: '-0.005em', fontWeight: '500' }],
+        'nav-link-lg': ['19px', { lineHeight: '1.1', letterSpacing: '-0.005em', fontWeight: '500' }],
+        'nav-link-xl': ['20px', { lineHeight: '1.1', letterSpacing: '-0.005em', fontWeight: '500' }],
       },
       maxWidth: {
         'container': '1100px',

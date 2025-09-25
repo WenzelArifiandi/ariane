@@ -1,0 +1,83 @@
+- hosts: pg
+  become: true
+  vars:
+    pg_ver: 16
+    db_name: zitadel
+    db_user: zitadel
+    db_pass: "CHANGE_ME"   # set later to something strong
+  tasks:
+    - name: Add PGDG apt key
+      apt_key:
+        url: https://www.postgresql.org/media/keys/ACCC4CF8.asc
+        state: present
+
+    - name: Add PGDG apt source
+      copy:
+        dest: /etc/apt/sources.list.d/pgdg.list
+        content: "deb http://apt.postgresql.org/pub/repos/apt noble-pgdg main\n"
+
+    - name: Install Postgres {{ pg_ver }} & helpers
+      apt:
+        update_cache: yes
+        name:
+          - "postgresql-{{ pg_ver }}"
+          - "postgresql-client-{{ pg_ver }}"
+          - qemu-guest-agent
+          - ufw
+        state: present
+
+    - name: Ensure guest agent running
+      systemd:
+        name: qemu-guest-agent
+        enabled: true
+        state: started
+
+    - name: Basic Postgres tuning
+      lineinfile:
+        path: "/etc/postgresql/{{ pg_ver }}/main/postgresql.conf"
+        regexp: "^{{ item.key }}\\s*=.*"
+        line: "{{ item.key }} = {{ item.val }}"
+      loop:
+        - { key: "shared_buffers",       val: "4GB" }
+        - { key: "effective_cache_size", val: "12GB" }
+        - { key: "work_mem",             val: "64MB" }
+        - { key: "wal_level",            val: "replica" }
+        - { key: "max_wal_size",         val: "4GB" }
+        - { key: "checkpoint_timeout",   val: "15min" }
+
+    - name: Allow LAN connections (adjust CIDR if you want tighter)
+      lineinfile:
+        path: "/etc/postgresql/{{ pg_ver }}/main/pg_hba.conf"
+        insertafter: EOF
+        line: "host    all    all    10.10.10.0/24    scram-sha-256"
+
+    - name: Restart Postgres
+      systemd:
+        name: postgresql
+        state: restarted
+
+    - name: Create DB user
+      become_user: postgres
+      community.postgresql.postgresql_user:
+        name: "{{ db_user }}"
+        password: "{{ db_pass }}"
+        role_attr_flags: "LOGIN"
+
+    - name: Create DB
+      become_user: postgres
+      community.postgresql.postgresql_db:
+        name: "{{ db_name }}"
+        owner: "{{ db_user }}"
+
+    - name: UFW allow Postgres from vm subnet
+      ufw:
+        rule: allow
+        port: "5432"
+        proto: tcp
+        src: "10.10.10.0/24"
+
+    - name: Enable firewall
+      ufw:
+        state: enabled
+        policy: deny
+        logging: 'on'
