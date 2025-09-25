@@ -1,36 +1,51 @@
-provider "proxmox" {
-  pm_api_url          = "https://127.0.0.1:8006/api2/json"
-  pm_api_token_id     = var.token_id
-  pm_api_token_secret = var.token_secret
-  pm_tls_insecure     = true
-}
+resource "proxmox_virtual_environment_vm" "pbs" {
+  node_name = "neve"
+  vm_id     = 1201
+  name      = "pbs"
 
-resource "proxmox_vm_qemu" "pbs" {
-  name        = "pbs-01"
-  target_node = "neve"
-  vmid        = 1201
+  # match current power state
+  started = true
 
-  clone       = "debian12-cloud"
-  full_clone  = true
+  # match scsi controller seen in state
+  scsi_hardware = "virtio-scsi-pci"
 
-  cores  = 2
-  memory = 4096
-  scsihw = "virtio-scsi-pci"
-
-  disk {
-    slot    = 0
-    size    = "100G"
-    type    = "scsi"
-    storage = "vmdata"
+  agent {
+    enabled = true
   }
 
-  network {
-    model  = "virtio"
+  cpu {
+    cores = 2
+  }
+
+  memory {
+    dedicated = 2048
+  }
+
+  network_device {
     bridge = "vmbr0"
+    model  = "virtio"
   }
 
-  agent     = 1
-  ciuser    = "debian"
-  sshkeys   = var.ssh_key
-  ipconfig0 = "dhcp"
+  # this matches the 3 GiB raw scsi0 disk the template has
+  disk {
+    datastore_id = "vmdata"
+    interface    = "scsi0"
+    size         = 3
+    file_format  = "raw"
+  }
+
+  # cloud-init drive exists as ide2 on vmdata (no user-data yet)
+  initialization {
+    datastore_id = "vmdata"
+    interface    = "ide2"
+  }
+
+  serial_device {
+    device = "socket"
+  }
+
+  vga {
+    type   = "serial0"
+    memory = 16
+  }
 }
