@@ -1,0 +1,89 @@
+- hosts: localhost
+  connection: local
+  gather_facts: yes
+  vars:
+    data_disk: /dev/sdb
+    data_part: /dev/sdb1
+    mount_point: /store
+
+  tasks:
+    - name: Show disks
+      command: lsblk -o NAME,SIZE,TYPE,MOUNTPOINT
+      register: lsblk_out
+      changed_when: false
+    - debug: var=lsblk_out.stdout_lines
+
+    - name: Check if data disk exists
+      stat:
+        path: "{{ data_disk }}"
+      register: disk_stat
+
+    - name: Create GPT and partition when disk exists
+      community.general.parted:
+        device: "{{ data_disk }}"
+        label: gpt
+        number: 1
+        state: present
+        part_start: 1MiB
+        part_end: 100%
+      when: disk_stat.stat.exists
+
+    - name: Make ext4 on data partition when disk exists
+      filesystem:
+        fstype: ext4
+        dev: "{{ data_part }}"
+      when: disk_stat.stat.exists
+
+    - name: Ensure mount point
+      file:
+        path: "{{ mount_point }}"
+        state: directory
+        mode: '0755'
+
+    - name: Mount data partition and persist when disk exists
+      ansible.posix.mount:
+        path: "{{ mount_point }}"
+        src: "{{ data_part }}"
+        fstype: ext4
+        opts: defaults,nofail
+        state: mounted
+      when: disk_stat.stat.exists
+
+    - name: Add PBS repo
+      copy:
+        dest: /etc/apt/sources.list.d/pbs.list
+        mode: '0644'
+        content: |
+          deb http://download.proxmox.com/debian/pbs bookworm pbs-no-subscription
+
+    - name: Add Proxmox apt key
+      get_url:
+        url: http://download.proxmox.com/debian/proxmox-release-bookworm.gpg
+        dest: /etc/apt/trusted.gpg.d/proxmox.gpg
+        mode: '0644'
+
+    - name: Install PBS
+      apt:
+        update_cache: yes
+        name:
+          - proxmox-backup-server
+          - proxmox-backup-client
+        state: present
+
+    - name: Enable and start PBS proxy
+      systemd:
+        name: proxmox-backup-proxy
+        enabled: yes
+        state: started
+
+    - name: Create datastore "pbs" on mount point
+      command: proxmox-backup-manager datastore create pbs {{ mount_point }}
+      register: ds
+      failed_when: ds.rc not in [0,255]
+      changed_when: "'already exists' not in (ds.stdout|default('')) and 'already exists' not in (ds.stderr|default(''))"
+
+    - name: Show datastore list
+      command: proxmox-backup-manager datastore list
+      register: ds_list
+      changed_when: false
+    - debug: var=ds_list.stdout_lines
