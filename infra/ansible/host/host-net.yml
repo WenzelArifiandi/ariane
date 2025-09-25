@@ -1,0 +1,69 @@
+- hosts: proxmox
+  gather_facts: false
+  become: true
+
+  pre_tasks:
+    - name: Ensure jq is installed (used by storage-assert)
+      ansible.builtin.apt:
+        name: jq
+        state: present
+        update_cache: yes
+
+    - name: Assert storage layout matches repo blueprint (fails fast)
+      ansible.builtin.script: "{{ playbook_dir }}/../../scripts/storage-assert.sh"
+      environment:
+        LAYOUT_JSON: "{{ playbook_dir }}/../../docs/storage-layout.json"
+      register: storage_assert
+      changed_when: false
+
+    - name: Stop if storage layout mismatch
+      ansible.builtin.assert:
+        that:
+          - storage_assert.rc == 0
+        fail_msg: "Storage layout mismatch. Check infra/docs/storage-layout.json before proceeding."
+
+  tasks:
+    - name: Ensure vmbr1 exists in /etc/network/interfaces
+      ansible.builtin.blockinfile:
+        path: /etc/network/interfaces
+        marker: "# {mark} ANSIBLE vmbr1"
+        block: |
+          auto vmbr1
+          iface vmbr1 inet static
+              address 10.10.10.1/24
+              bridge-ports none
+              bridge-stp off
+              bridge-fd 0
+
+    - name: Bring up vmbr1 (idempotent)
+      ansible.builtin.command: ifup vmbr1
+      register: ifup_vmbr1
+      failed_when: false
+      changed_when: "'already configured' not in ifup_vmbr1.stderr"
+
+    - name: Enable IPv4 forwarding persistently
+      ansible.builtin.copy:
+        dest: /etc/sysctl.d/99-ipforward.conf
+        content: "net.ipv4.ip_forward=1\n"
+        mode: "0644"
+
+    - name: Apply sysctl
+      ansible.builtin.command: sysctl -p /etc/sysctl.d/99-ipforward.conf
+
+    - name: Ensure nft nat table/chain exist
+      ansible.builtin.shell: |
+        nft list tables | grep -q '^table ip nat$' || nft add table ip nat
+        nft list chains ip nat | grep -q '^chain postrouting$' || nft 'add chain ip nat postrouting { type nat hook postrouting priority 100; }'
+      args: { executable: /bin/bash }
+
+    - name: Ensure masquerade rule for 10.10.10.0/24 out vmbr0
+      ansible.builtin.shell: |
+        nft list ruleset | grep -q 'oif "vmbr0".*10.10.10.0/24.*masquerade' || \
+        nft add rule ip nat postrouting oif "vmbr0" ip saddr 10.10.10.0/24 counter masquerade
+      args: { executable: /bin/bash }
+
+    - name: Ensure forward chain exists and accepts traffic (simple)
+      ansible.builtin.shell: |
+        nft list tables | grep -q '^table inet filter$' || nft add table inet filter
+        nft list chains inet filter | grep -q '^chain forward$' || nft 'add chain inet filter forward { type filter hook forward priority 0; policy accept; }'
+      args: { executable: /bin/bash }

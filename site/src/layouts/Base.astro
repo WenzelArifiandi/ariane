@@ -56,9 +56,9 @@ const pageUrl = pathname ? new URL(pathname, siteUrl).toString() : siteUrl
     <link rel="icon" href="/favicon.svg" />
     <link rel="preload" as="image" href="/favicon.svg" imagesrcset="/favicon.svg" />
     <!-- Preload Google Sans fonts for better LCP -->
-    <link rel="preload" as="font" type="font/truetype" href="/fonts/google-sans-regular.ttf" crossorigin />
-    <link rel="preload" as="font" type="font/truetype" href="/fonts/google-sans-medium.ttf" crossorigin />
-    <link rel="preload" as="font" type="font/truetype" href="/fonts/google-sans-bold.ttf" crossorigin />
+    <link rel="preload" as="font" type="font/woff2" href="/fonts/google-sans-regular.woff2" crossorigin />
+    <link rel="preload" as="font" type="font/woff2" href="/fonts/google-sans-medium.woff2" crossorigin />
+    <link rel="preload" as="font" type="font/woff2" href="/fonts/google-sans-bold.woff2" crossorigin />
   <!-- Material Symbols: prefer local font when PUBLIC_USE_LOCAL_ICONS=true; otherwise load from Google Fonts -->
   {((import.meta as any).env?.PUBLIC_USE_LOCAL_ICONS || process.env.PUBLIC_USE_LOCAL_ICONS) ? (
     <>
@@ -81,9 +81,20 @@ const pageUrl = pathname ? new URL(pathname, siteUrl).toString() : siteUrl
     <style>
       *,*::before,*::after{ box-sizing: border-box; }
       html { scroll-behavior: smooth; }
-  /* Hide icon glyph text until the font is ready to avoid placeholder text flash */
-  .material-symbols-rounded { visibility: hidden; }
-  html[data-icons-loaded="true"] .material-symbols-rounded { visibility: visible; }
+
+      /* Critical FOIT prevention - hide body until Google Sans loads */
+      body {
+        font-family: ui-sans-serif, system-ui, sans-serif;
+        visibility: hidden;
+      }
+      html[data-fonts-loaded="true"] body {
+        font-family: 'Google Sans', ui-sans-serif, system-ui, sans-serif;
+        visibility: visible;
+      }
+
+      /* Hide icon glyph text until the font is ready to avoid placeholder text flash */
+      .material-symbols-rounded { visibility: hidden; }
+      html[data-icons-loaded="true"] .material-symbols-rounded { visibility: visible; }
     </style>
     <AWCustomStyles />
   </head>
@@ -91,6 +102,36 @@ const pageUrl = pathname ? new URL(pathname, siteUrl).toString() : siteUrl
     <slot />
     {import.meta.env.PROD && <Analytics />}
     {import.meta.env.PROD && <SpeedInsights />}
+
+    <!-- Font loading detection script -->
+    <script is:inline>
+      // Show body once Google Sans is loaded to prevent FOIT
+      try {
+        const setFontsReady = () => {
+          document.documentElement.setAttribute('data-fonts-loaded', 'true');
+        };
+
+        if (document.fonts && typeof document.fonts.ready?.then === 'function') {
+          // Use Font Loading API if available
+          document.fonts.load('1rem "Google Sans"').then(() => {
+            if (document.fonts.status === 'loaded') {
+              setFontsReady();
+            } else {
+              document.fonts.ready.then(setFontsReady).catch(setFontsReady);
+            }
+          }).catch(() => {
+            // Fallback: show after timeout to avoid indefinite hiding
+            setTimeout(setFontsReady, 3000);
+          });
+        } else {
+          // Fallback for browsers without Font Loading API
+          setTimeout(setFontsReady, 100);
+        }
+      } catch (error) {
+        // Emergency fallback
+        document.documentElement.setAttribute('data-fonts-loaded', 'true');
+      }
+    </script>
     
     {(!((import.meta as any).env?.PUBLIC_USE_LOCAL_ICONS || process.env.PUBLIC_USE_LOCAL_ICONS)) && (
       <script is:inline>

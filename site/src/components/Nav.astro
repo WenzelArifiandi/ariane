@@ -4,19 +4,20 @@ const links = [
   { href: '#playground', label: 'Playground' },
   { href: '#field-notes', label: 'Field Notes' },
   { href: '#contact', label: 'Contact' },
+  { href: import.meta.env.DEV ? 'http://localhost:4322/' : 'https://constellation.wenzelarifiandi.com', label: 'Constellation' },
 ];
 const studioHref = import.meta.env.DEV ? 'http://localhost:3333/' : 'https://studio.wenzelarifiandi.com';
 ---
 
 <nav class="sticky top-3 z-50 mx-auto my-3 px-3 sm:px-7">
   <div class="max-w-container mx-auto">
-    <div class="nav-inner flex items-center justify-between gap-nav md:gap-nav-md px-pad-x py-3 relative overflow-hidden isolate">
+    <div class="glass-liquid flex items-center justify-between gap-nav md:gap-nav-md px-pad-x py-3 relative overflow-visible">
 
       <!-- Brand -->
-      <a href="/" class="brand relative z-10 text-nav-brand-sm md:text-nav-brand-md lg:text-nav-brand-lg xl:text-nav-brand-xl">Wenzel Arifiandi</a>
+      <a href="/" class="brand relative z-10 font-semibold text-[20px] leading-[23px]">Wenzel Arifiandi</a>
 
       <!-- Desktop links -->
-      <ul class="hidden lg:flex items-center gap-nav lg:gap-nav-md text-nav-link md:text-nav-link-md lg:text-nav-link-lg xl:text-nav-link-xl list-none m-0 p-0 relative z-10">
+      <ul class="hidden lg:flex items-center gap-nav lg:gap-nav-md font-medium text-[18px] leading-[21px] list-none m-0 p-0 relative z-10">
         {links.map(l => (
           <li class="whitespace-nowrap">
             <a class="nav-link" href={l.href}>{l.label}</a>
@@ -32,7 +33,8 @@ const studioHref = import.meta.env.DEV ? 'http://localhost:3333/' : 'https://stu
         <!-- Explore button (mobile only, to the left of Maker) -->
         <button
           id="explore-toggle"
-          class="lg:hidden chip-m3 inline-flex items-center gap-1.5 px-2.5 py-2 text-sm font-medium
+          class="lg:hidden chip-m3 inline-flex items-center gap-1.5 px-3 py-1.5
+                 text-[18px] leading-[21px] font-medium
                  transition-[transform,box-shadow] duration-200 ease-[cubic-bezier(0.2,0,0,1)]
                  active:scale-[0.98] active:shadow-sm"
           aria-controls="mobile-menu"
@@ -42,12 +44,11 @@ const studioHref = import.meta.env.DEV ? 'http://localhost:3333/' : 'https://stu
         >
           <!-- M3 compass icon -->
           <span class="material-symbols-rounded text-white" style="font-size: 16px;">explore</span>
-          <span class="hidden xs:inline">Explore</span>
-          <span class="xs:hidden">Menu</span>
+          <span>Explore</span>
         </button>
 
         <!-- Maker button (always visible at all screen sizes) -->
-        <button id="creator-toggle" class="chip-m3 inline-flex items-center gap-2 px-3 md:px-4 py-2 text-sm md:text-base font-medium"
+        <button id="creator-toggle" class="chip-m3 inline-flex items-center gap-2 px-3 py-1.5 font-medium text-[18px] leading-[21px]"
                 aria-haspopup="true" aria-expanded="false" aria-controls="creator-sheet" title="Maker">
           <!-- M3 sparkle icon -->
           <span class="material-symbols-rounded text-white" style="font-size: 18px;">auto_awesome</span>
@@ -95,6 +96,12 @@ const studioHref = import.meta.env.DEV ? 'http://localhost:3333/' : 'https://stu
                 <span>Contact</span>
               </a>
             </li>
+            <li class="transition-opacity duration-300 delay-175 opacity-0 data-[open=true]:opacity-100">
+              <a class="mobile-menu-item" role="menuitem" href={import.meta.env.DEV ? 'http://localhost:4322/' : 'https://constellation.wenzelarifiandi.com'}>
+                <span class="material-symbols-rounded">stars</span>
+                <span>Constellation</span>
+              </a>
+            </li>
             <li class="transition-opacity duration-300 delay-200 opacity-0 data-[open=true]:opacity-100">
               <a class="mobile-menu-item" role="menuitem" href={studioHref}>
                 <span class="material-symbols-rounded">palette</span>
@@ -117,51 +124,7 @@ const studioHref = import.meta.env.DEV ? 'http://localhost:3333/' : 'https://stu
 
 
 <style>
-  /* Apple liquid glass navbar with M3 expressive design */
-
-  .nav-inner {
-    border-radius: var(--ariane-glass-radius, 20px);
-    background: var(--ariane-glass-tint, rgba(255,255,255,0.1));
-    -webkit-backdrop-filter: blur(var(--ariane-glass-blur, 20px));
-    backdrop-filter: blur(var(--ariane-glass-blur, 20px));
-    border: 1px solid rgba(255,255,255,.30);
-    box-shadow:
-      0 1px 0 0 var(--ariane-glass-edge-bright, rgba(255,255,255,.2)) inset,
-      0 -1px 0 0 var(--ariane-glass-edge-dim, rgba(120,120,160,.15)) inset,
-      0 10px 26px var(--ariane-glass-shadow-soft, rgba(0,0,0,.1));
-  }
-
-  /* Liquid glass overlay effects */
-  .nav-inner::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
-    background:
-      radial-gradient(120% 60% at 0% 0%, rgba(255,255,255,.25) 0%, transparent 55%),
-      linear-gradient(180deg, rgba(255,255,255,.18) 0%, transparent 45%),
-      linear-gradient(90deg, rgba(255,255,255,.12), transparent 35%, transparent 65%, rgba(255,255,255,.10));
-    mix-blend-mode: screen;
-    border-radius: inherit;
-  }
-
-  .nav-inner::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    border-radius: inherit;
-    box-shadow: 0 0 0 1px rgba(170,180,255,.35) inset;
-    pointer-events: none;
-  }
-
-  /* Scrolled state enhancement */
-  .scrolled .nav-inner {
-    background: var(--ariane-glass-tint-scrolled, rgba(255,255,255,0.15));
-    box-shadow:
-      0 1px 0 0 rgba(255,255,255,.16) inset,
-      0 -1px 0 0 rgba(120,120,160,.20) inset,
-      0 14px 30px var(--ariane-glass-shadow-soft, rgba(0,0,0,.15));
-  }
+  /* Apple liquid glass navbar with M3 expressive design - now using .glass-liquid from global.css */
 
   /* M3 expressive chip with proper styling */
   .chip-m3 {
@@ -189,7 +152,6 @@ const studioHref = import.meta.env.DEV ? 'http://localhost:3333/' : 'https://stu
 
   /* Brand styling */
   .brand {
-    font-weight: 600;
     letter-spacing: .2px;
     color: var(--ariane-text-ink, var(--ink));
     text-decoration: none !important;
@@ -207,11 +169,11 @@ const studioHref = import.meta.env.DEV ? 'http://localhost:3333/' : 'https://stu
     text-decoration: none !important;
     font-weight: 600;
     white-space: nowrap;
-    padding: 8px 10px;
+    padding: 4px 8px;
     border-radius: 10px;
     transition: background 0.2s ease, color 0.2s ease;
-    font-size: var(--body, 1rem);
-    line-height: 1.2;
+    font-size: inherit;
+    line-height: 1.15;
   }
 
   .nav-link:hover,
@@ -282,7 +244,6 @@ const studioHref = import.meta.env.DEV ? 'http://localhost:3333/' : 'https://stu
 
 <script type="module" is:inline>
   const qs = (s) => document.querySelector(s);
-  const navInner = qs('.nav-inner');
 
   // Darkens the glass as you scroll down
   const onScroll = () => {
@@ -311,8 +272,15 @@ const studioHref = import.meta.env.DEV ? 'http://localhost:3333/' : 'https://stu
   const mobileMenuPanel = mobileMenuWrap?.querySelector('[data-anim]');
   const menuItems = mobileMenuWrap?.querySelectorAll('li');
 
+  // ensure menu items get their data-open on first open
+  let itemsPrimed = false;
   function setItemsOpen(open) {
-    menuItems?.forEach(li => li.setAttribute('data-open', open ? 'true' : 'false'));
+    if (!menuItems) return;
+    if (!itemsPrimed) {
+      menuItems.forEach(li => li.setAttribute('data-open', 'false'));
+      itemsPrimed = true;
+    }
+    menuItems.forEach(li => li.setAttribute('data-open', open ? 'true' : 'false'));
   }
 
   function openMobileMenu(open) {
@@ -369,4 +337,9 @@ const studioHref = import.meta.env.DEV ? 'http://localhost:3333/' : 'https://stu
       openMobileMenu(false);
     }
   });
+
+  // Close mobile menu on resize to avoid stuck state
+  addEventListener('resize', () => {
+    if (window.innerWidth >= 1024) openMobileMenu(false);
+  }, { passive: true });
 </script>
