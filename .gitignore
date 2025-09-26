@@ -34,3 +34,7 @@ infrastructure/terraform/.terraform.lock.hcl
 
 # Logs
 *.log
+
+
+#Ignore vscode AI rules
+.github/instructions/codacy.instructions.md

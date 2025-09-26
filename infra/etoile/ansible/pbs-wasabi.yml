@@ -1,0 +1,33 @@
+- hosts: localhost
+  connection: local
+  become: true
+  tasks:
+    - name: Ensure PBS datastore exists
+      command: proxmox-backup-manager datastore create pbsdata /var/lib/proxmox-backup/datastore/pbsdata
+      register: dsout
+      failed_when: false
+    - name: Restart PBS
+      systemd:
+        name: proxmox-backup
+        state: restarted
+    - name: Install deps
+      apt:
+        name: [rclone, jq]
+        update_cache: true
+        state: present
+    - name: Write rclone.conf for Wasabi
+      copy:
+        dest: /root/.config/rclone/rclone.conf
+        mode: '0600'
+        content: |
+          [wasabi]
+          type = s3
+          provider = Wasabi
+          access_key_id = {{ lookup("env","WASABI_ACCESS_KEY") }}
+          secret_access_key = {{ lookup("env","WASABI_SECRET_KEY") }}
+          endpoint = {{ lookup("env","WASABI_ENDPOINT") | default("s3.wasabisys.com") }}
+          acl = private
+    - name: Quick list buckets (non-fatal)
+      shell: rclone lsd wasabi: || true
+  vars:
+    ansible_python_interpreter: /usr/bin/python3

@@ -1,0 +1,121 @@
+---
+- name: Setup Wasabi backend for PBS
+  hosts: pbs
+  become: yes
+  vars:
+    wasabi_access_key: "{{ lookup('env', 'WASABI_ACCESS_KEY') }}"
+    wasabi_secret_key: "{{ lookup('env', 'WASABI_SECRET_KEY') }}"
+    wasabi_bucket: "{{ lookup('env', 'WASABI_BUCKET') }}"
+    wasabi_endpoint: "{{ lookup('env', 'WASABI_ENDPOINT') | default('s3.wasabisys.com') }}"
+  tasks:
+    - name: Ensure PBS datastore dir exists
+      file:
+        path: /var/lib/proxmox-backup/datastore/pbsdata
+        state: directory
+        owner: root
+        group: root
+        mode: '0750'
+
+    - name: Create datastore if not present
+      command: proxmox-backup-manager datastore create pbsdata /var/lib/proxmox-backup/datastore/pbsdata
+      args:
+        creates: /etc/proxmox-backup/datastore.cfg
+
+    - name: Restart proxmox-backup
+      systemd:
+        name: proxmox-backup
+        state: restarted
+
+    - name: Install rclone and jq
+      apt:
+        name:
+          - rclone
+          - jq
+        state: present
+        update_cache: yes
+
+    - name: Ensure rclone config directory exists
+      file:
+        path: /root/.config/rclone
+        state: directory
+        mode: '0700'
+
+    - name: Configure rclone for Wasabi
+      copy:
+        dest: /root/.config/rclone/rclone.conf
+        owner: root
+        group: root
+        mode: '0600'
+        content: |
+          [wasabi]
+          type = s3
+          provider = Wasabi
+          access_key_id = {{ wasabi_access_key }}
+          secret_access_key = {{ wasabi_secret_key }}
+          endpoint = {{ wasabi_endpoint }}
+          acl = private
+
+    - name: Create PBS → Wasabi sync script
+      copy:
+        dest: /usr/local/bin/pbs-sync-to-wasabi.sh
+        mode: '0755'
+        owner: root
+        group: root
+        content: |
+          #!/usr/bin/env bash
+          set -euo pipefail
+          SRC="/var/lib/proxmox-backup/datastore/pbsdata"
+          DST="wasabi:${WASABI_BUCKET}/pbs/pbsdata"
+          rclone sync "$SRC" "$DST" --transfers=8 --checkers=8 --fast-list
+
+    - name: Create systemd service for sync
+      copy:
+        dest: /etc/systemd/system/pbs-sync-wasabi.service
+        mode: '0644'
+        content: |
+          [Unit]
+          Description=Sync PBS datastore to Wasabi (rclone)
+          After=network-online.target proxmox-backup.service
+          Wants=network-online.target
+
+          [Service]
+          Type=oneshot
+          Environment=WASABI_BUCKET={{ wasabi_bucket }}
+          Environment=WASABI_ACCESS_KEY={{ wasabi_access_key }}
+          Environment=WASABI_SECRET_KEY={{ wasabi_secret_key }}
+          Environment=WASABI_ENDPOINT={{ wasabi_endpoint }}
+          ExecStart=/usr/local/bin/pbs-sync-to-wasabi.sh
+
+          [Install]
+          WantedBy=multi-user.target
+
+    - name: Create systemd timer (nightly at 03:30)
+      copy:
+        dest: /etc/systemd/system/pbs-sync-wasabi.timer
+        mode: '0644'
+        content: |
+          [Unit]
+          Description=Nightly sync of PBS datastore to Wasabi
+
+          [Timer]
+          OnCalendar=*-*-* 03:30:00
+          Persistent=true
+          AccuracySec=1min
+
+          [Install]
+          WantedBy=timers.target
+
+    - name: Reload systemd and enable timer
+      systemd:
+        daemon_reload: yes
+        name: pbs-sync-wasabi.timer
+        state: started
+        enabled: yes
+
+    - name: Quick check of Wasabi buckets (non-fatal)
+      command: rclone lsd wasabi:
+      register: rclone_check
+      ignore_errors: yes
+
+    - debug:
+        var: rclone_check.stdout_lines
