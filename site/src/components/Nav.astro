@@ -1,11 +1,4 @@
 ---
-const links = [
-  { href: '#hello', label: 'Hello' },
-  { href: '#playground', label: 'Playground' },
-  { href: '#field-notes', label: 'Field Notes' },
-  { href: '#contact', label: 'Contact' },
-  { href: import.meta.env.DEV ? 'http://localhost:4322/' : 'https://constellation.wenzelarifiandi.com', label: 'Constellation' },
-];
 const studioHref = import.meta.env.DEV ? 'http://localhost:3333/' : 'https://studio.wenzelarifiandi.com';
 ---
 
@@ -16,24 +9,12 @@ const studioHref = import.meta.env.DEV ? 'http://localhost:3333/' : 'https://stu
       <!-- Brand -->
       <a href="/" class="brand relative z-10 font-semibold text-[20px] leading-[23px]">Wenzel Arifiandi</a>
 
-      <!-- Desktop links -->
-      <ul class="hidden lg:flex items-center gap-nav lg:gap-nav-md font-medium text-[18px] leading-[21px] list-none m-0 p-0 relative z-10">
-        {links.map(l => (
-          <li class="whitespace-nowrap">
-            <a class="nav-link" href={l.href}>{l.label}</a>
-          </li>
-        ))}
-        <li class="whitespace-nowrap">
-          <a class="nav-link" href={studioHref}>Studio</a>
-        </li>
-      </ul>
-
-      <!-- Right: Explore (mobile) + Maker (always visible) -->
+      <!-- Right: Explore drawer toggle + Maker button -->
       <div class="flex items-center gap-2 relative z-10 flex-shrink-0">
-        <!-- Explore button (mobile only, to the left of Maker) -->
+        <!-- Explore button (available on all breakpoints) -->
         <button
           id="explore-toggle"
-          class="lg:hidden chip-m3 inline-flex items-center gap-1.5 px-3 py-1.5
+          class="chip-m3 inline-flex items-center gap-1.5 px-3 py-1.5
                  text-[18px] leading-[21px] font-medium
                  transition-[transform,box-shadow] duration-200 ease-[cubic-bezier(0.2,0,0,1)]
                  active:scale-[0.98] active:shadow-sm"
@@ -60,7 +41,7 @@ const studioHref = import.meta.env.DEV ? 'http://localhost:3333/' : 'https://stu
   </div>
   <!-- Mobile drop panel -->
   <div id="mobile-menu"
-       class="lg:hidden absolute inset-x-0 top-full mt-2"
+       class="absolute inset-x-0 top-full mt-2"
        hidden>
     <div class="max-w-container mx-auto px-3 sm:px-7">
       <div
@@ -110,13 +91,6 @@ const studioHref = import.meta.env.DEV ? 'http://localhost:3333/' : 'https://stu
               <span class="material-symbols-rounded">palette</span>
               <span>Studio</span>
             </a>
-          </li>
-          <li class="transition-opacity duration-300 delay-225 opacity-0 data-[open=true]:opacity-100">
-            <button class="mobile-menu-item w-full text-left" role="menuitem"
-                    onclick="document.getElementById('creator-toggle')?.click?.()">
-              <span class="material-symbols-rounded">auto_awesome</span>
-              <span>Maker</span>
-            </button>
           </li>
         </ul>
       </div>
