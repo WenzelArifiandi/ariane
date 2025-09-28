@@ -97,6 +97,53 @@ export default {
     plugin(({ addVariant }) => {
       addVariant('intersect', '&:not([no-intersect])');
     }),
+    plugin(({ addUtilities }) => {
+      addUtilities({
+        '.glass': {
+          'position': 'relative',
+          'border-radius': 'var(--glass-radius, 24px)',
+          'background': `
+            radial-gradient(120% 80% at 50% 0%, color-mix(in oklab, rgba(123, 97, 255, 0.18), transparent 80%) 0%, transparent 62%),
+            linear-gradient(180deg, color-mix(in oklab, rgba(123, 97, 255, 0.10), transparent 90%) 0%, color-mix(in oklab, rgba(123, 97, 255, 0.10), transparent 96%) 100%),
+            rgba(255,255,255,0.06)
+          `,
+          'border': '1px solid rgba(123,97,255,0.14)',
+          'box-shadow': '0 8px 28px rgba(123,97,255,0.18)',
+          'backdrop-filter': 'blur(14px) saturate(1.35) contrast(1.06) brightness(1.02)',
+          '-webkit-backdrop-filter': 'blur(14px) saturate(1.35) contrast(1.06) brightness(1.02)',
+          '&::before': {
+            'content': '""',
+            'position': 'absolute',
+            'inset': '0',
+            'border-radius': 'inherit',
+            'pointer-events': 'none',
+            'background': 'radial-gradient(80% 45% at 50% 0%, rgba(255,255,255,0.55) 0%, transparent 70%)',
+            'mix-blend-mode': 'screen',
+            'opacity': '0.55',
+          },
+          '&::after': {
+            'content': '""',
+            'position': 'absolute',
+            'inset': '-8%',
+            'border-radius': 'inherit',
+            'pointer-events': 'none',
+            'background': `
+              radial-gradient(110px 80px at 22% 32%, rgba(255,255,255,0.35) 0%, transparent 62%),
+              radial-gradient(150px 100px at 78% 60%, rgba(167,139,250,0.28) 0%, transparent 68%),
+              radial-gradient(140px 90px at 48% 92%, rgba(255,155,213,0.22) 0%, transparent 72%)
+            `,
+            'filter': 'blur(16px) saturate(1.2)',
+            'opacity': '0.40',
+            'animation': 'liquid-drift 16s ease-in-out infinite alternate',
+          },
+        },
+        '@keyframes liquid-drift': {
+          '0%': { transform: 'translateY(-2%) translateX(-1%) scale(1)' },
+          '50%': { transform: 'translateY(2%) translateX(1%) scale(1.02)' },
+          '100%': { transform: 'translateY(-1%) translateX(2%) scale(1.01)' },
+        },
+      });
+    }),
   ],
   darkMode: 'class',
 };

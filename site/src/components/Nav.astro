@@ -61,11 +61,11 @@ const studioHref = import.meta.env.DEV ? 'http://localhost:3333/' : 'https://stu
            class="lg:hidden absolute left-0 right-0 top-full mt-2 px-3 sm:px-7"
            hidden>
         <div
-          class="nav-panel rounded-2xl border shadow-lg backdrop-blur bg-white/80
+          class="glass-liquid px-pad-x py-3
                  origin-top will-change-transform will-change-opacity
                  transition-[opacity,transform] duration-[420ms]
                  ease-[cubic-bezier(0.2,1.2,0.35,1)]
-                 opacity-0 -translate-y-4 scale-[0.97]"
+                 -translate-y-4 scale-[0.97]"
           data-anim
           aria-hidden="true"
           role="menu"
@@ -185,15 +185,6 @@ const studioHref = import.meta.env.DEV ? 'http://localhost:3333/' : 'https://stu
     text-decoration: none !important;
   }
 
-  /* Mobile menu panel */
-  .nav-panel {
-    background: var(--ariane-glass-tint, rgba(255,255,255,0.85));
-    border: 1px solid rgba(255,255,255,.30);
-    box-shadow:
-      0 1px 0 0 var(--ariane-glass-edge-bright, rgba(255,255,255,.2)) inset,
-      0 -1px 0 0 var(--ariane-glass-edge-dim, rgba(120,120,160,.15)) inset,
-      0 10px 26px var(--ariane-glass-shadow-soft, rgba(0,0,0,.1));
-  }
 
   /* Mobile menu items (card-style) */
   .mobile-menu-item {
@@ -294,16 +285,16 @@ const studioHref = import.meta.env.DEV ? 'http://localhost:3333/' : 'https://stu
       mobileMenuPanel.style.transitionTimingFunction = 'cubic-bezier(0.2, 1.2, 0.35, 1)';
       mobileMenuPanel.style.transitionDuration = '420ms';
       requestAnimationFrame(() => {
-        mobileMenuPanel.classList.remove('opacity-0', '-translate-y-4', 'scale-[0.97]');
-        mobileMenuPanel.classList.add('opacity-100', 'translate-y-0', 'scale-100');
+        mobileMenuPanel.classList.remove('-translate-y-4', 'scale-[0.97]');
+        mobileMenuPanel.classList.add('translate-y-0', 'scale-100');
         setItemsOpen(true);
       });
     } else {
       // EXIT: snappier, no overshoot
       mobileMenuPanel.style.transitionTimingFunction = 'cubic-bezier(0.3, 0, 0.8, 0.15)';
       mobileMenuPanel.style.transitionDuration = '280ms';
-      mobileMenuPanel.classList.add('opacity-0', '-translate-y-4', 'scale-[0.97]');
-      mobileMenuPanel.classList.remove('opacity-100', 'translate-y-0', 'scale-100');
+      mobileMenuPanel.classList.add('-translate-y-4', 'scale-[0.97]');
+      mobileMenuPanel.classList.remove('translate-y-0', 'scale-100');
       setItemsOpen(false);
       mobileMenuPanel.addEventListener('transitionend', () => (mobileMenuWrap.hidden = true), { once: true });
     }
