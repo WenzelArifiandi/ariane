@@ -26,14 +26,6 @@
   --radius: 12px;
   --shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
 
-  /* Liquid glass styling tokens */
-  --glass-bg: rgba(255,255,255,.06);
-  --glass-tint: rgba(123, 97, 255, .10);
-  --glass-ring: rgba(123, 97, 255, .18);
-  --glass-highlight: rgba(255,255,255,.55);
-  --glass-shadow: 0 8px 28px rgba(123,97,255,.18);
-  --glass-blur: 14px;
-  --glass-radius: 24px;
 }
 
 /* Local Material Symbols font (optional). If /public/fonts/material-symbols-rounded.woff2 exists,
@@ -225,50 +217,4 @@
     padding: 1.25rem;
   }
 
-  /* Liquid glass navbar component */
-  .glass-liquid {
-    position: relative;
-    border-radius: var(--glass-radius);
-    background:
-      radial-gradient(120% 80% at 50% 0%, color-mix(in oklab, var(--glass-ring), transparent 80%) 0%, transparent 62%),
-      linear-gradient(180deg, color-mix(in oklab, var(--glass-tint), transparent 90%) 0%, color-mix(in oklab, var(--glass-tint), transparent 96%) 100%),
-      var(--glass-bg);
-    border: 1px solid rgba(123,97,255,.14);
-    box-shadow: var(--glass-shadow);
-    backdrop-filter: blur(var(--glass-blur)) saturate(1.35) contrast(1.06) brightness(1.02);
-    -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(1.35) contrast(1.06) brightness(1.02);
-  }
-
-  /* brighter inner highlight, lighter caustics */
-  .glass-liquid::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    border-radius: inherit;
-    pointer-events: none;
-    background: radial-gradient(80% 45% at 50% 0%, var(--glass-highlight) 0%, transparent 70%);
-    mix-blend-mode: screen;
-    opacity: .55;
-  }
-
-  .glass-liquid::after {
-    content: "";
-    position: absolute;
-    inset: -8%;
-    border-radius: inherit;
-    pointer-events: none;
-    background:
-      radial-gradient(110px 80px at 22% 32%, rgba(255,255,255,.35) 0%, transparent 62%),
-      radial-gradient(150px 100px at 78% 60%, rgba(167,139,250,.28) 0%, transparent 68%),
-      radial-gradient(140px 90px at 48% 92%, rgba(255,155,213,.22) 0%, transparent 72%);
-    filter: blur(16px) saturate(1.2);
-    opacity: .40;
-    animation: liquid-drift 16s ease-in-out infinite alternate;
-  }
-
-  @keyframes liquid-drift {
-    0%   { transform: translateY(-2%) translateX(-1%) scale(1); }
-    50%  { transform: translateY(2%) translateX(1%)  scale(1.02); }
-    100% { transform: translateY(-1%) translateX(2%) scale(1.01); }
-  }
 }

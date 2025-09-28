@@ -50,4 +50,21 @@
   /* Legacy variables for compatibility */
   --ink: var(--ariane-text-ink);
   --page: var(--ariane-bg-main);
+
+  /* Shared liquid-glass tokens (consumed by Tailwind .glass utility) */
+  --glass-bg: color-mix(in oklab, var(--ariane-bg-accent), transparent 82%);
+  --glass-tint: var(--ariane-glass-tint);
+  --glass-ring: color-mix(in oklab, var(--ariane-glass-tint), transparent 70%);
+  --glass-highlight: var(--ariane-glass-edge-bright);
+  --glass-shadow: 0 16px 48px color-mix(in oklab, var(--ariane-glass-shadow-soft), transparent 35%);
+  --glass-blur: var(--ariane-glass-blur);
+  --glass-radius: var(--ariane-glass-radius);
+}
+
+/* Slightly deepen the glass as the navbar marks the page scrolled */
+html.scrolled {
+  --glass-tint: var(--ariane-glass-tint-scrolled);
+  --glass-ring: color-mix(in oklab, var(--ariane-glass-tint-scrolled), transparent 62%);
+  --glass-bg: color-mix(in oklab, var(--ariane-glass-tint-scrolled), transparent 86%);
+  --glass-shadow: 0 18px 52px color-mix(in oklab, var(--ariane-glass-shadow-soft), transparent 25%);
 }

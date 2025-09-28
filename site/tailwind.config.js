@@ -103,21 +103,21 @@ export default {
           'position': 'relative',
           'border-radius': 'var(--glass-radius, 24px)',
           'background': `
-            radial-gradient(120% 80% at 50% 0%, color-mix(in oklab, rgba(123, 97, 255, 0.18), transparent 80%) 0%, transparent 62%),
-            linear-gradient(180deg, color-mix(in oklab, rgba(123, 97, 255, 0.10), transparent 90%) 0%, color-mix(in oklab, rgba(123, 97, 255, 0.10), transparent 96%) 100%),
-            rgba(255,255,255,0.06)
+            radial-gradient(120% 80% at 50% 0%, color-mix(in oklab, var(--glass-ring), transparent 80%) 0%, transparent 62%),
+            linear-gradient(180deg, color-mix(in oklab, var(--glass-tint), transparent 90%) 0%, color-mix(in oklab, var(--glass-tint), transparent 96%) 100%),
+            var(--glass-bg)
           `,
           'border': '1px solid rgba(123,97,255,0.14)',
-          'box-shadow': '0 8px 28px rgba(123,97,255,0.18)',
-          'backdrop-filter': 'blur(14px) saturate(1.35) contrast(1.06) brightness(1.02)',
-          '-webkit-backdrop-filter': 'blur(14px) saturate(1.35) contrast(1.06) brightness(1.02)',
+          'box-shadow': 'var(--glass-shadow, 0 8px 28px rgba(123,97,255,0.18))',
+          'backdrop-filter': 'blur(var(--glass-blur, 14px)) saturate(1.35) contrast(1.06) brightness(1.02)',
+          '-webkit-backdrop-filter': 'blur(var(--glass-blur, 14px)) saturate(1.35) contrast(1.06) brightness(1.02)',
           '&::before': {
             'content': '""',
             'position': 'absolute',
             'inset': '0',
             'border-radius': 'inherit',
             'pointer-events': 'none',
-            'background': 'radial-gradient(80% 45% at 50% 0%, rgba(255,255,255,0.55) 0%, transparent 70%)',
+            'background': 'radial-gradient(80% 45% at 50% 0%, var(--glass-highlight, rgba(255,255,255,0.55)) 0%, transparent 70%)',
             'mix-blend-mode': 'screen',
             'opacity': '0.55',
           },

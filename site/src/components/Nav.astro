@@ -9,9 +9,9 @@ const links = [
 const studioHref = import.meta.env.DEV ? 'http://localhost:3333/' : 'https://studio.wenzelarifiandi.com';
 ---
 
-<nav class="sticky top-3 z-50 mx-auto my-3 px-3 sm:px-7">
+<nav class="sticky top-3 z-50 mx-auto my-3 px-3 sm:px-7 relative">
   <div class="max-w-container mx-auto">
-    <div class="glass-liquid flex items-center justify-between gap-nav md:gap-nav-md px-pad-x py-3 relative overflow-visible">
+    <div class="glass flex items-center justify-between gap-nav md:gap-nav-md px-pad-x py-3 relative overflow-visible">
 
       <!-- Brand -->
       <a href="/" class="brand relative z-10 font-semibold text-[20px] leading-[23px]">Wenzel Arifiandi</a>
@@ -56,67 +56,69 @@ const studioHref = import.meta.env.DEV ? 'http://localhost:3333/' : 'https://stu
         </button>
       </div>
 
-      <!-- Mobile drop panel -->
-      <div id="mobile-menu"
-           class="lg:hidden absolute left-0 right-0 top-full mt-2 px-3 sm:px-7"
-           hidden>
-        <div
-          class="glass-liquid px-pad-x py-3
-                 origin-top will-change-transform will-change-opacity
-                 transition-[opacity,transform] duration-[420ms]
-                 ease-[cubic-bezier(0.2,1.2,0.35,1)]
-                 -translate-y-4 scale-[0.97]"
-          data-anim
-          aria-hidden="true"
-          role="menu"
-        >
-          <ul class="py-2">
-            <!-- Staggered menu items -->
-            <li class="transition-opacity duration-300 delay-75 opacity-0 data-[open=true]:opacity-100">
-              <a class="mobile-menu-item" role="menuitem" href="#hello">
-                <span class="material-symbols-rounded">waving_hand</span>
-                <span>Hello</span>
-              </a>
-            </li>
-            <li class="transition-opacity duration-300 delay-100 opacity-0 data-[open=true]:opacity-100">
-              <a class="mobile-menu-item" role="menuitem" href="#playground">
-                <span class="material-symbols-rounded">science</span>
-                <span>Playground</span>
-              </a>
-            </li>
-            <li class="transition-opacity duration-300 delay-125 opacity-0 data-[open=true]:opacity-100">
-              <a class="mobile-menu-item" role="menuitem" href="#field-notes">
-                <span class="material-symbols-rounded">edit_note</span>
-                <span>Field Notes</span>
-              </a>
-            </li>
-            <li class="transition-opacity duration-300 delay-150 opacity-0 data-[open=true]:opacity-100">
-              <a class="mobile-menu-item" role="menuitem" href="#contact">
-                <span class="material-symbols-rounded">mail</span>
-                <span>Contact</span>
-              </a>
-            </li>
-            <li class="transition-opacity duration-300 delay-175 opacity-0 data-[open=true]:opacity-100">
-              <a class="mobile-menu-item" role="menuitem" href={import.meta.env.DEV ? 'http://localhost:4322/' : 'https://constellation.wenzelarifiandi.com'}>
-                <span class="material-symbols-rounded">stars</span>
-                <span>Constellation</span>
-              </a>
-            </li>
-            <li class="transition-opacity duration-300 delay-200 opacity-0 data-[open=true]:opacity-100">
-              <a class="mobile-menu-item" role="menuitem" href={studioHref}>
-                <span class="material-symbols-rounded">palette</span>
-                <span>Studio</span>
-              </a>
-            </li>
-            <li class="transition-opacity duration-300 delay-225 opacity-0 data-[open=true]:opacity-100">
-              <button class="mobile-menu-item w-full text-left" role="menuitem"
-                      onclick="document.getElementById('creator-toggle')?.click?.()">
-                <span class="material-symbols-rounded">auto_awesome</span>
-                <span>Maker</span>
-              </button>
-            </li>
-          </ul>
-        </div>
+    </div>
+  </div>
+  <!-- Mobile drop panel -->
+  <div id="mobile-menu"
+       class="lg:hidden absolute inset-x-0 top-full mt-2"
+       hidden>
+    <div class="max-w-container mx-auto px-3 sm:px-7">
+      <div
+        class="glass transform-gpu px-pad-x py-3
+               origin-top will-change-transform will-change-opacity
+               transition-[opacity,transform] duration-[420ms]
+               ease-[cubic-bezier(0.2,1.2,0.35,1)]
+               -translate-y-4 scale-[0.97]"
+        data-anim
+        aria-hidden="true"
+        role="menu"
+      >
+        <ul class="py-2">
+          <!-- Staggered menu items -->
+          <li class="transition-opacity duration-300 delay-75 opacity-0 data-[open=true]:opacity-100">
+            <a class="mobile-menu-item" role="menuitem" href="#hello">
+              <span class="material-symbols-rounded">waving_hand</span>
+              <span>Hello</span>
+            </a>
+          </li>
+          <li class="transition-opacity duration-300 delay-100 opacity-0 data-[open=true]:opacity-100">
+            <a class="mobile-menu-item" role="menuitem" href="#playground">
+              <span class="material-symbols-rounded">science</span>
+              <span>Playground</span>
+            </a>
+          </li>
+          <li class="transition-opacity duration-300 delay-125 opacity-0 data-[open=true]:opacity-100">
+            <a class="mobile-menu-item" role="menuitem" href="#field-notes">
+              <span class="material-symbols-rounded">edit_note</span>
+              <span>Field Notes</span>
+            </a>
+          </li>
+          <li class="transition-opacity duration-300 delay-150 opacity-0 data-[open=true]:opacity-100">
+            <a class="mobile-menu-item" role="menuitem" href="#contact">
+              <span class="material-symbols-rounded">mail</span>
+              <span>Contact</span>
+            </a>
+          </li>
+          <li class="transition-opacity duration-300 delay-175 opacity-0 data-[open=true]:opacity-100">
+            <a class="mobile-menu-item" role="menuitem" href={import.meta.env.DEV ? 'http://localhost:4322/' : 'https://constellation.wenzelarifiandi.com'}>
+              <span class="material-symbols-rounded">stars</span>
+              <span>Constellation</span>
+            </a>
+          </li>
+          <li class="transition-opacity duration-300 delay-200 opacity-0 data-[open=true]:opacity-100">
+            <a class="mobile-menu-item" role="menuitem" href={studioHref}>
+              <span class="material-symbols-rounded">palette</span>
+              <span>Studio</span>
+            </a>
+          </li>
+          <li class="transition-opacity duration-300 delay-225 opacity-0 data-[open=true]:opacity-100">
+            <button class="mobile-menu-item w-full text-left" role="menuitem"
+                    onclick="document.getElementById('creator-toggle')?.click?.()">
+              <span class="material-symbols-rounded">auto_awesome</span>
+              <span>Maker</span>
+            </button>
+          </li>
+        </ul>
       </div>
     </div>
   </div>
@@ -124,7 +126,13 @@ const studioHref = import.meta.env.DEV ? 'http://localhost:3333/' : 'https://stu
 
 
 <style>
-  /* Apple liquid glass navbar with M3 expressive design - now using .glass-liquid from global.css */
+  /* Apple liquid glass navbar with M3 expressive design using Tailwind .glass utility */
+
+  /* Mobile menu glass safeguard: ensure the panel stacks above content */
+  #mobile-menu {
+    z-index: 60; /* above the navbar's z-index (navbar uses z-50) */
+    pointer-events: auto;
+  }
 
   /* M3 expressive chip with proper styling */
   .chip-m3 {
