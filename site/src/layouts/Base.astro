@@ -7,6 +7,8 @@ import '../styles/overrides.css'
 import AWCustomStyles from '../components/AWCustomStyles.astro'
 import Analytics from '@vercel/analytics/astro'
 import SpeedInsights from '@vercel/speed-insights/astro'
+import fs from 'node:fs'
+import { fileURLToPath } from 'node:url'
 
 interface Props {
   title?: string
@@ -16,6 +18,23 @@ interface Props {
 }
 
 const { title, description, ogImage, pathname } = Astro.props as Props
+
+const iconEnv = (import.meta.env.PUBLIC_USE_LOCAL_ICONS ?? process.env.PUBLIC_USE_LOCAL_ICONS ?? '').toString().toLowerCase()
+const wantsLocalIcons = ['true', '1', 'yes', 'on'].includes(iconEnv)
+let hasLocalIconFont = false
+if (wantsLocalIcons) {
+  try {
+    const fontPath = new URL('../public/fonts/material-symbols-rounded.woff2', import.meta.url)
+    hasLocalIconFont = fs.existsSync(fileURLToPath(fontPath))
+  } catch (error) {
+    hasLocalIconFont = false
+  }
+}
+const useLocalIcons = wantsLocalIcons && hasLocalIconFont
+
+if (wantsLocalIcons && !useLocalIcons) {
+  console.warn('PUBLIC_USE_LOCAL_ICONS is set but material-symbols-rounded.woff2 is missing in site/public/fonts. Falling back to Google-hosted Material Symbols.')
+}
 
 // Site defaults
 const siteTitle = 'Wenzel Arifiandi'
@@ -54,15 +73,23 @@ const pageUrl = pathname ? new URL(pathname, siteUrl).toString() : siteUrl
 
     <link rel="canonical" href={pageUrl} />
     <link rel="icon" href="/favicon.svg" />
-    <link rel="preload" as="image" href="/favicon.svg" imagesrcset="/favicon.svg" />
     <!-- Preload Google Sans fonts for better LCP -->
     <link rel="preload" as="font" type="font/woff2" href="/fonts/google-sans-regular.woff2" crossorigin />
     <link rel="preload" as="font" type="font/woff2" href="/fonts/google-sans-medium.woff2" crossorigin />
     <link rel="preload" as="font" type="font/woff2" href="/fonts/google-sans-bold.woff2" crossorigin />
   <!-- Material Symbols: prefer local font when PUBLIC_USE_LOCAL_ICONS=true; otherwise load from Google Fonts -->
-  {((import.meta as any).env?.PUBLIC_USE_LOCAL_ICONS || process.env.PUBLIC_USE_LOCAL_ICONS) ? (
+  {useLocalIcons ? (
     <>
       <link rel="preload" as="font" type="font/woff2" href="/fonts/material-symbols-rounded.woff2" crossorigin />
+      <style is:inline>
+        {`@font-face {
+            font-family: 'Material Symbols Rounded Local';
+            src: url('/fonts/material-symbols-rounded.woff2') format('woff2');
+            font-weight: 100 700;
+            font-style: normal;
+            font-display: swap;
+          }`}
+      </style>
       <script is:inline>
         // Mark icons loaded immediately; local font is preloaded and @font-face uses font-display:block
         try { document.documentElement.setAttribute('data-icons-loaded', 'true'); } catch {}
@@ -133,7 +160,7 @@ const pageUrl = pathname ? new URL(pathname, siteUrl).toString() : siteUrl
       }
     </script>
     
-    {(!((import.meta as any).env?.PUBLIC_USE_LOCAL_ICONS || process.env.PUBLIC_USE_LOCAL_ICONS)) && (
+  {!useLocalIcons && (
       <script is:inline>
         // Mark when icon fonts are ready to reveal symbols without flashing fallback text
         try {

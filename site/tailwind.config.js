@@ -44,6 +44,7 @@ export default {
       },
       spacing: {
         'pad-x': 'clamp(1rem, 4vw, 2rem)',
+        'glass-x': 'clamp(1rem, 2.8vw, 1.5rem)',
         '18': '4.5rem', // 72px for navbar height spacing
         '20': '5rem',   // 80px for section top padding
         '22': '5.5rem', // 88px

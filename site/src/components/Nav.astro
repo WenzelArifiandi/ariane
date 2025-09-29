@@ -4,7 +4,7 @@ const studioHref = import.meta.env.DEV ? 'http://localhost:3333/' : 'https://stu
 
 <nav class="sticky top-3 z-50 my-3 relative">
   <div class="max-w-container mx-auto px-pad-x">
-    <div class="glass flex flex-wrap items-center gap-2 xs:gap-3 md:gap-nav-md py-3 px-4 sm:px-6 relative overflow-visible">
+    <div class="glass flex flex-wrap items-center gap-2 xs:gap-3 md:gap-nav-md py-3 px-glass-x relative overflow-visible">
 
       <!-- Brand -->
       <div class="flex-1 min-w-[180px] xs:min-w-0">
@@ -50,9 +50,9 @@ const studioHref = import.meta.env.DEV ? 'http://localhost:3333/' : 'https://stu
   <div id="mobile-menu"
        class="absolute inset-x-0 top-full mt-2"
        hidden>
-    <div class="max-w-container mx-auto px-3 sm:px-7">
+    <div class="max-w-container mx-auto px-pad-x">
       <div
-        class="glass transform-gpu px-pad-x py-3
+        class="glass transform-gpu px-glass-x py-3
                origin-top will-change-transform will-change-opacity
                transition-[opacity,transform] duration-[420ms]
                ease-[cubic-bezier(0.2,1.2,0.35,1)]
@@ -297,10 +297,10 @@ const studioHref = import.meta.env.DEV ? 'http://localhost:3333/' : 'https://stu
 
   // Click outside / Esc to close
   document.addEventListener('click', (e) => {
-    if (!mobileMenuWrap?.hidden &&
-        !mobileMenuWrap.contains(e.target) &&
-        e.target !== exploreBtn &&
-        !exploreBtn?.contains(e.target)) {
+    const target = e.target;
+    const insideMenu = target instanceof Element && target.closest('#mobile-menu');
+    const onToggle = target instanceof Element && target.closest('#explore-toggle');
+    if (!mobileMenuWrap?.hidden && !insideMenu && !onToggle) {
       openMobileMenu(false);
     }
   });
@@ -319,7 +319,10 @@ const studioHref = import.meta.env.DEV ? 'http://localhost:3333/' : 'https://stu
   });
 
   // Close mobile menu on resize to avoid stuck state
+  let lastWidth = window.innerWidth;
   addEventListener('resize', () => {
-    if (window.innerWidth >= 1024) openMobileMenu(false);
+    const current = window.innerWidth;
+    if (lastWidth < 1024 && current >= 1024) openMobileMenu(false);
+    lastWidth = current;
   }, { passive: true });
 </script>

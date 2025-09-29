@@ -28,19 +28,6 @@
 
 }
 
-/* Local Material Symbols font (optional). If /public/fonts/material-symbols-rounded.woff2 exists,
-   it will be used; otherwise we fall back to Google Fonts stylesheet declared in Base.astro. */
-@layer base {
-  @font-face {
-    font-family: 'Material Symbols Rounded Local';
-    src: url('/fonts/material-symbols-rounded.woff2') format('woff2');
-    font-weight: 100 700;
-    font-style: normal;
-    font-display: swap;
-    /* use fallback immediately then swap when loaded */
-  }
-}
-
 /* --- Global system font fallback (instant everywhere) --- */
 @layer base {
   html {
