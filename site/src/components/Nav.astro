@@ -2,20 +2,25 @@
 const studioHref = import.meta.env.DEV ? 'http://localhost:3333/' : 'https://studio.wenzelarifiandi.com';
 ---
 
-<nav class="sticky top-3 z-50 mx-auto my-3 px-3 sm:px-7 relative">
-  <div class="max-w-container mx-auto">
-    <div class="glass flex items-center justify-between gap-nav md:gap-nav-md px-pad-x py-3 relative overflow-visible">
+<nav class="sticky top-3 z-50 my-3 relative">
+  <div class="max-w-container mx-auto px-pad-x">
+    <div class="glass flex flex-wrap items-center gap-2 xs:gap-3 md:gap-nav-md py-3 px-4 sm:px-6 relative overflow-visible">
 
       <!-- Brand -->
-      <a href="/" class="brand relative z-10 font-semibold text-[20px] leading-[23px]">Wenzel Arifiandi</a>
+      <div class="flex-1 min-w-[180px] xs:min-w-0">
+        <a href="/"
+           class="brand relative z-10 block font-semibold text-[18px] sm:text-[20px] leading-[22px] sm:leading-[23px]">
+          Wenzel Arifiandi
+        </a>
+      </div>
 
       <!-- Right: Explore drawer toggle + Maker button -->
-      <div class="flex items-center gap-2 relative z-10 flex-shrink-0">
+      <div class="flex items-center gap-2 xs:gap-3 justify-start xs:justify-end basis-full xs:basis-auto xs:ml-auto relative z-10">
         <!-- Explore button (available on all breakpoints) -->
         <button
           id="explore-toggle"
           class="chip-m3 inline-flex items-center gap-1.5 px-3 py-1.5
-                 text-[18px] leading-[21px] font-medium
+                 text-[16px] sm:text-[18px] leading-[20px] sm:leading-[21px] font-medium
                  transition-[transform,box-shadow] duration-200 ease-[cubic-bezier(0.2,0,0,1)]
                  active:scale-[0.98] active:shadow-sm"
           aria-controls="mobile-menu"
@@ -29,7 +34,9 @@ const studioHref = import.meta.env.DEV ? 'http://localhost:3333/' : 'https://stu
         </button>
 
         <!-- Maker button (always visible at all screen sizes) -->
-        <button id="creator-toggle" class="chip-m3 inline-flex items-center gap-2 px-3 py-1.5 font-medium text-[18px] leading-[21px]"
+        <button id="creator-toggle"
+                class="chip-m3 inline-flex items-center gap-2 px-3 py-1.5 font-medium text-[16px] sm:text-[18px]
+                       leading-[20px] sm:leading-[21px] whitespace-nowrap"
                 aria-haspopup="true" aria-expanded="false" aria-controls="creator-sheet" title="Maker">
           <!-- M3 sparkle icon -->
           <span class="material-symbols-rounded text-white" style="font-size: 18px;">auto_awesome</span>
