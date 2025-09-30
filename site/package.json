@@ -61,7 +61,7 @@
     "@astrojs/vercel": "^8.2.7",
     "@iconify-json/tabler": "^1.2.23",
     "@tailwindcss/typography": "^0.5.19",
-    "@typescript-eslint/eslint-plugin": "^8.44.0",
+    "@typescript-eslint/eslint-plugin": "^8.45.0",
     "@typescript-eslint/parser": "^8.44.0",
     "autoprefixer": "^10.4.21",
     "concurrently": "^9.2.1",
