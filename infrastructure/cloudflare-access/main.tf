@@ -42,6 +42,53 @@ resource "cloudflare_record" "auth_cname" {
   ttl     = 1
 }
 
+# Create Access Application for wenzelarifiandi.com/maker path
+resource "cloudflare_zero_trust_access_application" "maker" {
+  account_id                = var.cloudflare_account_id
+  name                      = "Ariane Maker"
+  domain                    = "wenzelarifiandi.com/maker"
+  type                      = "self_hosted"
+  session_duration          = "24h"
+
+  # Specify exactly one IdP
+  allowed_idps = [cloudflare_zero_trust_access_identity_provider.cipher_oidc.id]
+
+  # Enable application logo and branding
+  logo_url = "https://wenzelarifiandi.com/favicon.ico"
+
+  # CORS settings for cross-origin auth checks
+  cors_headers {
+    allowed_origins   = ["https://wenzelarifiandi.com", "http://localhost:4321"]
+    allowed_methods   = ["GET", "OPTIONS"]
+    allow_credentials = true
+  }
+
+  # Skip interstitial page to speed up auth flow
+  skip_interstitial = true
+}
+
+# Create Access Policy for Maker path
+resource "cloudflare_zero_trust_access_policy" "maker_policy" {
+  application_id = cloudflare_zero_trust_access_application.maker.id
+  account_id     = var.cloudflare_account_id
+  name           = "Allow Cipher OIDC Users for Maker"
+  precedence     = 1
+  decision       = "allow"
+
+  # Include rule: Users authenticated via Cipher OIDC
+  include {
+    login_method = [cloudflare_zero_trust_access_identity_provider.cipher_oidc.id]
+  }
+
+  # Require authentication via Cipher OIDC
+  require {
+    login_method = [cloudflare_zero_trust_access_identity_provider.cipher_oidc.id]
+  }
+
+  # Session settings
+  session_duration = "24h"
+}
+
 # Create Access Application for auth.wenzelarifiandi.com
 resource "cloudflare_zero_trust_access_application" "auth" {
   account_id                = var.cloudflare_account_id
