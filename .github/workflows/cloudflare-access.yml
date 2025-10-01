@@ -17,9 +17,7 @@ on:
         branches:
             - main
         paths:
-            - "infrastructure/terraform/cloudflare.tf"
-            - "infrastructure/terraform/providers.tf"
-            - "infrastructure/terraform/variables.tf"
+            - "infrastructure/cloudflare-access/**"
             - ".github/workflows/cloudflare-access.yml"
 
 env:
@@ -41,7 +39,7 @@ jobs:
 
         defaults:
             run:
-                working-directory: infrastructure/terraform
+                working-directory: infrastructure/cloudflare-access
 
         steps:
             - name: Checkout repository
@@ -86,11 +84,11 @@ jobs:
               run: |
                   # Create a focused plan for Cloudflare resources only
                   terraform plan \
-                    -target="cloudflare_access_application.cipher" \
-                    -target="cloudflare_access_identity_provider.cipher_oidc" \
-                    -target="cloudflare_access_policy.cipher_oidc_policy" \
-                    -target="cloudflare_access_policy.cipher_service_policy" \
-                    -target="cloudflare_access_service_token.cipher_service_token" \
+                    -target="cloudflare_zero_trust_access_application.cipher" \
+                    -target="cloudflare_zero_trust_access_identity_provider.cipher_oidc" \
+                    -target="cloudflare_zero_trust_access_policy.cipher_oidc_policy" \
+                    -target="cloudflare_zero_trust_access_policy.cipher_service_policy" \
+                    -target="cloudflare_zero_trust_access_service_token.cipher_service_token" \
                     -input=false \
                     -out=cfplan \
                     -detailed-exitcode
@@ -117,7 +115,7 @@ jobs:
               uses: actions/upload-artifact@50769540e7f4bd5e21e526ee35c689e35e0d6874 # v4.4.0
               with:
                   name: cloudflare-terraform-plan
-                  path: infrastructure/terraform/cfplan
+                  path: infrastructure/cloudflare-access/cfplan
                   retention-days: 7
 
             - name: Comment PR with Plan
