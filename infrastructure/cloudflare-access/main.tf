@@ -64,6 +64,14 @@ resource "cloudflare_zero_trust_access_application" "auth" {
     allow_credentials = true
   }
 
+  # Configure what happens when users are denied access or authentication fails
+  # This controls where users go if they fail authentication or are denied
+  custom_deny_url     = "https://wenzelarifiandi.com"
+  custom_deny_message = "Authentication required. Please try again."
+  
+  # Skip interstitial page to speed up auth flow
+  skip_interstitial = true
+
   # Tags removed for now - can be added later when account ID is available
   # tags = ["production", "cipher", "zitadel-auth"]
 }

@@ -273,8 +273,18 @@ const studioHref = import.meta.env.DEV ? 'http://localhost:3333/' : 'https://stu
   const CF_ACCESS_BASE_URL = "https://auth.wenzelarifiandi.com";
 
   function redirectToAccessLogin() {
-    // Redirect to auth domain root - Cloudflare Access will handle the 302 flow
-    window.location.href = CF_ACCESS_BASE_URL;
+    // Store the current page for return after authentication (fallback)
+    sessionStorage.setItem('pre_auth_url', window.location.href);
+    
+    // Construct proper redirect URL to return to original site
+    const returnUrl = window.location.origin === 'http://localhost:4321' 
+      ? 'http://localhost:4321' 
+      : 'https://wenzelarifiandi.com';
+    const redirectUrl = encodeURIComponent(returnUrl);
+    
+    // Try the proper login URL with redirect parameter first
+    const loginUrl = `${CF_ACCESS_BASE_URL}/cdn-cgi/access/login?redirect_url=${redirectUrl}`;
+    window.location.href = loginUrl;
   }
 
   // Check authentication status via Cloudflare Access
@@ -288,6 +298,22 @@ const studioHref = import.meta.env.DEV ? 'http://localhost:3333/' : 'https://stu
       // Network error or CORS issue - treat as unknown / unauthenticated
       return null;
     }
+  }
+
+  // Handle return from authentication - check if user should be redirected back
+  async function checkReturnFromAuth() {
+    const preAuthUrl = sessionStorage.getItem('pre_auth_url');
+    if (preAuthUrl && window.location.href !== preAuthUrl) {
+      // User was redirected here from auth, check if they're now authenticated
+      const status = await getAccessStatus();
+      if (status === 200) {
+        // Authenticated! Clear the stored URL and redirect back
+        sessionStorage.removeItem('pre_auth_url');
+        window.location.href = preAuthUrl;
+        return true;
+      }
+    }
+    return false;
   }
 
   const creatorToggle = qs('#creator-toggle');
@@ -329,6 +355,9 @@ const studioHref = import.meta.env.DEV ? 'http://localhost:3333/' : 'https://stu
       makerMenuPanel.addEventListener('transitionend', () => (makerMenuWrap.hidden = true), { once: true });
     }
   }
+
+  // Check if user is returning from authentication on page load
+  checkReturnFromAuth();
 
   // Main Maker button click handler
   creatorToggle?.addEventListener('click', async () => {
