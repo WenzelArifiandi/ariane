@@ -142,7 +142,7 @@ variable "cipher_client_secret" {
 }
 
 variable "cipher_issuer_url" {
-  description = "CIPHER issuer URL for OIDC"
+  description = "CIPHER domain URL (protected by Cloudflare Access)"
   type        = string
   default     = "https://cipher.wenzelarifiandi.com"
 }

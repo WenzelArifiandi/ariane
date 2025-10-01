@@ -17,12 +17,12 @@ resource "cloudflare_access_application" "cipher" {
   # Enable application logo and branding (optional)
   logo_url = "https://wenzelarifiandi.com/favicon.ico"
   
-  # CORS settings for web applications
+  # CORS settings for web applications - allow cipher, main site, and localhost for development
   cors_headers {
     allow_all_origins     = false
     allow_all_methods     = false
     allow_all_headers     = false
-    allowed_origins       = ["https://cipher.wenzelarifiandi.com"]
+    allowed_origins       = ["https://cipher.wenzelarifiandi.com", "https://wenzelarifiandi.com", "http://localhost:4321"]
     allowed_methods       = ["GET", "POST", "OPTIONS"]
     allowed_headers       = ["Content-Type", "Authorization"]
     allow_credentials     = true
@@ -32,10 +32,10 @@ resource "cloudflare_access_application" "cipher" {
   tags = ["production", "cipher", "zitadel-auth"]
 }
 
-# Create Access Identity Provider for CIPHER OIDC
+# Create Access Identity Provider - Cipher ZITADEL as OIDC provider
 resource "cloudflare_access_identity_provider" "cipher_oidc" {
   zone_id = data.cloudflare_zone.wenzelarifiandi.id
-  name    = "CIPHER OIDC"
+  name    = "Cipher OIDC"
   type    = "oidc"
 
   config {
@@ -47,22 +47,22 @@ resource "cloudflare_access_identity_provider" "cipher_oidc" {
     scopes          = ["openid", "profile", "email"]
     
     # Additional OIDC claims
-    claims          = ["email", "groups"]
+    claims          = ["email", "groups", "preferred_username"]
     
-    # Enable email domain validation (optional)
+    # Enable email domain validation
     email_claim_name = "email"
   }
 }
 
-# Create Access Policy allowing login via CIPHER
+# Create Access Policy allowing login via Cipher OIDC
 resource "cloudflare_access_policy" "cipher_oidc_policy" {
   application_id = cloudflare_access_application.cipher.id
   zone_id        = data.cloudflare_zone.wenzelarifiandi.id
-  name           = "Allow CIPHER Users"
+  name           = "Allow Cipher OIDC Users"
   precedence     = 1
   decision       = "allow"
   
-  # Include rule: Users authenticated via CIPHER
+  # Include rule: Users authenticated via Cipher OIDC
   include {
     login_method = [cloudflare_access_identity_provider.cipher_oidc.id]
   }
@@ -72,7 +72,7 @@ resource "cloudflare_access_policy" "cipher_oidc_policy" {
   #   email_domain = ["wenzelarifiandi.com"]
   # }
   
-  # Optional: Require additional factors
+  # Require authentication via Cipher OIDC
   require {
     login_method = [cloudflare_access_identity_provider.cipher_oidc.id]
   }

@@ -130,7 +130,7 @@ output "cloudflare_access_application" {
 }
 
 output "cloudflare_access_identity_provider" {
-  description = "CIPHER OIDC identity provider information"
+  description = "Cipher OIDC identity provider information"
   value = {
     id   = cloudflare_access_identity_provider.cipher_oidc.id
     name = cloudflare_access_identity_provider.cipher_oidc.name
@@ -158,11 +158,11 @@ output "cipher_access_info" {
       access = "https://cipher.wenzelarifiandi.com/cdn-cgi/access/login"
     }
     authentication = {
-      provider = "CIPHER OIDC"
+      provider = "Cipher OIDC"
       issuer   = var.cipher_issuer_url
     }
     policies = [
-      "Allow CIPHER Users",
+      "Allow Cipher OIDC Users",
       "Allow Service Token"
     ]
     service_token = {

@@ -103,8 +103,8 @@ jobs:
                   echo "" >> $GITHUB_STEP_SUMMARY
                   echo "### 🎯 Target Resources:" >> $GITHUB_STEP_SUMMARY
                   echo "- Cloudflare Access Application (cipher.wenzelarifiandi.com)" >> $GITHUB_STEP_SUMMARY
-                  echo "- CIPHER OIDC Identity Provider" >> $GITHUB_STEP_SUMMARY
-                  echo "- Access Policies (CIPHER users + Service token)" >> $GITHUB_STEP_SUMMARY
+                  echo "- Cipher OIDC Identity Provider" >> $GITHUB_STEP_SUMMARY
+                  echo "- Access Policies (Cipher OIDC users + Service token)" >> $GITHUB_STEP_SUMMARY
                   echo "- Service Token for programmatic access" >> $GITHUB_STEP_SUMMARY
                   echo "" >> $GITHUB_STEP_SUMMARY
                   echo "### 📊 Plan Output:" >> $GITHUB_STEP_SUMMARY
@@ -132,8 +132,8 @@ jobs:
 
                       ### Resources:
                       - 🏢 **Application**: cipher.wenzelarifiandi.com
-                      - 🔑 **Identity Provider**: CIPHER OIDC
-                      - 📋 **Policies**: Allow CIPHER users + Service token access
+                      - 🔑 **Identity Provider**: Cipher OIDC
+                      - 📋 **Policies**: Allow Cipher OIDC users + Service token access
 
                       <details>
                       <summary>📊 Show Plan Details</summary>
@@ -167,7 +167,7 @@ jobs:
                   echo "### 🎉 Deployment Complete!" >> $GITHUB_STEP_SUMMARY
                   echo "- **Application URL**: https://cipher.wenzelarifiandi.com" >> $GITHUB_STEP_SUMMARY
                   echo "- **Access Login**: https://cipher.wenzelarifiandi.com/cdn-cgi/access/login" >> $GITHUB_STEP_SUMMARY
-                  echo "- **Identity Provider**: CIPHER OIDC (cipher.wenzelarifiandi.com)" >> $GITHUB_STEP_SUMMARY
+                  echo "- **Identity Provider**: Cipher OIDC (cipher.wenzelarifiandi.com)" >> $GITHUB_STEP_SUMMARY
 
             - name: Terraform Destroy
               if: github.event.inputs.action == 'destroy'
