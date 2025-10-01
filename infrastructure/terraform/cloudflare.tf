@@ -22,11 +22,15 @@ resource "cloudflare_access_application" "auth" {
   domain                   = "auth.wenzelarifiandi.com"
   type                     = "self_hosted"
   session_duration         = "24h"
-  auto_redirect_to_identity = true
-  
+  auto_redirect_to_identity = false
+
   # Enable application logo and branding (optional)
   logo_url = "https://wenzelarifiandi.com/favicon.ico"
-  
+
+  # Custom deny URL - redirect unauthorized users to main site
+  custom_deny_url = "https://wenzelarifiandi.com"
+  custom_deny_message = "Please authenticate to access Maker features"
+
   # CORS settings for web applications - allow primary site and localhost for development
   cors_headers {
     allow_all_origins     = false
