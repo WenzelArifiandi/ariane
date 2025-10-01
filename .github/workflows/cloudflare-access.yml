@@ -23,6 +23,7 @@ on:
 env:
     TF_IN_AUTOMATION: true
     TF_VAR_cloudflare_api_token: ${{ secrets.TERRAFORM_ACCESS }}
+    TF_VAR_cloudflare_account_id: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
     TF_VAR_cipher_client_id: ${{ secrets.CIPHER_CLIENT_ID }}
     TF_VAR_cipher_client_secret: ${{ secrets.CIPHER_CLIENT_SECRET }}
     TF_VAR_cipher_issuer_url: "https://cipher.wenzelarifiandi.com"
@@ -56,6 +57,10 @@ jobs:
                     echo "❌ TERRAFORM_ACCESS secret is not set"
                     exit 1
                   fi
+                  if [[ -z "${{ secrets.CLOUDFLARE_ACCOUNT_ID }}" ]]; then
+                    echo "❌ CLOUDFLARE_ACCOUNT_ID secret is not set"
+                    exit 1
+                  fi
                   if [[ -z "${{ secrets.CIPHER_CLIENT_ID }}" ]]; then
                     echo "❌ CIPHER_CLIENT_ID secret is not set"
                     exit 1
@@ -84,6 +89,9 @@ jobs:
               run: |
                   # Create a focused plan for Cloudflare resources only
                   terraform plan \
+                    -target="cloudflare_zero_trust_access_tag.production" \
+                    -target="cloudflare_zero_trust_access_tag.cipher" \
+                    -target="cloudflare_zero_trust_access_tag.zitadel_auth" \
                     -target="cloudflare_zero_trust_access_application.cipher" \
                     -target="cloudflare_zero_trust_access_identity_provider.cipher_oidc" \
                     -target="cloudflare_zero_trust_access_policy.cipher_oidc_policy" \
@@ -100,6 +108,7 @@ jobs:
                   echo "## 📋 Terraform Plan Summary" >> $GITHUB_STEP_SUMMARY
                   echo "" >> $GITHUB_STEP_SUMMARY
                   echo "### 🎯 Target Resources:" >> $GITHUB_STEP_SUMMARY
+                  echo "- Access Tags (production, cipher, zitadel-auth)" >> $GITHUB_STEP_SUMMARY
                   echo "- Cloudflare Access Application (cipher.wenzelarifiandi.com)" >> $GITHUB_STEP_SUMMARY
                   echo "- Cipher OIDC Identity Provider" >> $GITHUB_STEP_SUMMARY
                   echo "- Access Policies (Cipher OIDC users + Service token)" >> $GITHUB_STEP_SUMMARY
@@ -172,11 +181,14 @@ jobs:
               run: |
                   echo "🗑️ Destroying Cloudflare Access resources..."
                   terraform destroy \
-                    -target="cloudflare_access_application.cipher" \
-                    -target="cloudflare_access_identity_provider.cipher_oidc" \
-                    -target="cloudflare_access_policy.cipher_oidc_policy" \
-                    -target="cloudflare_access_policy.cipher_service_policy" \
-                    -target="cloudflare_access_service_token.cipher_service_token" \
+                    -target="cloudflare_zero_trust_access_tag.production" \
+                    -target="cloudflare_zero_trust_access_tag.cipher" \
+                    -target="cloudflare_zero_trust_access_tag.zitadel_auth" \
+                    -target="cloudflare_zero_trust_access_application.cipher" \
+                    -target="cloudflare_zero_trust_access_identity_provider.cipher_oidc" \
+                    -target="cloudflare_zero_trust_access_policy.cipher_oidc_policy" \
+                    -target="cloudflare_zero_trust_access_policy.cipher_service_policy" \
+                    -target="cloudflare_zero_trust_access_service_token.cipher_service_token" \
                     -auto-approve
 
             - name: Generate Outputs

@@ -1,4 +1,14 @@
 # Cloudflare Access Outputs
+output "cloudflare_access_tags" {
+  description = "Access tags for organization"
+  value = {
+    production   = cloudflare_zero_trust_access_tag.production.id
+    cipher       = cloudflare_zero_trust_access_tag.cipher.id
+    zitadel_auth = cloudflare_zero_trust_access_tag.zitadel_auth.id
+  }
+  sensitive = false
+}
+
 output "cloudflare_access_application" {
   description = "Cloudflare Access application information"
   value = {
@@ -6,6 +16,7 @@ output "cloudflare_access_application" {
     domain = cloudflare_zero_trust_access_application.cipher.domain
     aud    = cloudflare_zero_trust_access_application.cipher.aud
     name   = cloudflare_zero_trust_access_application.cipher.name
+    tags   = cloudflare_zero_trust_access_application.cipher.tags
   }
   sensitive = false
 }
@@ -23,9 +34,9 @@ output "cloudflare_access_identity_provider" {
 output "cloudflare_access_service_token" {
   description = "Service token for programmatic access"
   value = {
-    id           = cloudflare_zero_trust_access_service_token.cipher_service_token.id
-    name         = cloudflare_zero_trust_access_service_token.cipher_service_token.name
-    client_id    = cloudflare_zero_trust_access_service_token.cipher_service_token.client_id
+    id            = cloudflare_zero_trust_access_service_token.cipher_service_token.id
+    name          = cloudflare_zero_trust_access_service_token.cipher_service_token.name
+    client_id     = cloudflare_zero_trust_access_service_token.cipher_service_token.client_id
     client_secret = cloudflare_zero_trust_access_service_token.cipher_service_token.client_secret
   }
   sensitive = true

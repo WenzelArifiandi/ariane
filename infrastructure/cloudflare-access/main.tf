@@ -5,31 +5,51 @@ data "cloudflare_zone" "wenzelarifiandi" {
   name = "wenzelarifiandi.com"
 }
 
+# Create Access Tags for organization
+resource "cloudflare_zero_trust_access_tag" "production" {
+  account_id = var.cloudflare_account_id
+  name       = "production"
+}
+
+resource "cloudflare_zero_trust_access_tag" "cipher" {
+  account_id = var.cloudflare_account_id
+  name       = "cipher"
+}
+
+resource "cloudflare_zero_trust_access_tag" "zitadel_auth" {
+  account_id = var.cloudflare_account_id
+  name       = "zitadel-auth"
+}
+
 # Create Access Application for cipher.wenzelarifiandi.com
 resource "cloudflare_zero_trust_access_application" "cipher" {
   zone_id                   = data.cloudflare_zone.wenzelarifiandi.id
-  name                     = "Cipher Application"
-  domain                   = "cipher.wenzelarifiandi.com"
-  type                     = "self_hosted"
-  session_duration         = "24h"
+  name                      = "Cipher Application"
+  domain                    = "cipher.wenzelarifiandi.com"
+  type                      = "self_hosted"
+  session_duration          = "24h"
   auto_redirect_to_identity = true
-  
+
   # Enable application logo and branding (optional)
   logo_url = "https://wenzelarifiandi.com/favicon.ico"
-  
+
   # CORS settings for web applications - allow cipher, main site, and localhost for development
   cors_headers {
-    allow_all_origins     = false
-    allow_all_methods     = false
-    allow_all_headers     = false
-    allowed_origins       = ["https://cipher.wenzelarifiandi.com", "https://wenzelarifiandi.com", "http://localhost:4321"]
-    allowed_methods       = ["GET", "POST", "OPTIONS"]
-    allowed_headers       = ["Content-Type", "Authorization"]
-    allow_credentials     = true
-    max_age              = 86400
+    allow_all_origins = false
+    allow_all_methods = false
+    allow_all_headers = false
+    allowed_origins   = ["https://cipher.wenzelarifiandi.com", "https://wenzelarifiandi.com", "http://localhost:4321"]
+    allowed_methods   = ["GET", "POST", "OPTIONS"]
+    allowed_headers   = ["Content-Type", "Authorization"]
+    allow_credentials = true
+    max_age           = 86400
   }
 
-  tags = ["production", "cipher", "zitadel-auth"]
+  tags = [
+    cloudflare_zero_trust_access_tag.production.id,
+    cloudflare_zero_trust_access_tag.cipher.id,
+    cloudflare_zero_trust_access_tag.zitadel_auth.id
+  ]
 }
 
 # Create Access Identity Provider - Cipher ZITADEL as OIDC provider
@@ -39,16 +59,16 @@ resource "cloudflare_zero_trust_access_identity_provider" "cipher_oidc" {
   type    = "oidc"
 
   config {
-    client_id       = var.cipher_client_id
-    client_secret   = var.cipher_client_secret
-    auth_url        = "${var.cipher_issuer_url}/oauth/v2/authorize"
-    token_url       = "${var.cipher_issuer_url}/oauth/v2/token"
-    certs_url       = "${var.cipher_issuer_url}/oauth/v2/keys"
-    scopes          = ["openid", "profile", "email"]
-    
+    client_id     = var.cipher_client_id
+    client_secret = var.cipher_client_secret
+    auth_url      = "${var.cipher_issuer_url}/oauth/v2/authorize"
+    token_url     = "${var.cipher_issuer_url}/oauth/v2/token"
+    certs_url     = "${var.cipher_issuer_url}/oauth/v2/keys"
+    scopes        = ["openid", "profile", "email"]
+
     # Additional OIDC claims
-    claims          = ["email", "groups", "preferred_username"]
-    
+    claims = ["email", "groups", "preferred_username"]
+
     # Enable email domain validation
     email_claim_name = "email"
   }
@@ -61,17 +81,17 @@ resource "cloudflare_zero_trust_access_policy" "cipher_oidc_policy" {
   name           = "Allow Cipher OIDC Users"
   precedence     = 1
   decision       = "allow"
-  
+
   # Include rule: Users authenticated via Cipher OIDC
   include {
     login_method = [cloudflare_zero_trust_access_identity_provider.cipher_oidc.id]
   }
-  
+
   # Require authentication via Cipher OIDC
   require {
     login_method = [cloudflare_zero_trust_access_identity_provider.cipher_oidc.id]
   }
-  
+
   # Session settings
   session_duration = "24h"
 }
@@ -89,7 +109,7 @@ resource "cloudflare_zero_trust_access_policy" "cipher_service_policy" {
   name           = "Allow Service Token"
   precedence     = 2
   decision       = "allow"
-  
+
   include {
     service_token = [cloudflare_zero_trust_access_service_token.cipher_service_token.id]
   }
