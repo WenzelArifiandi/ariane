@@ -1,0 +1,94 @@
+name: "Import Cloudflare Access Resources"
+
+on:
+    workflow_dispatch:
+        inputs:
+            app_id:
+                description: "Access Application ID (from Cloudflare dashboard)"
+                required: true
+                type: string
+            idp_id:
+                description: "Identity Provider ID (from Cloudflare dashboard)"
+                required: true
+                type: string
+
+env:
+    TF_IN_AUTOMATION: true
+    TF_VAR_cloudflare_api_token: ${{ secrets.TERRAFORM_ACCESS }}
+    TF_VAR_cloudflare_account_id: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+    TF_VAR_cipher_client_id: ${{ secrets.CIPHER_CLIENT_ID }}
+    TF_VAR_cipher_client_secret: ${{ secrets.CIPHER_CLIENT_SECRET }}
+    TF_VAR_cipher_issuer_url: "https://cipher.wenzelarifiandi.com"
+
+jobs:
+    import:
+        name: "Import Existing Resources"
+        runs-on: ubuntu-latest
+        environment: prod
+        permissions:
+            contents: read
+
+        defaults:
+            run:
+                working-directory: infrastructure/cloudflare-access
+
+        steps:
+            - name: Checkout repository
+              uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+
+            - name: Setup Terraform
+              uses: hashicorp/setup-terraform@651471c36a6092792c552e8b1bef71e592b462d8 # v3.1.1
+              with:
+                  terraform_version: 1.9.0
+
+            - name: Terraform Init
+              run: terraform init
+
+            - name: Import Access Application
+              run: |
+                  echo "🔄 Importing Access Application..."
+                  terraform import \
+                    cloudflare_zero_trust_access_application.cipher \
+                    "accounts/${{ secrets.CLOUDFLARE_ACCOUNT_ID }}/${{ github.event.inputs.app_id }}" \
+                    || echo "⚠️ Application may already be imported"
+
+            - name: Import Identity Provider
+              run: |
+                  echo "🔄 Importing Identity Provider..."
+                  terraform import \
+                    cloudflare_zero_trust_access_identity_provider.cipher_oidc \
+                    "accounts/${{ secrets.CLOUDFLARE_ACCOUNT_ID }}/${{ github.event.inputs.idp_id }}" \
+                    || echo "⚠️ Identity Provider may already be imported"
+
+            - name: Verify Import
+              run: |
+                  echo "✅ Verifying imported resources..."
+                  terraform state list
+
+                  echo ""
+                  echo "## 📋 Imported Resources" >> $GITHUB_STEP_SUMMARY
+                  terraform state list >> $GITHUB_STEP_SUMMARY
+
+            - name: Run Terraform Plan
+              run: |
+                  echo "🎯 Running plan to check for drift..."
+                  terraform plan -no-color | tee plan-output.txt
+
+                  echo ""
+                  echo "## 📊 Plan After Import" >> $GITHUB_STEP_SUMMARY
+                  echo '```' >> $GITHUB_STEP_SUMMARY
+                  head -n 100 plan-output.txt >> $GITHUB_STEP_SUMMARY
+                  echo '```' >> $GITHUB_STEP_SUMMARY
+
+            - name: Next Steps
+              run: |
+                  echo "## ✨ Import Complete!" >> $GITHUB_STEP_SUMMARY
+                  echo "" >> $GITHUB_STEP_SUMMARY
+                  echo "The resources have been imported into Terraform state." >> $GITHUB_STEP_SUMMARY
+                  echo "" >> $GITHUB_STEP_SUMMARY
+                  echo "### 🎯 Next Steps:" >> $GITHUB_STEP_SUMMARY
+                  echo "1. Review the plan output above" >> $GITHUB_STEP_SUMMARY
+                  echo "2. If there are changes needed, adjust main.tf" >> $GITHUB_STEP_SUMMARY
+                  echo "3. Run the main deployment workflow to apply changes" >> $GITHUB_STEP_SUMMARY
+                  echo "" >> $GITHUB_STEP_SUMMARY
+                  echo "**Note**: The main cloudflare-access.yml workflow will now work without errors." >> $GITHUB_STEP_SUMMARY

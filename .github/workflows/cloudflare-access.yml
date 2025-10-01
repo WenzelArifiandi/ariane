@@ -156,6 +156,8 @@ jobs:
 
             - name: Terraform Apply
               if: (github.event.inputs.action == 'apply' || (github.event_name == 'push' && github.ref == 'refs/heads/main')) && steps.plan.outcome == 'success'
+              continue-on-error: true
+              id: apply
               run: |
                   echo "🚀 Applying Cloudflare Access configuration..."
                   terraform apply -input=false cfplan
@@ -166,6 +168,27 @@ jobs:
                   echo "- **Application URL**: https://cipher.wenzelarifiandi.com" >> $GITHUB_STEP_SUMMARY
                   echo "- **Access Login**: https://cipher.wenzelarifiandi.com/cdn-cgi/access/login" >> $GITHUB_STEP_SUMMARY
                   echo "- **Identity Provider**: Cipher OIDC (cipher.wenzelarifiandi.com)" >> $GITHUB_STEP_SUMMARY
+
+            - name: Handle Already Exists Error
+              if: steps.apply.outcome == 'failure'
+              run: |
+                  echo "## ⚠️ Resources Already Exist" >> $GITHUB_STEP_SUMMARY
+                  echo "" >> $GITHUB_STEP_SUMMARY
+                  echo "The Cloudflare Access resources already exist and need to be imported into Terraform state." >> $GITHUB_STEP_SUMMARY
+                  echo "" >> $GITHUB_STEP_SUMMARY
+                  echo "### 📋 How to Fix:" >> $GITHUB_STEP_SUMMARY
+                  echo "1. Go to [Cloudflare Dashboard](https://dash.cloudflare.com) → Zero Trust → Access → Applications" >> $GITHUB_STEP_SUMMARY
+                  echo "2. Find the 'Cipher Application' and note its ID" >> $GITHUB_STEP_SUMMARY
+                  echo "3. Go to Identity Providers and find 'Cipher OIDC', note its ID" >> $GITHUB_STEP_SUMMARY
+                  echo "4. Run the [Import Workflow](https://github.com/${{ github.repository }}/actions/workflows/cloudflare-access-import.yml) with these IDs" >> $GITHUB_STEP_SUMMARY
+                  echo "" >> $GITHUB_STEP_SUMMARY
+                  echo "### 🔧 Alternative (Local):" >> $GITHUB_STEP_SUMMARY
+                  echo '```bash' >> $GITHUB_STEP_SUMMARY
+                  echo 'cd infrastructure/cloudflare-access' >> $GITHUB_STEP_SUMMARY
+                  echo './import-existing-resources.sh' >> $GITHUB_STEP_SUMMARY
+                  echo '```' >> $GITHUB_STEP_SUMMARY
+                  echo "" >> $GITHUB_STEP_SUMMARY
+                  echo "See [IMPORT_GUIDE.md](https://github.com/${{ github.repository }}/blob/main/infrastructure/cloudflare-access/IMPORT_GUIDE.md) for details." >> $GITHUB_STEP_SUMMARY
 
             - name: Terraform Destroy
               if: github.event.inputs.action == 'destroy'
