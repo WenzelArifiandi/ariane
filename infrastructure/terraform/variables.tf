@@ -121,3 +121,28 @@ variable "pbs_ip" {
   type        = string
   default     = "10.98.0.12"
 }
+
+# Cloudflare variables
+variable "cloudflare_api_token" {
+  description = "Cloudflare API token for managing Access applications and policies"
+  type        = string
+  sensitive   = true
+}
+
+variable "cipher_client_id" {
+  description = "CIPHER OIDC client ID for Cloudflare Access"
+  type        = string
+  sensitive   = true
+}
+
+variable "cipher_client_secret" {
+  description = "CIPHER OIDC client secret for Cloudflare Access"
+  type        = string
+  sensitive   = true
+}
+
+variable "cipher_issuer_url" {
+  description = "CIPHER issuer URL for OIDC"
+  type        = string
+  default     = "https://cipher.wenzelarifiandi.com"
+}

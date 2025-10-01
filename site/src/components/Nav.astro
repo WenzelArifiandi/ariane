@@ -103,6 +103,40 @@ const studioHref = import.meta.env.DEV ? 'http://localhost:3333/' : 'https://stu
       </div>
     </div>
   </div>
+
+  <!-- Maker menu -->
+  <div id="maker-menu"
+       class="absolute inset-x-0 top-full mt-2"
+       hidden>
+    <div class="max-w-container mx-auto px-pad-x">
+      <div
+        class="glass transform-gpu px-glass-x py-3
+               origin-top will-change-transform will-change-opacity
+               transition-[opacity,transform] duration-[420ms]
+               ease-[cubic-bezier(0.2,1.2,0.35,1)]
+               -translate-y-4 scale-[0.97]"
+        data-anim
+        aria-hidden="true"
+        role="menu"
+      >
+        <ul class="py-2">
+          <!-- Staggered menu items -->
+          <li class="transition-opacity duration-300 delay-75 opacity-0 data-[open=true]:opacity-100">
+            <a class="mobile-menu-item" role="menuitem" href="https://neve.wenzelarifiandi.com">
+              <span class="material-symbols-rounded">hub</span>
+              <span>Neve</span>
+            </a>
+          </li>
+          <li class="transition-opacity duration-300 delay-100 opacity-0 data-[open=true]:opacity-100">
+            <a class="mobile-menu-item" role="menuitem" href="https://etoile.wenzelarifiandi.com">
+              <span class="material-symbols-rounded">cloud_upload</span>
+              <span>Etoile</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
 </nav>
 
 
@@ -236,14 +270,76 @@ const studioHref = import.meta.env.DEV ? 'http://localhost:3333/' : 'https://stu
   addEventListener('scroll', onScroll, { passive: true });
   onScroll();
 
-  // Creator toggle functionality (desktop)
+  // Maker functionality
+  let isAuthenticated = false;
+
+  // Check authentication status
+  async function checkAuthStatus() {
+    try {
+      // Try to access a protected endpoint to check authentication
+      const response = await fetch('https://cipher.wenzelarifiandi.com/cdn-cgi/access/get-identity', {
+        credentials: 'include'
+      });
+      isAuthenticated = response.ok;
+    } catch (error) {
+      isAuthenticated = false;
+    }
+    return isAuthenticated;
+  }
+
   const creatorToggle = qs('#creator-toggle');
-  creatorToggle?.addEventListener('click', () => {
-    const html = document.documentElement;
-    const open = html.getAttribute('data-creator') === 'open';
-    html.setAttribute('data-creator', open ? 'closed' : 'open');
-    creatorToggle.setAttribute('aria-expanded', String(!open));
-    window.dispatchEvent(new CustomEvent('toggle-creator', { detail: { open: !open } }));
+  const makerMenuWrap = qs('#maker-menu');
+  const makerMenuPanel = makerMenuWrap?.querySelector('[data-anim]');
+  const makerMenuItems = makerMenuWrap?.querySelectorAll('li');
+
+  // Maker menu toggle functionality (only for authenticated users)
+  let makerItemsPrimed = false;
+  function setMakerItemsOpen(open) {
+    if (!makerMenuItems) return;
+    if (!makerItemsPrimed) {
+      makerMenuItems.forEach(li => li.setAttribute('data-open', 'false'));
+      makerItemsPrimed = true;
+    }
+    makerMenuItems.forEach(li => li.setAttribute('data-open', open ? 'true' : 'false'));
+  }
+
+  function openMakerMenu(open) {
+    if (!creatorToggle || !makerMenuWrap || !makerMenuPanel) return;
+
+    creatorToggle.setAttribute('aria-expanded', String(open));
+
+    if (open) {
+      makerMenuWrap.hidden = false;
+      makerMenuPanel.style.transitionTimingFunction = 'cubic-bezier(0.2, 1.2, 0.35, 1)';
+      makerMenuPanel.style.transitionDuration = '420ms';
+      requestAnimationFrame(() => {
+        makerMenuPanel.classList.remove('-translate-y-4', 'scale-[0.97]');
+        makerMenuPanel.classList.add('translate-y-0', 'scale-100');
+        setMakerItemsOpen(true);
+      });
+    } else {
+      makerMenuPanel.style.transitionTimingFunction = 'cubic-bezier(0.3, 0, 0.8, 0.15)';
+      makerMenuPanel.style.transitionDuration = '280ms';
+      makerMenuPanel.classList.add('-translate-y-4', 'scale-[0.97]');
+      makerMenuPanel.classList.remove('translate-y-0', 'scale-100');
+      setMakerItemsOpen(false);
+      makerMenuPanel.addEventListener('transitionend', () => (makerMenuWrap.hidden = true), { once: true });
+    }
+  }
+
+  // Main Maker button click handler
+  creatorToggle?.addEventListener('click', async () => {
+    // First check if user is authenticated
+    const authenticated = await checkAuthStatus();
+
+    if (authenticated) {
+      // If authenticated, show the menu
+      const isOpen = creatorToggle.getAttribute('aria-expanded') === 'true';
+      openMakerMenu(!isOpen);
+    } else {
+      // If not authenticated, redirect to Cloudflare Access
+      window.location.href = 'https://cipher.wenzelarifiandi.com';
+    }
   });
 
   // M3 Expressive Mobile Menu
@@ -298,16 +394,24 @@ const studioHref = import.meta.env.DEV ? 'http://localhost:3333/' : 'https://stu
   // Click outside / Esc to close
   document.addEventListener('click', (e) => {
     const target = e.target;
-    const insideMenu = target instanceof Element && target.closest('#mobile-menu');
-    const onToggle = target instanceof Element && target.closest('#explore-toggle');
-    if (!mobileMenuWrap?.hidden && !insideMenu && !onToggle) {
+    const insideMobileMenu = target instanceof Element && target.closest('#mobile-menu');
+    const onExploreToggle = target instanceof Element && target.closest('#explore-toggle');
+    const insideMakerMenu = target instanceof Element && target.closest('#maker-menu');
+    const onMakerToggle = target instanceof Element && target.closest('#creator-toggle');
+
+    if (!mobileMenuWrap?.hidden && !insideMobileMenu && !onExploreToggle) {
       openMobileMenu(false);
+    }
+
+    if (!makerMenuWrap?.hidden && !insideMakerMenu && !onMakerToggle) {
+      openMakerMenu(false);
     }
   });
 
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') {
       openMobileMenu(false);
+      openMakerMenu(false);
     }
   });
 
@@ -318,11 +422,21 @@ const studioHref = import.meta.env.DEV ? 'http://localhost:3333/' : 'https://stu
     }
   });
 
-  // Close mobile menu on resize to avoid stuck state
+  // Close maker menu when clicking a link
+  makerMenuWrap?.addEventListener('click', (e) => {
+    if (e.target.tagName === 'A') {
+      openMakerMenu(false);
+    }
+  });
+
+  // Close menus on resize to avoid stuck state
   let lastWidth = window.innerWidth;
   addEventListener('resize', () => {
     const current = window.innerWidth;
-    if (lastWidth < 1024 && current >= 1024) openMobileMenu(false);
+    if (lastWidth < 1024 && current >= 1024) {
+      openMobileMenu(false);
+      openMakerMenu(false);
+    }
     lastWidth = current;
   }, { passive: true });
 </script>

@@ -41,55 +41,53 @@
   --ariane-heading-text: #3D418F;
   --ariane-subtext: #5A5A75;
   --ariane-link-text: #3D418F;
-  --ariane-text-main: #2A2A35;
-}
 
-:root {
-  --sl-color-bg: var(--ariane-bg-main) !important;
-  --sl-color-bg-nav: var(--ariane-bg-accent) !important;
-  --sl-color-bg-sidebar: var(--ariane-bg-accent) !important;
-  --sl-color-text: var(--ariane-body-text) !important;
-  --sl-color-text-accent: var(--ariane-heading-text) !important;
+  --ariane-bg-main-dark: #11121a;
+  --ariane-bg-accent-dark: #181b2a;
+  --ariane-body-text-dark: #e8e8ee;
+  --ariane-heading-text-dark: #cfd3ff;
+  --ariane-subtext-dark: #9aa0c6;
+  --ariane-link-text-dark: #c5c9ff;
+
   /* Set Google Sans as the default font - no fallbacks as requested */
   --sl-font: 'Google Sans' !important;
   --sl-font-system: 'Google Sans' !important;
 }
 
-/* Override Starlight background colors */
 html[data-theme="light"] {
   --sl-color-bg: var(--ariane-bg-main);
   --sl-color-bg-nav: var(--ariane-bg-accent);
   --sl-color-bg-sidebar: var(--ariane-bg-accent);
   --sl-color-text: var(--ariane-body-text);
   --sl-color-text-accent: var(--ariane-heading-text);
+  --sl-color-text-muted: var(--ariane-subtext);
+  --sl-color-link: var(--ariane-link-text);
 }
 
-body {
-  background-color: var(--ariane-bg-main) !important;
+html[data-theme="dark"] {
+  --sl-color-bg: var(--ariane-bg-main-dark);
+  --sl-color-bg-nav: var(--ariane-bg-accent-dark);
+  --sl-color-bg-sidebar: var(--ariane-bg-accent-dark);
+  --sl-color-text: var(--ariane-body-text-dark);
+  --sl-color-text-accent: var(--ariane-heading-text-dark);
+  --sl-color-text-muted: var(--ariane-subtext-dark);
+  --sl-color-link: var(--ariane-link-text-dark);
 }
 
-/* Make sure the main content area uses our background */
+body,
 .main-frame,
 .content-frame {
-  background-color: var(--ariane-bg-main) !important;
+  background-color: var(--sl-color-bg) !important;
+  color: var(--sl-color-text) !important;
 }
 
-/* Header and sidebar use different background */
 .sidebar,
 .header {
-  background-color: var(--ariane-bg-accent) !important;
-}
-
-/* Additional selectors for Starlight structure */
-[data-theme="light"] .header {
-  background-color: var(--ariane-bg-accent) !important;
-}
-
-[data-theme="light"] .sidebar {
-  background-color: var(--ariane-bg-accent) !important;
+  background-color: var(--sl-color-bg-nav) !important;
 }
 
 /* Target markdown content only if Starlight vars don't work everywhere */
 .sl-markdown-content {
   font-family: 'Google Sans';
+  color: var(--sl-color-text);
 }

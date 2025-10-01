@@ -6,6 +6,10 @@ terraform {
       # Use RC version for PVE 9.x compatibility
       version = "3.0.2-rc04"
     }
+    cloudflare = {
+      source  = "cloudflare/cloudflare"
+      version = "~> 4.0"
+    }
   }
 }
 
@@ -37,4 +41,8 @@ provider "proxmox" {
   pm_parallel         = 1
   pm_timeout          = 600
   pm_debug            = false
+}
+
+provider "cloudflare" {
+  api_token = var.cloudflare_api_token
 }

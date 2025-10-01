@@ -1,0 +1,218 @@
+name: "Cloudflare Access Deployment"
+
+on:
+    workflow_dispatch:
+        inputs:
+            action:
+                description: "Action to perform"
+                required: true
+                default: "plan"
+                type: choice
+                options:
+                    - plan
+                    - apply
+                    - destroy
+
+    push:
+        branches:
+            - main
+        paths:
+            - "infrastructure/terraform/cloudflare.tf"
+            - "infrastructure/terraform/providers.tf"
+            - "infrastructure/terraform/variables.tf"
+            - ".github/workflows/cloudflare-access.yml"
+
+env:
+    TF_IN_AUTOMATION: true
+    TF_VAR_cloudflare_api_token: ${{ secrets.TERRAFORM_ACCESS }}
+    TF_VAR_cipher_client_id: ${{ secrets.CIPHER_CLIENT_ID }}
+    TF_VAR_cipher_client_secret: ${{ secrets.CIPHER_CLIENT_SECRET }}
+    TF_VAR_cipher_issuer_url: "https://cipher.wenzelarifiandi.com"
+
+jobs:
+    terraform:
+        name: "Terraform Cloudflare Access"
+        runs-on: ubuntu-latest
+        environment: prod
+        permissions:
+            contents: read
+            pull-requests: write
+            security-events: write
+
+        defaults:
+            run:
+                working-directory: infrastructure/terraform
+
+        steps:
+            - name: Checkout repository
+              uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+
+            - name: Setup Terraform
+              uses: hashicorp/setup-terraform@651471c36a6092792c552e8b1bef71e592b462d8 # v3.1.1
+              with:
+                  terraform_version: 1.9.0
+
+            - name: Validate required secrets
+              run: |
+                  if [[ -z "${{ secrets.TERRAFORM_ACCESS }}" ]]; then
+                    echo "❌ TERRAFORM_ACCESS secret is not set"
+                    exit 1
+                  fi
+                  if [[ -z "${{ secrets.CIPHER_CLIENT_ID }}" ]]; then
+                    echo "❌ CIPHER_CLIENT_ID secret is not set"
+                    exit 1
+                  fi
+                  if [[ -z "${{ secrets.CIPHER_CLIENT_SECRET }}" ]]; then
+                    echo "❌ CIPHER_CLIENT_SECRET secret is not set"
+                    exit 1
+                  fi
+                  echo "✅ All required secrets are configured"
+
+            - name: Terraform Init
+              id: init
+              run: terraform init
+
+            - name: Terraform Format Check
+              id: fmt
+              run: terraform fmt -check -recursive
+              continue-on-error: true
+
+            - name: Terraform Validate
+              id: validate
+              run: terraform validate
+
+            - name: Terraform Plan
+              id: plan
+              run: |
+                  # Create a focused plan for Cloudflare resources only
+                  terraform plan \
+                    -target="cloudflare_access_application.cipher" \
+                    -target="cloudflare_access_identity_provider.cipher_oidc" \
+                    -target="cloudflare_access_policy.cipher_oidc_policy" \
+                    -target="cloudflare_access_policy.cipher_service_policy" \
+                    -target="cloudflare_access_service_token.cipher_service_token" \
+                    -input=false \
+                    -out=cfplan \
+                    -detailed-exitcode
+              continue-on-error: true
+
+            - name: Generate Plan Summary
+              if: steps.plan.outcome == 'success'
+              run: |
+                  echo "## 📋 Terraform Plan Summary" >> $GITHUB_STEP_SUMMARY
+                  echo "" >> $GITHUB_STEP_SUMMARY
+                  echo "### 🎯 Target Resources:" >> $GITHUB_STEP_SUMMARY
+                  echo "- Cloudflare Access Application (cipher.wenzelarifiandi.com)" >> $GITHUB_STEP_SUMMARY
+                  echo "- CIPHER OIDC Identity Provider" >> $GITHUB_STEP_SUMMARY
+                  echo "- Access Policies (CIPHER users + Service token)" >> $GITHUB_STEP_SUMMARY
+                  echo "- Service Token for programmatic access" >> $GITHUB_STEP_SUMMARY
+                  echo "" >> $GITHUB_STEP_SUMMARY
+                  echo "### 📊 Plan Output:" >> $GITHUB_STEP_SUMMARY
+                  echo '```' >> $GITHUB_STEP_SUMMARY
+                  terraform show -no-color cfplan | head -50 >> $GITHUB_STEP_SUMMARY
+                  echo '```' >> $GITHUB_STEP_SUMMARY
+
+            - name: Upload Terraform Plan
+              if: steps.plan.outcome == 'success'
+              uses: actions/upload-artifact@50769540e7f4bd5e21e526ee35c689e35e0d6874 # v4.4.0
+              with:
+                  name: cloudflare-terraform-plan
+                  path: infrastructure/terraform/cfplan
+                  retention-days: 7
+
+            - name: Comment PR with Plan
+              if: github.event_name == 'pull_request' && steps.plan.outcome == 'success'
+              uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
+              with:
+                  script: |
+                      const plan = `
+                      ## 🔐 Cloudflare Access Terraform Plan
+
+                      ### Status: ${{ steps.plan.outcome == 'success' && '✅ Success' || '❌ Failed' }}
+
+                      ### Resources:
+                      - 🏢 **Application**: cipher.wenzelarifiandi.com
+                      - 🔑 **Identity Provider**: CIPHER OIDC
+                      - 📋 **Policies**: Allow CIPHER users + Service token access
+
+                      <details>
+                      <summary>📊 Show Plan Details</summary>
+
+                      \`\`\`terraform
+                      Plan: ${{ steps.plan.outputs.changes }} to add, ${{ steps.plan.outputs.changes }} to change, ${{ steps.plan.outputs.changes }} to destroy.
+                      \`\`\`
+
+                      </details>
+
+                      ### 🚀 Next Steps:
+                      - Review the plan above
+                      - If approved, run workflow with \`apply\` action
+                      `;
+
+                      github.rest.issues.createComment({
+                        issue_number: context.issue.number,
+                        owner: context.repo.owner,
+                        repo: context.repo.repo,
+                        body: plan
+                      })
+
+            - name: Terraform Apply
+              if: (github.event.inputs.action == 'apply' || (github.event_name == 'push' && github.ref == 'refs/heads/main')) && steps.plan.outcome == 'success'
+              run: |
+                  echo "🚀 Applying Cloudflare Access configuration..."
+                  terraform apply -input=false cfplan
+
+                  echo "✅ Cloudflare Access deployed successfully!" >> $GITHUB_STEP_SUMMARY
+                  echo "" >> $GITHUB_STEP_SUMMARY
+                  echo "### 🎉 Deployment Complete!" >> $GITHUB_STEP_SUMMARY
+                  echo "- **Application URL**: https://cipher.wenzelarifiandi.com" >> $GITHUB_STEP_SUMMARY
+                  echo "- **Access Login**: https://cipher.wenzelarifiandi.com/cdn-cgi/access/login" >> $GITHUB_STEP_SUMMARY
+                  echo "- **Identity Provider**: CIPHER OIDC (cipher.wenzelarifiandi.com)" >> $GITHUB_STEP_SUMMARY
+
+            - name: Terraform Destroy
+              if: github.event.inputs.action == 'destroy'
+              run: |
+                  echo "🗑️ Destroying Cloudflare Access resources..."
+                  terraform destroy \
+                    -target="cloudflare_access_application.cipher" \
+                    -target="cloudflare_access_identity_provider.cipher_oidc" \
+                    -target="cloudflare_access_policy.cipher_oidc_policy" \
+                    -target="cloudflare_access_policy.cipher_service_policy" \
+                    -target="cloudflare_access_service_token.cipher_service_token" \
+                    -auto-approve
+
+            - name: Generate Outputs
+              if: (github.event.inputs.action == 'apply' || github.event_name == 'push') && steps.plan.outcome == 'success'
+              run: |
+                  echo "## 🔐 Cloudflare Access Configuration" >> $GITHUB_STEP_SUMMARY
+                  echo "" >> $GITHUB_STEP_SUMMARY
+                  terraform output -json cloudflare_access_application | jq -r '
+                    "### 📱 Application Details:",
+                    "- **Name**: " + .name,
+                    "- **Domain**: " + .domain,
+                    "- **Application ID**: " + .id,
+                    "- **Audience Tag**: " + .aud,
+                    ""
+                  ' >> $GITHUB_STEP_SUMMARY
+
+                  echo "### 🔑 Service Token (Secure)" >> $GITHUB_STEP_SUMMARY
+                  echo "Service token created for programmatic access. Store the credentials securely!" >> $GITHUB_STEP_SUMMARY
+
+            - name: Security Scan
+              if: steps.plan.outcome == 'success'
+              run: |
+                  echo "🔍 Running security checks..."
+                  # Check for hardcoded secrets (basic check)
+                  if grep -r "sk-" . --exclude-dir=.terraform || grep -r "token.*=" . --exclude-dir=.terraform | grep -v "var\." | grep -v "#"; then
+                    echo "⚠️ Potential hardcoded secrets detected"
+                    exit 1
+                  fi
+                  echo "✅ No hardcoded secrets found"
+
+            - name: Cleanup
+              if: always()
+              run: |
+                  # Clean up sensitive plan files
+                  rm -f cfplan tfplan terraform.tfstate.backup
+                  # Clean up any temp files
+                  find . -name "*.tmp" -delete

@@ -1,0 +1,90 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: cipher-zitadel-setup-rerun
+  namespace: cipher
+spec:
+  backoffLimit: 0
+  activeDeadlineSeconds: 1200
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: zitadel
+        app.kubernetes.io/component: setup-rerun
+    spec:
+      serviceAccountName: cipher-zitadel
+      restartPolicy: Never
+      volumes:
+        - name: zitadel-config-yaml
+          configMap:
+            name: cipher-zitadel-config-yaml
+        - name: zitadel-secrets-yaml
+          secret:
+            secretName: cipher-zitadel-secrets-yaml
+        - name: login-client
+          emptyDir: {}
+      containers:
+        - name: zitadel-setup
+          image: ghcr.io/zitadel/zitadel:v4.0.0
+          args:
+            - setup
+            - --masterkeyFromEnv
+            - --config
+            - /config/zitadel-config-yaml
+            - --steps
+            - /config/zitadel-config-yaml
+            - --config
+            - /zitadel-secrets-yaml/zitadel-secrets-yaml
+            - --steps
+            - /zitadel-secrets-yaml/zitadel-secrets-yaml
+            - --init-projections=true
+          env:
+            - name: POD_IP
+              valueFrom: { fieldRef: { fieldPath: status.podIP } }
+            - name: ZITADEL_MASTERKEY
+              valueFrom:
+                secretKeyRef:
+                  name: cipher-zitadel-masterkey
+                  key: masterkey
+            - name: ZITADEL_FIRSTINSTANCE_MACHINEKEYPATH
+              value: /machinekey/sa.json
+            - name: ZITADEL_FIRSTINSTANCE_LOGINCLIENTPATPATH
+              value: /login-client/pat
+          volumeMounts:
+            - name: zitadel-config-yaml
+              mountPath: /config
+              readOnly: true
+            - name: zitadel-secrets-yaml
+              mountPath: /zitadel-secrets-yaml
+              readOnly: true
+            - name: login-client
+              mountPath: /login-client
+        - name: zitadel-login-client-pat
+          image: docker.io/bitnami/kubectl:1.33
+          command: ["/bin/bash", "-lc"]
+          args: |
+            set -euo pipefail
+            echo "Waiting for zitadel-setup to finish..."
+            while :; do
+              st="$(kubectl -n cipher get pod "$POD_NAME" -o jsonpath='{.status.containerStatuses[?(@.name=="zitadel-setup")].state.terminated.exitCode}' || true)"
+              [ -n "$st" ] && break
+              sleep 5
+            done
+            echo "zitadel-setup exitCode=$st"
+            if [ -s /login-client/pat ]; then
+              echo "=== PAT (do not share) ==="
+              cat /login-client/pat
+              kubectl -n cipher delete secret login-client --ignore-not-found
+              kubectl -n cipher create secret generic login-client --from-file=pat=/login-client/pat
+              echo "secret/login-client created"
+            else
+              echo "PAT file missing or empty" >&2
+              exit 1
+            fi
+          env:
+            - name: POD_NAME
+              valueFrom: { fieldRef: { fieldPath: metadata.name } }
+          volumeMounts:
+            - name: login-client
+              mountPath: /login-client
+              readOnly: true

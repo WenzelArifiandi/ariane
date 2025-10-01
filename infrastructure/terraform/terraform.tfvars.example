@@ -24,3 +24,11 @@ macaddr_smoke = "BC:24:11:39:7C:4D"
 postgres_ip = "10.98.0.10"
 k8s_ip      = "10.98.0.11"
 pbs_ip      = "10.98.0.12"
+
+# Cloudflare Access Configuration
+# SECURITY: These should be set via environment variables or GitHub secrets
+# Do not commit actual values to version control
+cloudflare_api_token  = "CHANGE_ME_TO_ACTUAL_CLOUDFLARE_API_TOKEN"
+cipher_client_id      = "CHANGE_ME_TO_ACTUAL_CIPHER_CLIENT_ID"
+cipher_client_secret  = "CHANGE_ME_TO_ACTUAL_CIPHER_CLIENT_SECRET"
+cipher_issuer_url     = "https://cipher.wenzelarifiandi.com"

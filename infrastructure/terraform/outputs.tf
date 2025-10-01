@@ -116,3 +116,58 @@ output "resource_utilization" {
     efficiency = "Optimal - room for growth without waste"
   }
 }
+
+# Cloudflare Access Outputs
+output "cloudflare_access_application" {
+  description = "Cloudflare Access application information"
+  value = {
+    id     = cloudflare_access_application.cipher.id
+    domain = cloudflare_access_application.cipher.domain
+    aud    = cloudflare_access_application.cipher.aud
+    name   = cloudflare_access_application.cipher.name
+  }
+  sensitive = false
+}
+
+output "cloudflare_access_identity_provider" {
+  description = "CIPHER OIDC identity provider information"
+  value = {
+    id   = cloudflare_access_identity_provider.cipher_oidc.id
+    name = cloudflare_access_identity_provider.cipher_oidc.name
+    type = cloudflare_access_identity_provider.cipher_oidc.type
+  }
+  sensitive = false
+}
+
+output "cloudflare_access_service_token" {
+  description = "Service token for programmatic access"
+  value = {
+    id           = cloudflare_access_service_token.cipher_service_token.id
+    name         = cloudflare_access_service_token.cipher_service_token.name
+    client_id    = cloudflare_access_service_token.cipher_service_token.client_id
+    client_secret = cloudflare_access_service_token.cipher_service_token.client_secret
+  }
+  sensitive = true
+}
+
+output "cipher_access_info" {
+  description = "Complete Cipher access setup information"
+  value = {
+    application = {
+      url    = "https://cipher.wenzelarifiandi.com"
+      access = "https://cipher.wenzelarifiandi.com/cdn-cgi/access/login"
+    }
+    authentication = {
+      provider = "CIPHER OIDC"
+      issuer   = var.cipher_issuer_url
+    }
+    policies = [
+      "Allow CIPHER Users",
+      "Allow Service Token"
+    ]
+    service_token = {
+      usage = "For programmatic API access"
+      note  = "Store client_id and client_secret securely"
+    }
+  }
+}
