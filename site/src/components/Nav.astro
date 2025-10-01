@@ -311,10 +311,27 @@ const studioHref = import.meta.env.DEV ? 'http://localhost:3333/' : 'https://stu
     }
   }
 
-  // Main Maker button click handler - simply navigate to /maker
-  // Cloudflare Access will handle authentication automatically
-  creatorToggle?.addEventListener('click', () => {
-    window.location.href = '/maker';
+  // Main Maker button click handler - require authentication, then show dropdown
+  creatorToggle?.addEventListener('click', async () => {
+    // Check if user is authenticated by trying to access the protected /maker endpoint
+    try {
+      const response = await fetch('/maker', {
+        method: 'HEAD',
+        credentials: 'include'
+      });
+
+      if (response.ok) {
+        // Authenticated - toggle the dropdown menu
+        const isOpen = creatorToggle.getAttribute('aria-expanded') === 'true';
+        openMakerMenu(!isOpen);
+      } else {
+        // Not authenticated - redirect to /maker which will trigger Cloudflare Access login
+        window.location.href = '/maker';
+      }
+    } catch (error) {
+      // On error, redirect to /maker to trigger authentication
+      window.location.href = '/maker';
+    }
   });
 
   // M3 Expressive Mobile Menu
