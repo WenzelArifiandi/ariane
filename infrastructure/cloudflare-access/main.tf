@@ -50,6 +50,7 @@ resource "cloudflare_zero_trust_access_application" "cipher" {
   # CORS settings for cross-origin auth checks from Ariane
   cors_headers {
     allowed_origins   = ["https://wenzelarifiandi.com", "http://localhost:4321"]
+    allowed_methods   = ["GET", "OPTIONS"]
     allow_credentials = true
   }
 
