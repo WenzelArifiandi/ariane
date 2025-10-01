@@ -49,9 +49,9 @@ resource "cloudflare_zero_trust_access_application" "auth" {
   domain                    = "auth.wenzelarifiandi.com"
   type                      = "self_hosted"
   session_duration          = "24h"
-  auto_redirect_to_identity = true
+  auto_redirect_to_identity = false
 
-  # Specify exactly one IdP for auto-redirect (required when auto_redirect_to_identity = true)
+  # Specify exactly one IdP
   allowed_idps = [cloudflare_zero_trust_access_identity_provider.cipher_oidc.id]
 
   # Enable application logo and branding (optional)
@@ -68,7 +68,7 @@ resource "cloudflare_zero_trust_access_application" "auth" {
   # This controls where users go if they fail authentication or are denied
   custom_deny_url     = "https://wenzelarifiandi.com"
   custom_deny_message = "Authentication required. Please try again."
-  
+
   # Skip interstitial page to speed up auth flow
   skip_interstitial = true
 
