@@ -279,7 +279,7 @@ const studioHref = import.meta.env.DEV ? 'http://localhost:3333/' : 'https://stu
       // 200 = authenticated, 401/403 = not authenticated
       return response.status === 200;
     } catch (error) {
-      // Network error or CORS issue, treat as not authenticated
+      // Network error or CORS issue - treat as not authenticated
       return false;
     }
   }
