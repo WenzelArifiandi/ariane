@@ -24,8 +24,5 @@ variable "cipher_issuer_url" {
   default     = "https://cipher.wenzelarifiandi.com"
 }
 
-variable "cloudflare_account_id" {
-  description = "Cloudflare account ID for managing Zero Trust resources"
-  type        = string
-  sensitive   = true
-}
+# Note: cloudflare_account_id removed to simplify initial deployment
+# Can be added later when tags are needed

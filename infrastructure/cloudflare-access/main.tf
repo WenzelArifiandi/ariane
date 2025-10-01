@@ -5,22 +5,6 @@ data "cloudflare_zone" "wenzelarifiandi" {
   name = "wenzelarifiandi.com"
 }
 
-# Create Access Tags for organization
-resource "cloudflare_zero_trust_access_tag" "production" {
-  account_id = var.cloudflare_account_id
-  name       = "production"
-}
-
-resource "cloudflare_zero_trust_access_tag" "cipher" {
-  account_id = var.cloudflare_account_id
-  name       = "cipher"
-}
-
-resource "cloudflare_zero_trust_access_tag" "zitadel_auth" {
-  account_id = var.cloudflare_account_id
-  name       = "zitadel-auth"
-}
-
 # Create Access Application for cipher.wenzelarifiandi.com
 resource "cloudflare_zero_trust_access_application" "cipher" {
   zone_id                   = data.cloudflare_zone.wenzelarifiandi.id
@@ -45,11 +29,8 @@ resource "cloudflare_zero_trust_access_application" "cipher" {
     max_age           = 86400
   }
 
-  tags = [
-    cloudflare_zero_trust_access_tag.production.id,
-    cloudflare_zero_trust_access_tag.cipher.id,
-    cloudflare_zero_trust_access_tag.zitadel_auth.id
-  ]
+  # Tags removed for now - can be added later when account ID is available
+  # tags = ["production", "cipher", "zitadel-auth"]
 }
 
 # Create Access Identity Provider - Cipher ZITADEL as OIDC provider
