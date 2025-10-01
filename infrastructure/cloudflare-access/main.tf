@@ -5,34 +5,6 @@ data "cloudflare_zone" "wenzelarifiandi" {
   name = "wenzelarifiandi.com"
 }
 
-# Create Access Application for cipher.wenzelarifiandi.com
-resource "cloudflare_zero_trust_access_application" "cipher" {
-  zone_id                   = data.cloudflare_zone.wenzelarifiandi.id
-  name                      = "Cipher Application"
-  domain                    = "cipher.wenzelarifiandi.com"
-  type                      = "self_hosted"
-  session_duration          = "24h"
-  auto_redirect_to_identity = true
-
-  # Enable application logo and branding (optional)
-  logo_url = "https://wenzelarifiandi.com/favicon.ico"
-
-  # CORS settings for web applications - allow cipher, main site, and localhost for development
-  cors_headers {
-    allow_all_origins = false
-    allow_all_methods = false
-    allow_all_headers = false
-    allowed_origins   = ["https://cipher.wenzelarifiandi.com", "https://wenzelarifiandi.com", "http://localhost:4321"]
-    allowed_methods   = ["GET", "POST", "OPTIONS"]
-    allowed_headers   = ["Content-Type", "Authorization"]
-    allow_credentials = true
-    max_age           = 86400
-  }
-
-  # Tags removed for now - can be added later when account ID is available
-  # tags = ["production", "cipher", "zitadel-auth"]
-}
-
 # Create Access Identity Provider - Cipher ZITADEL as OIDC provider
 resource "cloudflare_zero_trust_access_identity_provider" "cipher_oidc" {
   zone_id = data.cloudflare_zone.wenzelarifiandi.id
@@ -53,6 +25,37 @@ resource "cloudflare_zero_trust_access_identity_provider" "cipher_oidc" {
     # Enable email domain validation
     email_claim_name = "email"
   }
+}
+
+# Create Access Application for cipher.wenzelarifiandi.com
+resource "cloudflare_zero_trust_access_application" "cipher" {
+  zone_id                   = data.cloudflare_zone.wenzelarifiandi.id
+  name                      = "Cipher Application"
+  domain                    = "cipher.wenzelarifiandi.com"
+  type                      = "self_hosted"
+  session_duration          = "24h"
+  auto_redirect_to_identity = true
+
+  # Specify exactly one IdP for auto-redirect (required when auto_redirect_to_identity = true)
+  allowed_idps = [cloudflare_zero_trust_access_identity_provider.cipher_oidc.id]
+
+  # Enable application logo and branding (optional)
+  logo_url = "https://wenzelarifiandi.com/favicon.ico"
+
+  # CORS settings for web applications - allow cipher, main site, and localhost for development
+  cors_headers {
+    allow_all_origins = false
+    allow_all_methods = false
+    allow_all_headers = false
+    allowed_origins   = ["https://cipher.wenzelarifiandi.com", "https://wenzelarifiandi.com", "http://localhost:4321"]
+    allowed_methods   = ["GET", "POST", "OPTIONS"]
+    allowed_headers   = ["Content-Type", "Authorization"]
+    allow_credentials = true
+    max_age           = 86400
+  }
+
+  # Tags removed for now - can be added later when account ID is available
+  # tags = ["production", "cipher", "zitadel-auth"]
 }
 
 # Create Access Policy allowing login via Cipher OIDC
