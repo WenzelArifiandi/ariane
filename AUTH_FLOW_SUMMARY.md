@@ -9,7 +9,7 @@ The Maker button on wenzelarifiandi.com now uses Cloudflare Access + Cipher OIDC
 ### 1. User Clicks Maker Button
 ```javascript
 // Nav.astro checks auth via fetch
-const response = await fetch("https://cipher.wenzelarifiandi.com/cdn-cgi/access/get-identity", {
+const response = await fetch("https://auth.wenzelarifiandi.com/cdn-cgi/access/get-identity", {
   credentials: "include"
 });
 ```
@@ -21,7 +21,7 @@ const response = await fetch("https://cipher.wenzelarifiandi.com/cdn-cgi/access/
 - Shows links to Neve, Etoile, etc.
 
 #### B. User is Not Authenticated (401/403 response)
-- Redirects to: `https://cipher.wenzelarifiandi.com/cdn-cgi/access/login?redirect_url=<current_page>`
+- Redirects to: `https://auth.wenzelarifiandi.com/cdn-cgi/access/login?redirect_url=<current_page>`
 - User authenticates via Cipher OIDC (Zitadel)
 - After auth, **immediately redirects back to current Ariane page**
 - User clicks Maker button again → now authenticated → menu opens
@@ -37,8 +37,8 @@ const response = await fetch("https://cipher.wenzelarifiandi.com/cdn-cgi/access/
 
 ### Terraform (infrastructure/cloudflare-access/main.tf)
 ```hcl
-resource "cloudflare_zero_trust_access_application" "cipher" {
-  domain = "cipher.wenzelarifiandi.com"
+resource "cloudflare_zero_trust_access_application" "auth" {
+  domain = "auth.wenzelarifiandi.com"
   cors_headers {
     allowed_origins   = ["https://wenzelarifiandi.com", "http://localhost:4321"]
     allow_credentials = true
@@ -49,7 +49,7 @@ resource "cloudflare_zero_trust_access_application" "cipher" {
 ### Frontend (site/src/components/Nav.astro)
 ```javascript
 async function checkAuthStatus() {
-  const response = await fetch("https://cipher.wenzelarifiandi.com/cdn-cgi/access/get-identity", {
+  const response = await fetch("https://auth.wenzelarifiandi.com/cdn-cgi/access/get-identity", {
     credentials: "include"
   });
   return response.status === 200;
@@ -60,7 +60,7 @@ creatorToggle.addEventListener('click', async () => {
     openMakerMenu();  // Show dropdown
   } else {
     // Redirect to auth, will return to current page
-    window.location.href = `https://cipher.wenzelarifiandi.com/cdn-cgi/access/login?redirect_url=${encodeURIComponent(window.location.href)}`;
+    window.location.href = `https://auth.wenzelarifiandi.com/cdn-cgi/access/login?redirect_url=${encodeURIComponent(window.location.href)}`;
   }
 });
 ```

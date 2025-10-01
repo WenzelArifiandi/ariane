@@ -42,7 +42,7 @@ echo "🔍 Searching for existing Access applications..."
 apps_response=$(call_api "/accounts/$ACCOUNT_ID/access/apps")
 
 if echo "$apps_response" | jq -e '.success' > /dev/null 2>&1; then
-    cipher_app=$(echo "$apps_response" | jq -r '.result[] | select(.domain == "cipher.wenzelarifiandi.com")')
+    cipher_app=$(echo "$apps_response" | jq -r '.result[] | select(.domain == "auth.wenzelarifiandi.com")')
     
     if [[ "$cipher_app" != "" ]]; then
         app_id=$(echo "$cipher_app" | jq -r '.id')
@@ -50,13 +50,13 @@ if echo "$apps_response" | jq -e '.success' > /dev/null 2>&1; then
         echo "✅ Found existing Access application:"
         echo "   Name: $app_name"
         echo "   ID: $app_id"
-        echo "   Domain: cipher.wenzelarifiandi.com"
+        echo "   Domain: auth.wenzelarifiandi.com"
         echo ""
         echo "📋 Import command:"
-        echo "   terraform import cloudflare_zero_trust_access_application.cipher accounts/$ACCOUNT_ID/$app_id"
+        echo "   terraform import cloudflare_zero_trust_access_application.auth accounts/$ACCOUNT_ID/$app_id"
         echo ""
     else
-        echo "ℹ️  No existing Access application found for cipher.wenzelarifiandi.com"
+        echo "ℹ️  No existing Access application found for auth.wenzelarifiandi.com"
     fi
 else
     echo "❌ Failed to fetch Access applications"

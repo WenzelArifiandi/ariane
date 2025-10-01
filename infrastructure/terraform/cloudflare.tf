@@ -1,15 +1,25 @@
-# Cloudflare Access Application and Policy for cipher.wenzelarifiandi.com
+# Cloudflare Access Application and Policy for auth.wenzelarifiandi.com
 
 # Get the zone ID for wenzelarifiandi.com
 data "cloudflare_zone" "wenzelarifiandi" {
   name = "wenzelarifiandi.com"
 }
 
-# Create Access Application for cipher.wenzelarifiandi.com
-resource "cloudflare_access_application" "cipher" {
+# DNS record: auth → cipher (proxied)
+resource "cloudflare_record" "auth_cname" {
+  zone_id = data.cloudflare_zone.wenzelarifiandi.id
+  name    = "auth"
+  type    = "CNAME"
+  value   = "cipher.wenzelarifiandi.com"
+  proxied = true
+  ttl     = 1
+}
+
+# Create Access Application for auth.wenzelarifiandi.com
+resource "cloudflare_access_application" "auth" {
   zone_id                   = data.cloudflare_zone.wenzelarifiandi.id
-  name                     = "Cipher Application"
-  domain                   = "cipher.wenzelarifiandi.com"
+  name                     = "Ariane Auth"
+  domain                   = "auth.wenzelarifiandi.com"
   type                     = "self_hosted"
   session_duration         = "24h"
   auto_redirect_to_identity = true
@@ -17,19 +27,19 @@ resource "cloudflare_access_application" "cipher" {
   # Enable application logo and branding (optional)
   logo_url = "https://wenzelarifiandi.com/favicon.ico"
   
-  # CORS settings for web applications - allow cipher, main site, and localhost for development
+  # CORS settings for web applications - allow primary site and localhost for development
   cors_headers {
     allow_all_origins     = false
     allow_all_methods     = false
     allow_all_headers     = false
-    allowed_origins       = ["https://cipher.wenzelarifiandi.com", "https://wenzelarifiandi.com", "http://localhost:4321"]
+    allowed_origins       = ["https://wenzelarifiandi.com", "http://localhost:4321"]
     allowed_methods       = ["GET", "POST", "OPTIONS"]
     allowed_headers       = ["Content-Type", "Authorization"]
     allow_credentials     = true
     max_age              = 86400
   }
 
-  tags = ["production", "cipher", "zitadel-auth"]
+  tags = ["production", "auth", "zitadel-auth"]
 }
 
 # Create Access Identity Provider - Cipher ZITADEL as OIDC provider
@@ -56,7 +66,7 @@ resource "cloudflare_access_identity_provider" "cipher_oidc" {
 
 # Create Access Policy allowing login via Cipher OIDC
 resource "cloudflare_access_policy" "cipher_oidc_policy" {
-  application_id = cloudflare_access_application.cipher.id
+  application_id = cloudflare_access_application.auth.id
   zone_id        = data.cloudflare_zone.wenzelarifiandi.id
   name           = "Allow Cipher OIDC Users"
   precedence     = 1
@@ -92,7 +102,7 @@ resource "cloudflare_access_service_token" "cipher_service_token" {
 
 # Optional: Create policy for service token access
 resource "cloudflare_access_policy" "cipher_service_policy" {
-  application_id = cloudflare_access_application.cipher.id
+  application_id = cloudflare_access_application.auth.id
   zone_id        = data.cloudflare_zone.wenzelarifiandi.id
   name           = "Allow Service Token"
   precedence     = 2

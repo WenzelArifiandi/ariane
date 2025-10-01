@@ -2,7 +2,7 @@
 
 ## Problem
 
-The `/cdn-cgi/access/get-identity` endpoint returns 404, which means Cloudflare Access is not active on cipher.wenzelarifiandi.com.
+The `/cdn-cgi/access/get-identity` endpoint returns 404, which means Cloudflare Access is not active on auth.wenzelarifiandi.com.
 
 This happened because:
 1. Only the Application and Identity Provider were imported to Terraform
@@ -31,7 +31,7 @@ You have two options:
 
 3. **Verify:**
    ```bash
-   curl -I https://cipher.wenzelarifiandi.com/cdn-cgi/access/get-identity
+   curl -I https://auth.wenzelarifiandi.com/cdn-cgi/access/get-identity
    # Should return 401 or 403, NOT 404
    ```
 
@@ -71,7 +71,7 @@ The policies exist in Cloudflare but aren't in Terraform state. You need to impo
 
 3. **Verify:**
    ```bash
-   curl -I https://cipher.wenzelarifiandi.com/cdn-cgi/access/get-identity
+   curl -I https://auth.wenzelarifiandi.com/cdn-cgi/access/get-identity
    # Should return 401 or 403 (not authenticated)
    ```
 
@@ -98,11 +98,11 @@ Once Access is active, test the auth flow:
 
 ```bash
 # Should return 401/403 when not authenticated
-curl -I https://cipher.wenzelarifiandi.com/cdn-cgi/access/get-identity
+curl -I https://auth.wenzelarifiandi.com/cdn-cgi/access/get-identity
 
 # Should redirect to identity provider login
-curl -I "https://cipher.wenzelarifiandi.com/cdn-cgi/access/login?redirect_url=https://wenzelarifiandi.com"
+curl -I "https://auth.wenzelarifiandi.com/cdn-cgi/access/login?redirect_url=https://wenzelarifiandi.com"
 
 # With valid CF_Authorization cookie, should return user info
-curl -H "Cookie: CF_Authorization=<token>" https://cipher.wenzelarifiandi.com/cdn-cgi/access/get-identity
+curl -H "Cookie: CF_Authorization=<token>" https://auth.wenzelarifiandi.com/cdn-cgi/access/get-identity
 ```

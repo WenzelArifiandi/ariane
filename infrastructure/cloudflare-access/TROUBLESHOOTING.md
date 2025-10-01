@@ -146,7 +146,7 @@ cd infrastructure/cloudflare-access
 terraform init
 
 # Import each resource (replace IDs with actual values)
-terraform import cloudflare_zero_trust_access_application.cipher accounts/<ACCOUNT_ID>/<APP_ID>
+terraform import cloudflare_zero_trust_access_application.auth accounts/<ACCOUNT_ID>/<APP_ID>
 terraform import cloudflare_zero_trust_access_identity_provider.cipher_oidc accounts/<ACCOUNT_ID>/<IDP_ID>
 
 # Verify

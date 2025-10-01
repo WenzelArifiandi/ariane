@@ -2,10 +2,10 @@
 output "cloudflare_access_application" {
   description = "Cloudflare Access application information"
   value = {
-    id     = cloudflare_zero_trust_access_application.cipher.id
-    domain = cloudflare_zero_trust_access_application.cipher.domain
-    aud    = cloudflare_zero_trust_access_application.cipher.aud
-    name   = cloudflare_zero_trust_access_application.cipher.name
+    id     = cloudflare_zero_trust_access_application.auth.id
+    domain = cloudflare_zero_trust_access_application.auth.domain
+    aud    = cloudflare_zero_trust_access_application.auth.aud
+    name   = cloudflare_zero_trust_access_application.auth.name
   }
   sensitive = false
 }
@@ -32,11 +32,11 @@ output "cloudflare_access_service_token" {
 }
 
 output "cipher_access_info" {
-  description = "Complete Cipher access setup information"
+  description = "Complete auth subdomain access setup information"
   value = {
     application = {
-      url    = "https://cipher.wenzelarifiandi.com"
-      access = "https://cipher.wenzelarifiandi.com/cdn-cgi/access/login"
+      url    = "https://auth.wenzelarifiandi.com"
+      access = "https://auth.wenzelarifiandi.com/cdn-cgi/access/login"
     }
     authentication = {
       provider = "Cipher OIDC"

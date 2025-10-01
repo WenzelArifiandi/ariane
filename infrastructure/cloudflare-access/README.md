@@ -1,6 +1,6 @@
 # Cloudflare Access - Local Development Guide
 
-This directory contains Terraform configuration for Cloudflare Zero Trust Access setup for `cipher.wenzelarifiandi.com`.
+This directory contains Terraform configuration for Cloudflare Zero Trust Access setup for `auth.wenzelarifiandi.com`.
 
 ## 🚀 Quick Start
 
@@ -95,7 +95,7 @@ The workflow automatically uses GitHub Secrets:
 
 ## 📋 Resources Created
 
-- **Access Application**: `cipher.wenzelarifiandi.com`
+- **Access Application**: `auth.wenzelarifiandi.com`
 - **OIDC Identity Provider**: Cipher ZITADEL integration
 - **Access Policies**: Allow OIDC users + Service token access
 - **Service Token**: For programmatic API access
@@ -103,7 +103,7 @@ The workflow automatically uses GitHub Secrets:
 
 ## � Importing Existing Resources
 
-If you already have Access resources for `cipher.wenzelarifiandi.com`, you need to import them first:
+If you already have Access resources for `auth.wenzelarifiandi.com`, you need to import them first:
 
 ### Automatic Discovery & Import
 
@@ -117,7 +117,7 @@ export TF_VAR_cloudflare_account_id="your_account_id"
 
 # Follow the import commands shown by the script
 # Example outputs:
-# terraform import cloudflare_zero_trust_access_application.cipher accounts/abc123/def456
+# terraform import cloudflare_zero_trust_access_application.auth accounts/abc123/def456
 # terraform import cloudflare_zero_trust_access_identity_provider.cipher_oidc accounts/abc123/ghi789
 ```
 
@@ -126,7 +126,7 @@ export TF_VAR_cloudflare_account_id="your_account_id"
 1. **Find existing resources** in [Cloudflare Dashboard](https://dash.cloudflare.com) → Zero Trust → Access
 2. **Import Access Application**:
    ```bash
-   terraform import cloudflare_zero_trust_access_application.cipher accounts/<ACCOUNT_ID>/<APP_ID>
+   terraform import cloudflare_zero_trust_access_application.auth accounts/<ACCOUNT_ID>/<APP_ID>
    ```
 3. **Import Identity Provider**:
    ```bash
@@ -147,7 +147,7 @@ export TF_VAR_cloudflare_account_id="your_account_id"
 
 After deployment, test the setup:
 
-1. **Visit**: https://cipher.wenzelarifiandi.com
+1. **Visit**: https://auth.wenzelarifiandi.com
 2. **Should redirect** to Cloudflare Access login
 3. **Select**: "Cipher OIDC" provider
 4. **Authenticate** via ZITADEL
@@ -177,7 +177,7 @@ After deployment, test the setup:
 
 ### "Error 11010: application_already_exists"
 
-- An Access application for `cipher.wenzelarifiandi.com` already exists
+- An Access application for `auth.wenzelarifiandi.com` already exists
 - Use the import script: `./import-existing-resources.sh`
 - Follow the import commands to bring existing resources into Terraform state
 

@@ -4,9 +4,9 @@ import type { APIRoute } from "astro";
 export const GET: APIRoute = async () => {
   try {
     // Check if the user has valid Cloudflare Access authentication
-    // by hitting the cipher domain's get-identity endpoint
+    // by hitting the auth subdomain's get-identity endpoint
     const response = await fetch(
-      "https://cipher.wenzelarifiandi.com/cdn-cgi/access/get-identity",
+      "https://auth.wenzelarifiandi.com/cdn-cgi/access/get-identity",
       {
         headers: {
           // Forward any CF Access cookies if they exist

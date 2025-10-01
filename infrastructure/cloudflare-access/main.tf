@@ -1,4 +1,4 @@
-# Cloudflare Access Application and Policy for cipher.wenzelarifiandi.com
+# Cloudflare Access Application and Policy for auth.wenzelarifiandi.com
 
 # Get the zone ID for wenzelarifiandi.com (still needed for some resources)
 data "cloudflare_zone" "wenzelarifiandi" {
@@ -32,11 +32,21 @@ resource "cloudflare_zero_trust_access_identity_provider" "cipher_oidc" {
   }
 }
 
-# Create Access Application for cipher.wenzelarifiandi.com
-resource "cloudflare_zero_trust_access_application" "cipher" {
+# DNS record: auth → cipher (proxied)
+resource "cloudflare_record" "auth_cname" {
+  zone_id = data.cloudflare_zone.wenzelarifiandi.id
+  name    = "auth"
+  type    = "CNAME"
+  value   = "cipher.wenzelarifiandi.com"
+  proxied = true
+  ttl     = 1
+}
+
+# Create Access Application for auth.wenzelarifiandi.com
+resource "cloudflare_zero_trust_access_application" "auth" {
   account_id                = var.cloudflare_account_id
-  name                      = "Cipher Application"
-  domain                    = "cipher.wenzelarifiandi.com"
+  name                      = "Ariane Auth"
+  domain                    = "auth.wenzelarifiandi.com"
   type                      = "self_hosted"
   session_duration          = "24h"
   auto_redirect_to_identity = true
@@ -60,7 +70,7 @@ resource "cloudflare_zero_trust_access_application" "cipher" {
 
 # Create Access Policy allowing login via Cipher OIDC
 resource "cloudflare_zero_trust_access_policy" "cipher_oidc_policy" {
-  application_id = cloudflare_zero_trust_access_application.cipher.id
+  application_id = cloudflare_zero_trust_access_application.auth.id
   account_id     = var.cloudflare_account_id
   name           = "Allow Cipher OIDC Users"
   precedence     = 1
@@ -88,7 +98,7 @@ resource "cloudflare_zero_trust_access_service_token" "cipher_service_token" {
 
 # Optional: Create policy for service token access
 resource "cloudflare_zero_trust_access_policy" "cipher_service_policy" {
-  application_id = cloudflare_zero_trust_access_application.cipher.id
+  application_id = cloudflare_zero_trust_access_application.auth.id
   account_id     = var.cloudflare_account_id
   name           = "Allow Service Token"
   precedence     = 2

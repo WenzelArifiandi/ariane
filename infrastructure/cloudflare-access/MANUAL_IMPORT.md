@@ -26,7 +26,7 @@ terraform init
 
 # 3. Import Access Application
 terraform import \
-  cloudflare_zero_trust_access_application.cipher \
+  cloudflare_zero_trust_access_application.auth \
   "$TF_VAR_cloudflare_account_id/2768b19d-a8a6-4866-b42f-f4881629edaf"
 
 # 4. Import Identity Provider

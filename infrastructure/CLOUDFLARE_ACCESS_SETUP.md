@@ -42,7 +42,7 @@ In your ZITADEL instance (`https://auth.wenzelarifiandi.com`):
 1. **Create Application**:
 
    - Type: Web Application
-   - Redirect URIs: `https://cipher.wenzelarifiandi.com/cdn-cgi/access/callback`
+   - Redirect URIs: `https://cipher.wenzelarifiandi.cloudflareaccess.com/cdn-cgi/access/callback`
    - Scopes: `openid`, `profile`, `email`
 
 2. **Note the credentials**:
@@ -90,7 +90,7 @@ terraform plan -target="module.cloudflare_access"
 
 # Apply targeted resources
 terraform apply \
-  -target="cloudflare_access_application.cipher" \
+  -target="cloudflare_access_application.auth" \
   -target="cloudflare_access_identity_provider.zitadel_oidc" \
   -target="cloudflare_access_policy.cipher_zitadel_policy"
 ```
@@ -126,7 +126,7 @@ terraform apply \
 After deployment, these URLs will be active:
 
 - **Application**: https://cipher.wenzelarifiandi.com
-- **Access Login**: https://cipher.wenzelarifiandi.com/cdn-cgi/access/login
+- **Access Login**: https://auth.wenzelarifiandi.com/cdn-cgi/access/login
 - **ZITADEL Auth**: https://auth.wenzelarifiandi.com
 
 ## 🧪 Testing Access
@@ -194,7 +194,7 @@ infrastructure/terraform/
 terraform output cloudflare_access_application
 
 # Verify ZITADEL application settings
-# Ensure redirect URI matches: https://cipher.wenzelarifiandi.com/cdn-cgi/access/callback
+# Ensure redirect URI matches: https://cipher.wenzelarifiandi.cloudflareaccess.com/cdn-cgi/access/callback
 ```
 
 **❌ "Invalid OIDC Configuration"**

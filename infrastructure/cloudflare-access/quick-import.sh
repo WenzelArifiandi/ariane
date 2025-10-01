@@ -45,7 +45,7 @@ echo ""
 
 # Import Access Application
 echo "📥 Importing Access Application..."
-terraform import cloudflare_zero_trust_access_application.cipher "accounts/$ACCOUNT_ID/$APP_ID" || {
+terraform import cloudflare_zero_trust_access_application.auth "accounts/$ACCOUNT_ID/$APP_ID" || {
     echo "⚠️  Application may already be imported or error occurred"
 }
 echo ""

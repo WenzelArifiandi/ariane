@@ -20,7 +20,7 @@ export TF_VAR_cipher_client_secret="your_cipher_client_secret"
 ./import-existing-resources.sh
 
 # The script will show you import commands like:
-# terraform import cloudflare_zero_trust_access_application.cipher accounts/abc123/def456
+# terraform import cloudflare_zero_trust_access_application.auth accounts/abc123/def456
 # terraform import cloudflare_zero_trust_access_identity_provider.cipher_oidc accounts/abc123/ghi789
 ```
 
@@ -30,7 +30,7 @@ Copy and run each import command shown by the discovery script:
 
 ```bash
 # Example - replace with actual IDs from the script output
-terraform import cloudflare_zero_trust_access_application.cipher accounts/<ACCOUNT_ID>/<APP_ID>
+terraform import cloudflare_zero_trust_access_application.auth accounts/<ACCOUNT_ID>/<APP_ID>
 terraform import cloudflare_zero_trust_access_identity_provider.cipher_oidc accounts/<ACCOUNT_ID>/<IDP_ID>
 terraform import cloudflare_zero_trust_access_service_token.cipher_service_token accounts/<ACCOUNT_ID>/<TOKEN_ID>
 ```
@@ -65,7 +65,7 @@ terraform apply
 
 | Terraform Resource                                                | Import Format                       |
 | ----------------------------------------------------------------- | ----------------------------------- |
-| `cloudflare_zero_trust_access_application.cipher`                 | `accounts/<ACCOUNT_ID>/<APP_ID>`    |
+| `cloudflare_zero_trust_access_application.auth`                 | `accounts/<ACCOUNT_ID>/<APP_ID>`    |
 | `cloudflare_zero_trust_access_identity_provider.cipher_oidc`      | `accounts/<ACCOUNT_ID>/<IDP_ID>`    |
 | `cloudflare_zero_trust_access_service_token.cipher_service_token` | `accounts/<ACCOUNT_ID>/<TOKEN_ID>`  |
 | `cloudflare_zero_trust_access_policy.cipher_oidc_policy`          | `accounts/<ACCOUNT_ID>/<POLICY_ID>` |
@@ -81,7 +81,7 @@ terraform apply
 
 After successful import and apply:
 
-1. Visit https://cipher.wenzelarifiandi.com
+1. Visit https://auth.wenzelarifiandi.com
 2. Should redirect to Cloudflare Access login
 3. OIDC authentication should work via ZITADEL
 4. No `application_already_exists` errors in future deployments
