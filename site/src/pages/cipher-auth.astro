@@ -1,0 +1,67 @@
+---
+// This page will be deployed at cipher.wenzelarifiandi.com
+// After Cloudflare Access authentication, it redirects back to the original page
+
+const redirect = Astro.url.searchParams.get('redirect');
+const returnUrl = redirect || 'https://wenzelarifiandi.com?auth_success=true';
+---
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Authenticating...</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: system-ui, -apple-system, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        .container {
+            text-align: center;
+            padding: 2rem;
+        }
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        h1 {
+            font-size: 1.5rem;
+            margin: 0 0 0.5rem;
+        }
+        p {
+            opacity: 0.9;
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="spinner"></div>
+        <h1>Authentication Successful</h1>
+        <p>Redirecting you back...</p>
+    </div>
+
+    <script is:inline define:vars={{ returnUrl }}>
+        // Wait a moment for Cloudflare Access cookies to be set
+        setTimeout(() => {
+            window.location.href = returnUrl;
+        }, 500);
+    </script>
+</body>
+</html>
