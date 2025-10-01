@@ -166,7 +166,7 @@ jobs:
                   echo "" >> $GITHUB_STEP_SUMMARY
                   echo "### 🎉 Deployment Complete!" >> $GITHUB_STEP_SUMMARY
                   echo "- **Application URL**: https://auth.wenzelarifiandi.com" >> $GITHUB_STEP_SUMMARY
-                  echo "- **Access Login**: https://auth.wenzelarifiandi.com/cdn-cgi/access/login" >> $GITHUB_STEP_SUMMARY
+                  echo "- **Access Login**: https://auth.wenzelarifiandi.com/" >> $GITHUB_STEP_SUMMARY
                   echo "- **Identity Provider**: Cipher OIDC (cipher.wenzelarifiandi.com)" >> $GITHUB_STEP_SUMMARY
 
             - name: Handle Already Exists Error

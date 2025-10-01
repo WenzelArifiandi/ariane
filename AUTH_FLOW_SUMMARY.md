@@ -21,7 +21,7 @@ const response = await fetch("https://auth.wenzelarifiandi.com/cdn-cgi/access/ge
 - Shows links to Neve, Etoile, etc.
 
 #### B. User is Not Authenticated (401/403 response)
-- Redirects to: `https://auth.wenzelarifiandi.com/cdn-cgi/access/login?redirect_url=<current_page>`
+- Redirects to: `https://auth.wenzelarifiandi.com/` (Cloudflare Access handles the login flow)
 - User authenticates via Cipher OIDC (Zitadel)
 - After auth, **immediately redirects back to current Ariane page**
 - User clicks Maker button again → now authenticated → menu opens
@@ -60,7 +60,7 @@ creatorToggle.addEventListener('click', async () => {
     openMakerMenu();  // Show dropdown
   } else {
     // Redirect to auth, will return to current page
-    window.location.href = `https://auth.wenzelarifiandi.com/cdn-cgi/access/login?redirect_url=${encodeURIComponent(window.location.href)}`;
+    window.location.href = "https://auth.wenzelarifiandi.com";
   }
 });
 ```

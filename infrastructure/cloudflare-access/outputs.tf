@@ -36,7 +36,7 @@ output "cipher_access_info" {
   value = {
     application = {
       url    = "https://auth.wenzelarifiandi.com"
-      access = "https://auth.wenzelarifiandi.com/cdn-cgi/access/login"
+      access = "https://auth.wenzelarifiandi.com/"
     }
     authentication = {
       provider = "Cipher OIDC"

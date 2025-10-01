@@ -101,7 +101,7 @@ Once Access is active, test the auth flow:
 curl -I https://auth.wenzelarifiandi.com/cdn-cgi/access/get-identity
 
 # Should redirect to identity provider login
-curl -I "https://auth.wenzelarifiandi.com/cdn-cgi/access/login?redirect_url=https://wenzelarifiandi.com"
+curl -I "https://auth.wenzelarifiandi.com/"
 
 # With valid CF_Authorization cookie, should return user info
 curl -H "Cookie: CF_Authorization=<token>" https://auth.wenzelarifiandi.com/cdn-cgi/access/get-identity

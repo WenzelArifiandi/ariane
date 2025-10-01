@@ -126,7 +126,7 @@ terraform apply \
 After deployment, these URLs will be active:
 
 - **Application**: https://cipher.wenzelarifiandi.com
-- **Access Login**: https://auth.wenzelarifiandi.com/cdn-cgi/access/login
+- **Access Login**: https://auth.wenzelarifiandi.com/ (redirects to Cloudflare Access)
 - **ZITADEL Auth**: https://auth.wenzelarifiandi.com
 
 ## 🧪 Testing Access

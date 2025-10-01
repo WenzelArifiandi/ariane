@@ -15,7 +15,7 @@ The Maker button on wenzelarifiandi.com now requires authentication via Cloudfla
 If not authenticated:
 ```
 wenzelarifiandi.com
-  → https://auth.wenzelarifiandi.com/cdn-cgi/access/login?redirect_url=...
+  → https://auth.wenzelarifiandi.com/ (Cloudflare Access handles login)
   → Cloudflare Access login page
   → Zitadel OIDC authentication
   → Back to wenzelarifiandi.com?auth_success=true
@@ -55,7 +55,7 @@ async function checkAuthStatus() {
 }
 
 // Redirect to Cloudflare Access
-window.location.href = `https://auth.wenzelarifiandi.com/cdn-cgi/access/login?redirect_url=${returnUrl}`;
+window.location.href = "https://auth.wenzelarifiandi.com";
 ```
 
 #### 2. Auth Return Handler (`src/pages/api/auth/return.ts`)

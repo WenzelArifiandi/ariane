@@ -273,8 +273,8 @@ const studioHref = import.meta.env.DEV ? 'http://localhost:3333/' : 'https://stu
   const CF_ACCESS_BASE_URL = "https://auth.wenzelarifiandi.com";
 
   function redirectToAccessLogin() {
-    const redirectUrl = encodeURIComponent(window.location.href);
-    window.location.href = `${CF_ACCESS_BASE_URL}/cdn-cgi/access/login?redirect_url=${redirectUrl}`;
+    // Redirect to auth domain root - Cloudflare Access will handle the 302 flow
+    window.location.href = CF_ACCESS_BASE_URL;
   }
 
   // Check authentication status via Cloudflare Access
