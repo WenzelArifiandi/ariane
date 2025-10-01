@@ -40,6 +40,10 @@ if ! prompt_for_value "TF_VAR_cloudflare_api_token" "Cloudflare API Token (get f
     exit 1
 fi
 
+if ! prompt_for_value "TF_VAR_cloudflare_account_id" "Cloudflare Account ID (get from https://dash.cloudflare.com right sidebar)"; then
+    exit 1
+fi
+
 if ! prompt_for_value "TF_VAR_cipher_client_id" "Cipher OIDC Client ID (from ZITADEL application)"; then
     exit 1
 fi
@@ -54,6 +58,7 @@ echo ""
 echo "💡 To make these persistent, add to your shell profile (~/.zshrc or ~/.bashrc):"
 echo ""
 echo "export TF_VAR_cloudflare_api_token=\"\$TF_VAR_cloudflare_api_token\""
+echo "export TF_VAR_cloudflare_account_id=\"\$TF_VAR_cloudflare_account_id\""
 echo "export TF_VAR_cipher_client_id=\"\$TF_VAR_cipher_client_id\""  
 echo "export TF_VAR_cipher_client_secret=\"\$TF_VAR_cipher_client_secret\""
 echo ""

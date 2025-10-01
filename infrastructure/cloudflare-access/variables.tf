@@ -39,5 +39,13 @@ variable "cipher_issuer_url" {
   default     = "https://cipher.wenzelarifiandi.com"
 }
 
-# Note: cloudflare_account_id removed to simplify initial deployment
-# Can be added later when tags are needed
+variable "cloudflare_account_id" {
+  description = "Cloudflare account ID for managing Zero Trust resources. Can be set via TF_VAR_cloudflare_account_id environment variable."
+  type        = string
+  sensitive   = true
+  
+  validation {
+    condition     = length(var.cloudflare_account_id) > 0
+    error_message = "Cloudflare account ID must be provided. Set TF_VAR_cloudflare_account_id environment variable or add to terraform.tfvars file."
+  }
+}

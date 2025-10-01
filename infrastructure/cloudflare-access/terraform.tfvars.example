@@ -6,6 +6,10 @@
 # Get this from: https://dash.cloudflare.com/profile/api-tokens
 cloudflare_api_token = "your_cloudflare_api_token_here"
 
+# Cloudflare Account ID (required)
+# Get this from: https://dash.cloudflare.com (right sidebar)
+cloudflare_account_id = "your_cloudflare_account_id_here"
+
 # Cipher OIDC credentials (required)
 # Get these from your ZITADEL Cipher OIDC application configuration
 cipher_client_id     = "your_cipher_oidc_client_id_here"

@@ -8,31 +8,34 @@ This directory contains Terraform configuration for Cloudflare Zero Trust Access
 
 Set these environment variables before running Terraform:
 
-```bash
+````bash
 export TF_VAR_cloudflare_api_token="your_api_token_here"
+export TF_VAR_cloudflare_account_id="your_account_id_here"
 export TF_VAR_cipher_client_id="your_client_id_here"
 export TF_VAR_cipher_client_secret="your_client_secret_here"
+
+# Check for existing resources and import if needed
+./import-existing-resources.sh
 
 # Now run terraform without prompts
 terraform init
 terraform plan
 terraform apply
-```
-
-### Option 2: terraform.tfvars File
+```### Option 2: terraform.tfvars File
 
 1. **Copy the example file:**
 
    ```bash
    cp terraform.tfvars.example terraform.tfvars
-   ```
+````
 
 2. **Edit terraform.tfvars** with your actual values:
 
    ```hcl
-   cloudflare_api_token = "your_actual_api_token"
-   cipher_client_id     = "your_actual_client_id"
-   cipher_client_secret = "your_actual_client_secret"
+   cloudflare_api_token  = "your_actual_api_token"
+   cloudflare_account_id = "your_actual_account_id"
+   cipher_client_id      = "your_actual_client_id"
+   cipher_client_secret  = "your_actual_client_secret"
    ```
 
 3. **Run Terraform:**
@@ -51,6 +54,12 @@ terraform apply
 3. Use "Zone:Zone:Read, Zone:DNS:Edit, Account:Cloudflare Access:Edit" permissions
 4. Include your zone: `wenzelarifiandi.com`
 
+### Cloudflare Account ID
+
+1. Go to [Cloudflare Dashboard](https://dash.cloudflare.com)
+2. Look at the right sidebar - your Account ID is displayed there
+3. It looks like: `1234567890abcdef1234567890abcdef`
+
 ### Cipher OIDC Credentials
 
 1. Access your ZITADEL instance at `cipher.wenzelarifiandi.com`
@@ -64,11 +73,15 @@ terraform apply
 ```bash
 # Set environment variables (add to your ~/.zshrc or ~/.bashrc)
 export TF_VAR_cloudflare_api_token="xxx"
+export TF_VAR_cloudflare_account_id="xxx"
 export TF_VAR_cipher_client_id="xxx"
 export TF_VAR_cipher_client_secret="xxx"
 
-# Run terraform
+# Import any existing resources first
 cd infrastructure/cloudflare-access
+./import-existing-resources.sh
+
+# Run terraform
 terraform plan
 ```
 
@@ -88,7 +101,49 @@ The workflow automatically uses GitHub Secrets:
 - **Service Token**: For programmatic API access
 - **CORS Configuration**: Supports localhost development
 
-## 🔍 Validation
+## � Importing Existing Resources
+
+If you already have Access resources for `cipher.wenzelarifiandi.com`, you need to import them first:
+
+### Automatic Discovery & Import
+
+```bash
+# Set your credentials first
+export TF_VAR_cloudflare_api_token="your_token"
+export TF_VAR_cloudflare_account_id="your_account_id"
+
+# Run the discovery script
+./import-existing-resources.sh
+
+# Follow the import commands shown by the script
+# Example outputs:
+# terraform import cloudflare_zero_trust_access_application.cipher accounts/abc123/def456
+# terraform import cloudflare_zero_trust_access_identity_provider.cipher_oidc accounts/abc123/ghi789
+```
+
+### Manual Import Process
+
+1. **Find existing resources** in [Cloudflare Dashboard](https://dash.cloudflare.com) → Zero Trust → Access
+2. **Import Access Application**:
+   ```bash
+   terraform import cloudflare_zero_trust_access_application.cipher accounts/<ACCOUNT_ID>/<APP_ID>
+   ```
+3. **Import Identity Provider**:
+   ```bash
+   terraform import cloudflare_zero_trust_access_identity_provider.cipher_oidc accounts/<ACCOUNT_ID>/<IDP_ID>
+   ```
+4. **Import Service Token** (if exists):
+   ```bash
+   terraform import cloudflare_zero_trust_access_service_token.cipher_service_token accounts/<ACCOUNT_ID>/<TOKEN_ID>
+   ```
+
+### Post-Import Steps
+
+1. Run `terraform plan` to see what needs to be updated
+2. Adjust configuration in `main.tf` to match existing resource attributes
+3. Run `terraform apply` to align state
+
+## �🔍 Validation
 
 After deployment, test the setup:
 
@@ -119,3 +174,15 @@ After deployment, test the setup:
 
 - Set environment variables or create terraform.tfvars file
 - Check variable validation error messages for guidance
+
+### "Error 11010: application_already_exists"
+
+- An Access application for `cipher.wenzelarifiandi.com` already exists
+- Use the import script: `./import-existing-resources.sh`
+- Follow the import commands to bring existing resources into Terraform state
+
+### "Resource not found" after import
+
+- The resource may have been deleted or moved
+- Re-run the discovery script to find current resource IDs
+- Check the Cloudflare dashboard to verify resource existence

@@ -1,15 +1,20 @@
 # Cloudflare Access Application and Policy for cipher.wenzelarifiandi.com
 
-# Get the zone ID for wenzelarifiandi.com
+# Get the zone ID for wenzelarifiandi.com (still needed for some resources)
 data "cloudflare_zone" "wenzelarifiandi" {
   name = "wenzelarifiandi.com"
 }
 
+# Get account information
+data "cloudflare_accounts" "main" {
+  name = "wenzelarifiandi@gmail.com" # Replace with your account name/email if different
+}
+
 # Create Access Identity Provider - Cipher ZITADEL as OIDC provider
 resource "cloudflare_zero_trust_access_identity_provider" "cipher_oidc" {
-  zone_id = data.cloudflare_zone.wenzelarifiandi.id
-  name    = "Cipher OIDC"
-  type    = "oidc"
+  account_id = var.cloudflare_account_id
+  name       = "Cipher OIDC"
+  type       = "oidc"
 
   config {
     client_id     = var.cipher_client_id
@@ -29,7 +34,7 @@ resource "cloudflare_zero_trust_access_identity_provider" "cipher_oidc" {
 
 # Create Access Application for cipher.wenzelarifiandi.com
 resource "cloudflare_zero_trust_access_application" "cipher" {
-  zone_id                   = data.cloudflare_zone.wenzelarifiandi.id
+  account_id                = var.cloudflare_account_id
   name                      = "Cipher Application"
   domain                    = "cipher.wenzelarifiandi.com"
   type                      = "self_hosted"
@@ -61,7 +66,7 @@ resource "cloudflare_zero_trust_access_application" "cipher" {
 # Create Access Policy allowing login via Cipher OIDC
 resource "cloudflare_zero_trust_access_policy" "cipher_oidc_policy" {
   application_id = cloudflare_zero_trust_access_application.cipher.id
-  zone_id        = data.cloudflare_zone.wenzelarifiandi.id
+  account_id     = var.cloudflare_account_id
   name           = "Allow Cipher OIDC Users"
   precedence     = 1
   decision       = "allow"
@@ -82,14 +87,14 @@ resource "cloudflare_zero_trust_access_policy" "cipher_oidc_policy" {
 
 # Optional: Create a service token for programmatic access
 resource "cloudflare_zero_trust_access_service_token" "cipher_service_token" {
-  zone_id = data.cloudflare_zone.wenzelarifiandi.id
-  name    = "Cipher Service Token"
+  account_id = var.cloudflare_account_id
+  name       = "Cipher Service Token"
 }
 
 # Optional: Create policy for service token access
 resource "cloudflare_zero_trust_access_policy" "cipher_service_policy" {
   application_id = cloudflare_zero_trust_access_application.cipher.id
-  zone_id        = data.cloudflare_zone.wenzelarifiandi.id
+  account_id     = var.cloudflare_account_id
   name           = "Allow Service Token"
   precedence     = 2
   decision       = "allow"
