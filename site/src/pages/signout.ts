@@ -33,13 +33,13 @@ export const GET: APIRoute = async ({ request }) => {
 
   // If generic OIDC end-session is configured (e.g., Zitadel), prefer that
   if (!isLocal && OIDC_END_SESSION) {
-    // Redirect back to homepage after logout
-    const homepage = new URL("/", origin);
+    // After OIDC logout, redirect to Cloudflare Access logout which will clear the session
+    const cfAccessLogout = new URL("/cdn-cgi/access/logout", origin);
     const endSession = new URL(OIDC_END_SESSION);
-    // RP-initiated logout: redirect back to homepage
+    // RP-initiated logout: redirect to CF Access logout after IdP logout
     endSession.searchParams.set(
       "post_logout_redirect_uri",
-      homepage.toString(),
+      cfAccessLogout.toString(),
     );
     if (OIDC_CLIENT_ID)
       endSession.searchParams.set("client_id", OIDC_CLIENT_ID);
