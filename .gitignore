@@ -32,6 +32,14 @@ infrastructure/terraform/terraform.tfstate
 infrastructure/terraform/terraform.tfstate.backup
 infrastructure/terraform/.terraform.lock.hcl
 
+# Cloudflare Access Terraform files
+infrastructure/cloudflare-access/terraform.tfvars
+infrastructure/cloudflare-access/.terraform/
+infrastructure/cloudflare-access/terraform.tfstate
+infrastructure/cloudflare-access/terraform.tfstate.backup
+infrastructure/cloudflare-access/.terraform.lock.hcl
+infrastructure/cloudflare-access/*.tfplan
+
 # Logs
 *.log
 

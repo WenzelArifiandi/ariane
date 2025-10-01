@@ -199,7 +199,10 @@ Notes:
 
 Cloudflare Access (protect tunnel with GitHub)
 
-- Follow the step-by-step guide to require GitHub sign-in and a hardware security key for `https://tunnel.wenzelarifiandi.com`:
+- **Terraform Setup**: Automated Cloudflare Zero Trust Access for `cipher.wenzelarifiandi.com`:
+  - See: `infrastructure/cloudflare-access/README.md`
+  - Quick setup: `cd infrastructure/cloudflare-access && ./setup-local-dev.sh`
+- Manual setup guide for tunnel protection with GitHub sign-in and hardware security key:
   - ops/cloudflare-access-github.md
 
 GitHub OAuth test endpoints (optional)
