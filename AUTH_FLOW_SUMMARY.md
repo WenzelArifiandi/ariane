@@ -7,20 +7,26 @@ The Maker button on wenzelarifiandi.com now uses Cloudflare Access + Cipher OIDC
 ## How It Works
 
 ### 1. User Clicks Maker Button
+
 ```javascript
 // Nav.astro checks auth via fetch
-const response = await fetch("https://auth.wenzelarifiandi.com/cdn-cgi/access/get-identity", {
-  credentials: "include"
-});
+const response = await fetch(
+  "https://auth.wenzelarifiandi.com/cdn-cgi/access/get-identity",
+  {
+    credentials: "include",
+  }
+);
 ```
 
 ### 2. Two Possible Outcomes
 
 #### A. User is Authenticated (200 response)
+
 - Maker dropdown opens immediately
 - Shows links to Neve, Etoile, etc.
 
 #### B. User is Not Authenticated (401/403 response)
+
 - Redirects to: `https://auth.wenzelarifiandi.com/` (Cloudflare Access handles the login flow)
 - User authenticates via Cipher OIDC (Zitadel)
 - After auth, **immediately redirects back to current Ariane page**
@@ -36,6 +42,7 @@ const response = await fetch("https://auth.wenzelarifiandi.com/cdn-cgi/access/ge
 ## Configuration
 
 ### Terraform (infrastructure/cloudflare-access/main.tf)
+
 ```hcl
 resource "cloudflare_zero_trust_access_application" "auth" {
   domain = "auth.wenzelarifiandi.com"
@@ -47,17 +54,21 @@ resource "cloudflare_zero_trust_access_application" "auth" {
 ```
 
 ### Frontend (site/src/components/Nav.astro)
+
 ```javascript
 async function checkAuthStatus() {
-  const response = await fetch("https://auth.wenzelarifiandi.com/cdn-cgi/access/get-identity", {
-    credentials: "include"
-  });
+  const response = await fetch(
+    "https://auth.wenzelarifiandi.com/cdn-cgi/access/get-identity",
+    {
+      credentials: "include",
+    }
+  );
   return response.status === 200;
 }
 
-creatorToggle.addEventListener('click', async () => {
+creatorToggle.addEventListener("click", async () => {
   if (await checkAuthStatus()) {
-    openMakerMenu();  // Show dropdown
+    openMakerMenu(); // Show dropdown
   } else {
     // Redirect to auth, will return to current page
     window.location.href = "https://auth.wenzelarifiandi.com";
@@ -78,16 +89,19 @@ creatorToggle.addEventListener('click', async () => {
 ## Troubleshooting
 
 ### CORS Errors
+
 - Verify Cloudflare Access app has correct CORS settings
 - Check browser console for specific CORS errors
 - Ensure `credentials: "include"` is set in fetch
 
 ### Auth Not Persisting
+
 - Cloudflare Access cookies last 24h (configurable)
 - Cookies are domain-scoped to `.wenzelarifiandi.com`
 - Check browser isn't blocking third-party cookies
 
 ### Redirect Loop
+
 - Ensure redirect_url is properly URL-encoded
 - Check Cloudflare Access redirect settings
 
@@ -102,6 +116,7 @@ creatorToggle.addEventListener('click', async () => {
 ## Next Steps
 
 The auth flow is implemented! When the site is deployed, users will:
+
 1. Click Maker → check auth via CORS
 2. If not authenticated → redirect to cipher for auth
 3. After auth → return to Ariane automatically
