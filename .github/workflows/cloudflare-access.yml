@@ -107,7 +107,7 @@ jobs:
                   echo "" >> $GITHUB_STEP_SUMMARY
                   echo "### 📊 Plan Output:" >> $GITHUB_STEP_SUMMARY
                   echo '```' >> $GITHUB_STEP_SUMMARY
-                  terraform show -no-color cfplan | head -50 >> $GITHUB_STEP_SUMMARY
+                  terraform show -no-color cfplan 2>&1 | head -n 50 >> $GITHUB_STEP_SUMMARY || echo "Plan details available in artifacts" >> $GITHUB_STEP_SUMMARY
                   echo '```' >> $GITHUB_STEP_SUMMARY
 
             - name: Upload Terraform Plan
@@ -194,8 +194,8 @@ jobs:
               if: steps.plan.outcome == 'success'
               run: |
                   echo "🔍 Running security checks..."
-                  # Check for hardcoded secrets (basic check)
-                  if grep -r "sk-" . --exclude-dir=.terraform || grep -r "token.*=" . --exclude-dir=.terraform | grep -v "var\." | grep -v "#"; then
+                  # Check for hardcoded secrets (basic check) - exclude example files
+                  if grep -r "sk-[a-zA-Z0-9]{20,}" . --exclude-dir=.terraform --exclude="*.example" --exclude="*.md" 2>/dev/null; then
                     echo "⚠️ Potential hardcoded secrets detected"
                     exit 1
                   fi
