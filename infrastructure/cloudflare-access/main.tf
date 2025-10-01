@@ -47,16 +47,10 @@ resource "cloudflare_zero_trust_access_application" "cipher" {
   # Enable application logo and branding (optional)
   logo_url = "https://wenzelarifiandi.com/favicon.ico"
 
-  # CORS settings for web applications - allow cipher, main site, and localhost for development
+  # CORS settings for cross-origin auth checks from Ariane
   cors_headers {
-    allow_all_origins = false
-    allow_all_methods = false
-    allow_all_headers = false
-    allowed_origins   = ["https://cipher.wenzelarifiandi.com", "https://wenzelarifiandi.com", "http://localhost:4321"]
-    allowed_methods   = ["GET", "POST", "OPTIONS"]
-    allowed_headers   = ["Content-Type", "Authorization"]
+    allowed_origins   = ["https://wenzelarifiandi.com", "http://localhost:4321"]
     allow_credentials = true
-    max_age           = 86400
   }
 
   # Tags removed for now - can be added later when account ID is available
