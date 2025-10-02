@@ -265,6 +265,21 @@ const studioHref = import.meta.env.DEV ? 'http://localhost:3333/' : 'https://stu
 <script type="module" is:inline>
   const qs = (s) => document.querySelector(s);
 
+  const urlParams = new URLSearchParams(window.location.search);
+  const accessMessage = urlParams.get('__cf_access_message');
+  if (accessMessage === 'logged_out') {
+    try {
+      sessionStorage.removeItem('maker_authenticated');
+    } catch (error) {
+      console.warn('[Nav] Unable to clear maker auth session flag after logout', error);
+    }
+
+    urlParams.delete('__cf_access_message');
+    const remaining = urlParams.toString();
+    const newUrl = `${window.location.pathname}${remaining ? `?${remaining}` : ''}${window.location.hash}`;
+    window.history.replaceState({}, '', newUrl);
+  }
+
   // Darkens the glass as you scroll down
   const onScroll = () => {
     if (window.scrollY > 24) {
@@ -283,10 +298,11 @@ const studioHref = import.meta.env.DEV ? 'http://localhost:3333/' : 'https://stu
   const makerMenuItems = makerMenuWrap?.querySelectorAll('li');
 
   // Auto-open Maker menu if redirected from /maker after authentication
-  const urlParams = new URLSearchParams(window.location.search);
   if (urlParams.get('maker') === 'open') {
     // Remove the query param from URL without reloading
-    const newUrl = window.location.pathname;
+    urlParams.delete('maker');
+    const remaining = urlParams.toString();
+    const newUrl = `${window.location.pathname}${remaining ? `?${remaining}` : ''}${window.location.hash}`;
     window.history.replaceState({}, '', newUrl);
     // Open the menu after a short delay
     setTimeout(() => openMakerMenu(true), 100);
@@ -432,7 +448,17 @@ const studioHref = import.meta.env.DEV ? 'http://localhost:3333/' : 'https://stu
 
   // Close maker menu when clicking a link
   makerMenuWrap?.addEventListener('click', (e) => {
-    if (e.target.tagName === 'A') {
+    const target = e.target;
+    if (!(target instanceof Element)) return;
+    const link = target.closest('a');
+    if (link) {
+      if (link.getAttribute('href') === '/signout') {
+        try {
+          sessionStorage.removeItem('maker_authenticated');
+        } catch (error) {
+          console.warn('[Nav] Unable to clear maker auth session flag on logout click', error);
+        }
+      }
       openMakerMenu(false);
     }
   });
