@@ -296,6 +296,20 @@ const studioHref = import.meta.env.DEV ? 'http://localhost:3333/' : 'https://stu
   const makerMenuWrap = qs('#maker-menu');
   const makerMenuPanel = makerMenuWrap?.querySelector('[data-anim]');
   const makerMenuItems = makerMenuWrap?.querySelectorAll('li');
+  const isLocalhost = /localhost|127\.0\.0\.1/.test(window.location.hostname);
+
+  const buildAccessLoginUrl = () => {
+    if (isLocalhost) {
+      return '/maker';
+    }
+
+    const teamDomain = (import.meta as any)?.env?.PUBLIC_CF_TEAM_DOMAIN || 'wenzelarifiandi.cloudflareaccess.com';
+    const base = `https://${teamDomain}/cdn-cgi/access/login/wenzelarifiandi.com`;
+    const u = new URL(base);
+    u.searchParams.set('prompt', 'login');
+    u.searchParams.set('redirect_url', '/maker');
+    return u.toString();
+  };
 
   // Auto-open Maker menu if redirected from /maker after authentication
   if (urlParams.get('maker') === 'open') {
@@ -357,12 +371,12 @@ const studioHref = import.meta.env.DEV ? 'http://localhost:3333/' : 'https://stu
         const isOpen = creatorToggle.getAttribute('aria-expanded') === 'true';
         openMakerMenu(!isOpen);
       } else {
-        // Not authenticated - redirect to /maker which will trigger Cloudflare Access login
-        window.location.href = '/maker';
+        // Not authenticated - go through Cloudflare Access login with prompt=login to prevent silent SSO
+        window.location.href = buildAccessLoginUrl();
       }
     } catch (error) {
-      // On error, redirect to /maker to trigger authentication
-      window.location.href = '/maker';
+      // On error, still force Cloudflare Access login prompt
+      window.location.href = buildAccessLoginUrl();
     }
   });
 

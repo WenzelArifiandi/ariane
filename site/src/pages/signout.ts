@@ -14,22 +14,18 @@ export const GET: APIRoute = async ({ request }) => {
   const origin = `${proto}://${host}`;
 
   const nextPath = url.searchParams.get("next") || "/";
-  let finalRedirect: string;
+  let returnTo: string;
 
   try {
     const resolved = new URL(nextPath, origin);
-    finalRedirect = resolved.toString();
+    returnTo = resolved.toString();
   } catch (error) {
     console.warn("[/signout] Invalid next parameter, defaulting to origin", {
       nextPath,
       error,
     });
-    finalRedirect = origin;
+    returnTo = origin;
   }
-
-  const logoutCallback = new URL("/api/auth/logout", origin);
-  logoutCallback.searchParams.set("redirect", finalRedirect);
-  logoutCallback.searchParams.set("ts", Date.now().toString());
 
   const teamDomain =
     (import.meta as any)?.env?.CF_TEAM_DOMAIN ||
@@ -37,7 +33,7 @@ export const GET: APIRoute = async ({ request }) => {
     "wenzelarifiandi.cloudflareaccess.com";
 
   const logoutUrl = `https://${teamDomain}/cdn-cgi/access/logout?returnTo=${encodeURIComponent(
-    logoutCallback.toString(),
+    returnTo,
   )}`;
 
   console.log("[/signout] Redirecting to Cloudflare Access logout", {

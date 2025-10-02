@@ -48,7 +48,7 @@ resource "cloudflare_zero_trust_access_application" "maker" {
   name                      = "Ariane Maker"
   domain                    = "wenzelarifiandi.com/maker"
   type                      = "self_hosted"
-  session_duration          = "24h"
+  session_duration          = "5m"
 
   # Specify exactly one IdP
   allowed_idps = [cloudflare_zero_trust_access_identity_provider.cipher_oidc.id]
@@ -86,7 +86,7 @@ resource "cloudflare_zero_trust_access_policy" "maker_policy" {
   }
 
   # Session settings
-  session_duration = "24h"
+  session_duration = "5m"
 }
 
 # Create Access Application for auth.wenzelarifiandi.com
