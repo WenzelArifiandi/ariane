@@ -45,7 +45,14 @@ ensure_import() {
   fi
 
   echo "[ensure-imports] Importing $address -> $import_id"
-  terraform import "$address" "$import_id"
+  if ! output=$(terraform import "$address" "$import_id" 2>&1); then
+    echo "[ensure-imports] Skipped import (provider bug or resource missing): $address" >&2
+    echo "$output" >&2
+    return
+  fi
+  if [[ -n "$output" ]]; then
+    echo "$output"
+  fi
 }
 
 apps_json=$(call_api "/accounts/$ACCOUNT_ID/access/apps")
