@@ -1,30 +1,17 @@
 import type { APIRoute } from "astro";
 
-function getOrigin(headers: Headers): string {
-  const host =
-    headers.get("x-forwarded-host") || headers.get("host") || "127.0.0.1:4321";
-  const proto =
-    headers.get("x-forwarded-proto") ||
-    (host.includes("127.0.0.1") || host.includes("localhost")
-      ? "http"
-      : "https");
-  return `${proto}://${host}`;
-}
-
 export const GET: APIRoute = async ({ request }) => {
-  const origin = getOrigin(request.headers);
+  // Hard-pinned logout URL for debugging redirect chain
+  // This ensures consistent behavior and allows us to verify the exact redirect flow
+  const logoutUrl = "https://wenzelarifiandi.com/cdn-cgi/access/logout?return_to=https%3A%2F%2Fwenzelarifiandi.com%2F";
 
-  // Since users authenticate through Cloudflare Access (not directly with Zitadel),
-  // there's no Zitadel browser session to end. Users only have a Cloudflare Access session.
-  // Use the logout endpoint on the actual site host with return_to parameter.
-  // This clears the CF_Authorization cookie and redirects back to the homepage.
-  const homepage = new URL("/", origin);
-  const cfLogout = new URL("/cdn-cgi/access/logout", origin);
-  cfLogout.searchParams.set("return_to", homepage.toString());
+  // Log the request for debugging
+  console.log("[/signout] Request received from:", request.headers.get("referer"));
+  console.log("[/signout] Redirecting to:", logoutUrl);
 
   return new Response(null, {
     status: 302,
-    headers: { Location: cfLogout.toString() },
+    headers: { Location: logoutUrl },
   });
 };
 
