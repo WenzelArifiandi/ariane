@@ -1,5 +1,5 @@
----
 const studioHref = import.meta.env.DEV ? 'http://localhost:3333/' : 'https://studio.wenzelarifiandi.com';
+const cfTeamDomain = import.meta.env.PUBLIC_CF_TEAM_DOMAIN ?? 'wenzelarifiandi.cloudflareaccess.com';
 ---
 
 <nav class="sticky top-3 z-50 my-3 relative">
@@ -297,13 +297,14 @@ const studioHref = import.meta.env.DEV ? 'http://localhost:3333/' : 'https://stu
   const makerMenuPanel = makerMenuWrap?.querySelector('[data-anim]');
   const makerMenuItems = makerMenuWrap?.querySelectorAll('li');
   const isLocalhost = /localhost|127\.0\.0\.1/.test(window.location.hostname);
+  const publicTeamDomain = ${JSON.stringify(cfTeamDomain)};
 
   const buildAccessLoginUrl = () => {
     if (isLocalhost) {
       return '/maker';
     }
 
-    const teamDomain = (import.meta as any)?.env?.PUBLIC_CF_TEAM_DOMAIN || 'wenzelarifiandi.cloudflareaccess.com';
+    const teamDomain = publicTeamDomain || 'wenzelarifiandi.cloudflareaccess.com';
     const base = `https://${teamDomain}/cdn-cgi/access/login/wenzelarifiandi.com`;
     const u = new URL(base);
     u.searchParams.set('prompt', 'login');
