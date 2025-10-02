@@ -75,6 +75,9 @@ jobs:
         id: init
         run: terraform init
 
+      - name: Ensure Terraform Imports
+        run: ./ensure-imports.sh
+
       - name: Terraform Format Check
         id: fmt
         run: terraform fmt -check -recursive
@@ -160,7 +163,7 @@ jobs:
         id: apply
         run: |
           echo "🚀 Applying Cloudflare Access configuration..."
-          terraform apply -input=false cfplan
+          terraform apply -auto-approve cfplan
 
           echo "✅ Cloudflare Access deployed successfully!" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
