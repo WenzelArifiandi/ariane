@@ -16,8 +16,11 @@ export const GET: APIRoute = async ({ request }) => {
 
   // Since users authenticate through Cloudflare Access (not directly with Zitadel),
   // there's no Zitadel browser session to end. Users only have a Cloudflare Access session.
-  // Redirect directly to Cloudflare Access logout to clear the Access cookie.
+  // Use the logout endpoint on the actual site host with return_to parameter.
+  // This clears the CF_Authorization cookie and redirects back to the homepage.
+  const homepage = new URL("/", origin);
   const cfLogout = new URL("/cdn-cgi/access/logout", origin);
+  cfLogout.searchParams.set("return_to", homepage.toString());
 
   return new Response(null, {
     status: 302,
