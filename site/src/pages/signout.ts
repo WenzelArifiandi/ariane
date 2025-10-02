@@ -38,39 +38,18 @@ export const GET: APIRoute = async ({ request }) => {
   // 2. https://wenzelarifiandi.cloudflareaccess.com/cdn-cgi/access/logout
   //    registered in ZITADEL post-logout redirect URIs
 
-  const cipherClientId =
-    import.meta.env.CIPHER_CLIENT_ID ||
-    process.env.CIPHER_CLIENT_ID;
+  // ZITADEL has a bug (Issue #10413) where the UI uses 'post_logout_redirect'
+  // instead of 'post_logout_redirect_uri', causing users to get stuck on account picker.
+  //
+  // Workaround: Clear Cloudflare Access, then let page JS handle Cipher logout via iframe
+  // This avoids user-visible redirects through ZITADEL's buggy UI.
 
-  if (cipherClientId) {
-    const cipherIssuer = "https://cipher.wenzelarifiandi.com";
-
-    // Step 2: Cloudflare Access logout (where Cipher redirects to)
-    // Use base URL without query params so ZITADEL can match it exactly
-    const cfAccessLogoutUrl = `https://${teamDomain}/cdn-cgi/access/logout`;
-
-    // Step 1: Cipher/ZITADEL logout (starts the chain)
-    // ZITADEL will redirect to cfAccessLogoutUrl after logout
-    const cipherLogoutUrl = `${cipherIssuer}/oidc/v1/end_session?client_id=${encodeURIComponent(cipherClientId)}&post_logout_redirect_uri=${encodeURIComponent(cfAccessLogoutUrl)}`;
-
-    console.log("[/signout] Full logout chain", {
-      step1_cipher: cipherLogoutUrl,
-      step2_cloudflare: cfAccessLogoutUrl,
-      note: "Cloudflare Access will redirect to its default logout page",
-    });
-
-    return new Response(null, {
-      status: 302,
-      headers: { Location: cipherLogoutUrl },
-    });
-  }
-
-  // Fallback: Cloudflare Access only
   const cfAccessLogoutUrl = `https://${teamDomain}/cdn-cgi/access/logout?returnTo=${encodeURIComponent(returnTo)}`;
 
-  console.log("[/signout] Cloudflare Access logout only (no CIPHER_CLIENT_ID)", {
+  console.log("[/signout] Cloudflare Access logout", {
     referer: request.headers.get("referer"),
     logoutUrl: cfAccessLogoutUrl,
+    note: "Cipher logout handled client-side to avoid ZITADEL UI bug",
   });
 
   return new Response(null, {
