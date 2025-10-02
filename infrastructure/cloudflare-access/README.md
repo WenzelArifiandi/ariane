@@ -1,188 +1,121 @@
-# Cloudflare Access - Local Development Guide
+# Cloudflare Access - Simplified Setup
 
-This directory contains Terraform configuration for Cloudflare Zero Trust Access setup for `auth.wenzelarifiandi.com`.
+Clean, single-source-of-truth Terraform configuration for protecting `/maker` endpoint.
 
-## 🚀 Quick Start
+## What's Protected
 
-### Option 1: Environment Variables (Recommended)
+- **Path**: `wenzelarifiandi.com/maker`
+- **Authentication**: Cipher OIDC (ZITADEL)
+- **Session**: 24 hours
 
-Set these environment variables before running Terraform:
+## Resources
 
-````bash
-export TF_VAR_cloudflare_api_token="your_api_token_here"
-export TF_VAR_cloudflare_account_id="your_account_id_here"
-export TF_VAR_cipher_client_id="your_client_id_here"
-export TF_VAR_cipher_client_secret="your_client_secret_here"
+1. **Identity Provider** (`cipher_oidc`)
+   - Type: OIDC
+   - Provider: Cipher/ZITADEL
+   - Scopes: openid, profile, email
 
-# Check for existing resources and import if needed
-./import-existing-resources.sh
+2. **Access Application** (`maker`)
+   - Domain: wenzelarifiandi.com/maker
+   - Session: 24h
+   - Skip interstitial: Yes
 
-# Now run terraform without prompts
-terraform init
-terraform plan
-terraform apply
-```### Option 2: terraform.tfvars File
+3. **Access Policy** (`maker_policy`)
+   - Rule: Allow Cipher OIDC authenticated users
+   - Session: 24h
 
-1. **Copy the example file:**
+## Authentication Flow
 
-   ```bash
-   cp terraform.tfvars.example terraform.tfvars
-````
+1. User clicks "Maker" button on homepage
+2. Client checks auth with HEAD request to `/maker`
+3. If not authenticated → redirect to `/maker`
+4. Cloudflare Access intercepts → shows login (wenzelarifiandi.cloudflareaccess.com)
+5. User authenticates via Cipher/ZITADEL
+6. After successful auth → `/maker` endpoint returns 302 to `/?maker=open`
+7. Homepage auto-opens Maker menu
 
-2. **Edit terraform.tfvars** with your actual values:
+## Deployment
 
-   ```hcl
-   cloudflare_api_token  = "your_actual_api_token"
-   cloudflare_account_id = "your_actual_account_id"
-   cipher_client_id      = "your_actual_client_id"
-   cipher_client_secret  = "your_actual_client_secret"
-   ```
-
-3. **Run Terraform:**
-   ```bash
-   terraform init
-   terraform plan
-   terraform apply
-   ```
-
-## 🔑 Getting Required Credentials
-
-### Cloudflare API Token
-
-1. Go to [Cloudflare API Tokens](https://dash.cloudflare.com/profile/api-tokens)
-2. Click "Create Token"
-3. Use "Zone:Zone:Read, Zone:DNS:Edit, Account:Cloudflare Access:Edit" permissions
-4. Include your zone: `wenzelarifiandi.com`
-
-### Cloudflare Account ID
-
-1. Go to [Cloudflare Dashboard](https://dash.cloudflare.com)
-2. Look at the right sidebar - your Account ID is displayed there
-3. It looks like: `1234567890abcdef1234567890abcdef`
-
-### Cipher OIDC Credentials
-
-1. Access your ZITADEL instance at `cipher.wenzelarifiandi.com`
-2. Go to your OIDC application configuration
-3. Copy the `Client ID` and `Client Secret`
-
-## 🛠️ Development Workflow
-
-### Local Development
+Changes are automatically applied when merged to `main`:
 
 ```bash
-# Set environment variables (add to your ~/.zshrc or ~/.bashrc)
-export TF_VAR_cloudflare_api_token="xxx"
-export TF_VAR_cloudflare_account_id="xxx"
-export TF_VAR_cipher_client_id="xxx"
-export TF_VAR_cipher_client_secret="xxx"
-
-# Import any existing resources first
-cd infrastructure/cloudflare-access
-./import-existing-resources.sh
-
-# Run terraform
-terraform plan
+# The workflow handles:
+1. terraform init
+2. Import existing resources (idempotent)
+3. terraform plan
+4. terraform apply (on push to main)
 ```
 
-### CI/CD (GitHub Actions)
-
-The workflow automatically uses GitHub Secrets:
-
-- `TERRAFORM_ACCESS` → `TF_VAR_cloudflare_api_token`
-- `CIPHER_CLIENT_ID` → `TF_VAR_cipher_client_id`
-- `CIPHER_CLIENT_SECRET` → `TF_VAR_cipher_client_secret`
-
-## 📋 Resources Created
-
-- **Access Application**: `auth.wenzelarifiandi.com`
-- **OIDC Identity Provider**: Cipher ZITADEL integration
-- **Access Policies**: Allow OIDC users + Service token access
-- **Service Token**: For programmatic API access
-- **CORS Configuration**: Supports localhost development
-
-## � Importing Existing Resources
-
-If you already have Access resources for `auth.wenzelarifiandi.com`, you need to import them first:
-
-### Automatic Discovery & Import
+### Manual Deployment
 
 ```bash
-# Set your credentials first
-export TF_VAR_cloudflare_api_token="your_token"
-export TF_VAR_cloudflare_account_id="your_account_id"
-
-# Run the discovery script
-./import-existing-resources.sh
-
-# Follow the import commands shown by the script
-# Example outputs:
-# terraform import cloudflare_zero_trust_access_application.auth accounts/abc123/def456
-# terraform import cloudflare_zero_trust_access_identity_provider.cipher_oidc accounts/abc123/ghi789
+gh workflow run cloudflare-access.yml --field action=apply
 ```
 
-### Manual Import Process
+## Configuration
 
-1. **Find existing resources** in [Cloudflare Dashboard](https://dash.cloudflare.com) → Zero Trust → Access
-2. **Import Access Application**:
-   ```bash
-   terraform import cloudflare_zero_trust_access_application.auth accounts/<ACCOUNT_ID>/<APP_ID>
-   ```
-3. **Import Identity Provider**:
-   ```bash
-   terraform import cloudflare_zero_trust_access_identity_provider.cipher_oidc accounts/<ACCOUNT_ID>/<IDP_ID>
-   ```
-4. **Import Service Token** (if exists):
-   ```bash
-   terraform import cloudflare_zero_trust_access_service_token.cipher_service_token accounts/<ACCOUNT_ID>/<TOKEN_ID>
-   ```
+All configuration is in:
+- `main.tf` - Resources
+- `variables.tf` - Input variables
+- `outputs.tf` - Output values
+- `ensure-imports.sh` - Auto-import existing resources
 
-### Post-Import Steps
+### Required Secrets (GitHub Environment: prod)
 
-1. Run `terraform plan` to see what needs to be updated
-2. Adjust configuration in `main.tf` to match existing resource attributes
-3. Run `terraform apply` to align state
+- `TERRAFORM_ACCESS` - Cloudflare API token
+- `CLOUDFLARE_ACCOUNT_ID` - Cloudflare account ID
+- `CIPHER_CLIENT_ID` - ZITADEL client ID
+- `CIPHER_CLIENT_SECRET` - ZITADEL client secret
 
-## �🔍 Validation
+## State Management
 
-After deployment, test the setup:
+> **Note**: Currently using local state in CI. Each run imports existing resources before applying changes. This works but isn't ideal for frequent updates.
 
-1. **Visit**: https://auth.wenzelarifiandi.com
-2. **Should redirect** to Cloudflare Access login
-3. **Select**: "Cipher OIDC" provider
-4. **Authenticate** via ZITADEL
-5. **Access granted** to protected application
+**Future improvement**: Add remote state backend (Terraform Cloud, S3, etc.)
 
-## 📝 Notes
+## Testing
 
-- `terraform.tfvars` is gitignored for security
-- Environment variables take precedence over tfvars file
-- All sensitive values are marked as `sensitive = true`
-- Configuration validates input requirements
+```bash
+# Test that /maker is protected
+curl -I https://wenzelarifiandi.com/maker
+# Should return: 302 redirect to Cloudflare Access login
 
-## 🐛 Troubleshooting
+# Test after authentication (with valid CF_Authorization cookie)
+curl -I https://wenzelarifiandi.com/maker -H "Cookie: CF_Authorization=..."
+# Should return: 302 redirect to /?maker=open
+```
 
-### "Error 12130: Invalid tag reference"
+## Troubleshooting
 
-- Fixed by removing tag resources (account ID not required)
+### "Application already exists" error
 
-### "auto_redirect_to_identity requires allowed_idps"
+This is expected! The `ensure-imports.sh` script automatically imports existing resources before each apply. The workflow handles this gracefully.
 
-- Fixed by adding `allowed_idps = [cipher_oidc_provider.id]`
+### Terraform state not preserved
 
-### "Missing required variables"
+Currently using local state. Each workflow run starts fresh and imports existing resources. This is intentional to avoid state management complexity in CI.
 
-- Set environment variables or create terraform.tfvars file
-- Check variable validation error messages for guidance
+### Auth flow not working
 
-### "Error 11010: application_already_exists"
+1. Check `/maker` endpoint returns 302 to Cloudflare Access
+2. Verify Cipher OIDC is configured correctly
+3. Check browser console for CORS errors
+4. Ensure `Nav.astro` is using the simplified redirect flow
 
-- An Access application for `auth.wenzelarifiandi.com` already exists
-- Use the import script: `./import-existing-resources.sh`
-- Follow the import commands to bring existing resources into Terraform state
+## What Changed (Cleanup Summary)
 
-### "Resource not found" after import
+**Removed:**
+- ❌ `auth.wenzelarifiandi.com` Access app (unnecessary)
+- ❌ DNS CNAME `auth → cipher` (confusing)
+- ❌ Service tokens (unused)
+- ❌ Multiple import/cleanup workflows
+- ❌ Manual Cloudflare Access URL construction in Nav.astro
 
-- The resource may have been deleted or moved
-- Re-run the discovery script to find current resource IDs
-- Check the Cloudflare dashboard to verify resource existence
+**Kept:**
+- ✅ `wenzelarifiandi.com/maker` Access app
+- ✅ Cipher OIDC identity provider
+- ✅ Single access policy
+- ✅ One clean workflow
+- ✅ Simple redirect-based auth flow
+
+**Result**: 620 lines removed, single source of truth established.
