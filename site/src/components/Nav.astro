@@ -1,16 +1,8 @@
 ---
 const studioHref = import.meta.env.DEV ? 'http://localhost:3333/' : 'https://studio.wenzelarifiandi.com';
-const accessLoginBase = import.meta.env.DEV
-  ? '/maker'
-  : 'https://auth.wenzelarifiandi.com/cdn-cgi/access/login';
-const accessRedirectTarget = import.meta.env.DEV
-  ? '/maker'
-  : 'https://wenzelarifiandi.com/maker';
 ---
 
-<nav class="sticky top-3 z-50 my-3 relative"
-     data-access-login={accessLoginBase}
-     data-access-redirect={accessRedirectTarget}>
+<nav class="sticky top-3 z-50 my-3 relative">
   <div class="max-w-container mx-auto px-pad-x">
     <div class="glass flex flex-wrap items-center gap-2 xs:gap-3 md:gap-nav-md py-3 px-glass-x relative overflow-visible">
 
@@ -304,21 +296,6 @@ const accessRedirectTarget = import.meta.env.DEV
   const makerMenuWrap = qs('#maker-menu');
   const makerMenuPanel = makerMenuWrap?.querySelector('[data-anim]');
   const makerMenuItems = makerMenuWrap?.querySelectorAll('li');
-  const isLocalhost = /localhost|127\.0\.0\.1/.test(window.location.hostname);
-  const navRoot = qs('nav[data-access-login]');
-  const accessLoginEndpoint = navRoot?.getAttribute('data-access-login') || '/maker';
-  const accessRedirectTarget = navRoot?.getAttribute('data-access-redirect') || '/maker';
-
-  const buildAccessLoginUrl = () => {
-    if (isLocalhost || !/^https?:\/\//i.test(accessLoginEndpoint)) {
-      return accessLoginEndpoint;
-    }
-
-    const u = new URL(accessLoginEndpoint);
-    u.searchParams.set('prompt', 'login');
-    u.searchParams.set('redirect_url', accessRedirectTarget);
-    return u.toString();
-  };
 
   // Auto-open Maker menu if redirected from /maker after authentication
   if (urlParams.get('maker') === 'open') {
@@ -380,12 +357,12 @@ const accessRedirectTarget = import.meta.env.DEV
         const isOpen = creatorToggle.getAttribute('aria-expanded') === 'true';
         openMakerMenu(!isOpen);
       } else {
-        // Not authenticated - go through Cloudflare Access login with prompt=login to prevent silent SSO
-        window.location.href = buildAccessLoginUrl();
+        // Not authenticated - redirect to /maker which will trigger Cloudflare Access login
+        window.location.href = '/maker';
       }
     } catch (error) {
-      // On error, still force Cloudflare Access login prompt
-      window.location.href = buildAccessLoginUrl();
+      // On error, redirect to /maker to trigger authentication
+      window.location.href = '/maker';
     }
   });
 

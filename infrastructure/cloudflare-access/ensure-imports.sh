@@ -55,41 +55,21 @@ ensure_import() {
   fi
 }
 
-apps_json=$(call_api "/accounts/$ACCOUNT_ID/access/apps")
-
-auth_app_id=$(echo "$apps_json" | jq -r '.result[] | select(.domain == "auth.wenzelarifiandi.com") | .id' | head -n 1)
-maker_app_id=$(echo "$apps_json" | jq -r '.result[] | select(.domain == "wenzelarifiandi.com/maker") | .id' | head -n 1)
-
-ensure_import "cloudflare_zero_trust_access_application.auth" "accounts/$ACCOUNT_ID/$auth_app_id"
-ensure_import "cloudflare_zero_trust_access_application.maker" "accounts/$ACCOUNT_ID/$maker_app_id"
-
+# Import Cipher OIDC Identity Provider
 idps_json=$(call_api "/accounts/$ACCOUNT_ID/access/identity_providers")
-
 cipher_idp_id=$(echo "$idps_json" | jq -r '.result[] | select(.name == "Cipher OIDC" or (.name | test("cipher"; "i"))) | .id' | head -n 1)
 ensure_import "cloudflare_zero_trust_access_identity_provider.cipher_oidc" "accounts/$ACCOUNT_ID/$cipher_idp_id"
 
-policies_for_app() {
-  local app_id="$1"
-  if [[ -z "$app_id" || "$app_id" == "null" ]]; then
-    echo '{}' && return
-  fi
-  call_api "/accounts/$ACCOUNT_ID/access/apps/$app_id/policies"
-}
+# Import Maker Access Application
+apps_json=$(call_api "/accounts/$ACCOUNT_ID/access/apps")
+maker_app_id=$(echo "$apps_json" | jq -r '.result[] | select(.domain == "wenzelarifiandi.com/maker") | .id' | head -n 1)
+ensure_import "cloudflare_zero_trust_access_application.maker" "accounts/$ACCOUNT_ID/$maker_app_id"
 
-auth_policies=$(policies_for_app "$auth_app_id")
-maker_policies=$(policies_for_app "$maker_app_id")
-
-cipher_policy_id=$(echo "$auth_policies" | jq -r '.result[] | select(.name == "Allow Cipher OIDC Users") | .id' | head -n 1)
-service_policy_id=$(echo "$auth_policies" | jq -r '.result[] | select(.name == "Allow Service Token") | .id' | head -n 1)
-maker_policy_id=$(echo "$maker_policies" | jq -r '.result[] | select(.name == "Allow Cipher OIDC Users for Maker") | .id' | head -n 1)
-
-ensure_import "cloudflare_zero_trust_access_policy.cipher_oidc_policy" "accounts/$ACCOUNT_ID/$auth_app_id/$cipher_policy_id"
-ensure_import "cloudflare_zero_trust_access_policy.cipher_service_policy" "accounts/$ACCOUNT_ID/$auth_app_id/$service_policy_id"
-ensure_import "cloudflare_zero_trust_access_policy.maker_policy" "accounts/$ACCOUNT_ID/$maker_app_id/$maker_policy_id"
-
-service_tokens_json=$(call_api "/accounts/$ACCOUNT_ID/access/service_tokens")
-service_token_id=$(echo "$service_tokens_json" | jq -r '.result[] | select(.name == "Cipher Service Token" or (.name | test("cipher"; "i"))) | .id' | head -n 1)
-
-ensure_import "cloudflare_zero_trust_access_service_token.cipher_service_token" "accounts/$ACCOUNT_ID/$service_token_id"
+# Import Maker Access Policy
+if [[ -n "$maker_app_id" && "$maker_app_id" != "null" ]]; then
+  maker_policies=$(call_api "/accounts/$ACCOUNT_ID/access/apps/$maker_app_id/policies")
+  maker_policy_id=$(echo "$maker_policies" | jq -r '.result[0].id' | head -n 1)
+  ensure_import "cloudflare_zero_trust_access_policy.maker_policy" "accounts/$ACCOUNT_ID/$maker_app_id/$maker_policy_id"
+fi
 
 echo "[ensure-imports] Import check complete"

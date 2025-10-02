@@ -100,13 +100,12 @@ jobs:
       - name: Generate Plan Summary
         if: steps.plan.outcome == 'success'
         run: |
-          echo "## 📋 Terraform Plan Summary" >> $GITHUB_STEP_SUMMARY
+          echo "## 📋 Cloudflare Access Plan" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "### 🎯 Target Resources:" >> $GITHUB_STEP_SUMMARY
-          echo "- Cloudflare Access Application (cipher.wenzelarifiandi.com)" >> $GITHUB_STEP_SUMMARY
-          echo "- Cipher OIDC Identity Provider" >> $GITHUB_STEP_SUMMARY
-          echo "- Access Policies (Cipher OIDC users + Service token)" >> $GITHUB_STEP_SUMMARY
-          echo "- Service Token for programmatic access" >> $GITHUB_STEP_SUMMARY
+          echo "### 🎯 Resources:" >> $GITHUB_STEP_SUMMARY
+          echo "- Access Application: wenzelarifiandi.com/maker" >> $GITHUB_STEP_SUMMARY
+          echo "- Identity Provider: Cipher OIDC (ZITADEL)" >> $GITHUB_STEP_SUMMARY
+          echo "- Access Policy: Allow Cipher OIDC Users" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "### 📊 Plan Output:" >> $GITHUB_STEP_SUMMARY
           echo '```' >> $GITHUB_STEP_SUMMARY
@@ -127,27 +126,23 @@ jobs:
         with:
           script: |
             const plan = `
-            ## 🔐 Cloudflare Access Terraform Plan
-
-            ### Status: ${{ steps.plan.outcome == 'success' && '✅ Success' || '❌ Failed' }}
+            ## 🔐 Cloudflare Access Plan
 
             ### Resources:
-            - 🏢 **Application**: cipher.wenzelarifiandi.com
-            - 🔑 **Identity Provider**: Cipher OIDC
-            - 📋 **Policies**: Allow Cipher OIDC users + Service token access
+            - **Application**: wenzelarifiandi.com/maker
+            - **Identity Provider**: Cipher OIDC (ZITADEL)
+            - **Policy**: Allow Cipher OIDC Users
 
             <details>
             <summary>📊 Show Plan Details</summary>
 
-            \`\`\`terraform
-            Plan: ${{ steps.plan.outputs.changes }} to add, ${{ steps.plan.outputs.changes }} to change, ${{ steps.plan.outputs.changes }} to destroy.
-            \`\`\`
+            Check the Actions summary for full plan output.
 
             </details>
 
             ### 🚀 Next Steps:
-            - Review the plan above
-            - If approved, run workflow with \`apply\` action
+            - Review the plan
+            - Merge to apply changes automatically
             `;
 
             github.rest.issues.createComment({
@@ -165,12 +160,12 @@ jobs:
           echo "🚀 Applying Cloudflare Access configuration..."
           terraform apply -auto-approve cfplan
 
-          echo "✅ Cloudflare Access deployed successfully!" >> $GITHUB_STEP_SUMMARY
+          echo "✅ Cloudflare Access deployed!" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "### 🎉 Deployment Complete!" >> $GITHUB_STEP_SUMMARY
-          echo "- **Application URL**: https://auth.wenzelarifiandi.com" >> $GITHUB_STEP_SUMMARY
-          echo "- **Access Login**: https://auth.wenzelarifiandi.com/" >> $GITHUB_STEP_SUMMARY
-          echo "- **Identity Provider**: Cipher OIDC (cipher.wenzelarifiandi.com)" >> $GITHUB_STEP_SUMMARY
+          echo "- **Protected Path**: wenzelarifiandi.com/maker" >> $GITHUB_STEP_SUMMARY
+          echo "- **Identity Provider**: Cipher OIDC (ZITADEL)" >> $GITHUB_STEP_SUMMARY
+          echo "- **Session Duration**: 24 hours" >> $GITHUB_STEP_SUMMARY
 
       - name: Handle Already Exists Error
         if: steps.apply.outcome == 'failure'
@@ -200,21 +195,17 @@ jobs:
           terraform destroy -auto-approve
 
       - name: Generate Outputs
-        if: (github.event.inputs.action == 'apply' || github.event_name == 'push') && steps.plan.outcome == 'success'
+        if: (github.event.inputs.action == 'apply' || github.event_name == 'push') && steps.apply.outcome == 'success'
         run: |
-          echo "## 🔐 Cloudflare Access Configuration" >> $GITHUB_STEP_SUMMARY
+          echo "## 🔐 Access Configuration" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          terraform output -json cloudflare_access_application | jq -r '
-            "### 📱 Application Details:",
+          terraform output -json maker_application | jq -r '
+            "### 📱 Maker Application:",
             "- **Name**: " + .name,
             "- **Domain**: " + .domain,
             "- **Application ID**: " + .id,
-            "- **Audience Tag**: " + .aud,
             ""
-          ' >> $GITHUB_STEP_SUMMARY
-
-          echo "### 🔑 Service Token (Secure)" >> $GITHUB_STEP_SUMMARY
-          echo "Service token created for programmatic access. Store the credentials securely!" >> $GITHUB_STEP_SUMMARY
+          ' >> $GITHUB_STEP_SUMMARY || echo "Output details available via terraform output" >> $GITHUB_STEP_SUMMARY
 
       - name: Security Scan
         if: steps.plan.outcome == 'success'
