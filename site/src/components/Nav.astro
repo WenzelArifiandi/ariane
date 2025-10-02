@@ -1,8 +1,9 @@
+---
 const studioHref = import.meta.env.DEV ? 'http://localhost:3333/' : 'https://studio.wenzelarifiandi.com';
 const cfTeamDomain = import.meta.env.PUBLIC_CF_TEAM_DOMAIN ?? 'wenzelarifiandi.cloudflareaccess.com';
 ---
 
-<nav class="sticky top-3 z-50 my-3 relative">
+<nav class="sticky top-3 z-50 my-3 relative" data-team-domain={cfTeamDomain}>
   <div class="max-w-container mx-auto px-pad-x">
     <div class="glass flex flex-wrap items-center gap-2 xs:gap-3 md:gap-nav-md py-3 px-glass-x relative overflow-visible">
 
@@ -297,7 +298,8 @@ const cfTeamDomain = import.meta.env.PUBLIC_CF_TEAM_DOMAIN ?? 'wenzelarifiandi.c
   const makerMenuPanel = makerMenuWrap?.querySelector('[data-anim]');
   const makerMenuItems = makerMenuWrap?.querySelectorAll('li');
   const isLocalhost = /localhost|127\.0\.0\.1/.test(window.location.hostname);
-  const publicTeamDomain = ${JSON.stringify(cfTeamDomain)};
+  const navRoot = qs('nav[data-team-domain]');
+  const publicTeamDomain = navRoot?.getAttribute('data-team-domain') || 'wenzelarifiandi.cloudflareaccess.com';
 
   const buildAccessLoginUrl = () => {
     if (isLocalhost) {
