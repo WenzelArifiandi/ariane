@@ -27,32 +27,29 @@ export const GET: APIRoute = async ({ request }) => {
     returnTo = origin;
   }
 
-  // Step 1: Build Cipher/ZITADEL logout URL
-  // This will log out from the OIDC provider session
-  const cipherIssuer = "https://cipher.wenzelarifiandi.com";
   const teamDomain =
     (import.meta as any)?.env?.CF_TEAM_DOMAIN ||
     process.env.CF_TEAM_DOMAIN ||
     "wenzelarifiandi.cloudflareaccess.com";
 
-  // Cloudflare Access logout URL (where Cipher will redirect back to)
+  // Cloudflare Access only clears its own session.
+  // For full logout (including Cipher/ZITADEL), we'd need:
+  // 1. post_logout_redirect_uri registered in ZITADEL application config
+  // 2. client_id passed to ZITADEL logout endpoint
+  //
+  // Since we don't have that configured, just do Cloudflare Access logout.
+  // User can manually visit https://cipher.wenzelarifiandi.com to logout from Cipher.
+
   const cfAccessLogoutUrl = `https://${teamDomain}/cdn-cgi/access/logout?returnTo=${encodeURIComponent(returnTo)}`;
 
-  // Cipher OIDC end_session_endpoint
-  // After logging out from Cipher, it will redirect to the Cloudflare Access logout
-  const cipherLogoutUrl = `${cipherIssuer}/oidc/v1/end_session?post_logout_redirect_uri=${encodeURIComponent(cfAccessLogoutUrl)}`;
-
-  console.log("[/signout] Full logout chain", {
+  console.log("[/signout] Cloudflare Access logout", {
     referer: request.headers.get("referer"),
-    step1_cipher: cipherLogoutUrl,
-    step2_cloudflare: cfAccessLogoutUrl,
-    step3_final: returnTo,
+    logoutUrl: cfAccessLogoutUrl,
   });
 
-  // Redirect to Cipher logout first, which will chain to Cloudflare Access logout
   return new Response(null, {
     status: 302,
-    headers: { Location: cipherLogoutUrl },
+    headers: { Location: cfAccessLogoutUrl },
   });
 };
 
