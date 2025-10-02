@@ -45,20 +45,18 @@ export const GET: APIRoute = async ({ request }) => {
   if (cipherClientId) {
     const cipherIssuer = "https://cipher.wenzelarifiandi.com";
 
-    // Final destination after full logout chain
-    const finalReturnUrl = new URL(returnTo);
-    finalReturnUrl.searchParams.set("logged_out", "true");
-
     // Step 2: Cloudflare Access logout (where Cipher redirects to)
-    const cfAccessLogoutUrl = `https://${teamDomain}/cdn-cgi/access/logout?returnTo=${encodeURIComponent(finalReturnUrl.toString())}`;
+    // Use base URL without query params so ZITADEL can match it exactly
+    const cfAccessLogoutUrl = `https://${teamDomain}/cdn-cgi/access/logout`;
 
     // Step 1: Cipher/ZITADEL logout (starts the chain)
+    // ZITADEL will redirect to cfAccessLogoutUrl after logout
     const cipherLogoutUrl = `${cipherIssuer}/oidc/v1/end_session?client_id=${encodeURIComponent(cipherClientId)}&post_logout_redirect_uri=${encodeURIComponent(cfAccessLogoutUrl)}`;
 
     console.log("[/signout] Full logout chain", {
       step1_cipher: cipherLogoutUrl,
       step2_cloudflare: cfAccessLogoutUrl,
-      step3_final: finalReturnUrl.toString(),
+      note: "Cloudflare Access will redirect to its default logout page",
     });
 
     return new Response(null, {
