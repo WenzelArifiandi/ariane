@@ -14,13 +14,10 @@ const PUBLIC_PATHS = [
   "/api/oauth/github/start",
   "/api/oauth/github/callback",
   "/api/auth/session",
-  "/api/auth/logout",
   "/api/diag",
   "/access-required",
   "/access-denied",
-  "/logged-out",
   "/signout",
-  "/post-access-logout",
 ];
 
 function isApiOrAsset(path: string): boolean {
