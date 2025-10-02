@@ -458,15 +458,6 @@ const studioHref = import.meta.env.DEV ? 'http://localhost:3333/' : 'https://stu
         } catch (error) {
           console.warn('[Nav] Unable to clear maker auth session flag on logout click', error);
         }
-
-        // Also logout from Cipher via hidden iframe to avoid buggy ZITADEL UI redirect
-        // This clears the Cipher/ZITADEL session silently in the background
-        const cipherLogoutUrl = 'https://cipher.wenzelarifiandi.com/oidc/v1/end_session';
-        const iframe = document.createElement('iframe');
-        iframe.style.display = 'none';
-        iframe.src = cipherLogoutUrl;
-        document.body.appendChild(iframe);
-        setTimeout(() => iframe.remove(), 2000);
       }
       openMakerMenu(false);
     }
