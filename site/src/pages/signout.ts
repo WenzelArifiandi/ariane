@@ -1,4 +1,8 @@
 import type { APIRoute } from "astro";
+import {
+  verifyCloudflareAccessJWT,
+  createSLOCookie,
+} from "../lib/cloudflare-access";
 
 export const GET: APIRoute = async ({ request }) => {
   const url = new URL(request.url);
@@ -32,29 +36,36 @@ export const GET: APIRoute = async ({ request }) => {
     process.env.CF_TEAM_DOMAIN ||
     "wenzelarifiandi.cloudflareaccess.com";
 
-  // Full logout chain: Cipher OIDC → Cloudflare Access → Home
-  // Requires:
-  // 1. CIPHER_CLIENT_ID env var
-  // 2. https://wenzelarifiandi.cloudflareaccess.com/cdn-cgi/access/logout
-  //    registered in ZITADEL post-logout redirect URIs
+  // Hybrid SLO: Extract user from CF_Authorization JWT before logout
+  // This allows us to programmatically revoke ZITADEL sessions after Cloudflare logout
+  const user = await verifyCloudflareAccessJWT(request);
 
-  // ZITADEL has a bug (Issue #10413) where the UI uses 'post_logout_redirect'
-  // instead of 'post_logout_redirect_uri', causing users to get stuck on account picker.
-  //
-  // Workaround: Clear Cloudflare Access, then let page JS handle Cipher logout via iframe
-  // This avoids user-visible redirects through ZITADEL's buggy UI.
+  const responseHeaders = new Headers();
 
-  const cfAccessLogoutUrl = `https://${teamDomain}/cdn-cgi/access/logout?returnTo=${encodeURIComponent(returnTo)}`;
+  if (user?.email) {
+    // Store user email in short-lived signed cookie (60s TTL)
+    // This will be used by client-side script to trigger ZITADEL session revocation
+    responseHeaders.append("Set-Cookie", createSLOCookie(user.email));
+    console.log("[/signout] Stored SLO cookie for user", user.email);
+  }
 
-  console.log("[/signout] Cloudflare Access logout", {
+  // Add slo=1 param to return URL so client knows to trigger ZITADEL logout
+  const returnWithSLO = new URL(returnTo);
+  returnWithSLO.searchParams.set("slo", "1");
+
+  const cfAccessLogoutUrl = `https://${teamDomain}/cdn-cgi/access/logout?returnTo=${encodeURIComponent(returnWithSLO.toString())}`;
+
+  console.log("[/signout] Hybrid SLO logout", {
     referer: request.headers.get("referer"),
     logoutUrl: cfAccessLogoutUrl,
-    note: "Cipher logout handled client-side to avoid ZITADEL UI bug",
+    userEmail: user?.email || "unknown",
   });
+
+  responseHeaders.set("Location", cfAccessLogoutUrl);
 
   return new Response(null, {
     status: 302,
-    headers: { Location: cfAccessLogoutUrl },
+    headers: responseHeaders,
   });
 };
 

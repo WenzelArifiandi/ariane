@@ -176,5 +176,40 @@ const pageUrl = pathname ? new URL(pathname, siteUrl).toString() : siteUrl
       </script>
     )}
     <script type="module" src="/src/scripts/maker-client.ts" is:inline></script>
+
+    <!-- Hybrid SLO: Trigger ZITADEL session revocation after Cloudflare logout -->
+    <script is:inline>
+      (function() {
+        const params = new URLSearchParams(window.location.search);
+
+        // Check if we just returned from logout
+        const isSLO = params.get('slo') === '1' || params.get('__cf_access_message') === 'logged_out';
+
+        if (isSLO) {
+          // Remove the param from URL without reload
+          params.delete('slo');
+          params.delete('__cf_access_message');
+          const newUrl = window.location.pathname + (params.toString() ? '?' + params.toString() : '') + window.location.hash;
+          window.history.replaceState({}, '', newUrl);
+
+          // Trigger ZITADEL session revocation
+          fetch('/api/zitadel/slo', {
+            method: 'POST',
+            credentials: 'include',
+          })
+            .then(res => res.json())
+            .then(data => {
+              if (data.success) {
+                console.log('[SLO] ZITADEL sessions revoked:', data.sessionsDeleted);
+              } else {
+                console.warn('[SLO] Failed:', data.error);
+              }
+            })
+            .catch(err => {
+              console.error('[SLO] Error:', err);
+            });
+        }
+      })();
+    </script>
   </body>
 </html>
