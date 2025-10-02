@@ -36,13 +36,38 @@ export const GET: APIRoute = async ({ request }) => {
     // After OIDC logout, redirect to Cloudflare Access logout which will clear the session
     const cfAccessLogout = new URL("/cdn-cgi/access/logout", origin);
     const endSession = new URL(OIDC_END_SESSION);
-    // RP-initiated logout: redirect to CF Access logout after IdP logout
+
+    // Build logout URL with required params
+    if (OIDC_CLIENT_ID) {
+      endSession.searchParams.set("client_id", OIDC_CLIENT_ID);
+    }
+
+    // Set post_logout_redirect_uri to Cloudflare Access logout
     endSession.searchParams.set(
       "post_logout_redirect_uri",
       cfAccessLogout.toString(),
     );
-    if (OIDC_CLIENT_ID)
-      endSession.searchParams.set("client_id", OIDC_CLIENT_ID);
+
+    // Try to get ID token from Cloudflare Access identity
+    // The ID token should be passed as id_token_hint to avoid account selector
+    try {
+      const identityUrl = new URL("/cdn-cgi/access/get-identity", origin);
+      const identityResponse = await fetch(identityUrl.toString(), {
+        headers: request.headers,
+      });
+
+      if (identityResponse.ok) {
+        const identity = await identityResponse.json();
+        // Cloudflare Access provides the IdP's ID token in the identity response
+        if (identity.id_token || identity.idToken) {
+          endSession.searchParams.set("id_token_hint", identity.id_token || identity.idToken);
+        }
+      }
+    } catch (error) {
+      // If we can't get the ID token, proceed without it
+      // User may see account selector at IdP
+    }
+
     return new Response(null, {
       status: 302,
       headers: { Location: endSession.toString() },
