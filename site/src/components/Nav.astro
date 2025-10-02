@@ -1,9 +1,15 @@
----
 const studioHref = import.meta.env.DEV ? 'http://localhost:3333/' : 'https://studio.wenzelarifiandi.com';
-const cfTeamDomain = import.meta.env.PUBLIC_CF_TEAM_DOMAIN ?? 'wenzelarifiandi.cloudflareaccess.com';
+const accessLoginBase = import.meta.env.DEV
+  ? '/maker'
+  : 'https://auth.wenzelarifiandi.com/cdn-cgi/access/login';
+const accessRedirectTarget = import.meta.env.DEV
+  ? '/maker'
+  : 'https://wenzelarifiandi.com/maker';
 ---
 
-<nav class="sticky top-3 z-50 my-3 relative" data-team-domain={cfTeamDomain}>
+<nav class="sticky top-3 z-50 my-3 relative"
+     data-access-login={accessLoginBase}
+     data-access-redirect={accessRedirectTarget}>
   <div class="max-w-container mx-auto px-pad-x">
     <div class="glass flex flex-wrap items-center gap-2 xs:gap-3 md:gap-nav-md py-3 px-glass-x relative overflow-visible">
 
@@ -298,19 +304,18 @@ const cfTeamDomain = import.meta.env.PUBLIC_CF_TEAM_DOMAIN ?? 'wenzelarifiandi.c
   const makerMenuPanel = makerMenuWrap?.querySelector('[data-anim]');
   const makerMenuItems = makerMenuWrap?.querySelectorAll('li');
   const isLocalhost = /localhost|127\.0\.0\.1/.test(window.location.hostname);
-  const navRoot = qs('nav[data-team-domain]');
-  const publicTeamDomain = navRoot?.getAttribute('data-team-domain') || 'wenzelarifiandi.cloudflareaccess.com';
+  const navRoot = qs('nav[data-access-login]');
+  const accessLoginEndpoint = navRoot?.getAttribute('data-access-login') || '/maker';
+  const accessRedirectTarget = navRoot?.getAttribute('data-access-redirect') || '/maker';
 
   const buildAccessLoginUrl = () => {
-    if (isLocalhost) {
-      return '/maker';
+    if (isLocalhost || !/^https?:\/\//i.test(accessLoginEndpoint)) {
+      return accessLoginEndpoint;
     }
 
-    const teamDomain = publicTeamDomain || 'wenzelarifiandi.cloudflareaccess.com';
-    const base = `https://${teamDomain}/cdn-cgi/access/login/wenzelarifiandi.com`;
-    const u = new URL(base);
+    const u = new URL(accessLoginEndpoint);
     u.searchParams.set('prompt', 'login');
-    u.searchParams.set('redirect_url', '/maker');
+    u.searchParams.set('redirect_url', accessRedirectTarget);
     return u.toString();
   };
 
