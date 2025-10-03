@@ -75,8 +75,12 @@ jobs:
         id: init
         run: terraform init
 
-      - name: Ensure Terraform Imports
-        run: ./ensure-imports.sh
+      - name: Nuke All Existing Resources
+        run: |
+          echo "🗑️ Deleting all existing Access resources to avoid conflicts..."
+          export CLOUDFLARE_API_TOKEN="${{ secrets.TERRAFORM_ACCESS }}"
+          export CLOUDFLARE_ACCOUNT_ID="${{ secrets.CLOUDFLARE_ACCOUNT_ID }}"
+          ./nuke-everything.sh
 
       - name: Terraform Format Check
         id: fmt
