@@ -16,15 +16,15 @@ async function getServiceAccountToken(): Promise<string> {
   }
 
   const clientId =
-    import.meta.env.ZITADEL_SERVICE_CLIENT_ID ||
-    process.env.ZITADEL_SERVICE_CLIENT_ID;
+    import.meta.env.CIPHER_CLIENT_ID ||
+    process.env.CIPHER_CLIENT_ID;
   const clientSecret =
-    import.meta.env.ZITADEL_SERVICE_CLIENT_SECRET ||
-    process.env.ZITADEL_SERVICE_CLIENT_SECRET;
+    import.meta.env.CIPHER_CLIENT_SECRET ||
+    process.env.CIPHER_CLIENT_SECRET;
 
   if (!clientId || !clientSecret) {
     throw new Error(
-      "ZITADEL service account credentials not configured (ZITADEL_SERVICE_CLIENT_ID, ZITADEL_SERVICE_CLIENT_SECRET)"
+      "ZITADEL service account credentials not configured (CIPHER_CLIENT_ID, CIPHER_CLIENT_SECRET)"
     );
   }
 
