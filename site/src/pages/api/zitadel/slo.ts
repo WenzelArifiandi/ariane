@@ -11,7 +11,7 @@ export const POST: APIRoute = async ({ request }) => {
     const userEmail = readSLOCookie(request);
 
     if (!userEmail) {
-      console.log("[SLO API] No SLO cookie found");
+      console.debug("[SLO API] No SLO cookie found (normal for new logout flow)");
       return new Response(
         JSON.stringify({ error: "No SLO session found" }),
         {
