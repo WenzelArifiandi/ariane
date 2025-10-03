@@ -1,5 +1,9 @@
 // ZITADEL Service Account API client
 // Docs: https://zitadel.com/docs/guides/integrate/zitadel-apis/access-zitadel-apis
+//
+// Required service-user permissions (in ZITADEL Console):
+// - Organization Owner role (or custom role with user.read and session.delete)
+// - Credentials: CIPHER_CLIENT_ID and CIPHER_CLIENT_SECRET (set in Vercel environment)
 
 const ZITADEL_ISSUER = "https://cipher.wenzelarifiandi.com";
 const ZITADEL_API_SCOPE = "urn:zitadel:iam:org:project:id:zitadel:aud";
@@ -63,14 +67,14 @@ async function getServiceAccountToken(): Promise<string> {
 
 /**
  * Search for user by email
- * API: POST /v2/users/_search
+ * API: POST /v2/users
  */
 export async function searchUserByEmail(
   email: string
 ): Promise<{ userId: string; email: string } | null> {
   const token = await getServiceAccountToken();
 
-  const response = await fetch(`${ZITADEL_ISSUER}/v2/users/_search`, {
+  const response = await fetch(`${ZITADEL_ISSUER}/v2/users`, {
     method: "POST",
     headers: {
       Authorization: `Bearer ${token}`,
@@ -90,7 +94,7 @@ export async function searchUserByEmail(
 
   if (!response.ok) {
     const error = await response.text();
-    console.error("[ZITADEL] User search failed", error);
+    console.error("[ZITADEL] User search failed", response.status, error);
     return null;
   }
 
@@ -111,14 +115,14 @@ export async function searchUserByEmail(
 
 /**
  * List sessions for a user
- * API: POST /v2/sessions/_search
+ * API: POST /v2/sessions/search
  */
 export async function listUserSessions(
   userId: string
 ): Promise<Array<{ sessionId: string; userId: string }>> {
   const token = await getServiceAccountToken();
 
-  const response = await fetch(`${ZITADEL_ISSUER}/v2/sessions/_search`, {
+  const response = await fetch(`${ZITADEL_ISSUER}/v2/sessions/search`, {
     method: "POST",
     headers: {
       Authorization: `Bearer ${token}`,
@@ -137,7 +141,7 @@ export async function listUserSessions(
 
   if (!response.ok) {
     const error = await response.text();
-    console.error("[ZITADEL] Session search failed", error);
+    console.error("[ZITADEL] Session search failed", response.status, error);
     return [];
   }
 
@@ -187,17 +191,18 @@ export async function revokeAllUserSessions(
   // 1. Find user by email
   const user = await searchUserByEmail(email);
   if (!user) {
-    console.log("[ZITADEL SLO] User not found", email);
+    console.warn("[ZITADEL SLO] ⚠️ User not found for email:", email);
     return { deleted: 0, failed: 0 };
   }
 
-  console.log("[ZITADEL SLO] Found user", { userId: user.userId, email: user.email });
+  console.log("[ZITADEL SLO] ✅ Found user:", { userId: user.userId, email: user.email });
 
   // 2. List all sessions for user
   const sessions = await listUserSessions(user.userId);
-  console.log(`[ZITADEL SLO] Found ${sessions.length} session(s) for user`);
+  console.log(`[ZITADEL SLO] 📋 Found ${sessions.length} active session(s) for user ${user.userId}`);
 
   if (sessions.length === 0) {
+    console.log("[ZITADEL SLO] No active sessions to revoke");
     return { deleted: 0, failed: 0 };
   }
 
@@ -206,16 +211,18 @@ export async function revokeAllUserSessions(
   let failed = 0;
 
   for (const session of sessions) {
+    console.log(`[ZITADEL SLO] 🗑️ Deleting session ${session.sessionId}...`);
     const success = await deleteSession(session.sessionId);
     if (success) {
       deleted++;
-      console.log(`[ZITADEL SLO] Deleted session ${session.sessionId}`);
+      console.log(`[ZITADEL SLO] ✅ Successfully deleted session ${session.sessionId}`);
     } else {
       failed++;
+      console.error(`[ZITADEL SLO] ❌ Failed to delete session ${session.sessionId}`);
     }
   }
 
-  console.log(`[ZITADEL SLO] Complete: ${deleted} deleted, ${failed} failed`);
+  console.log(`[ZITADEL SLO] 🎯 Session revocation complete: ${deleted} deleted, ${failed} failed`);
 
   return { deleted, failed };
 }
