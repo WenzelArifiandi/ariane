@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
-# Wrapper to open an interactive remediation-oriented SSH session to the Oracle Zitadel host.
+# Wrapper to open an interactive remediation-oriented SSH session to the Cipher Zitadel host.
 # Usage: ./scripts/zitadel-remote-session.sh [user@host] [path]
-# Defaults: user=ubuntu host=auth.wenzelarifiandi.com path=zitadel
+# Defaults: user=ubuntu host=cipher.griffin-justitia.ts.net path=zitadel
 
 set -euo pipefail
-USER_HOST=${1:-ubuntu@auth.wenzelarifiandi.com}
+USER_HOST=${1:-ubuntu@cipher.griffin-justitia.ts.net}
 REMOTE_PATH=${2:-zitadel}
-KEY_PATH=${SSH_KEY_PATH:-$HOME/.ssh/oracle_key_correct}
+KEY_PATH=${SSH_KEY_PATH:-}
 
 cat <<'BANNER'
 ============================================================
@@ -20,7 +20,7 @@ This will:
 ------------------------------------------------------------
 BANNER
 
-if [ ! -f "$KEY_PATH" ]; then
+if [ -n "$KEY_PATH" ] && [ ! -f "$KEY_PATH" ]; then
   echo "[error] SSH key not found at $KEY_PATH (override with SSH_KEY_PATH env var)" >&2
   exit 1
 fi
@@ -68,4 +68,8 @@ exec $SHELL -l
 EOF
 
 # shellcheck disable=SC2029
-ssh -i "$KEY_PATH" -t "$USER_HOST" "REMOTE_PATH='$REMOTE_PATH' bash -s" <<<"$REMOTE_BOOTSTRAP"
+if [ -n "$KEY_PATH" ]; then
+  ssh -i "$KEY_PATH" -t "$USER_HOST" "REMOTE_PATH='$REMOTE_PATH' bash -s" <<<"$REMOTE_BOOTSTRAP"
+else
+  ssh -t "$USER_HOST" "REMOTE_PATH='$REMOTE_PATH' bash -s" <<<"$REMOTE_BOOTSTRAP"
+fi

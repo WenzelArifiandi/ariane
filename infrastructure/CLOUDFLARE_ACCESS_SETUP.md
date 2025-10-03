@@ -37,7 +37,7 @@ curl -H "Authorization: Bearer YOUR_TOKEN" \
 
 ### 3. ZITADEL OIDC Application Setup
 
-In your ZITADEL instance (`https://auth.wenzelarifiandi.com`):
+In your ZITADEL instance (`https://auth.wenzelarifiandi.com`, hosted on cipher.griffin-justitia.ts.net):
 
 1. **Create Application**:
 
