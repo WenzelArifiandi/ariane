@@ -1,0 +1,48 @@
+name: "Cleanup OIDC Providers"
+
+on:
+  workflow_dispatch:
+    inputs:
+      confirm:
+        description: "Type 'DELETE' to confirm deletion of all OIDC identity providers"
+        required: true
+        type: string
+
+jobs:
+  cleanup:
+    name: "Delete All OIDC Identity Providers"
+    runs-on: ubuntu-latest
+    environment: prod
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+
+      - name: Validate Confirmation
+        run: |
+          if [[ "${{ github.event.inputs.confirm }}" != "DELETE" ]]; then
+            echo "❌ Confirmation failed. You must type 'DELETE' to proceed."
+            exit 1
+          fi
+          echo "✅ Confirmation validated"
+
+      - name: Run Cleanup Script
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.TERRAFORM_ACCESS }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          chmod +x infrastructure/cloudflare-access/cleanup-oidc-providers.sh
+          ./infrastructure/cloudflare-access/cleanup-oidc-providers.sh
+
+      - name: Generate Summary
+        if: always()
+        run: |
+          echo "## 🗑️ OIDC Provider Cleanup" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "All OIDC identity providers have been removed from Cloudflare Access." >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### 🔄 Next Steps:" >> $GITHUB_STEP_SUMMARY
+          echo "1. Run the Cloudflare Access workflow to recreate providers via Terraform" >> $GITHUB_STEP_SUMMARY
+          echo "2. Or trigger apply: \`gh workflow run cloudflare-access.yml --field action=apply\`" >> $GITHUB_STEP_SUMMARY
