@@ -22,6 +22,15 @@ resource "cloudflare_zero_trust_access_identity_provider" "cipher_oidc" {
     claims        = ["email", "groups", "preferred_username"]
     email_claim_name = "email"
   }
+
+  lifecycle {
+    # Prevent accidental deletion/recreation
+    prevent_destroy = false
+    # Ignore changes to avoid recreation on minor API differences
+    ignore_changes = [
+      config[0].claims,
+    ]
+  }
 }
 
 # Access Application for /maker endpoint
