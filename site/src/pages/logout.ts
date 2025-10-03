@@ -2,7 +2,7 @@
 // This endpoint orchestrates a complete logout by redirecting through both identity providers
 
 import type { APIRoute } from "astro";
-import { verifyCloudflareAccessJWT } from "../lib/cloudflare-access";
+import { verifyCloudflareAccessJWT, readIDTokenCookie, clearIDTokenCookie } from "../lib/cloudflare-access";
 
 export const GET: APIRoute = async ({ request }) => {
   console.log("[Unified Logout] 🚪 Starting unified logout flow");
@@ -49,6 +49,22 @@ export const GET: APIRoute = async ({ request }) => {
   cipherLogoutUrl.searchParams.set("client_id", CIPHER_OIDC_CLIENT_ID);
   cipherLogoutUrl.searchParams.set("post_logout_redirect_uri", cloudflareLogoutUrl);
 
+  // Step 2.5: Add id_token_hint for silent logout (no account picker)
+  const idToken = readIDTokenCookie(request);
+  const responseHeaders = new Headers({
+    "Cache-Control": "no-store, no-cache, must-revalidate",
+  });
+
+  if (idToken) {
+    cipherLogoutUrl.searchParams.set("id_token_hint", idToken);
+    console.log("[Unified Logout] 🎯 Using id_token_hint for silent logout (no account picker)");
+
+    // Clear the ID token cookie
+    responseHeaders.append("Set-Cookie", clearIDTokenCookie());
+  } else {
+    console.log("[Unified Logout] ⚠️ No id_token_hint available - ZITADEL may show account picker");
+  }
+
   console.log("[Unified Logout] 🔗 Redirect chain:");
   console.log("[Unified Logout]   1️⃣ Cipher/ZITADEL end_session:", cipherLogoutUrl.toString());
   console.log("[Unified Logout]   2️⃣ Cloudflare Access logout:", cloudflareLogoutUrl);
@@ -56,12 +72,11 @@ export const GET: APIRoute = async ({ request }) => {
   console.log("[Unified Logout] ✅ Cipher cookie will be cleared → Access cleared → returned to /");
 
   // Step 3: Redirect to ZITADEL end_session (starts the chain)
+  responseHeaders.set("Location", cipherLogoutUrl.toString());
+
   return new Response(null, {
     status: 302,
-    headers: {
-      Location: cipherLogoutUrl.toString(),
-      "Cache-Control": "no-store, no-cache, must-revalidate",
-    },
+    headers: responseHeaders,
   });
 };
 

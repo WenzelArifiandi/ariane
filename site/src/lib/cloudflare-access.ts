@@ -107,3 +107,60 @@ export function readSLOCookie(request: Request): string | null {
 export function clearSLOCookie(): string {
   return "slo_user=; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=0";
 }
+
+/**
+ * Store OIDC ID token in httpOnly cookie for logout id_token_hint
+ * The ID token is embedded in the CF_Authorization JWT custom claims
+ */
+export function createIDTokenCookie(idToken: string): string {
+  const maxAge = 24 * 60 * 60; // 24 hours (match session duration)
+
+  // Store the raw ID token for use in end_session id_token_hint
+  return `cipher_id_token=${idToken}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=${maxAge}`;
+}
+
+/**
+ * Read ID token from cookie for logout id_token_hint
+ */
+export function readIDTokenCookie(request: Request): string | null {
+  const cookieHeader = request.headers.get("cookie");
+  if (!cookieHeader) return null;
+
+  const cookies = Object.fromEntries(
+    cookieHeader.split("; ").map((c) => {
+      const [key, ...v] = c.split("=");
+      return [key, v.join("=")];
+    })
+  );
+
+  return cookies.cipher_id_token || null;
+}
+
+/**
+ * Clear ID token cookie
+ */
+export function clearIDTokenCookie(): string {
+  return "cipher_id_token=; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=0";
+}
+
+/**
+ * Extract OIDC ID token from Cloudflare Access JWT custom claims
+ * CF Access includes the original OIDC ID token in custom claims
+ */
+export function extractIDTokenFromCFJWT(cfJWT: string): string | null {
+  try {
+    const parts = cfJWT.split(".");
+    if (parts.length !== 3) return null;
+
+    const payload = JSON.parse(
+      Buffer.from(parts[1], "base64url").toString("utf-8")
+    );
+
+    // CF Access may store the original ID token in custom claims
+    // Check common claim names
+    return payload.id_token || payload.oidc_id_token || payload.identity?.id_token || null;
+  } catch (error) {
+    console.error("[CF Access] Failed to extract ID token from JWT", error);
+    return null;
+  }
+}
