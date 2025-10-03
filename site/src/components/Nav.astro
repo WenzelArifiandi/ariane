@@ -134,7 +134,7 @@ const studioHref = import.meta.env.DEV ? 'http://localhost:3333/' : 'https://stu
             </a>
           </li>
           <li class="transition-opacity duration-300 delay-125 opacity-0 data-[open=true]:opacity-100">
-            <a class="mobile-menu-item" role="menuitem" href="/signout">
+            <a class="mobile-menu-item" role="menuitem" href="/logout">
               <span class="material-symbols-rounded">logout</span>
               <span>Logout</span>
             </a>
@@ -452,7 +452,7 @@ const studioHref = import.meta.env.DEV ? 'http://localhost:3333/' : 'https://stu
     if (!(target instanceof Element)) return;
     const link = target.closest('a');
     if (link) {
-      if (link.getAttribute('href') === '/signout') {
+      if (link.getAttribute("href") === "/logout") {
         try {
           sessionStorage.removeItem('maker_authenticated');
         } catch (error) {
