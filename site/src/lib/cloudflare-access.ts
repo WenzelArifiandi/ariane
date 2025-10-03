@@ -164,3 +164,56 @@ export function extractIDTokenFromCFJWT(cfJWT: string): string | null {
     return null;
   }
 }
+
+/**
+ * Validate that a JWT is a genuine ZITADEL ID token for our OIDC client
+ *
+ * Acceptance criteria:
+ * - iss (issuer) starts with https://cipher.wenzelarifiandi.com
+ * - aud (audience) contains our OIDC client ID (340307158316941421)
+ *
+ * @param jwt - The JWT to validate
+ * @param expectedClientId - Expected OIDC client ID in audience
+ * @returns true if valid ZITADEL ID token, false otherwise
+ */
+export function isValidZITADELIDToken(
+  jwt: string,
+  expectedClientId: string
+): boolean {
+  try {
+    const parts = jwt.split(".");
+    if (parts.length !== 3) {
+      console.warn("[ZITADEL ID Token] Invalid JWT format - not 3 parts");
+      return false;
+    }
+
+    const payload = JSON.parse(
+      Buffer.from(parts[1], "base64url").toString("utf-8")
+    );
+
+    // Check issuer starts with Cipher ZITADEL instance
+    const iss = payload.iss;
+    if (!iss || !iss.startsWith("https://cipher.wenzelarifiandi.com")) {
+      console.warn("[ZITADEL ID Token] Invalid issuer:", iss);
+      return false;
+    }
+
+    // Check audience contains our OIDC client ID
+    const aud = payload.aud;
+    const audiences = Array.isArray(aud) ? aud : [aud];
+
+    if (!audiences.includes(expectedClientId)) {
+      console.warn("[ZITADEL ID Token] Client ID not in audience:", {
+        expected: expectedClientId,
+        actual: audiences,
+      });
+      return false;
+    }
+
+    console.log("[ZITADEL ID Token] ✅ Valid - iss=cipher, aud contains client ID");
+    return true;
+  } catch (error) {
+    console.error("[ZITADEL ID Token] Validation failed:", error);
+    return false;
+  }
+}

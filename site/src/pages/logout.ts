@@ -2,7 +2,12 @@
 // This endpoint orchestrates a complete logout by redirecting through both identity providers
 
 import type { APIRoute } from "astro";
-import { verifyCloudflareAccessJWT, readIDTokenCookie, clearIDTokenCookie } from "../lib/cloudflare-access";
+import {
+  verifyCloudflareAccessJWT,
+  readIDTokenCookie,
+  clearIDTokenCookie,
+  isValidZITADELIDToken,
+} from "../lib/cloudflare-access";
 
 export const GET: APIRoute = async ({ request }) => {
   console.log("[Unified Logout] 🚪 Starting unified logout flow");
@@ -32,10 +37,16 @@ export const GET: APIRoute = async ({ request }) => {
       },
     }).catch((error) => {
       // Don't block UX on SLO API failure
-      console.warn("[Unified Logout] ⚠️ SLO API call failed (non-blocking):", error.message);
+      console.warn(
+        "[Unified Logout] ⚠️ SLO API call failed (non-blocking):",
+        error.message
+      );
     });
 
-    console.log("[Unified Logout] 🔥 Triggered fire-and-forget SLO API call for", user.email);
+    console.log(
+      "[Unified Logout] 🔥 Triggered fire-and-forget SLO API call for",
+      user.email
+    );
   } else {
     console.log("[Unified Logout] ⚠️ No user session found, skipping SLO API call");
   }
@@ -49,27 +60,47 @@ export const GET: APIRoute = async ({ request }) => {
   cipherLogoutUrl.searchParams.set("client_id", CIPHER_OIDC_CLIENT_ID);
   cipherLogoutUrl.searchParams.set("post_logout_redirect_uri", cloudflareLogoutUrl);
 
-  // Step 2.5: Add id_token_hint for silent logout (no account picker)
-  const idToken = readIDTokenCookie(request);
   const responseHeaders = new Headers({
     "Cache-Control": "no-store, no-cache, must-revalidate",
   });
 
-  if (idToken) {
+  // Step 2.5: Add id_token_hint ONLY if we have a valid ZITADEL ID token
+  const idToken = readIDTokenCookie(request);
+
+  if (idToken && isValidZITADELIDToken(idToken, CIPHER_OIDC_CLIENT_ID)) {
+    // Valid ZITADEL ID token - use for silent logout
     cipherLogoutUrl.searchParams.set("id_token_hint", idToken);
-    console.log("[Unified Logout] 🎯 Using id_token_hint for silent logout (no account picker)");
+    console.log(
+      "[Unified Logout] 🎯 Using Zitadel id_token_hint (iss=cipher, aud ok) - silent logout"
+    );
 
     // Clear the ID token cookie
     responseHeaders.append("Set-Cookie", clearIDTokenCookie());
   } else {
-    console.log("[Unified Logout] ⚠️ No id_token_hint available - ZITADEL may show account picker");
+    // No valid ZITADEL ID token - graceful fallback (may show account picker)
+    if (idToken) {
+      console.log(
+        "[Unified Logout] ❌ ID token exists but failed validation - not using id_token_hint"
+      );
+      // Clear invalid token
+      responseHeaders.append("Set-Cookie", clearIDTokenCookie());
+    } else {
+      console.log(
+        "[Unified Logout] ℹ️ No valid Zitadel ID token - proceeding without id_token_hint"
+      );
+    }
   }
 
   console.log("[Unified Logout] 🔗 Redirect chain:");
-  console.log("[Unified Logout]   1️⃣ Cipher/ZITADEL end_session:", cipherLogoutUrl.toString());
+  console.log(
+    "[Unified Logout]   1️⃣ Cipher/ZITADEL end_session:",
+    cipherLogoutUrl.toString()
+  );
   console.log("[Unified Logout]   2️⃣ Cloudflare Access logout:", cloudflareLogoutUrl);
   console.log("[Unified Logout]   3️⃣ Final destination:", FINAL_RETURN_URL);
-  console.log("[Unified Logout] ✅ Cipher cookie will be cleared → Access cleared → returned to /");
+  console.log(
+    "[Unified Logout] ✅ Cipher cookie will be cleared → Access cleared → returned to /"
+  );
 
   // Step 3: Redirect to ZITADEL end_session (starts the chain)
   responseHeaders.set("Location", cipherLogoutUrl.toString());

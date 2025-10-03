@@ -1,16 +1,23 @@
 // Redirect to homepage after Cloudflare Access authentication
 // The homepage will detect the query param and auto-open the Maker menu
-// Also stores the OIDC ID token for silent logout (id_token_hint)
+// Also stores the OIDC ID token for silent logout (id_token_hint) - ONLY if valid ZITADEL token
 
 import type { APIRoute } from "astro";
-import { createIDTokenCookie, extractIDTokenFromCFJWT } from "../lib/cloudflare-access";
+import {
+  createIDTokenCookie,
+  extractIDTokenFromCFJWT,
+  isValidZITADELIDToken,
+} from "../lib/cloudflare-access";
+
+const CIPHER_OIDC_CLIENT_ID = "340307158316941421";
 
 export const GET: APIRoute = async ({ request }) => {
   const responseHeaders = new Headers({
-    Location: '/?maker=open',
+    Location: "/?maker=open",
   });
 
   // Extract and store ID token from CF_Authorization JWT for logout id_token_hint
+  // ONLY store if it's a genuine ZITADEL ID token (not CF Access JWT)
   try {
     const cookieHeader = request.headers.get("cookie");
     const jwtHeader = request.headers.get("Cf-Access-Jwt-Assertion");
@@ -30,23 +37,33 @@ export const GET: APIRoute = async ({ request }) => {
     }
 
     if (cfJWT) {
-      // Try to extract the original OIDC ID token from CF JWT
+      // Try to extract the original OIDC ID token from CF JWT custom claims
       const idToken = extractIDTokenFromCFJWT(cfJWT);
 
       if (idToken) {
-        // Store ID token in httpOnly cookie for later use in logout
-        responseHeaders.append("Set-Cookie", createIDTokenCookie(idToken));
-        console.log("[/maker] ✅ Stored ID token cookie for silent logout");
+        // Validate that it's a genuine ZITADEL ID token for our client
+        if (isValidZITADELIDToken(idToken, CIPHER_OIDC_CLIENT_ID)) {
+          // Store validated ZITADEL ID token for silent logout
+          responseHeaders.append("Set-Cookie", createIDTokenCookie(idToken));
+          console.log(
+            "[/maker] ✅ Stored valid ZITADEL ID token for silent logout"
+          );
+        } else {
+          console.log(
+            "[/maker] ⚠️ Extracted token is not a valid ZITADEL ID token - not storing"
+          );
+        }
       } else {
-        // Fallback: use CF JWT itself as id_token_hint (may work in some cases)
-        responseHeaders.append("Set-Cookie", createIDTokenCookie(cfJWT));
-        console.log("[/maker] ⚠️ Using CF JWT as ID token fallback");
+        // No ID token found in CF JWT - this is normal for Access-only flow
+        console.log(
+          "[/maker] ℹ️ No ZITADEL ID token in CF JWT (Access-only flow) - silent logout unavailable"
+        );
       }
     } else {
       console.log("[/maker] ⚠️ No CF JWT found, skipping ID token storage");
     }
   } catch (error) {
-    console.warn("[/maker] Failed to store ID token:", error);
+    console.warn("[/maker] Failed to process ID token:", error);
     // Non-blocking - continue with redirect
   }
 
