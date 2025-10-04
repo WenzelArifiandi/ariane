@@ -13,15 +13,14 @@ resource "cloudflare_zero_trust_access_identity_provider" "cipher_oidc" {
   type       = "oidc"
 
   config {
-    client_id            = var.cipher_client_id
-    client_secret        = var.cipher_client_secret
-    auth_url             = "${var.cipher_issuer_url}/oauth/v2/authorize"
-    token_url            = "${var.cipher_issuer_url}/oauth/v2/token"
-    certs_url            = "${var.cipher_issuer_url}/oauth/v2/keys"
-    scopes               = ["openid", "profile", "email"]
-    claims               = ["email", "groups", "preferred_username"]
-    email_claim_name     = "email"
-    authorization_params = "prompt=login" # Force re-authentication on every login
+    client_id        = var.cipher_client_id
+    client_secret    = var.cipher_client_secret
+    auth_url         = "${var.cipher_issuer_url}/oauth/v2/authorize?prompt=login" # Force re-authentication
+    token_url        = "${var.cipher_issuer_url}/oauth/v2/token"
+    certs_url        = "${var.cipher_issuer_url}/oauth/v2/keys"
+    scopes           = ["openid", "profile", "email"]
+    claims           = ["email", "groups", "preferred_username"]
+    email_claim_name = "email"
   }
 
   lifecycle {
