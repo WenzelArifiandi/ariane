@@ -11,7 +11,41 @@ import {
 
 const CIPHER_OIDC_CLIENT_ID = "340307158316941421";
 
-export const GET: APIRoute = async ({ request }) => {
+export const GET: APIRoute = async ({ request, url }) => {
+  // Check for OIDC errors (e.g., expired requestId from ZITADEL)
+  const error = url.searchParams.get("error");
+  const errorDescription = url.searchParams.get("error_description");
+
+  if (error) {
+    console.warn(
+      `[/maker] OIDC error detected: ${error}`,
+      errorDescription ? `- ${errorDescription}` : ""
+    );
+
+    // If error relates to expired/invalid authorization request, restart flow
+    // This handles the case where ZITADEL requestId expires (one-time use)
+    if (
+      errorDescription?.toLowerCase().includes("request") ||
+      errorDescription?.toLowerCase().includes("expired") ||
+      error === "invalid_request"
+    ) {
+      console.log(
+        "[/maker] Restarting OAuth flow - clearing error state and redirecting"
+      );
+      // Redirect to /maker without error params to trigger fresh auth
+      return Response.redirect(
+        new URL("/maker", url.origin).toString(),
+        302
+      );
+    }
+
+    // For other errors, log and continue - may need manual intervention
+    console.error(
+      "[/maker] Unhandled OIDC error - continuing with redirect:",
+      error
+    );
+  }
+
   const responseHeaders = new Headers({
     Location: "/?maker=open",
   });
