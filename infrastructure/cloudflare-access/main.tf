@@ -85,7 +85,6 @@ resource "cloudflare_ruleset" "cipher_cache_bypass" {
     action = "set_cache_settings"
     action_parameters {
       cache = false
-      respect_origin = true
     }
     expression  = "(http.host eq \"cipher.wenzelarifiandi.com\" and (starts_with(http.request.uri.path, \"/.well-known/\") or starts_with(http.request.uri.path, \"/oidc/v1/\") or starts_with(http.request.uri.path, \"/oauth/v2/\") or starts_with(http.request.uri.path, \"/ui/\") or starts_with(http.request.uri.path, \"/assets/\")))"
     description = "Bypass cache for OIDC endpoints and UI"
