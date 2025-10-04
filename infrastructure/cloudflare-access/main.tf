@@ -73,112 +73,14 @@ resource "cloudflare_zero_trust_access_policy" "maker_policy" {
   session_duration = "24h"
 }
 
-# Cache Rules for cipher.wenzelarifiandi.com - Bypass cache for OIDC + UI paths
-resource "cloudflare_ruleset" "cipher_cache_bypass" {
-  zone_id     = data.cloudflare_zone.wenzelarifiandi.id
-  name        = "Cipher ZITADEL Cache Bypass"
-  description = "Bypass cache for ZITADEL OIDC endpoints and UI assets"
-  kind        = "zone"
-  phase       = "http_request_cache_settings"
-
-  rules {
-    action = "set_cache_settings"
-    action_parameters {
-      cache = false
-    }
-    expression  = "(http.host eq \"cipher.wenzelarifiandi.com\" and (starts_with(http.request.uri.path, \"/.well-known/\") or starts_with(http.request.uri.path, \"/oidc/v1/\") or starts_with(http.request.uri.path, \"/oauth/v2/\") or starts_with(http.request.uri.path, \"/ui/\") or starts_with(http.request.uri.path, \"/assets/\")))"
-    description = "Bypass cache for OIDC endpoints and UI"
-    enabled     = true
-  }
-}
-
-# Page Rules for cipher.wenzelarifiandi.com - Disable interfering features
-resource "cloudflare_page_rule" "cipher_well_known" {
-  zone_id  = data.cloudflare_zone.wenzelarifiandi.id
-  target   = "cipher.wenzelarifiandi.com/.well-known/*"
-  priority = 1
-
-  actions {
-    cache_level              = "bypass"
-    email_obfuscation        = "off"
-    rocket_loader            = "off"
-    mirage                   = "off"
-    automatic_https_rewrites = "off"
-  }
-}
-
-resource "cloudflare_page_rule" "cipher_oidc_v1" {
-  zone_id  = data.cloudflare_zone.wenzelarifiandi.id
-  target   = "cipher.wenzelarifiandi.com/oidc/v1/*"
-  priority = 2
-
-  actions {
-    cache_level              = "bypass"
-    email_obfuscation        = "off"
-    rocket_loader            = "off"
-    mirage                   = "off"
-    automatic_https_rewrites = "off"
-  }
-}
-
-resource "cloudflare_page_rule" "cipher_oauth_v2" {
-  zone_id  = data.cloudflare_zone.wenzelarifiandi.id
-  target   = "cipher.wenzelarifiandi.com/oauth/v2/*"
-  priority = 3
-
-  actions {
-    cache_level              = "bypass"
-    email_obfuscation        = "off"
-    rocket_loader            = "off"
-    mirage                   = "off"
-    automatic_https_rewrites = "off"
-  }
-}
-
-resource "cloudflare_page_rule" "cipher_ui" {
-  zone_id  = data.cloudflare_zone.wenzelarifiandi.id
-  target   = "cipher.wenzelarifiandi.com/ui/*"
-  priority = 4
-
-  actions {
-    cache_level              = "bypass"
-    email_obfuscation        = "off"
-    rocket_loader            = "off"
-    mirage                   = "off"
-    automatic_https_rewrites = "off"
-  }
-}
-
-resource "cloudflare_page_rule" "cipher_assets" {
-  zone_id  = data.cloudflare_zone.wenzelarifiandi.id
-  target   = "cipher.wenzelarifiandi.com/assets/*"
-  priority = 5
-
-  actions {
-    cache_level              = "bypass"
-    email_obfuscation        = "off"
-    rocket_loader            = "off"
-    mirage                   = "off"
-    automatic_https_rewrites = "off"
-  }
-}
-
-# WAF Bypass for cipher.wenzelarifiandi.com - Skip managed rules for ZITADEL paths
-resource "cloudflare_ruleset" "cipher_waf_bypass" {
-  zone_id     = data.cloudflare_zone.wenzelarifiandi.id
-  name        = "Cipher ZITADEL WAF Bypass"
-  description = "Skip WAF for ZITADEL OIDC endpoints and UI"
-  kind        = "zone"
-  phase       = "http_request_firewall_custom"
-
-  rules {
-    action = "skip"
-    action_parameters {
-      ruleset = "current"
-    }
-    expression  = "(http.host eq \"cipher.wenzelarifiandi.com\" and (starts_with(http.request.uri.path, \"/.well-known/\") or starts_with(http.request.uri.path, \"/oidc/v1/\") or starts_with(http.request.uri.path, \"/oauth/v2/\") or starts_with(http.request.uri.path, \"/ui/\") or starts_with(http.request.uri.path, \"/assets/\")))"
-    description = "Skip WAF for OIDC and UI paths"
-    enabled     = true
-  }
-}
+# Note: Zone-level rules (Cache, Page, WAF) require manual configuration
+# The API token is account-scoped and doesn't support Page Rules API
+# Page Rules also cannot be created via account tokens (error 1011)
+#
+# Manual configuration required via Cloudflare Dashboard:
+# 1. Cache Rules: Bypass for /.well-known/*, /oidc/v1/*, /oauth/v2/*, /ui/*, /assets/*
+# 2. Page Rules: 5 rules for paths above (or use Configuration Rules)
+# 3. WAF Custom Rules: Skip for ZITADEL paths
+#
+# See infrastructure/CIPHER_CLOUDFLARE_HARDENING.md for complete steps
 
