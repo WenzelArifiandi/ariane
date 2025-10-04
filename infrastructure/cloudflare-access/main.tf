@@ -73,12 +73,11 @@ resource "cloudflare_zero_trust_access_policy" "maker_policy" {
   session_duration = "24h"
 }
 
-# Cache Rules for cipher.wenzelarifiandi.com OIDC endpoints
-# Bypass cache for OIDC/OAuth endpoints to prevent stale responses
-resource "cloudflare_ruleset" "cipher_cache_rules" {
+# Cache Rules for cipher.wenzelarifiandi.com - Bypass cache for OIDC + UI paths
+resource "cloudflare_ruleset" "cipher_cache_bypass" {
   zone_id     = data.cloudflare_zone.wenzelarifiandi.id
-  name        = "Cipher OIDC Cache Rules"
-  description = "Bypass cache for ZITADEL OIDC endpoints"
+  name        = "Cipher ZITADEL Cache Bypass"
+  description = "Bypass cache for ZITADEL OIDC endpoints and UI assets"
   kind        = "zone"
   phase       = "http_request_cache_settings"
 
@@ -86,16 +85,16 @@ resource "cloudflare_ruleset" "cipher_cache_rules" {
     action = "set_cache_settings"
     action_parameters {
       cache = false
+      respect_origin = true
     }
-    expression  = "(http.host eq \"cipher.wenzelarifiandi.com\" and (starts_with(http.request.uri.path, \"/.well-known/\") or starts_with(http.request.uri.path, \"/oidc/v1/\") or starts_with(http.request.uri.path, \"/oauth/v2/\")))"
-    description = "Bypass cache for OIDC endpoints"
+    expression  = "(http.host eq \"cipher.wenzelarifiandi.com\" and (starts_with(http.request.uri.path, \"/.well-known/\") or starts_with(http.request.uri.path, \"/oidc/v1/\") or starts_with(http.request.uri.path, \"/oauth/v2/\") or starts_with(http.request.uri.path, \"/ui/\") or starts_with(http.request.uri.path, \"/assets/\")))"
+    description = "Bypass cache for OIDC endpoints and UI"
     enabled     = true
   }
 }
 
-# Page Rules for cipher.wenzelarifiandi.com OIDC endpoints
-# Disable potentially interfering features
-resource "cloudflare_page_rule" "cipher_oidc_settings" {
+# Page Rules for cipher.wenzelarifiandi.com - Disable interfering features
+resource "cloudflare_page_rule" "cipher_well_known" {
   zone_id  = data.cloudflare_zone.wenzelarifiandi.id
   target   = "cipher.wenzelarifiandi.com/.well-known/*"
   priority = 1
@@ -109,7 +108,7 @@ resource "cloudflare_page_rule" "cipher_oidc_settings" {
   }
 }
 
-resource "cloudflare_page_rule" "cipher_oidc_v1_settings" {
+resource "cloudflare_page_rule" "cipher_oidc_v1" {
   zone_id  = data.cloudflare_zone.wenzelarifiandi.id
   target   = "cipher.wenzelarifiandi.com/oidc/v1/*"
   priority = 2
@@ -123,7 +122,7 @@ resource "cloudflare_page_rule" "cipher_oidc_v1_settings" {
   }
 }
 
-resource "cloudflare_page_rule" "cipher_oauth_v2_settings" {
+resource "cloudflare_page_rule" "cipher_oauth_v2" {
   zone_id  = data.cloudflare_zone.wenzelarifiandi.id
   target   = "cipher.wenzelarifiandi.com/oauth/v2/*"
   priority = 3
@@ -137,11 +136,39 @@ resource "cloudflare_page_rule" "cipher_oauth_v2_settings" {
   }
 }
 
-# WAF/Firewall bypass for cipher OIDC endpoints
+resource "cloudflare_page_rule" "cipher_ui" {
+  zone_id  = data.cloudflare_zone.wenzelarifiandi.id
+  target   = "cipher.wenzelarifiandi.com/ui/*"
+  priority = 4
+
+  actions {
+    cache_level              = "bypass"
+    email_obfuscation        = "off"
+    rocket_loader            = "off"
+    mirage                   = "off"
+    automatic_https_rewrites = "off"
+  }
+}
+
+resource "cloudflare_page_rule" "cipher_assets" {
+  zone_id  = data.cloudflare_zone.wenzelarifiandi.id
+  target   = "cipher.wenzelarifiandi.com/assets/*"
+  priority = 5
+
+  actions {
+    cache_level              = "bypass"
+    email_obfuscation        = "off"
+    rocket_loader            = "off"
+    mirage                   = "off"
+    automatic_https_rewrites = "off"
+  }
+}
+
+# WAF Bypass for cipher.wenzelarifiandi.com - Skip managed rules for ZITADEL paths
 resource "cloudflare_ruleset" "cipher_waf_bypass" {
   zone_id     = data.cloudflare_zone.wenzelarifiandi.id
-  name        = "Cipher OIDC WAF Bypass"
-  description = "Skip WAF for ZITADEL OIDC endpoints"
+  name        = "Cipher ZITADEL WAF Bypass"
+  description = "Skip WAF for ZITADEL OIDC endpoints and UI"
   kind        = "zone"
   phase       = "http_request_firewall_custom"
 
@@ -150,8 +177,8 @@ resource "cloudflare_ruleset" "cipher_waf_bypass" {
     action_parameters {
       ruleset = "current"
     }
-    expression  = "(http.host eq \"cipher.wenzelarifiandi.com\" and (starts_with(http.request.uri.path, \"/.well-known/\") or starts_with(http.request.uri.path, \"/oidc/v1/\") or starts_with(http.request.uri.path, \"/oauth/v2/\")))"
-    description = "Skip WAF for OIDC endpoints"
+    expression  = "(http.host eq \"cipher.wenzelarifiandi.com\" and (starts_with(http.request.uri.path, \"/.well-known/\") or starts_with(http.request.uri.path, \"/oidc/v1/\") or starts_with(http.request.uri.path, \"/oauth/v2/\") or starts_with(http.request.uri.path, \"/ui/\") or starts_with(http.request.uri.path, \"/assets/\")))"
+    description = "Skip WAF for OIDC and UI paths"
     enabled     = true
   }
 }
