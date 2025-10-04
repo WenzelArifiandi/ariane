@@ -26,23 +26,38 @@ jobs:
           fi
           echo "✅ API token is configured"
 
-      - name: Run configuration script
+      - name: Run Cipher UI hardening script
         working-directory: infrastructure/cloudflare-access
         run: |
-          chmod +x configure-cipher-zone.sh
-          ./configure-cipher-zone.sh
+          chmod +x harden-cipher-ui.sh
+          ./harden-cipher-ui.sh
+
+      - name: Run health checks
+        run: |
+          echo "## 🔍 Health Check Results" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### UI Endpoint:" >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+          curl -sSI "https://cipher.wenzelarifiandi.com/ui/v2/login/loginname" | sed -n '1,20p' >> $GITHUB_STEP_SUMMARY || echo "Failed to fetch" >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
 
       - name: Generate summary
         if: always()
         run: |
-          echo "## 🔐 Cipher ZITADEL Zone Configuration" >> $GITHUB_STEP_SUMMARY
+          echo "## 🔐 Cipher ZITADEL UI Hardening Complete" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "### Applied Rules:" >> $GITHUB_STEP_SUMMARY
-          echo "- ✅ Cache Bypass for OIDC + UI paths" >> $GITHUB_STEP_SUMMARY
+          echo "### Applied Configuration:" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ Cache Bypass for /.well-known/*, /oidc/*, /oauth/*, /ui/*, /assets/*" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ Feature Disables (Rocket Loader, Minify, Email Obfuscation)" >> $GITHUB_STEP_SUMMARY
           echo "- ✅ WAF Bypass for ZITADEL paths" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ Development Mode enabled (3hrs)" >> $GITHUB_STEP_SUMMARY
           echo "- ✅ Cache purged for cipher.wenzelarifiandi.com" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "### ⚠️ Manual Configuration Required:" >> $GITHUB_STEP_SUMMARY
-          echo "Page Rules must be configured manually via Cloudflare Dashboard." >> $GITHUB_STEP_SUMMARY
+          echo "### 🧪 Next Steps:" >> $GITHUB_STEP_SUMMARY
+          echo "1. Test UI: https://cipher.wenzelarifiandi.com/ui/v2/login/loginname" >> $GITHUB_STEP_SUMMARY
+          echo "2. Check DevTools Network tab (all /ui/* and /assets/* = 200)" >> $GITHUB_STEP_SUMMARY
+          echo "3. Check Console tab (no CSP/Rocket Loader errors)" >> $GITHUB_STEP_SUMMARY
+          echo "4. Test full auth flow: /maker → login → logout" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "See [CIPHER_CLOUDFLARE_HARDENING.md](https://github.com/${{ github.repository }}/blob/main/infrastructure/CIPHER_CLOUDFLARE_HARDENING.md) for steps." >> $GITHUB_STEP_SUMMARY
+          echo "See [CIPHER_CLOUDFLARE_HARDENING.md](https://github.com/${{ github.repository }}/blob/main/infrastructure/CIPHER_CLOUDFLARE_HARDENING.md) for verification steps." >> $GITHUB_STEP_SUMMARY
