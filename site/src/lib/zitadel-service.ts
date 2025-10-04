@@ -114,12 +114,14 @@ export async function searchUserByEmail(
 }
 
 /**
- * List sessions for a user
+ * List ACTIVE sessions for a user (browser + user sessions)
  * API: POST /v2/sessions/search
+ * Filters: userId + state=ACTIVE
+ * Includes: Browser sessions AND OAuth sessions
  */
 export async function listUserSessions(
   userId: string
-): Promise<Array<{ sessionId: string; userId: string }>> {
+): Promise<Array<{ sessionId: string; userId: string; state: string }>> {
   const token = await getServiceAccountToken();
 
   const response = await fetch(`${ZITADEL_ISSUER}/v2/sessions/search`, {
@@ -133,6 +135,11 @@ export async function listUserSessions(
         {
           userIdQuery: {
             userId: userId,
+          },
+        },
+        {
+          stateQuery: {
+            state: "SESSION_STATE_ACTIVE", // Only ACTIVE sessions
           },
         },
       ],
@@ -154,6 +161,7 @@ export async function listUserSessions(
   return data.result.map((session: any) => ({
     sessionId: session.id,
     userId: session.factors?.user?.id || userId,
+    state: session.state || "UNKNOWN",
   }));
 }
 
@@ -181,37 +189,80 @@ export async function deleteSession(sessionId: string): Promise<boolean> {
 }
 
 /**
+ * Bulk terminate all sessions for a user
+ * API: POST /v2/users/{userId}/sessions/_terminate
+ * This is a fallback when no individual sessions are found
+ */
+export async function bulkTerminateUserSessions(userId: string): Promise<boolean> {
+  const token = await getServiceAccountToken();
+
+  const response = await fetch(
+    `${ZITADEL_ISSUER}/v2/users/${userId}/sessions/_terminate`,
+    {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({}), // Empty body as per API spec
+    }
+  );
+
+  if (!response.ok) {
+    const error = await response.text();
+    console.error(`[ZITADEL] Bulk terminate failed for user ${userId}`, error);
+    return false;
+  }
+
+  console.log(`[ZITADEL] ✅ Bulk terminate successful for user ${userId}`);
+  return true;
+}
+
+/**
  * Revoke all sessions for a user (by email)
+ * Strategy:
+ * 1. Search for ACTIVE sessions (browser + OAuth)
+ * 2. DELETE each session individually
+ * 3. If no sessions found, call bulk terminate as fallback
  */
 export async function revokeAllUserSessions(
   email: string
-): Promise<{ deleted: number; failed: number }> {
-  console.log("[ZITADEL SLO] Starting session revocation for", email);
+): Promise<{ deleted: number; failed: number; bulkTerminated: boolean }> {
+  console.log("[ZITADEL SLO] 🚪 Starting true sign-out for", email);
 
   // 1. Find user by email
   const user = await searchUserByEmail(email);
   if (!user) {
     console.warn("[ZITADEL SLO] ⚠️ User not found for email:", email);
-    return { deleted: 0, failed: 0 };
+    return { deleted: 0, failed: 0, bulkTerminated: false };
   }
 
   console.log("[ZITADEL SLO] ✅ Found user:", { userId: user.userId, email: user.email });
 
-  // 2. List all sessions for user
+  // 2. List all ACTIVE sessions for user (browser + OAuth)
   const sessions = await listUserSessions(user.userId);
-  console.log(`[ZITADEL SLO] 📋 Found ${sessions.length} active session(s) for user ${user.userId}`);
+  console.log(`[ZITADEL SLO] 📋 Found ${sessions.length} ACTIVE session(s) for user ${user.userId}`);
 
   if (sessions.length === 0) {
-    console.log("[ZITADEL SLO] No active sessions to revoke");
-    return { deleted: 0, failed: 0 };
+    // No individual sessions found - use bulk terminate as fallback
+    console.log("[ZITADEL SLO] 🔄 No individual sessions found - using bulk terminate");
+    const bulkSuccess = await bulkTerminateUserSessions(user.userId);
+
+    if (bulkSuccess) {
+      console.log("[ZITADEL SLO] ✅ Bulk terminate succeeded");
+      return { deleted: 0, failed: 0, bulkTerminated: true };
+    } else {
+      console.error("[ZITADEL SLO] ❌ Bulk terminate failed");
+      return { deleted: 0, failed: 1, bulkTerminated: false };
+    }
   }
 
-  // 3. Delete each session
+  // 3. Delete each session individually
   let deleted = 0;
   let failed = 0;
 
   for (const session of sessions) {
-    console.log(`[ZITADEL SLO] 🗑️ Deleting session ${session.sessionId}...`);
+    console.log(`[ZITADEL SLO] 🗑️ Deleting session ${session.sessionId} (state: ${session.state})...`);
     const success = await deleteSession(session.sessionId);
     if (success) {
       deleted++;
@@ -224,5 +275,12 @@ export async function revokeAllUserSessions(
 
   console.log(`[ZITADEL SLO] 🎯 Session revocation complete: ${deleted} deleted, ${failed} failed`);
 
-  return { deleted, failed };
+  // 4. If all deletions succeeded, confirm true sign-out
+  if (deleted > 0 && failed === 0) {
+    console.log("[ZITADEL SLO] ✅ True sign-out complete - all browser sessions terminated");
+  } else if (failed > 0) {
+    console.warn(`[ZITADEL SLO] ⚠️ Some sessions failed to delete (${failed}/${sessions.length})`);
+  }
+
+  return { deleted, failed, bulkTerminated: false };
 }

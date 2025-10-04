@@ -24,10 +24,16 @@ export const POST: APIRoute = async ({ request }) => {
       );
     }
 
-    console.log("[SLO API] Revoking ZITADEL sessions for", userEmail);
+    console.log("[SLO API] 🚪 Revoking ZITADEL sessions for", userEmail);
 
-    // Revoke all ZITADEL sessions for this user
+    // Revoke all ZITADEL sessions for this user (browser + OAuth)
     const result = await revokeAllUserSessions(userEmail);
+
+    const responseMessage = result.bulkTerminated
+      ? `Bulk terminate successful for ${userEmail}`
+      : `${result.deleted} session(s) deleted, ${result.failed} failed`;
+
+    console.log(`[SLO API] ✅ SLO complete: ${responseMessage}`);
 
     // Clear the SLO cookie
     return new Response(
@@ -36,6 +42,8 @@ export const POST: APIRoute = async ({ request }) => {
         email: userEmail,
         sessionsDeleted: result.deleted,
         sessionsFailed: result.failed,
+        bulkTerminated: result.bulkTerminated,
+        message: responseMessage,
       }),
       {
         status: 200,
