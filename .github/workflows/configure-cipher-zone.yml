@@ -1,0 +1,48 @@
+name: "Configure Cipher ZITADEL Zone"
+
+on:
+  workflow_dispatch:
+
+env:
+  CLOUDFLARE_API_TOKEN: ${{ secrets.TERRAFORM_ACCESS }}
+
+jobs:
+  configure:
+    name: "Configure Zone Rules"
+    runs-on: ubuntu-latest
+    environment: prod
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Validate API token
+        run: |
+          if [[ -z "${{ secrets.TERRAFORM_ACCESS }}" ]]; then
+            echo "❌ TERRAFORM_ACCESS secret is not set"
+            exit 1
+          fi
+          echo "✅ API token is configured"
+
+      - name: Run configuration script
+        working-directory: infrastructure/cloudflare-access
+        run: |
+          chmod +x configure-cipher-zone.sh
+          ./configure-cipher-zone.sh
+
+      - name: Generate summary
+        if: always()
+        run: |
+          echo "## 🔐 Cipher ZITADEL Zone Configuration" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Applied Rules:" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ Cache Bypass for OIDC + UI paths" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ WAF Bypass for ZITADEL paths" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ Cache purged for cipher.wenzelarifiandi.com" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### ⚠️ Manual Configuration Required:" >> $GITHUB_STEP_SUMMARY
+          echo "Page Rules must be configured manually via Cloudflare Dashboard." >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "See [CIPHER_CLOUDFLARE_HARDENING.md](https://github.com/${{ github.repository }}/blob/main/infrastructure/CIPHER_CLOUDFLARE_HARDENING.md) for steps." >> $GITHUB_STEP_SUMMARY
