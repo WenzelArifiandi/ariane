@@ -26,6 +26,19 @@ jobs:
           fi
           echo "✅ API token is configured"
 
+      - name: Verify Cloudflare rulesets
+        working-directory: infrastructure/cloudflare-access
+        run: |
+          chmod +x verify-cloudflare-rulesets.sh
+          ./verify-cloudflare-rulesets.sh > ruleset-verification.log 2>&1 || true
+
+          echo "## 🔍 Cloudflare Rulesets Verification" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+          cat ruleset-verification.log >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
       - name: Run Cipher UI hardening script
         working-directory: infrastructure/cloudflare-access
         run: |
