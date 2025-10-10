@@ -21,8 +21,8 @@
     "busboy": "^1.6.0",
     "formidable": "^3.5.4",
     "heic2any": "^0.0.4",
-    "react": "^19.1.1",
-    "react-dom": "^19.1.1",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
     "sanity": "^4.10.0",
     "sharp": "^0.34.4",
     "styled-components": "^6.1.19"
@@ -30,7 +30,7 @@
   "devDependencies": {
     "@sanity/eslint-config-studio": "^5.0.2",
     "@types/busboy": "^1.5.4",
-    "@types/react": "^19.1.13",
+    "@types/react": "^19.2.2",
     "@vercel/node": "^5.3.22",
     "eslint": "^9.36.0",
     "prettier": "^3.6.2",
