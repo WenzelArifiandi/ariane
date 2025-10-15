@@ -45,7 +45,7 @@
     "@vercel/speed-insights": "^1.2.0",
     "astro": "^5.13.9",
     "astro-icon": "^1.1.5",
-    "groq": "^4.10.0",
+    "groq": "^4.10.3",
     "jose": "^6.1.0",
     "lucide-astro": "^0.544.0",
     "postprocessing": "^6.27.0",
