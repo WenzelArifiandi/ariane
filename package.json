@@ -41,7 +41,7 @@
     "version:show": "node -p require('./package.json').version"
   },
   "devDependencies": {
-    "@playwright/test": "^1.48.0",
+    "@playwright/test": "^1.56.1",
     "@testing-library/jest-dom": "^6.5.0",
     "@testing-library/react": "^16.3.0",
     "@types/node": "^22.10.0",
