@@ -1,8 +1,10 @@
 ---
 title: "# ⚙️ Bazel Adoption Evaluation for Ariane Monorepo"
-description: "## ⚙️ Bazel Adoption Evaluation for Ariane Monorepo"
 slug: bazel_evaluation
+description: "## ⚙️ Bazel Adoption Evaluation for Ariane Monorepo"
 ---
+
+
 
 ## ⚙️ Bazel Adoption Evaluation for Ariane Monorepo
 

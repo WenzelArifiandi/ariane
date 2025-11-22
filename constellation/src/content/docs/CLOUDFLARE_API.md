@@ -1,8 +1,10 @@
 ---
-title: "Cloudflare API Token Setup"
-description: "# Cloudflare API Token Setup"
+title: Cloudflare API Token Setup
 slug: cloudflare_api
+description: "# Cloudflare API Token Setup"
 ---
+
+
 
 # Cloudflare API Token Setup
 

@@ -1,8 +1,10 @@
 ---
-title: "🛡️ Security Automation Guide"
-description: "# 🛡️ Security Automation Guide"
+title: 🛡️ Security Automation Guide
 slug: security_automation
+description: "# 🛡️ Security Automation Guide"
 ---
+
+
 
 # 🛡️ Security Automation Guide
 

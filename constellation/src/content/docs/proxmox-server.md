@@ -1,8 +1,10 @@
 ---
 title: "Proxmox Bare Metal Server - Detailed Specifications"
+slug: "proxmox-server"
 description: "# Proxmox Bare Metal Server - Detailed Specifications"
-slug: proxmox-server
 ---
+
+
 
 # Proxmox Bare Metal Server - Detailed Specifications
 

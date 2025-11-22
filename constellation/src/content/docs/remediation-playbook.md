@@ -1,8 +1,10 @@
 ---
-title: "ZITADEL Docker Remediation Quick Commands"
+title: ZITADEL Docker Remediation Quick Commands
+slug: "remediation-playbook"
 description: "# ZITADEL Docker Remediation Quick Commands"
-slug: remediation-playbook
 ---
+
+
 
 # ZITADEL Docker Remediation Quick Commands
 

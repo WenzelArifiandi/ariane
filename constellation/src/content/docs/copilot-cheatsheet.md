@@ -1,8 +1,10 @@
 ---
-title: "Ariane — AI Agent Quick Cheat Sheet"
+title: Ariane — AI Agent Quick Cheat Sheet
+slug: "copilot-cheatsheet"
 description: "# Ariane — AI Agent Quick Cheat Sheet"
-slug: copilot-cheatsheet
 ---
+
+
 
 # Ariane — AI Agent Quick Cheat Sheet
 

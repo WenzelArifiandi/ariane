@@ -1,8 +1,10 @@
 ---
-title: "Proxmox Backup Server (PBS) → Wasabi via rclone"
+title: Proxmox Backup Server (PBS) → Wasabi via rclone
+slug: "pbs-wasabi-rclone"
 description: "# Proxmox Backup Server (PBS) → Wasabi via rclone"
-slug: pbs-wasabi-rclone
 ---
+
+
 
 # Proxmox Backup Server (PBS) → Wasabi via rclone
 

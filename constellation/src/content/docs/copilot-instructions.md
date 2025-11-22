@@ -1,109 +1,75 @@
 ---
-title: "Ariane — Copilot instructions (concise)"
-description: "# Ariane — Copilot instructions (concise)"
-slug: copilot-instructions
+title: Ariane — Copilot Instructions (concise)
+slug: "copilot-instructions"
+description: "# Ariane — Copilot Instructions (concise)"
 ---
 
-# Ariane — Copilot instructions (concise)
 
-This file is the canonical short guide for automated coding agents working in this monorepo. Keep it brief, concrete, and repository-specific.
 
-Key layout
+# Ariane — Copilot Instructions (concise)
 
-- `site/` — Astro 5 frontend (Vercel). Pages: `site/src/pages/**`. API routes: `site/src/pages/api/**`. Middleware & edge logic: `site/src/middleware.ts`.
-- `studio/` — Sanity Studio (v4). Schemas: `studio/schemas/**`. Export list: `studio/schemaTypes/index.ts`.
-- `wasm/` — optional Rust→WASM signer; JS fallback: `site/src/lib/auth/signer.ts` (see `preloadSignerWasm()` comment).
+Canonical quick-start for AI coding agents. Focus on THIS repo’s real patterns; keep edits minimal & secure.
 
-Auth & security (high priority)
+## Structure & Roles
 
-- Middleware entry: `site/src/middleware.ts` — respects `AUTH_MODE` (`public|app|cf-access-only`) and centralises security headers via `addSecurityHeaders()`. Do not duplicate header logic elsewhere.
-- Session signing: `site/src/lib/auth/signer.ts` (WASM optional). Tests set `SESSION_SECRET` in `tests/setup/vitest.setup.ts`.
-- Cloudflare Access helpers: `site/src/lib/cfAccess.ts` — used from middleware to verify Access JWTs and optional group gating.
+- `site/` Astro 5 app (Vercel). Pages `src/pages/**`, API routes `src/pages/api/**`, edge logic `src/middleware.ts`.
+- `studio/` Sanity v4 Studio (schemas `studio/schemas/**`, exported via `studio/schemaTypes/index.ts`).
+- `constellation/` Docs (Astro + Starlight).
+- `infrastructure/` Terraform + Ansible (Proxmox, Cloudflare Access). Entry: `deploy.sh`.
+- `scripts/` & `ops/` Operational automation & server runbooks; security autofix scripts.
+- `wasm/` Optional Rust→WASM signer (fallback JS in `site/src/lib/auth/signer.ts`).
 
-Developer workflows (concrete commands)
+## Auth & Security (treat as hot path)
 
-- Local site dev: `npm run dev:site` (site serves on `127.0.0.1:4321`).
-- Studio dev: `npm run dev:studio` (Sanity Studio).
-- Build/preview site: `npm --prefix site run build` && `npm --prefix site run preview`.
-- WASM signer build (optional): `npm --prefix site run wasm:build:signer`.
-- Run tests (root): `npm run test`. Note: Playwright E2E expects the site on port `4321`.
+- Central entry: `site/src/middleware.ts` (enforces `AUTH_MODE=public|app|cf-access-only`, sets ALL security headers via `addSecurityHeaders()`). Never duplicate header logic elsewhere.
+- Session / cookie signing: `site/src/lib/auth/signer.ts` (dynamic WASM load, JS fallback). Tests set `SESSION_SECRET` in `tests/setup/vitest.setup.ts`.
+- Cloudflare Access JWT + group gating: `site/src/lib/cfAccess.ts` (Terraform config under `infrastructure/cloudflare-access/`).
+- Security automation: `scripts/security-autofix*.js` (invoke with `npm run security:autofix`). Review diff; do not weaken policies.
 
-Quick map & common files
+## Development Workflows
 
-- Sanity reads: `site/src/lib/sanity.ts` — use `fetchSanity<T>(groq, params)` (CDN, published). Writes/server: `site/src/lib/sanityServer.ts` (requires `SANITY_WRITE_TOKEN`).
-- Queries centralised: `site/src/lib/queries.ts` — import queries from here; avoid inlining long GROQ expressions.
-- Pages examples: `site/src/pages/work/index.astro` (list projects), `site/src/pages/work/[slug].astro` (project details).
-- Auth endpoints: `site/src/pages/api/auth/**` (OAuth/session handlers). Cookie signing uses `site/src/lib/auth/signer.ts`.
+- Site dev: `npm run dev:site` (port 4321 expected by Playwright E2E).
+- Studio dev: `npm run dev:studio` (deploys via Vercel deploy hook + `vercel.json` ignore).
+- Preview build locally: `npm --prefix site run build && npm --prefix site run preview`.
+- Combined dev + Cloudflare named tunnel: `npm run dev:bubble` (uses `site/cloudflared/config.yml`).
+- WASM signer (optional): `npm --prefix site run wasm:build:signer` (requires Rust toolchain present) — always keep JS fallback intact.
+- Tests: `npm run test` (Vitest + Playwright; ensure site dev server running for E2E where needed).
+- Infra apply: `cd infrastructure && ./deploy.sh apply` (Terraform then Ansible orchestration).
 
-Conventions & project-specific patterns
+## Data & Content Patterns
 
-- Security headers: only change via `addSecurityHeaders()` in middleware or `site/vercel.json` deploy headers. `site/vercel.json` uses `ignoreCommand` to skip builds when irrelevant files change.
-- Optional WASM pattern: dynamic import + JS fallback used in `site/src/lib/auth/signer.ts` to keep local dev simple for contributors without Rust toolchains.
-- Environment names used consistently: `AUTH_MODE`, `SESSION_SECRET`, `STORYBLOK_TOKEN`, `CF_ACCESS_*`, `PUBLIC_SANITY_*`, `SANITY_WRITE_TOKEN`.
-- Tests & mocks: MSW bootstraps in `tests/setup/vitest.setup.ts`; node `crypto` and DOM observers are mocked there — follow that setup when adding tests.
+- Sanity read helper: `site/src/lib/sanity.ts` via `fetchSanity<T>(groq, params)` (CDN published only).
+- Server-side mutations: `site/src/lib/sanityServer.ts` (needs `SANITY_WRITE_TOKEN`).
+- Consolidate GROQ: add/update in `site/src/lib/queries.ts` — import from there instead of inlining long queries.
+- Content workflow: (1) create schema file (2) export in `studio/schemaTypes/index.ts` (3) add GROQ in `queries.ts` (4) consume via `fetchSanity`.
 
-Sanity content workflow (how to add a type)
+## Deployment & Preview Nuances
 
-1. Add a schema file under `studio/schemas/` and export it in `studio/schemaTypes/index.ts`.
-2. Add a GROQ query to `site/src/lib/queries.ts`.
-3. Use `fetchSanity` in pages/components (e.g., `site/src/pages/...`) to render content.
+- Vercel `ignoreCommand` in `site/vercel.json` and `studio/vercel.json` prevents unnecessary builds; PR site previews gated by workflow + `VERCEL_FORCE_PREVIEW=1` label flow.
+- Keep security headers changes isolated to middleware or `site/vercel.json`.
 
-Automation & dependency policy (must preserve)
+## Infrastructure Snapshot (Oct 2025)
 
-- DO NOT accept automated PRs that downgrade dependencies. If a workflow or autofix proposes a downgrade, update the workflow and leave a comment explaining why downgrades are disallowed.
-- Inspect `.github/workflows/*` before changing dependency automation; some workflows intentionally gate upgrades.
+- Proxmox host `neve` (54.39.102.214) online; currently no active VMs/LXCs (Zitadel still on external host). Details & SSH patterns: `docs/agents/CLAUDE.md`, `ops/proxmox-server.md`.
+- Cloudflare Access Terraform under `infrastructure/cloudflare-access/` (auto import script: `ensure-imports.sh`).
 
-# Ariane — Copilot instructions (concise)
+## Testing & Mocks
 
-This is the short, actionable guide for automated coding agents working in this monorepo. Keep answers and edits repository-specific, small, and reversible.
+- Global test setup: `tests/setup/vitest.setup.ts` (MSW, crypto, DOM observer mocks). Ensure new network calls are either mocked or intentionally exercised.
 
-Key layout (quick)
+## Critical Constraints (DO NOT VIOLATE)
 
-- `site/` — Astro 5 frontend (Vercel). Pages: `site/src/pages/**`. API routes and middleware: `site/src/pages/api/**`, `site/src/middleware.ts`.
-- `studio/` — Sanity Studio (v4). Schemas live under `studio/schemas/` and must be exported in `studio/schemaTypes/index.ts`.
-- `constellation/`, `infra/`, `infrastructure/`, `ops/` — infra/ops docs and scripts. See `scripts/` for operational helpers.
+- Never downgrade dependencies; reject or amend automated downgrade PRs. Inspect `.github/workflows/*` before altering dependency automation.
+- Don’t alter `addSecurityHeaders()` semantics or secret handling without adding/adjusting tests.
+- Keep PRs single-concern, minimal surface; add tests/docs for changed behavior.
 
-Auth & security (high priority)
+## Fast Reference When Stuck
 
-- Middleware entry: `site/src/middleware.ts` — respects `AUTH_MODE` (`public|app|cf-access-only`) and centralises security headers via `addSecurityHeaders()`. Do not duplicate header logic.
-- Session signing: `site/src/lib/auth/signer.ts` (WASM optional; JS fallback). Tests set `SESSION_SECRET` in `tests/setup/vitest.setup.ts`.
-- Cloudflare Access helpers: `site/src/lib/cfAccess.ts` — used by middleware for Access JWT verification.
-
-Developer workflows (concrete commands)
-
-- Local site dev: `npm run dev:site` (serves on 127.0.0.1:4321).
-- Studio dev: `npm run dev:studio`.
-- Build & preview site: `npm --prefix site run build` && `npm --prefix site run preview`.
-- WASM signer build (optional): `npm --prefix site run wasm:build:signer`.
-- Run tests (root): `npm run test` — Playwright E2E expects the site on port 4321.
-
-Important patterns & examples
-
-- Sanity reads: use `site/src/lib/sanity.ts` and `fetchSanity<T>(groq, params)`. Server writes live in `site/src/lib/sanityServer.ts` (requires `SANITY_WRITE_TOKEN`).
-- Queries centralised: `site/src/lib/queries.ts` — import queries rather than inlining long GROQ.
-- Optional WASM pattern: dynamic import + JS fallback in `site/src/lib/auth/signer.ts` to avoid forcing Rust toolchains for local dev.
-- Tests & mocks: MSW bootstraps in `tests/setup/vitest.setup.ts`. Node `crypto` & DOM observers are mocked there.
-
-Repo-specific constraints
-
-- Security headers: only change via `addSecurityHeaders()` in `site/src/middleware.ts` or `site/vercel.json` deploy headers.
-- Env names used consistently: `AUTH_MODE`, `SESSION_SECRET`, `STORYBLOK_TOKEN`, `CF_ACCESS_*`, `PUBLIC_SANITY_*`, `SANITY_WRITE_TOKEN`.
-- Dependency policy: DO NOT accept automated PRs that downgrade dependencies. Inspect `.github/workflows/*` before changing dependency automation.
-
-Where to look when stuck (examples)
-
-- Auth/edge: `site/src/middleware.ts`, `site/src/lib/auth/*`, `site/src/lib/cfAccess.ts`.
-- Content/queries: `site/src/lib/sanity.ts`, `site/src/lib/sanityServer.ts`, `site/src/lib/queries.ts`.
-- Pages/components: `site/src/pages/**`, `site/src/components/**`.
-- Infra & ops: `scripts/`, `infra/`, `infrastructure/`, `constellation/` and `docs/agents/*` (eg. `docs/agents/CLAUDE.md`) — contains operational procedures and server access notes; do not include secrets in edits.
-
-Quick edit contract (what we change and how)
-
-- Small, targeted PRs only: one concern per change, include tests or a smoke check when possible.
-- Preserve security and env behavior: do not change middleware header logic or secret handling without explicit tests and justification.
-
-If you update this file, keep it short and preserve the dependency-downgrade warning at the bottom.
+Auth/edge: `site/src/middleware.ts`, `site/src/lib/auth/*`, `site/src/lib/cfAccess.ts`
+Content: `site/src/lib/sanity.ts`, `site/src/lib/queries.ts`, `studio/schemas/**`
+Infra: `infrastructure/README.md`, `deploy.sh`, `docs/agents/CLAUDE.md`
+Security: `scripts/security-autofix*.js`, `.github/workflows/security-*.yml`
 
 ---
 
-Feedback: anything missing or unclear? Point to files or examples you want expanded.
+Keep this file concise; retain the dependency‑downgrade warning & security header centralization rule.

@@ -1,8 +1,10 @@
 ---
-title: "Initialize a ZITADEL User (Fix not initialized errors)"
+title: Initialize a ZITADEL User (Fix not initialized errors)
+slug: "zitadel-user-initialization"
 description: "# Initialize a ZITADEL User (Fix not initialized errors)"
-slug: zitadel-user-initialization
 ---
+
+
 
 # Initialize a ZITADEL User (Fix not initialized errors)
 

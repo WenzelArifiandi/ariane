@@ -1,2884 +1,3536 @@
 ---
-title: "Changelog"
-description: "# Changelog"
+title: "# 4.52.5 (September 15th, 2025)"
 slug: changelog
+description: "## 4.52.5 (September 15th, 2025)"
 ---
 
-# Changelog
 
-## [0.84.0](https://github.com/bpg/terraform-provider-proxmox/compare/v0.83.2...v0.84.0) (2025-09-22)
 
+## 4.52.5 (September 15th, 2025)
 
-### Features
+BUG FIXES:
 
-* **file:** add file datasource ([#2176](https://github.com/bpg/terraform-provider-proxmox/issues/2176)) ([8244813](https://github.com/bpg/terraform-provider-proxmox/commit/8244813b7eae6bb6442fa69f786ab9422ffdadee))
-* **sdn:** add support for Subnet resource and datasource ([#2191](https://github.com/bpg/terraform-provider-proxmox/issues/2191)) ([1df305d](https://github.com/bpg/terraform-provider-proxmox/commit/1df305dfb3867f0e0bc207f928745de96db3f7f1))
-* **sdn:** add support for VNet resource and datasource ([#2185](https://github.com/bpg/terraform-provider-proxmox/issues/2185)) ([8938d86](https://github.com/bpg/terraform-provider-proxmox/commit/8938d8657157085934adb15680209a374b3bc7b2))
+* internal/framework/service/list/resource_test.go: list items are cleared when no nested item block defined
 
+## 4.52.4 (September 9th, 2025)
 
-### Miscellaneous
+BUG FIXES:
 
-* **deps:** update github.com/hashicorp/terraform-plugin-* ([#2187](https://github.com/bpg/terraform-provider-proxmox/issues/2187)) ([09b704a](https://github.com/bpg/terraform-provider-proxmox/commit/09b704ad8e082dde47247f2a9fb64f5af7791a15))
-* **deps:** update image golang (bb979b2 → 8305f5f) ([#2186](https://github.com/bpg/terraform-provider-proxmox/issues/2186)) ([b70fa62](https://github.com/bpg/terraform-provider-proxmox/commit/b70fa6267037811b650a48baec7bc07ed3b2665d))
-* **deps:** update module github.com/brianvoe/gofakeit/v7 (v7.6.0 → v7.7.0) ([#2189](https://github.com/bpg/terraform-provider-proxmox/issues/2189)) ([46dbc68](https://github.com/bpg/terraform-provider-proxmox/commit/46dbc68da70bd4e7600c3d124b39abd07dbbc07e))
-* **deps:** update module github.com/brianvoe/gofakeit/v7 (v7.7.0 → v7.7.1) ([#2192](https://github.com/bpg/terraform-provider-proxmox/issues/2192)) ([11f4002](https://github.com/bpg/terraform-provider-proxmox/commit/11f400288b896f8a4570f169651e20dd2cef3e10))
-* **deps:** update module github.com/hashicorp/terraform-plugin-sdk/v2 (v2.37.0 → v2.38.0) ([#2188](https://github.com/bpg/terraform-provider-proxmox/issues/2188)) ([2b2d619](https://github.com/bpg/terraform-provider-proxmox/commit/2b2d619356fa7a099807c54b0a6a45e78683b15e))
+* internal/sdkv2provider/schema_cloudflare_access_service_tokens.go: Remove ForceNew from client_id and client_secret
 
-## [0.83.2](https://github.com/bpg/terraform-provider-proxmox/compare/v0.83.1...v0.83.2) (2025-09-14)
+## 4.52.3 (September 8th, 2025)
 
+BUG FIXES:
 
-### Bug Fixes
+* internal/sdkv2provider/schema_cloudflare_access_service_tokens.go: Mark access_service_token.client_secret as computed when client_secret_version changes
 
-* **firewall:** detect drift when rules are manually deleted ([#2178](https://github.com/bpg/terraform-provider-proxmox/issues/2178)) ([6b84d5a](https://github.com/bpg/terraform-provider-proxmox/commit/6b84d5aa5ecd3ffb71e10050c20f79bc5ce1ff89))
-* **firewall:** prevent perpetual plan drift on rule attribute removal ([#2177](https://github.com/bpg/terraform-provider-proxmox/issues/2177)) ([0e72580](https://github.com/bpg/terraform-provider-proxmox/commit/0e725801ee26642dcb872de5b1be58d0a224408e))
-* **vm:** disk deletion may reorder disks ([#2174](https://github.com/bpg/terraform-provider-proxmox/issues/2174)) ([e339fef](https://github.com/bpg/terraform-provider-proxmox/commit/e339fef2d042728eaa7594607a89929892513e96))
-
-
-### Miscellaneous
-
-* **ci:** update actions/create-github-app-token action (v2.1.1 → v2.1.4) ([#2179](https://github.com/bpg/terraform-provider-proxmox/issues/2179)) ([70cfb58](https://github.com/bpg/terraform-provider-proxmox/commit/70cfb582922e2e31662e580b2f42b124e0d481e2))
-* **deps:** update image golang (b773c94 → bb979b2) ([#2173](https://github.com/bpg/terraform-provider-proxmox/issues/2173)) ([7944277](https://github.com/bpg/terraform-provider-proxmox/commit/79442773910b4309570aea8e838ea7d3b154e5be))
-
-## [0.83.1](https://github.com/bpg/terraform-provider-proxmox/compare/v0.83.0...v0.83.1) (2025-09-10)
-
-
-### Bug Fixes
-
-* **ci:** update link checker config ([#2151](https://github.com/bpg/terraform-provider-proxmox/issues/2151)) ([e017881](https://github.com/bpg/terraform-provider-proxmox/commit/e017881712ad81767590c4c60877167a28f35a42))
-
-
-### Miscellaneous
-
-* **ci:** Update actions/setup-go action (v5 → v6) ([#2154](https://github.com/bpg/terraform-provider-proxmox/issues/2154)) ([16814d4](https://github.com/bpg/terraform-provider-proxmox/commit/16814d469b4601413a9ea3fb9446bb7670884015))
-* **ci:** Update actions/stale action (v9 → v10) ([#2155](https://github.com/bpg/terraform-provider-proxmox/issues/2155)) ([87e6392](https://github.com/bpg/terraform-provider-proxmox/commit/87e639232d0228a58bd3060b543e9fc05108d2c3))
-* **code:** minor code cleanups ([#2156](https://github.com/bpg/terraform-provider-proxmox/issues/2156))ssh  ([9e22c3c](https://github.com/bpg/terraform-provider-proxmox/commit/9e22c3c427086f4780e2ddc226edc3e235c90586))
-* **deps:** update image golang (1.25.0 → 1.25.1) ([#2153](https://github.com/bpg/terraform-provider-proxmox/issues/2153)) ([a58bf4f](https://github.com/bpg/terraform-provider-proxmox/commit/a58bf4f9475c33a16f8fcead640976a5fb149cb0))
-* **deps:** update image golang (a5e935d → d6bdb04) ([#2161](https://github.com/bpg/terraform-provider-proxmox/issues/2161)) ([58d833d](https://github.com/bpg/terraform-provider-proxmox/commit/58d833dfa8996985253bbd75ed50a10f7e9cc0db))
-* **deps:** update image golang (d6bdb04 → b773c94) ([#2169](https://github.com/bpg/terraform-provider-proxmox/issues/2169)) ([a979850](https://github.com/bpg/terraform-provider-proxmox/commit/a9798505c828618892f33d4376295c9f6e1850d0))
-* **deps:** update module github.com/brianvoe/gofakeit/v7 (v7.5.1 → v7.6.0) ([#2162](https://github.com/bpg/terraform-provider-proxmox/issues/2162)) ([ffdc3a5](https://github.com/bpg/terraform-provider-proxmox/commit/ffdc3a55da085f45132b686dacf26642126ff0ae))
-* **deps:** update module golang.org/x/crypto (v0.41.0 → v0.42.0) ([#2163](https://github.com/bpg/terraform-provider-proxmox/issues/2163)) ([4e73d56](https://github.com/bpg/terraform-provider-proxmox/commit/4e73d5610c854cd64e6f4d4cf81b7f534183d9be))
-* **deps:** update module golang.org/x/net (v0.43.0 → v0.44.0) ([#2170](https://github.com/bpg/terraform-provider-proxmox/issues/2170)) ([ed366b5](https://github.com/bpg/terraform-provider-proxmox/commit/ed366b55dc8b32b2203ec87213bf76aba6d1860d))
-* **docs:** improve `container` documentation ([#2160](https://github.com/bpg/terraform-provider-proxmox/issues/2160)) ([380fd7f](https://github.com/bpg/terraform-provider-proxmox/commit/380fd7fed1d5cfbb9a2c562294a9f2ac127a0a31))
-* **docs:** improve `vm.initialization` documentation ([#2158](https://github.com/bpg/terraform-provider-proxmox/issues/2158)) ([29ef9d2](https://github.com/bpg/terraform-provider-proxmox/commit/29ef9d2527132b4e726e222edb958f022260a306))
-* **docs:** include vm/lxc lock error details in the README known issues section ([#2166](https://github.com/bpg/terraform-provider-proxmox/issues/2166)) ([1810273](https://github.com/bpg/terraform-provider-proxmox/commit/1810273cebc8de6092b6347c4be0393ad2f9f29b))
-* **docs:** update reference to `release-build` in contributing doc ([#2167](https://github.com/bpg/terraform-provider-proxmox/issues/2167)) ([739471a](https://github.com/bpg/terraform-provider-proxmox/commit/739471a9888b264587c42da1d370848b3d95639e))
-* **docs:** update sdn_applier example ([c275e03](https://github.com/bpg/terraform-provider-proxmox/commit/c275e031ffdd9b8fdd46c09d1563be12c713541b))
-
-## [0.83.0](https://github.com/bpg/terraform-provider-proxmox/compare/v0.82.1...v0.83.0) (2025-08-31)
-
-
-### Features
-
-* **sdn:** add custom resource to apply `sdn_*` configurations ([#2127](https://github.com/bpg/terraform-provider-proxmox/issues/2127)) ([e13d7ef](https://github.com/bpg/terraform-provider-proxmox/commit/e13d7ef29985ccd0ba8f79dd0ad658ee6779a8a6))
-
-
-### Bug Fixes
-
-* **docs:** correct minor typos / formatting ([#2144](https://github.com/bpg/terraform-provider-proxmox/issues/2144)) ([a2e4ff0](https://github.com/bpg/terraform-provider-proxmox/commit/a2e4ff039450214feb2c32d84e6b18878e1dd804))
-
-
-### Miscellaneous
-
-* **ci:** Update actions/attest-build-provenance action (v2 → v3) ([#2142](https://github.com/bpg/terraform-provider-proxmox/issues/2142)) ([f62e69d](https://github.com/bpg/terraform-provider-proxmox/commit/f62e69d160055dc0cbd5a08f5041533c079bd96e))
-* **ci:** update googleapis/release-please-action action (v4.2.0 → v4.3.0) ([#2136](https://github.com/bpg/terraform-provider-proxmox/issues/2136)) ([f634b2e](https://github.com/bpg/terraform-provider-proxmox/commit/f634b2eafb631b75c04c91b39d393de6b05e36b0))
-* **ci:** update lycheeverse/lychee-action action (v2.5.0 → v2.6.0) ([#2137](https://github.com/bpg/terraform-provider-proxmox/issues/2137)) ([64c1ab3](https://github.com/bpg/terraform-provider-proxmox/commit/64c1ab3148a4d7a5835c5fd957a3009c35f73761))
-* **ci:** update lycheeverse/lychee-action action (v2.6.0 → v2.6.1) ([#2138](https://github.com/bpg/terraform-provider-proxmox/issues/2138)) ([7f56290](https://github.com/bpg/terraform-provider-proxmox/commit/7f56290838c363d025719a15f6e25b6e1ec8d49e))
-* **deps:** update image golang (4859242 → 5502b0e) ([#2134](https://github.com/bpg/terraform-provider-proxmox/issues/2134)) ([20f41e8](https://github.com/bpg/terraform-provider-proxmox/commit/20f41e86e03f183bcbf295ba56c41c692fcee998))
-* **deps:** update image golang (91e2cd4 → 4859242) ([#2128](https://github.com/bpg/terraform-provider-proxmox/issues/2128)) ([9ae882e](https://github.com/bpg/terraform-provider-proxmox/commit/9ae882e5d7cdb19b54e9be07ba92ef92cab0054c))
-* **deps:** update module github.com/brianvoe/gofakeit/v7 (v7.3.0 → v7.4.0) ([#2129](https://github.com/bpg/terraform-provider-proxmox/issues/2129)) ([11b8167](https://github.com/bpg/terraform-provider-proxmox/commit/11b8167fc6488fbeb7b977f0267dcc862ce05e20))
-* **deps:** update module github.com/brianvoe/gofakeit/v7 (v7.4.0 → v7.5.1) ([#2143](https://github.com/bpg/terraform-provider-proxmox/issues/2143)) ([2eae3ee](https://github.com/bpg/terraform-provider-proxmox/commit/2eae3eeeeb7c12e407aa21a33e930e8219310b6b))
-* **deps:** update module github.com/stretchr/testify (v1.10.0 → v1.11.1) ([#2135](https://github.com/bpg/terraform-provider-proxmox/issues/2135)) ([6b00db6](https://github.com/bpg/terraform-provider-proxmox/commit/6b00db644613520e257c6af90b5f3930cf4a4b8a))
-
-## [0.82.1](https://github.com/bpg/terraform-provider-proxmox/compare/v0.82.0...v0.82.1) (2025-08-19)
-
-
-### Bug Fixes
-
-* **vm:** prevent re-creation of previously imported disks on update ([#2122](https://github.com/bpg/terraform-provider-proxmox/issues/2122)) ([c6c1c18](https://github.com/bpg/terraform-provider-proxmox/commit/c6c1c18a2b7a2ad80006bf5e22afec7dbf98071b))
-
-
-### Miscellaneous
-
-* **deps:** update image golang (9e56f0d → 91e2cd4) ([#2123](https://github.com/bpg/terraform-provider-proxmox/issues/2123)) ([9d179dd](https://github.com/bpg/terraform-provider-proxmox/commit/9d179dde724604d3b2f297fd805c7c2cb8f723b4))
-* **docs:** fix TOC format, cleanup cloud image guide ([#2121](https://github.com/bpg/terraform-provider-proxmox/issues/2121)) ([b321a01](https://github.com/bpg/terraform-provider-proxmox/commit/b321a01b4f142d55afef53eca20c1b183386bc84))
-
-## [0.82.0](https://github.com/bpg/terraform-provider-proxmox/compare/v0.81.0...v0.82.0) (2025-08-18)
-
-
-### Features
-
-* **docs:** update compatibility notes for PVE 9.x ([#2116](https://github.com/bpg/terraform-provider-proxmox/issues/2116)) ([08ea66a](https://github.com/bpg/terraform-provider-proxmox/commit/08ea66a4e0e1c92851c5811bacde075d169fb1cc))
-* **lxc:** add `proxmox_virtual_environment_containers` data source ([#2090](https://github.com/bpg/terraform-provider-proxmox/issues/2090)) ([45f2805](https://github.com/bpg/terraform-provider-proxmox/commit/45f28051cd18bbb5838ef0de5eedc41a97ecee3b))
-* **lxc:** Add missing configuration options for container rootfs ([#2067](https://github.com/bpg/terraform-provider-proxmox/issues/2067)) ([b2c5012](https://github.com/bpg/terraform-provider-proxmox/commit/b2c50120ea552d078e9634228f8b90b356a163b9))
-
-
-### Bug Fixes
-
-* **lxc:** adjust max number of container's IP configs ([#2088](https://github.com/bpg/terraform-provider-proxmox/issues/2088)) ([602568e](https://github.com/bpg/terraform-provider-proxmox/commit/602568e6a64945514b7e3a3294ec8fb1f98b6be8))
-* **provider:** parsing PVE version reported by API ([#2115](https://github.com/bpg/terraform-provider-proxmox/issues/2115)) ([f1501e2](https://github.com/bpg/terraform-provider-proxmox/commit/f1501e2655f4d9a246be8fe826a3d385448dce17))
-* **vm:** regression: disk re-ordering on re-apply ([#2114](https://github.com/bpg/terraform-provider-proxmox/issues/2114)) ([634ad69](https://github.com/bpg/terraform-provider-proxmox/commit/634ad690fefa719df7be1c7f8962cd4a5bead79a))
-
-
-### Miscellaneous
-
-* **ci:** Update actions/checkout action ([#2098](https://github.com/bpg/terraform-provider-proxmox/issues/2098)) ([3855cb2](https://github.com/bpg/terraform-provider-proxmox/commit/3855cb293fd32486eb39aee056c3c526d4f15ba8))
-* **ci:** update actions/create-github-app-token action (v2.0.6 → v2.1.0) ([#2095](https://github.com/bpg/terraform-provider-proxmox/issues/2095)) ([6161969](https://github.com/bpg/terraform-provider-proxmox/commit/61619690cce176948e4795a98075c0854a42669b))
-* **ci:** update actions/create-github-app-token action (v2.1.0 → v2.1.1) ([#2099](https://github.com/bpg/terraform-provider-proxmox/issues/2099)) ([7f5d771](https://github.com/bpg/terraform-provider-proxmox/commit/7f5d77143a2c3a607ee3f647ad2d9054b9e0d00d))
-* **ci:** update goreleaser/goreleaser-action action (v6.3.0 → v6.4.0) ([#2111](https://github.com/bpg/terraform-provider-proxmox/issues/2111)) ([78ce7f0](https://github.com/bpg/terraform-provider-proxmox/commit/78ce7f0db4595ecf00c0420b3d46fe78cda1d204))
-* **ci:** update jetbrains/qodana-action action (v2025.1.1 → v2025.2.1) ([#2106](https://github.com/bpg/terraform-provider-proxmox/issues/2106)) ([0dec643](https://github.com/bpg/terraform-provider-proxmox/commit/0dec643b3dc670c48f3f79752cb93519e3515a36))
-* **ci:** update lycheeverse/lychee-action action (v2.4.1 → v2.5.0) ([#2096](https://github.com/bpg/terraform-provider-proxmox/issues/2096)) ([7c98464](https://github.com/bpg/terraform-provider-proxmox/commit/7c98464783a70e1ca801765eb5c16fed4ce0f329))
-* **deps:** update golangci/golangci-lint (v2.3.0 → v2.3.1) ([#2074](https://github.com/bpg/terraform-provider-proxmox/issues/2074)) ([9947a86](https://github.com/bpg/terraform-provider-proxmox/commit/9947a86106c7215f68183956cf0f2cde209a73fa))
-* **deps:** update golangci/golangci-lint (v2.3.1 → v2.4.0) ([#2110](https://github.com/bpg/terraform-provider-proxmox/issues/2110)) ([21bed82](https://github.com/bpg/terraform-provider-proxmox/commit/21bed824e4cc4fd53cc927273798e5c6b757f89d))
-* **deps:** update image golang (1.24.5 → 1.24.6) ([#2085](https://github.com/bpg/terraform-provider-proxmox/issues/2085)) ([ac91fe8](https://github.com/bpg/terraform-provider-proxmox/commit/ac91fe8de01fd61ca1015350801ffdb5451d7aa7))
-* **deps:** update image golang (1.24.6 → 1.25.0) ([#2107](https://github.com/bpg/terraform-provider-proxmox/issues/2107)) ([9e10206](https://github.com/bpg/terraform-provider-proxmox/commit/9e10206e19b9f3cdf5989bef6956a4a1242a7235))
-* **deps:** update image golang (10a15b9 → 9e56f0d) ([#2109](https://github.com/bpg/terraform-provider-proxmox/issues/2109)) ([420add8](https://github.com/bpg/terraform-provider-proxmox/commit/420add86698425afba60ac06b3481b1057da5aee))
-* **deps:** update module github.com/hashicorp/terraform-plugin-testing (v1.13.2 → v1.13.3) ([#2113](https://github.com/bpg/terraform-provider-proxmox/issues/2113)) ([1863847](https://github.com/bpg/terraform-provider-proxmox/commit/1863847b5764c5da9ed70d3bd9a3ce087ab185b4))
-* **deps:** update module golang.org/x/crypto (v0.40.0 → v0.41.0) ([#2086](https://github.com/bpg/terraform-provider-proxmox/issues/2086)) ([5018b31](https://github.com/bpg/terraform-provider-proxmox/commit/5018b31d2aa72c66771242c0d5463f10ad20f7d0))
-* **deps:** update module golang.org/x/net (v0.42.0 → v0.43.0) ([#2087](https://github.com/bpg/terraform-provider-proxmox/issues/2087)) ([5151dcc](https://github.com/bpg/terraform-provider-proxmox/commit/5151dcc7b7832a95312efe5773401e3443d26a1a))
-* **docs:** cleanup and update `clone-vm` example ([#2094](https://github.com/bpg/terraform-provider-proxmox/issues/2094)) ([c7cd61a](https://github.com/bpg/terraform-provider-proxmox/commit/c7cd61a2d3aea273df40e86532fa575c0dd95b98))
-* **docs:** remove spurious sdn datasource .tf examples ([#2092](https://github.com/bpg/terraform-provider-proxmox/issues/2092)) ([91e0fbf](https://github.com/bpg/terraform-provider-proxmox/commit/91e0fbf676a93dca8659ca55460ba2318b09620e))
-
-## [0.81.0](https://github.com/bpg/terraform-provider-proxmox/compare/v0.80.0...v0.81.0) (2025-08-01)
-
-
-### Features
-
-* **firewall:** adds forward type to firewall rules ([#2052](https://github.com/bpg/terraform-provider-proxmox/issues/2052)) ([e185201](https://github.com/bpg/terraform-provider-proxmox/commit/e185201840ec3140505f344b2ec5a3cac6f23ba4))
-* **firewall:** adds forward_policy to cluster firewall ([#2064](https://github.com/bpg/terraform-provider-proxmox/issues/2064)) ([209d10c](https://github.com/bpg/terraform-provider-proxmox/commit/209d10cc0bb137e9ed52ec1975646a565a613863))
-* **sdn:** add support for zone resources and datasources ([#2046](https://github.com/bpg/terraform-provider-proxmox/issues/2046)) ([6b73d82](https://github.com/bpg/terraform-provider-proxmox/commit/6b73d822a5a6d55b7761647ad963be2b88491bbd))
-
-
-### Bug Fixes
-
-* **acme:** fix ACME account management  & add acceptance tests ([#2072](https://github.com/bpg/terraform-provider-proxmox/issues/2072)) ([3f5b795](https://github.com/bpg/terraform-provider-proxmox/commit/3f5b795a840efeec989ea9aa38d70df3a0098800))
-* **example:** update ubuntu LXC image ref ([#2070](https://github.com/bpg/terraform-provider-proxmox/issues/2070)) ([ce66bfd](https://github.com/bpg/terraform-provider-proxmox/commit/ce66bfdc61bd5faf6f95cfd25cb09dc1447567ec))
-* **vm,lxc:** 32bit int overflow in list nodes / containers API calls when running on i386 arch ([#2057](https://github.com/bpg/terraform-provider-proxmox/issues/2057)) ([47ff578](https://github.com/bpg/terraform-provider-proxmox/commit/47ff5787b1e150ab754abfd86e4a43a34b5cde0b))
-
-
-### Miscellaneous
-
-* **deps:** update golangci/golangci-lint (v2.2.2 → v2.3.0) ([#2056](https://github.com/bpg/terraform-provider-proxmox/issues/2056)) ([092edf2](https://github.com/bpg/terraform-provider-proxmox/commit/092edf2d08901c8e579cc6927b14ec5613547a00))
-* **deps:** update image golang (14fd8a5 → ef5b4be) ([#2061](https://github.com/bpg/terraform-provider-proxmox/issues/2061)) ([4da593d](https://github.com/bpg/terraform-provider-proxmox/commit/4da593d727f1141aeb64bc41925b9a6031a3055f))
-* **deps:** update module github.com/hashicorp/terraform-plugin-framework (v1.15.0 → v1.15.1) ([#2073](https://github.com/bpg/terraform-provider-proxmox/issues/2073)) ([4be9e93](https://github.com/bpg/terraform-provider-proxmox/commit/4be9e932fab68363d8dddbe15bac90ac82a663e1))
-* **docs:** add ceph squid to `apt_standard_repository` docs ([#2063](https://github.com/bpg/terraform-provider-proxmox/issues/2063)) ([5c33941](https://github.com/bpg/terraform-provider-proxmox/commit/5c3394121ff68efe3928be2ca957076dc4d4f2c8))
-* **example:** apply consistency in example/*.tf node_name declarations ([#2051](https://github.com/bpg/terraform-provider-proxmox/issues/2051)) ([757b191](https://github.com/bpg/terraform-provider-proxmox/commit/757b191376405b5cea41b229cda165ac70b3a490))
-* **project:** switch repo infographic to repobeats ([#2058](https://github.com/bpg/terraform-provider-proxmox/issues/2058)) ([bbd55d2](https://github.com/bpg/terraform-provider-proxmox/commit/bbd55d26184d464248c1e7dd7723ebbd2a028bbc))
-
-## [0.80.0](https://github.com/bpg/terraform-provider-proxmox/compare/v0.79.0...v0.80.0) (2025-07-15)
-
-
-### Features
-
-* **lxc:** retrieve container IP addresses ([#2030](https://github.com/bpg/terraform-provider-proxmox/issues/2030)) ([20572d9](https://github.com/bpg/terraform-provider-proxmox/commit/20572d95e03757dcbdc1861111eda0140e9a6de8))
-* **provider:** add support for ssh `agent_forwarding` ([#2028](https://github.com/bpg/terraform-provider-proxmox/issues/2028)) ([e27d0c5](https://github.com/bpg/terraform-provider-proxmox/commit/e27d0c555faab4560e41b3ca8eed038155a59de2))
-* **vm:** add support for EPYC-Genoa `cpu` type ([#2040](https://github.com/bpg/terraform-provider-proxmox/issues/2040)) ([74caca5](https://github.com/bpg/terraform-provider-proxmox/commit/74caca5fbed8404f57af0c3e283904462dd8fa49))
-
-
-### Bug Fixes
-
-* **api:** improve API response error handling ([#2043](https://github.com/bpg/terraform-provider-proxmox/issues/2043)) ([2c3f0c5](https://github.com/bpg/terraform-provider-proxmox/commit/2c3f0c5578f84fc27fd0ad530430416a45a3a9cb))
-* **lxc:** avoid setting domain to `" "` when null during clone ([#2033](https://github.com/bpg/terraform-provider-proxmox/issues/2033)) ([623c32c](https://github.com/bpg/terraform-provider-proxmox/commit/623c32cbab1aa839b40c26fc30c1b38e0c14548c))
-* **lxc:** mark `mac_address` as computed ([#2027](https://github.com/bpg/terraform-provider-proxmox/issues/2027)) ([e13e9bb](https://github.com/bpg/terraform-provider-proxmox/commit/e13e9bb8843203efd5242686a39928b0cda3e841))
-
-
-### Miscellaneous
-
-* **deps:** update golangci/golangci-lint (v2.2.1 → v2.2.2) ([#2034](https://github.com/bpg/terraform-provider-proxmox/issues/2034)) ([11bcb7a](https://github.com/bpg/terraform-provider-proxmox/commit/11bcb7a4c17572cd47389b6e043b711453e3a779))
-* **deps:** update image golang (1.24.4 → 1.24.5) ([#2035](https://github.com/bpg/terraform-provider-proxmox/issues/2035)) ([0cdd327](https://github.com/bpg/terraform-provider-proxmox/commit/0cdd32704ac939b9b50fc62b5e6f1f7fd2ec0406))
-* **deps:** update module golang.org/x/net (v0.41.0 → v0.42.0) ([#2037](https://github.com/bpg/terraform-provider-proxmox/issues/2037)) ([bb3168c](https://github.com/bpg/terraform-provider-proxmox/commit/bb3168c6395c3fc5d6ad4bd62a007368f0419964))
-* **docs:** fix indentation in vm resource ([#2020](https://github.com/bpg/terraform-provider-proxmox/issues/2020)) ([a2c40c7](https://github.com/bpg/terraform-provider-proxmox/commit/a2c40c7c79d562972b6da25f53087d95e9050b0b))
-* **tests:** allow different node / storage names in "example tests" ([#2042](https://github.com/bpg/terraform-provider-proxmox/issues/2042)) ([09e3cd6](https://github.com/bpg/terraform-provider-proxmox/commit/09e3cd62b7ee959aa26c59617966cf08c3e02bd8))
-
-## [0.79.0](https://github.com/bpg/terraform-provider-proxmox/compare/v0.78.2...v0.79.0) (2025-07-06)
-
-
-### Features
-
-* **file:** add support for `import` content type ([#1983](https://github.com/bpg/terraform-provider-proxmox/issues/1983)) ([2d9e0b5](https://github.com/bpg/terraform-provider-proxmox/commit/2d9e0b585e307196b97a680716db75c9cc010bac))
-* **vm:** add `disk.import_from` attribute to support importing via API ([#2012](https://github.com/bpg/terraform-provider-proxmox/issues/2012)) ([ddc4118](https://github.com/bpg/terraform-provider-proxmox/commit/ddc4118b08f98cfc1012fe3bf4edc200c894aca8))
-
-
-### Bug Fixes
-
-* **network:** improve error handling on `create`/`read`/`update` ([#2001](https://github.com/bpg/terraform-provider-proxmox/issues/2001)) ([5e4582f](https://github.com/bpg/terraform-provider-proxmox/commit/5e4582f820626ffbb6702c2d15cfe6bc0aba680f))
-* **tests:** fix `make example` tests ([#2007](https://github.com/bpg/terraform-provider-proxmox/issues/2007)) ([a76cc62](https://github.com/bpg/terraform-provider-proxmox/commit/a76cc6256da0ad86a2efe514ad03c5718681d477))
-
-
-### Miscellaneous
-
-* **deps:** update golangci/golangci-lint (v2.1.6 → v2.2.1) ([#2013](https://github.com/bpg/terraform-provider-proxmox/issues/2013)) ([6a8f367](https://github.com/bpg/terraform-provider-proxmox/commit/6a8f367c46937873da638da6bc3a9c1261b7dd46))
-* **deps:** update image golang (10c1318 → 20a022e) ([#2015](https://github.com/bpg/terraform-provider-proxmox/issues/2015)) ([e9a3576](https://github.com/bpg/terraform-provider-proxmox/commit/e9a3576a6448bc6788ea6485381139ae548455f5))
-* **deps:** update module github.com/brianvoe/gofakeit/v7 (v7.2.1 → v7.3.0) ([#2010](https://github.com/bpg/terraform-provider-proxmox/issues/2010)) ([b601ca3](https://github.com/bpg/terraform-provider-proxmox/commit/b601ca3ed25b7b82d16a291cdaac308b36dbb3f9))
-* **deps:** update module github.com/hashicorp/terraform-plugin-docs (v0.21.0 → v0.22.0) ([#2016](https://github.com/bpg/terraform-provider-proxmox/issues/2016)) ([ebb0fc7](https://github.com/bpg/terraform-provider-proxmox/commit/ebb0fc74af1affa46db91526a7a7dab38962b4b0))
-* **docs:** add description of HA settings management to VM documentation ([#2003](https://github.com/bpg/terraform-provider-proxmox/issues/2003)) ([0582e3d](https://github.com/bpg/terraform-provider-proxmox/commit/0582e3d7f1750248933efd395cc04635224b7ea8))
-* **docs:** minor fixes / updates in guides ([#2014](https://github.com/bpg/terraform-provider-proxmox/issues/2014)) ([8c2a071](https://github.com/bpg/terraform-provider-proxmox/commit/8c2a071b40f9be2894da6f88d49457f5202a9712))
-
-## [0.78.2](https://github.com/bpg/terraform-provider-proxmox/compare/v0.78.1...v0.78.2) (2025-06-16)
-
-
-### Bug Fixes
-
-* **docs:** firewall security group typo `enabled` ([#1994](https://github.com/bpg/terraform-provider-proxmox/issues/1994)) ([307bc25](https://github.com/bpg/terraform-provider-proxmox/commit/307bc25f2e105e0e0d7282954d53df66e3d7d86f))
-* **file:** `proxmox_virtual_environment_file` allow changing local file path ([#1982](https://github.com/bpg/terraform-provider-proxmox/issues/1982)) ([26c61e3](https://github.com/bpg/terraform-provider-proxmox/commit/26c61e32330d452a371232449ae184b47cb0daa6))
-* **file:** properly handle overwrite option behavior in `proxmox_virtual_environment_download_file` ([#1989](https://github.com/bpg/terraform-provider-proxmox/issues/1989)) ([1b86a41](https://github.com/bpg/terraform-provider-proxmox/commit/1b86a41535e5395dcaacc720d6d127287808c257))
-
-
-### Miscellaneous
-
-* **ci:** update actions/attest-build-provenance digest (db473fd → e8998f9) ([#1999](https://github.com/bpg/terraform-provider-proxmox/issues/1999)) ([303c7e6](https://github.com/bpg/terraform-provider-proxmox/commit/303c7e6f9074735872c88edae601b15979a13311))
-* **deps:** update image golang (1.24.3 → 1.24.4) ([#1984](https://github.com/bpg/terraform-provider-proxmox/issues/1984)) ([e8948c9](https://github.com/bpg/terraform-provider-proxmox/commit/e8948c9ac34ca778b6e177666f1c729ae74b9e70))
-* **deps:** update image golang (4c0a181 → 81bf592) ([#1977](https://github.com/bpg/terraform-provider-proxmox/issues/1977)) ([b6bcfe7](https://github.com/bpg/terraform-provider-proxmox/commit/b6bcfe75aa07069634387551489460aef1feef49))
-* **deps:** update image golang (db5d0af → 10c1318) ([#1996](https://github.com/bpg/terraform-provider-proxmox/issues/1996)) ([2444fe8](https://github.com/bpg/terraform-provider-proxmox/commit/2444fe8ef56e8464a82cfd15828e3b117a88d62e))
-* **deps:** update module github.com/hashicorp/terraform-plugin-testing (v1.13.1 → v1.13.2) ([#1997](https://github.com/bpg/terraform-provider-proxmox/issues/1997)) ([6260e3f](https://github.com/bpg/terraform-provider-proxmox/commit/6260e3fe27f604e7abbdc431fe1396c7e059b743))
-* **deps:** update module golang.org/x/crypto (v0.38.0 → v0.39.0) ([#1985](https://github.com/bpg/terraform-provider-proxmox/issues/1985)) ([4fa9311](https://github.com/bpg/terraform-provider-proxmox/commit/4fa931121106d1c8a032c157b777233215bde5a1))
-* **deps:** update module golang.org/x/net (v0.40.0 → v0.41.0) ([#1986](https://github.com/bpg/terraform-provider-proxmox/issues/1986)) ([60b6f5b](https://github.com/bpg/terraform-provider-proxmox/commit/60b6f5b657c5659ba6f55f7c9a7e3dcac879f584))
-
-## [0.78.1](https://github.com/bpg/terraform-provider-proxmox/compare/v0.78.0...v0.78.1) (2025-05-24)
-
-
-### Bug Fixes
-
-* **lxc:** increase maximum supported passthrough devices to 128 ([#1968](https://github.com/bpg/terraform-provider-proxmox/issues/1968)) ([3631240](https://github.com/bpg/terraform-provider-proxmox/commit/36312406d3a4ea55f3dfde522d54f9a527ef36a9))
-* **vm:** allow `scsi` and `sata` for CD-ROM interface ([#1971](https://github.com/bpg/terraform-provider-proxmox/issues/1971)) ([b1b8d15](https://github.com/bpg/terraform-provider-proxmox/commit/b1b8d1570f4ff71f7825ac3a0f3a6d25ada4c99e))
-
-
-### Miscellaneous
-
-* **ci:** improve devcontainer UX ([#1973](https://github.com/bpg/terraform-provider-proxmox/issues/1973)) ([d8a7bc0](https://github.com/bpg/terraform-provider-proxmox/commit/d8a7bc093f99d4e46c86d1d1f46c939b2690d741))
-* **deps:** pin image golang to 4c0a181 ([#1975](https://github.com/bpg/terraform-provider-proxmox/issues/1975)) ([f643f2a](https://github.com/bpg/terraform-provider-proxmox/commit/f643f2aecfea97ddf9a681ddc699e721ce947ff3))
-* **deps:** update github.com/hashicorp/terraform-plugin-* ([#1966](https://github.com/bpg/terraform-provider-proxmox/issues/1966)) ([9655bd9](https://github.com/bpg/terraform-provider-proxmox/commit/9655bd9ec7309e72216dd0bbef24b5e0f0d27274))
-* **deps:** update github.com/hashicorp/terraform-plugin-* ([#1974](https://github.com/bpg/terraform-provider-proxmox/issues/1974)) ([71ade27](https://github.com/bpg/terraform-provider-proxmox/commit/71ade273487b7d3e2c260fa44b7f0e7a3807e5be))
-
-## [0.78.0](https://github.com/bpg/terraform-provider-proxmox/compare/v0.77.1...v0.78.0) (2025-05-14)
-
-
-### Features
-
-* **vm:** add support for AMD SEV ([#1952](https://github.com/bpg/terraform-provider-proxmox/issues/1952)) ([28ae95b](https://github.com/bpg/terraform-provider-proxmox/commit/28ae95bd096353522af261b0219e7331beebbad2))
-
-
-### Bug Fixes
-
-* **network:** adjust Linux Bridge name validator ([#1961](https://github.com/bpg/terraform-provider-proxmox/issues/1961)) ([2a7a2ff](https://github.com/bpg/terraform-provider-proxmox/commit/2a7a2ff4938832076f401f912a5cb3286180a584))
-
-
-### Miscellaneous
-
-* **ci:** update actions/setup-go digest (0aaccfd → d35c59a) ([#1958](https://github.com/bpg/terraform-provider-proxmox/issues/1958)) ([a639257](https://github.com/bpg/terraform-provider-proxmox/commit/a6392572899543cea3e97c82e4307393f80a1b61))
-* **ci:** update jetbrains/qodana-action action (v2025.1.0 → v2025.1.1) ([#1955](https://github.com/bpg/terraform-provider-proxmox/issues/1955)) ([12f8a40](https://github.com/bpg/terraform-provider-proxmox/commit/12f8a406f36f1e909f8dbdc01c822338dcebaaab))
-* **ci:** update lycheeverse/lychee-action action (v2.4.0 → v2.4.1) ([#1956](https://github.com/bpg/terraform-provider-proxmox/issues/1956)) ([68132bb](https://github.com/bpg/terraform-provider-proxmox/commit/68132bb1fbd312c1a4fffb10ccefd236f176e551))
-* **deps:** update module github.com/hashicorp/terraform-plugin-framework-validators (v0.17.0 → v0.18.0) ([#1965](https://github.com/bpg/terraform-provider-proxmox/issues/1965)) ([9d91cdd](https://github.com/bpg/terraform-provider-proxmox/commit/9d91cddbe894089e2a38cf095d21dde29333ec5a))
-* **docs:** update terraform local (2.5.2 → 2.5.3) ([#1964](https://github.com/bpg/terraform-provider-proxmox/issues/1964)) ([10cda1f](https://github.com/bpg/terraform-provider-proxmox/commit/10cda1f257e5c24a1ceb94826eb856d557018dcf))
-
-## [0.77.1](https://github.com/bpg/terraform-provider-proxmox/compare/v0.77.0...v0.77.1) (2025-05-06)
-
-
-### Bug Fixes
-
-* **lxc:** spurious ip_config diff when interface has both IPv4 and IPv6 addresses ([15b0ae9](https://github.com/bpg/terraform-provider-proxmox/commit/15b0ae90be23c46d5cc106a7f8b4f867fce7d84e))
-
-
-### Miscellaneous
-
-* **ci:** update actions/create-github-app-token action (v2.0.2 → v2.0.3) ([#1941](https://github.com/bpg/terraform-provider-proxmox/issues/1941)) ([922d1eb](https://github.com/bpg/terraform-provider-proxmox/commit/922d1ebd8af5fd9e1e3091da13e46f9a9a3754f0))
-* **ci:** update actions/create-github-app-token action (v2.0.3 → v2.0.6) ([#1946](https://github.com/bpg/terraform-provider-proxmox/issues/1946)) ([84c9b72](https://github.com/bpg/terraform-provider-proxmox/commit/84c9b72e71cda1de5952030f830150599ca4b226))
-* **ci:** Update golangci/golangci-lint-action action (v7 → v8) ([#1950](https://github.com/bpg/terraform-provider-proxmox/issues/1950)) ([8ded437](https://github.com/bpg/terraform-provider-proxmox/commit/8ded437d45a2a5b290a761c8ef1ef296c790536e))
-* **code:** fix new qodana warnings ([#1951](https://github.com/bpg/terraform-provider-proxmox/issues/1951)) ([d23f7ab](https://github.com/bpg/terraform-provider-proxmox/commit/d23f7ab1c005fea2e28b9d969da5cfbe139c2fd7))
-* **deps:** update golangci/golangci-lint (v2.1.5 → v2.1.6) ([#1947](https://github.com/bpg/terraform-provider-proxmox/issues/1947)) ([462c153](https://github.com/bpg/terraform-provider-proxmox/commit/462c153b32e82b6764c8459e06cc0125c877efd4))
-* **deps:** update module golang.org/x/net (v0.39.0 → v0.40.0) ([#1949](https://github.com/bpg/terraform-provider-proxmox/issues/1949)) ([58cee6d](https://github.com/bpg/terraform-provider-proxmox/commit/58cee6d35f20b8a96ce8d13e7b8df094086b1779))
-
-## [0.77.0](https://github.com/bpg/terraform-provider-proxmox/compare/v0.76.1...v0.77.0) (2025-04-30)
-
-
-### Features
-
-* **lxc:** increase number of supported mount points to 256 ([#1939](https://github.com/bpg/terraform-provider-proxmox/issues/1939)) ([a99220e](https://github.com/bpg/terraform-provider-proxmox/commit/a99220e9fb170935026edc5449fce8d0a388abc8))
-
-
-### Bug Fixes
-
-* **file:** better error message on download failure ([#1923](https://github.com/bpg/terraform-provider-proxmox/issues/1923)) ([d463990](https://github.com/bpg/terraform-provider-proxmox/commit/d46399024f0390a57d52e4f89dd8027184815e01))
-* **firewall:** prevent reordering of CIDRs in `ipset` resource with mixed IPv4/IPv6 ([#1935](https://github.com/bpg/terraform-provider-proxmox/issues/1935)) ([64147cd](https://github.com/bpg/terraform-provider-proxmox/commit/64147cd24e84c09605633a8cec4aae5f39c4f903))
-* **lxc:** do not reboot for cpu block changes ([#1932](https://github.com/bpg/terraform-provider-proxmox/issues/1932)) ([5e49b98](https://github.com/bpg/terraform-provider-proxmox/commit/5e49b98f8e0b004e285a22bfc4687f114609710c))
-
-
-### Miscellaneous
-
-* **ci:** update actions/attest-build-provenance digest (c074443 → db473fd) ([#1937](https://github.com/bpg/terraform-provider-proxmox/issues/1937)) ([7b5042d](https://github.com/bpg/terraform-provider-proxmox/commit/7b5042d945e9e8d5cfd10d624e68ab22f91caab8))
-* **ci:** Update JetBrains/qodana-action action (v2024.3.4 → v2025.1.0) ([#1927](https://github.com/bpg/terraform-provider-proxmox/issues/1927)) ([d4bfc24](https://github.com/bpg/terraform-provider-proxmox/commit/d4bfc24cb432b694517cadfb78c69aeec5f71e4b))
-* **code:** fix code problems reported by Qodana ([#1934](https://github.com/bpg/terraform-provider-proxmox/issues/1934)) ([ebd5399](https://github.com/bpg/terraform-provider-proxmox/commit/ebd5399e14f13fa92e20effc70114813efb8c331))
-* **deps:** update golangci/golangci-lint (v2.1.2 → v2.1.5) ([#1926](https://github.com/bpg/terraform-provider-proxmox/issues/1926)) ([6b2749f](https://github.com/bpg/terraform-provider-proxmox/commit/6b2749feeace459fc383c4c8b3eb373e236d464f))
-* **docs:** update terraform tls (4.0.6 → 4.1.0) ([#1925](https://github.com/bpg/terraform-provider-proxmox/issues/1925)) ([2de77b6](https://github.com/bpg/terraform-provider-proxmox/commit/2de77b6a8e1193d864a71faa17389d2e0b61740e))
-
-## [0.76.1](https://github.com/bpg/terraform-provider-proxmox/compare/v0.76.0...v0.76.1) (2025-04-21)
-
-
-### Bug Fixes
-
-* **provider:** improve `known_hosts` handling in SSH client ([#1918](https://github.com/bpg/terraform-provider-proxmox/issues/1918)) ([49d366e](https://github.com/bpg/terraform-provider-proxmox/commit/49d366e45b0741310130c22c875748ffe0348643))
-* **vm:** cloned VM may be recreated/updated on re-apply ([#1914](https://github.com/bpg/terraform-provider-proxmox/issues/1914)) ([5974d8b](https://github.com/bpg/terraform-provider-proxmox/commit/5974d8b3a37835735c182c901ab873ab3b3c71eb))
-
-
-### Miscellaneous
-
-* **code:** move `hardwaremapping` package from `node` to `cluster` in `fwprovider` ([#1917](https://github.com/bpg/terraform-provider-proxmox/issues/1917)) ([fd24c5a](https://github.com/bpg/terraform-provider-proxmox/commit/fd24c5a740446418927aab67b24675f1df655494))
-* **docs:** fix broken links in documentation ([#1916](https://github.com/bpg/terraform-provider-proxmox/issues/1916)) ([d27b24f](https://github.com/bpg/terraform-provider-proxmox/commit/d27b24f5f61e14bc2506594f8968165f8adbf2eb))
-
-## [0.76.0](https://github.com/bpg/terraform-provider-proxmox/compare/v0.75.0...v0.76.0) (2025-04-17)
-
-
-### Features
-
-* **hardwaremapping:** Introduce support for directory mappings ([#1902](https://github.com/bpg/terraform-provider-proxmox/issues/1902)) ([6dbff43](https://github.com/bpg/terraform-provider-proxmox/commit/6dbff43bd13fbae86cc5b4fa2075164ef9cf9b62))
-* **vm:** add support for `virtiofs` ([#1900](https://github.com/bpg/terraform-provider-proxmox/issues/1900)) ([55b3f73](https://github.com/bpg/terraform-provider-proxmox/commit/55b3f7391ae03fbed60744a55e7966df20577139))
-
-
-### Bug Fixes
-
-* **vm,lxc:** error parsing disk ID when datastore name contains `.` ([#1894](https://github.com/bpg/terraform-provider-proxmox/issues/1894)) ([1340146](https://github.com/bpg/terraform-provider-proxmox/commit/13401465c9b4136b75d3814f470f0e7f46e05fe6))
-* **vm:** edge case error when cloning a VM with EFI disk ([#1897](https://github.com/bpg/terraform-provider-proxmox/issues/1897)) ([4ca2f32](https://github.com/bpg/terraform-provider-proxmox/commit/4ca2f32ac63b7f1844566023071adcd7eca12868))
-* **vm:** race condition on reboot causing inconsistent VM state ([#1911](https://github.com/bpg/terraform-provider-proxmox/issues/1911)) ([7fd190a](https://github.com/bpg/terraform-provider-proxmox/commit/7fd190aaebdc1ce13f3023a41d2191d1e4ad9fd2))
-
-
-### Miscellaneous
-
-* **deps:** update golangci/golangci-lint (v2.0.2 → v2.1.2) ([#1903](https://github.com/bpg/terraform-provider-proxmox/issues/1903)) ([ce5cc74](https://github.com/bpg/terraform-provider-proxmox/commit/ce5cc746f99c2d3a9731cdb4594dd66741e263d9))
-* **deps:** update module github.com/hashicorp/terraform-plugin-docs (v0.20.1 → v0.21.0) ([#1898](https://github.com/bpg/terraform-provider-proxmox/issues/1898)) ([504a84c](https://github.com/bpg/terraform-provider-proxmox/commit/504a84cb8354922f429967a7b1bc005774d686b8))
-* **docs:** indicate support of Proxmox VE 8.4 ([#1899](https://github.com/bpg/terraform-provider-proxmox/issues/1899)) ([35a5296](https://github.com/bpg/terraform-provider-proxmox/commit/35a529609d50cdfffbb1506ed6d01d35bb967a70))
-* **vm:** add an acc test for `disk.backup` update edge case ([#1906](https://github.com/bpg/terraform-provider-proxmox/issues/1906)) ([ad41476](https://github.com/bpg/terraform-provider-proxmox/commit/ad41476962c3ff3e7e7ac530fe6f5ad85797b994))
-
-## [0.75.0](https://github.com/bpg/terraform-provider-proxmox/compare/v0.74.1...v0.75.0) (2025-04-08)
-
-
-### ⚠ BREAKING CHANGES
-
-* **vm:** remove deprecated `initialization.dns.server`, `initialization.upgrade` ([#1884](https://github.com/bpg/terraform-provider-proxmox/issues/1884))
-* **datastores:** implement new structured format and filters for `datastores` data source ([#1875](https://github.com/bpg/terraform-provider-proxmox/issues/1875))
-
-### Features
-
-* **datastores:** implement new structured format and filters for `datastores` data source ([#1875](https://github.com/bpg/terraform-provider-proxmox/issues/1875)) ([b5b61b4](https://github.com/bpg/terraform-provider-proxmox/commit/b5b61b48dcb4a7a4943d1c40a07928cff34c8b68))
-* **vm:** do not force VM re-create on `initialization.user_account` changes ([#1885](https://github.com/bpg/terraform-provider-proxmox/issues/1885)) ([d631ccb](https://github.com/bpg/terraform-provider-proxmox/commit/d631ccbf908c38a91eefce9b7904f2c1dcc5d20b))
-
-
-### Miscellaneous
-
-* **ci:** pin golangci/golangci-lint-action action to ([#1872](https://github.com/bpg/terraform-provider-proxmox/issues/1872)) ([f7706c8](https://github.com/bpg/terraform-provider-proxmox/commit/f7706c805879d1773de312ca6a8106821e6b44ee))
-* **ci:** Update actions/create-github-app-token action (v1.12.0 → v2.0.2) ([#1880](https://github.com/bpg/terraform-provider-proxmox/issues/1880)) ([3d0c47a](https://github.com/bpg/terraform-provider-proxmox/commit/3d0c47ae7988bd2434e08985dd707892756bd344))
-* **ci:** update lycheeverse/lychee-action action (v2.3.0 → v2.4.0) ([#1873](https://github.com/bpg/terraform-provider-proxmox/issues/1873)) ([ece13f7](https://github.com/bpg/terraform-provider-proxmox/commit/ece13f7716e2bc5f63cd91c33ec0f791a4ae8247))
-* **deps:** update module golang.org/x/crypto (v0.36.0 → v0.37.0) ([#1882](https://github.com/bpg/terraform-provider-proxmox/issues/1882)) ([c526208](https://github.com/bpg/terraform-provider-proxmox/commit/c526208f4bfd16985e0d2ec206da8474d5ec7065))
-* **deps:** update module golang.org/x/net (v0.38.0 → v0.39.0) ([#1887](https://github.com/bpg/terraform-provider-proxmox/issues/1887)) ([5035965](https://github.com/bpg/terraform-provider-proxmox/commit/50359656bdaa8cc92e52b2169a5c1d10dd9ae7ab))
-* **docs:** add known issue to the README about Debian 12 VM requiring a serial device ([#1886](https://github.com/bpg/terraform-provider-proxmox/issues/1886)) ([8e231f9](https://github.com/bpg/terraform-provider-proxmox/commit/8e231f9737113eb62e8969da05620959e320f7f5))
-* **vm:** remove deprecated `initialization.dns.server`, `initialization.upgrade` ([#1884](https://github.com/bpg/terraform-provider-proxmox/issues/1884)) ([51e6d7b](https://github.com/bpg/terraform-provider-proxmox/commit/51e6d7b8db05c5200ce6dd0569c590a2fbe0aed2))
-
-## [0.74.1](https://github.com/bpg/terraform-provider-proxmox/compare/v0.74.0...v0.74.1) (2025-03-31)
-
-
-### Bug Fixes
-
-* **auth:** do not reset user token value in TF state during update ([#1857](https://github.com/bpg/terraform-provider-proxmox/issues/1857)) ([2da4e3d](https://github.com/bpg/terraform-provider-proxmox/commit/2da4e3de1c2ab8969afd1d86575a6101a8dc07f5))
-* **docs:** clarify `tags` behaviour for container ([#1851](https://github.com/bpg/terraform-provider-proxmox/issues/1851)) ([b19d28e](https://github.com/bpg/terraform-provider-proxmox/commit/b19d28e841926a1433a1898777b984a3b659edd5))
-* **lxc:** multiple issues during container import ([#1867](https://github.com/bpg/terraform-provider-proxmox/issues/1867)) ([aa9cdba](https://github.com/bpg/terraform-provider-proxmox/commit/aa9cdba0bf6dfd817c57384f6f688009a9e82635))
-* **lxc:** prevent spurious `dns` config change when updating `initialization` block ([#1859](https://github.com/bpg/terraform-provider-proxmox/issues/1859)) ([03f2079](https://github.com/bpg/terraform-provider-proxmox/commit/03f20799029b56ab0d9d0e096e8890f0d61780d8))
-* **vm:** allow to set `machine` type in clone ([#1865](https://github.com/bpg/terraform-provider-proxmox/issues/1865)) ([7090b10](https://github.com/bpg/terraform-provider-proxmox/commit/7090b1036a2c5a8640eef62daf23b56af521e409))
-* **vm:** improve error handling when updating `initialization` block ([#1858](https://github.com/bpg/terraform-provider-proxmox/issues/1858)) ([539b902](https://github.com/bpg/terraform-provider-proxmox/commit/539b902633b07e1f9089274b9ddd7e7d3edd317d))
-* **vm:** prevent cloud-init password reset to `**********` during update ([#1864](https://github.com/bpg/terraform-provider-proxmox/issues/1864)) ([4f522ec](https://github.com/bpg/terraform-provider-proxmox/commit/4f522ec34227a9b6f713e9600c00fcd110bea5d9))
-* **vm:** prevent cloud-init username reset to `" "` during create ([#1863](https://github.com/bpg/terraform-provider-proxmox/issues/1863)) ([c9fcb30](https://github.com/bpg/terraform-provider-proxmox/commit/c9fcb30762a46a3d6a0e48a8bb6201aa8b205dcd))
-* **vm:** remove `qcow2` as the default for `disk.file_format` ([#1862](https://github.com/bpg/terraform-provider-proxmox/issues/1862)) ([af46a9c](https://github.com/bpg/terraform-provider-proxmox/commit/af46a9c71af8d8ffe687c0b5a87de9f0ca4f1a37))
-
-
-### Miscellaneous
-
-* **ci:** update actions/create-github-app-token action (v1.11.7 → v1.12.0) ([#1860](https://github.com/bpg/terraform-provider-proxmox/issues/1860)) ([7ba9417](https://github.com/bpg/terraform-provider-proxmox/commit/7ba94171bfba19b29426429d043b03adb8fbaa1e))
-* **ci:** update crazy-max/ghaction-import-gpg action (v6.2.0 → v6.3.0) ([#1868](https://github.com/bpg/terraform-provider-proxmox/issues/1868)) ([4d30ba7](https://github.com/bpg/terraform-provider-proxmox/commit/4d30ba71860c2a2656f03fcb8e25d4c0bbfaadc0))
-* **ci:** update goreleaser/goreleaser-action action (v6.2.1 → v6.3.0) ([#1869](https://github.com/bpg/terraform-provider-proxmox/issues/1869)) ([8c42d80](https://github.com/bpg/terraform-provider-proxmox/commit/8c42d8063f6c18ea3f4ae720f14f42e306dfaefb))
-* **deps:** update module golang.org/x/net (v0.37.0 → v0.38.0) ([#1861](https://github.com/bpg/terraform-provider-proxmox/issues/1861)) ([f030a49](https://github.com/bpg/terraform-provider-proxmox/commit/f030a49e9f6798fcea7bb64defdcf7ddfd009bc0))
-* **docs:** add known issue for HA VMs and containers in README ([#1855](https://github.com/bpg/terraform-provider-proxmox/issues/1855)) ([de65997](https://github.com/bpg/terraform-provider-proxmox/commit/de65997de49fa40cb5874b5f5cace0732babe6ef))
-
-## [0.74.0](https://github.com/bpg/terraform-provider-proxmox/compare/v0.73.2...v0.74.0) (2025-03-26)
-
-
-### ⚠ BREAKING CHANGES
-
-* **docs:** clarify disk behaviour in clone operation ([#1850](https://github.com/bpg/terraform-provider-proxmox/issues/1850))
-
-### Bug Fixes
-
-* **vm:** handle update of disks moved during VM clone ([#1849](https://github.com/bpg/terraform-provider-proxmox/issues/1849)) ([09d3e97](https://github.com/bpg/terraform-provider-proxmox/commit/09d3e97d020ced9b7d7ee7e15087f8e5d708a681))
-
-
-### Miscellaneous
-
-* **ci:** pin actions/attest-build-provenance action to ([#1843](https://github.com/bpg/terraform-provider-proxmox/issues/1843)) ([ef66b55](https://github.com/bpg/terraform-provider-proxmox/commit/ef66b55fc26878c23c569f9018b443dc92494d1c))
-* **deps:** Update golangci/golangci-lint (v1.64.8 → v2.0.2) ([#1847](https://github.com/bpg/terraform-provider-proxmox/issues/1847)) ([1eee8cd](https://github.com/bpg/terraform-provider-proxmox/commit/1eee8cdbd0c401d5078b0befc3304e21f3faef17))
-* **deps:** update module github.com/pkg/sftp (v1.13.8 → v1.13.9) ([#1846](https://github.com/bpg/terraform-provider-proxmox/issues/1846)) ([2ae7725](https://github.com/bpg/terraform-provider-proxmox/commit/2ae77257d3c5e9b5672ff6e0e5f7b58ae2d7c06e))
-* **docs:** clarify disk behaviour in clone operation ([#1850](https://github.com/bpg/terraform-provider-proxmox/issues/1850)) ([75281b2](https://github.com/bpg/terraform-provider-proxmox/commit/75281b2652a44f2374951d085830711af5e96df5))
-
-## [0.73.2](https://github.com/bpg/terraform-provider-proxmox/compare/v0.73.1...v0.73.2) (2025-03-21)
-
-
-### Bug Fixes
-
-* **provider:** better error handling for non-existent resources([#1824](https://github.com/bpg/terraform-provider-proxmox/issues/1824)) ([febf239](https://github.com/bpg/terraform-provider-proxmox/commit/febf239b58b725e273397e060563b31846a0acf7))
-* **vm:** fix and improve disk management for cloned VMs ([#1840](https://github.com/bpg/terraform-provider-proxmox/issues/1840)) ([faeada9](https://github.com/bpg/terraform-provider-proxmox/commit/faeada970c2bbddea6d26e30fb3a40ae227cf55f))
-
-
-### Miscellaneous
-
-* **ci:** enable attestation ([#1841](https://github.com/bpg/terraform-provider-proxmox/issues/1841)) ([33e1eb4](https://github.com/bpg/terraform-provider-proxmox/commit/33e1eb4f4da71834a16ecdb606825facb8ad8dd2))
-* **ci:** pin dependencies ([#1822](https://github.com/bpg/terraform-provider-proxmox/issues/1822)) ([189e81a](https://github.com/bpg/terraform-provider-proxmox/commit/189e81aba3dda3670c7c1258911b361c0c7a657c))
-* **ci:** update actions/create-github-app-token action (v1.11.6 → v1.11.7) ([#1839](https://github.com/bpg/terraform-provider-proxmox/issues/1839)) ([267eb3d](https://github.com/bpg/terraform-provider-proxmox/commit/267eb3d07d9cf8a47f3d4fd9bf69d9590f4386b3))
-* **ci:** update actions/setup-go digest (f111f33 → 0aaccfd) ([#1831](https://github.com/bpg/terraform-provider-proxmox/issues/1831)) ([bd5ab91](https://github.com/bpg/terraform-provider-proxmox/commit/bd5ab9103cb0128bde2d8fe60b2873b2ff99219b))
-* **ci:** update actions/upload-artifact digest (4cec3d8 → ea165f8) ([#1832](https://github.com/bpg/terraform-provider-proxmox/issues/1832)) ([3bd2dac](https://github.com/bpg/terraform-provider-proxmox/commit/3bd2dac4d1f93f0b3aa5b795a8bd7101df32bcb7))
-* **ci:** update golangci/golangci-lint-action digest (4696ba8 → 55c2c14) ([#1833](https://github.com/bpg/terraform-provider-proxmox/issues/1833)) ([319eecd](https://github.com/bpg/terraform-provider-proxmox/commit/319eecdedc532b53d62ea7f4dfaf62d0b05b5a24))
-* **deps:** update golangci/golangci-lint ([#1834](https://github.com/bpg/terraform-provider-proxmox/issues/1834)) ([292811b](https://github.com/bpg/terraform-provider-proxmox/commit/292811bddef8f3bc009f228b1483696babadba32))
-* **deps:** update golangci/golangci-lint (1.64.5 → 1.64.7) ([#1810](https://github.com/bpg/terraform-provider-proxmox/issues/1810)) ([0977473](https://github.com/bpg/terraform-provider-proxmox/commit/0977473dd24fc2e393d1a4467856b98e14917cee))
-* **deps:** update golangci/golangci-lint (v1.64.5 → v1.64.7) ([#1821](https://github.com/bpg/terraform-provider-proxmox/issues/1821)) ([57244d2](https://github.com/bpg/terraform-provider-proxmox/commit/57244d2f99e20b3c8c68e99c2077eb2b9102495b))
-* **deps:** update image mcr.microsoft.com/devcontainers/go (1.23 → 1.24) ([#1835](https://github.com/bpg/terraform-provider-proxmox/issues/1835)) ([27fe170](https://github.com/bpg/terraform-provider-proxmox/commit/27fe17008f38adb4585702b3ae0bec42f135a440))
-* **deps:** update module github.com/hashicorp/go-cty (v1.4.1 → v1.5.0) ([#1836](https://github.com/bpg/terraform-provider-proxmox/issues/1836)) ([53d0045](https://github.com/bpg/terraform-provider-proxmox/commit/53d0045cdf8652c814c9c3d4df414c5852e91d7f))
-* **deps:** update module github.com/hashicorp/terraform-plugin-testing (v1.11.0 → v1.12.0) ([#1837](https://github.com/bpg/terraform-provider-proxmox/issues/1837)) ([bb13d05](https://github.com/bpg/terraform-provider-proxmox/commit/bb13d05f019b33cecf6f940dc126424c18bccb79))
-* **deps:** update module github.com/pkg/sftp (v1.13.7 → v1.13.8) ([#1819](https://github.com/bpg/terraform-provider-proxmox/issues/1819)) ([b38a29a](https://github.com/bpg/terraform-provider-proxmox/commit/b38a29a1da1fa841b2b9911a81eadd6b228310eb))
-* **docs:** update cloud-init configuration examples ([#1830](https://github.com/bpg/terraform-provider-proxmox/issues/1830)) ([a681e82](https://github.com/bpg/terraform-provider-proxmox/commit/a681e828bfe3de8e680a4c0c7ea3a363d98e3766))
-* **docs:** update project badges ([#1842](https://github.com/bpg/terraform-provider-proxmox/issues/1842)) ([d3d3910](https://github.com/bpg/terraform-provider-proxmox/commit/d3d39106559bda5fc9e84b29b513150d0c8419c7))
-
-## [0.73.1](https://github.com/bpg/terraform-provider-proxmox/compare/v0.73.0...v0.73.1) (2025-03-10)
-
-
-### Bug Fixes
-
-* **vm:** fix vm machine type validation in order to support viommu ([#1798](https://github.com/bpg/terraform-provider-proxmox/issues/1798)) ([57c3970](https://github.com/bpg/terraform-provider-proxmox/commit/57c3970d540bac6fb562a913ed82003ea5553c0c))
-
-
-### Miscellaneous
-
-* **ci:** update actions/create-github-app-token action (v1.11.5 → v1.11.6) ([#1809](https://github.com/bpg/terraform-provider-proxmox/issues/1809)) ([1145718](https://github.com/bpg/terraform-provider-proxmox/commit/1145718166c9c2375700c83a99d2ce27a4b44c2f))
-* **ci:** update googleapis/release-please-action action (v4.1.3 → v4.1.4) ([#1804](https://github.com/bpg/terraform-provider-proxmox/issues/1804)) ([748fb0d](https://github.com/bpg/terraform-provider-proxmox/commit/748fb0dc7750656c21d89af30fe008ea7b88513a))
-* **ci:** update googleapis/release-please-action action (v4.1.4 → v4.2.0) ([#1812](https://github.com/bpg/terraform-provider-proxmox/issues/1812)) ([b526e75](https://github.com/bpg/terraform-provider-proxmox/commit/b526e756a3c136d5ad021410dda32cff2885da9a))
-* **deps:** update module github.com/avast/retry-go/v4 (v4.6.0 → v4.6.1) ([#1791](https://github.com/bpg/terraform-provider-proxmox/issues/1791)) ([b3c862b](https://github.com/bpg/terraform-provider-proxmox/commit/b3c862b986f283a4be7d1a4f78562664a21003cd))
-* **deps:** update module github.com/hashicorp/go-cty (v1.4.1-0.20241127173709-a0325cb22c13 → v1.4.1) ([#1811](https://github.com/bpg/terraform-provider-proxmox/issues/1811)) ([51b93cf](https://github.com/bpg/terraform-provider-proxmox/commit/51b93cfd19f8e4472f76429ce0d0cd763e70fdf2))
-* **deps:** update module github.com/rogpeppe/go-internal (v1.13.1 → v1.14.0) ([#1792](https://github.com/bpg/terraform-provider-proxmox/issues/1792)) ([c5e4d5c](https://github.com/bpg/terraform-provider-proxmox/commit/c5e4d5ca2cff885589cc511c82c4e4e43bfa7d9c))
-* **deps:** update module github.com/rogpeppe/go-internal (v1.14.0 → v1.14.1) ([#1805](https://github.com/bpg/terraform-provider-proxmox/issues/1805)) ([ed1b25a](https://github.com/bpg/terraform-provider-proxmox/commit/ed1b25a93608114438e49e950c46bc6035e36d29))
-* **deps:** update module golang.org/x/crypto (v0.34.0 → v0.35.0) ([#1793](https://github.com/bpg/terraform-provider-proxmox/issues/1793)) ([a04ff63](https://github.com/bpg/terraform-provider-proxmox/commit/a04ff63f094e0fd4e1407a1d48bb52146fde3f89))
-* **deps:** update module golang.org/x/crypto (v0.35.0 → v0.36.0) ([#1813](https://github.com/bpg/terraform-provider-proxmox/issues/1813)) ([be6ddb4](https://github.com/bpg/terraform-provider-proxmox/commit/be6ddb47129f32c23b514b2b01175b32b40c37e7))
-* **deps:** update module golang.org/x/net (v0.35.0 → v0.37.0) ([#1814](https://github.com/bpg/terraform-provider-proxmox/issues/1814)) ([c126928](https://github.com/bpg/terraform-provider-proxmox/commit/c126928f3b4221753271e3a2400c3d4b2ef7d10b))
-* **docs:** update sponsorship section ([#1803](https://github.com/bpg/terraform-provider-proxmox/issues/1803)) ([654a5fc](https://github.com/bpg/terraform-provider-proxmox/commit/654a5fc73d67ad90447749c646abe4c431d3d92c))
-
-## [0.73.0](https://github.com/bpg/terraform-provider-proxmox/compare/v0.72.0...v0.73.0) (2025-02-24)
-
-
-### Features
-
-* **vm:** add optional `reboot_after_update` configuration flag ([#1777](https://github.com/bpg/terraform-provider-proxmox/issues/1777)) ([5e726c4](https://github.com/bpg/terraform-provider-proxmox/commit/5e726c48d447bee1b6487bad8472c032d00e8931))
-
-
-### Miscellaneous
-
-* **build:** update Go version and linter /documentation workflows ([#1789](https://github.com/bpg/terraform-provider-proxmox/issues/1789)) ([8ed271b](https://github.com/bpg/terraform-provider-proxmox/commit/8ed271b55121829b3c58b35a049ffeab43062ae9))
-* **deps:** update github.com/hashicorp/terraform-plugin-* ([#1782](https://github.com/bpg/terraform-provider-proxmox/issues/1782)) ([9c46bf0](https://github.com/bpg/terraform-provider-proxmox/commit/9c46bf0ee01fa07c5a2855a6c2ec151ff182584f))
-* **deps:** update module github.com/google/go-cmp (v0.6.0 → v0.7.0) ([#1783](https://github.com/bpg/terraform-provider-proxmox/issues/1783)) ([f516f80](https://github.com/bpg/terraform-provider-proxmox/commit/f516f804f6bc10600a58d4e3a282c7009342fcf8))
-* **deps:** update module github.com/hashicorp/terraform-plugin-sdk/v2 (v2.36.0 → v2.36.1) ([#1781](https://github.com/bpg/terraform-provider-proxmox/issues/1781)) ([74141bf](https://github.com/bpg/terraform-provider-proxmox/commit/74141bf9892d50d2d02eada3161685b4e05ecc88))
-* **deps:** update module golang.org/x/crypto (v0.33.0 → v0.34.0) ([#1784](https://github.com/bpg/terraform-provider-proxmox/issues/1784)) ([e013e54](https://github.com/bpg/terraform-provider-proxmox/commit/e013e54ae934fce1284033f0641b68e10baf0081))
-
-## [0.72.0](https://github.com/bpg/terraform-provider-proxmox/compare/v0.71.0...v0.72.0) (2025-02-17)
-
-
-### Features
-
-* **lxc:** add container datasource ([#1750](https://github.com/bpg/terraform-provider-proxmox/issues/1750)) ([3834564](https://github.com/bpg/terraform-provider-proxmox/commit/3834564ea43d1f679e4f281c89ce0a815ddfbd12))
-* **vm:** add RNG device  support ([#1774](https://github.com/bpg/terraform-provider-proxmox/issues/1774)) ([3119194](https://github.com/bpg/terraform-provider-proxmox/commit/31191942928722d18f1ae6ea467c030da1f2fa71))
-
-
-### Bug Fixes
-
-* **docs:** update incorrect reference to meta_data_file_id ([#1759](https://github.com/bpg/terraform-provider-proxmox/issues/1759)) ([28327f9](https://github.com/bpg/terraform-provider-proxmox/commit/28327f90e37840b73704dafd4e6ec983dbff53c0))
-
-
-### Miscellaneous
-
-* **ci:** update actions/create-github-app-token action (v1.11.3 → v1.11.5) ([#1773](https://github.com/bpg/terraform-provider-proxmox/issues/1773)) ([3d48a97](https://github.com/bpg/terraform-provider-proxmox/commit/3d48a97fb1a5bb35d8cc124b175275931f8c7d3b))
-* **ci:** update goreleaser/goreleaser-action action (v6.1.0 → v6.2.1) ([#1764](https://github.com/bpg/terraform-provider-proxmox/issues/1764)) ([54624fb](https://github.com/bpg/terraform-provider-proxmox/commit/54624fb6531b7447b112bf6098062aa978265148))
-* **code:** update linters config ([#1775](https://github.com/bpg/terraform-provider-proxmox/issues/1775)) ([45806f3](https://github.com/bpg/terraform-provider-proxmox/commit/45806f38f47a75635a777f4043dd7aaa9f461893))
-* **deps:** update module github.com/golangci/golangci-lint (v1.63.4 → v1.64.2) in /tools ([#1765](https://github.com/bpg/terraform-provider-proxmox/issues/1765)) ([6e21bca](https://github.com/bpg/terraform-provider-proxmox/commit/6e21bca2d5c1903f62c20d6b76106382ef342e26))
-* **deps:** update module github.com/golangci/golangci-lint (v1.64.2 → v1.64.4) in /tools ([#1769](https://github.com/bpg/terraform-provider-proxmox/issues/1769)) ([a5251d1](https://github.com/bpg/terraform-provider-proxmox/commit/a5251d119a6f50ac4808baeaa68af6640de1d7b7))
-* **deps:** update module github.com/golangci/golangci-lint (v1.64.4 → v1.64.5) in /tools ([#1772](https://github.com/bpg/terraform-provider-proxmox/issues/1772)) ([417cdff](https://github.com/bpg/terraform-provider-proxmox/commit/417cdff50c71c3517010990c0824b9b2b69f3c47))
-* **deps:** update module golang.org/x/net (v0.34.0 → v0.35.0) ([#1766](https://github.com/bpg/terraform-provider-proxmox/issues/1766)) ([d350c65](https://github.com/bpg/terraform-provider-proxmox/commit/d350c65f4cde83a2b9b4f46b09f15f21687b5a87))
-* **docs:** add security policy ([#1758](https://github.com/bpg/terraform-provider-proxmox/issues/1758)) ([cbff3e4](https://github.com/bpg/terraform-provider-proxmox/commit/cbff3e4fd458b3dabd4c9ff6c28ea277db2db0b4))
-* **docs:** remove broken links from SECURITY.md ([#1776](https://github.com/bpg/terraform-provider-proxmox/issues/1776)) ([4c06d0f](https://github.com/bpg/terraform-provider-proxmox/commit/4c06d0f12e6b89d0fb1085865a1e699808db462c))
-* **docs:** reorganize API token auth section ([#1761](https://github.com/bpg/terraform-provider-proxmox/issues/1761)) ([4057d13](https://github.com/bpg/terraform-provider-proxmox/commit/4057d137151bb7926d0d196e48ceb6a97c42b618))
-* **docs:** update project documentation and contribution guidelines ([#1756](https://github.com/bpg/terraform-provider-proxmox/issues/1756)) ([8c0c79b](https://github.com/bpg/terraform-provider-proxmox/commit/8c0c79be3c78ed85e6790ba1cbbdb1ece3d5290c))
-
-## [0.71.0](https://github.com/bpg/terraform-provider-proxmox/compare/v0.70.1...v0.71.0) (2025-02-09)
-
-
-### Features
-
-* **cluster:** add `proxmox_virtual_environment_metrics_server` resource ([#1719](https://github.com/bpg/terraform-provider-proxmox/issues/1719)) ([d1cc214](https://github.com/bpg/terraform-provider-proxmox/commit/d1cc2144f858f655a1a5752a7af0e9d551995dd5))
-* **vm:** deprecate `enabled` attribute on `cdrom`/`disk` devices ([#1746](https://github.com/bpg/terraform-provider-proxmox/issues/1746)) ([5f00314](https://github.com/bpg/terraform-provider-proxmox/commit/5f003143f882aca0e38637a9456f615d7fc6bbd0))
-
-
-### Bug Fixes
-
-* **file:** fix for datastore does not support content type "dump" ([#1752](https://github.com/bpg/terraform-provider-proxmox/issues/1752)) ([0aa2b50](https://github.com/bpg/terraform-provider-proxmox/commit/0aa2b505e59985d347149b90dd05d21ca041092b))
-* **lxc:** allow container disk size 0 for lxc zfs/brfs subvols ([#1737](https://github.com/bpg/terraform-provider-proxmox/issues/1737)) ([2925ae6](https://github.com/bpg/terraform-provider-proxmox/commit/2925ae63f5b233e007ff4621a9edffd8dcb139f0))
-* **provider:** improve provider credentials error handling ([#1754](https://github.com/bpg/terraform-provider-proxmox/issues/1754)) ([f221a85](https://github.com/bpg/terraform-provider-proxmox/commit/f221a85f8f16be600ed6808ce4b2ba7b26aecfb5))
-
-
-### Miscellaneous
-
-* **ci:** update actions/create-github-app-token action (v1.11.2 → v1.11.3) ([#1743](https://github.com/bpg/terraform-provider-proxmox/issues/1743)) ([ccc263f](https://github.com/bpg/terraform-provider-proxmox/commit/ccc263f8ad1b4a69135e81406ba7df24029ffd73))
-* **ci:** update lycheeverse/lychee-action action (v2.2.0 → v2.3.0) ([#1744](https://github.com/bpg/terraform-provider-proxmox/issues/1744)) ([0700975](https://github.com/bpg/terraform-provider-proxmox/commit/0700975ec25094bb3e0ce574961e47a56334e883))
-* **deps:** update module github.com/hashicorp/terraform-plugin-sdk/v2 (v2.35.0 → v2.36.0) ([#1745](https://github.com/bpg/terraform-provider-proxmox/issues/1745)) ([bf9c496](https://github.com/bpg/terraform-provider-proxmox/commit/bf9c496f2956202618b83cfb982fff5771349572))
-* **deps:** update module golang.org/x/crypto (v0.32.0 → v0.33.0) ([#1751](https://github.com/bpg/terraform-provider-proxmox/issues/1751)) ([96594e4](https://github.com/bpg/terraform-provider-proxmox/commit/96594e42705032fdf8f1457a70f5c7c51ceb8d05))
-* **docs:** update terraform proxmox (0.70.0 → 0.70.1) ([#1741](https://github.com/bpg/terraform-provider-proxmox/issues/1741)) ([9bd0b57](https://github.com/bpg/terraform-provider-proxmox/commit/9bd0b57254768519d70fb6b1589d038e06d93842))
-
-## [0.70.1](https://github.com/bpg/terraform-provider-proxmox/compare/v0.70.0...v0.70.1) (2025-01-31)
-
-
-### Bug Fixes
-
-* **lxc:** support `device_passthrough` config on non-clone container ([#1722](https://github.com/bpg/terraform-provider-proxmox/issues/1722)) ([e92b006](https://github.com/bpg/terraform-provider-proxmox/commit/e92b0064bf3a2a9b0c9582928665d93d8dc1993a))
-* **vm:** `vga` block defaults handling during create / clone ([#1732](https://github.com/bpg/terraform-provider-proxmox/issues/1732)) ([c992dfc](https://github.com/bpg/terraform-provider-proxmox/commit/c992dfc1f30437071cb5f4784cbfea3f3d199b0f))
-
-
-### Miscellaneous
-
-* **ci:** update actions/create-github-app-token action (v1.11.1 → v1.11.2) ([#1733](https://github.com/bpg/terraform-provider-proxmox/issues/1733)) ([4d89d34](https://github.com/bpg/terraform-provider-proxmox/commit/4d89d3484b1145be1eb4ee1f7f7f7068e641a823))
-* **deps:** update module github.com/brianvoe/gofakeit/v7 (v7.1.2 → v7.2.1) ([#1735](https://github.com/bpg/terraform-provider-proxmox/issues/1735)) ([d4b1d5f](https://github.com/bpg/terraform-provider-proxmox/commit/d4b1d5f1b694d70581e763be5ff20577916308f0))
-* **deps:** update module github.com/hashicorp/terraform-plugin-go (v0.25.0 → v0.26.0) ([#1726](https://github.com/bpg/terraform-provider-proxmox/issues/1726)) ([198f0ad](https://github.com/bpg/terraform-provider-proxmox/commit/198f0ad337c914a93bc81c543a4b665aaf2255eb))
-* **deps:** update module github.com/hashicorp/terraform-plugin-mux (v0.17.0 → v0.18.0) ([#1727](https://github.com/bpg/terraform-provider-proxmox/issues/1727)) ([e031a38](https://github.com/bpg/terraform-provider-proxmox/commit/e031a38d5026727b99fe6b8de898544710b19090))
-* **deps:** update module github.com/skeema/knownhosts (v1.3.0 → v1.3.1) ([#1734](https://github.com/bpg/terraform-provider-proxmox/issues/1734)) ([4cedbf1](https://github.com/bpg/terraform-provider-proxmox/commit/4cedbf1813aee9d8f4421e5f1cebab7b06722fbb))
-* **docs:** update terraform proxmox (0.69.1 → 0.70.0) ([#1717](https://github.com/bpg/terraform-provider-proxmox/issues/1717)) ([56f81cc](https://github.com/bpg/terraform-provider-proxmox/commit/56f81ccac39242b86cf55aba7724aa6c98a990a5))
-* **testacc:** add missing acceptance build tags, improve vscode settings ([#1723](https://github.com/bpg/terraform-provider-proxmox/issues/1723)) ([974a3c9](https://github.com/bpg/terraform-provider-proxmox/commit/974a3c906925bbaf0978f79f285d0dbd1fd76c68))
-* **testacc:** update apt repository acceptance tests ([#1725](https://github.com/bpg/terraform-provider-proxmox/issues/1725)) ([5e7e799](https://github.com/bpg/terraform-provider-proxmox/commit/5e7e7994d5ca5be7a2cd40bccad4b18425a00cd1))
-
-## [0.70.0](https://github.com/bpg/terraform-provider-proxmox/compare/v0.69.1...v0.70.0) (2025-01-18)
-
-
-### Features
-
-* **docs:** basic guide how to clone a VM template ([#1716](https://github.com/bpg/terraform-provider-proxmox/issues/1716)) ([ccaae92](https://github.com/bpg/terraform-provider-proxmox/commit/ccaae927e68a74197d0aac8d2d7a05e0ebdf7a7a))
-* **lxc:** add support for `device_passthrough` config option ([#1706](https://github.com/bpg/terraform-provider-proxmox/issues/1706)) ([7cbd1b4](https://github.com/bpg/terraform-provider-proxmox/commit/7cbd1b46fad999fe8a0ae5608d57ad708d9635c5))
-
-
-### Bug Fixes
-
-* **vm:** do not delete a VM during retry on `create` ([#1711](https://github.com/bpg/terraform-provider-proxmox/issues/1711)) ([c57dc78](https://github.com/bpg/terraform-provider-proxmox/commit/c57dc781192819bbcf942dc0b7c9e9d432d49edc))
-* **vm:** handle PVE node availability in VM datasource ([#1715](https://github.com/bpg/terraform-provider-proxmox/issues/1715)) ([3ecd044](https://github.com/bpg/terraform-provider-proxmox/commit/3ecd0443bbbdfce9bc7e8b8f082d662aac247760))
-
-
-### Miscellaneous
-
-* **deps:** update module github.com/hashicorp/terraform-plugin-framework-timeouts (v0.4.1 → v0.5.0) ([#1714](https://github.com/bpg/terraform-provider-proxmox/issues/1714)) ([eccd55f](https://github.com/bpg/terraform-provider-proxmox/commit/eccd55f522893708d9e9ebb88c581b4b9e40e714))
-* **deps:** update module golang.org/x/crypto (v0.31.0 → v0.32.0) ([#1702](https://github.com/bpg/terraform-provider-proxmox/issues/1702)) ([d22f9d3](https://github.com/bpg/terraform-provider-proxmox/commit/d22f9d32f022d42247897803ee8493c4019dc233))
-* **deps:** update module golang.org/x/net (v0.33.0 → v0.34.0) ([#1703](https://github.com/bpg/terraform-provider-proxmox/issues/1703)) ([3808aef](https://github.com/bpg/terraform-provider-proxmox/commit/3808aef33e822b85ae33a97cc87d6020b21abbfe))
-* **docs:** add 'stop_on_destroy' configuration to cloud image examples ([#1705](https://github.com/bpg/terraform-provider-proxmox/issues/1705)) ([ab09b09](https://github.com/bpg/terraform-provider-proxmox/commit/ab09b09fbf36b523e610fcfa0ac36def61a2eaa0))
-* **docs:** update README.md ([#1707](https://github.com/bpg/terraform-provider-proxmox/issues/1707)) ([6f65789](https://github.com/bpg/terraform-provider-proxmox/commit/6f657892c0a29d6677ef6d72690dbfb991a67ad1))
-
-## [0.69.1](https://github.com/bpg/terraform-provider-proxmox/compare/v0.69.0...v0.69.1) (2025-01-04)
-
-
-### Miscellaneous
-
-* **build:** update devcontainer and CI workflows ([#1691](https://github.com/bpg/terraform-provider-proxmox/issues/1691)) ([5ec64b8](https://github.com/bpg/terraform-provider-proxmox/commit/5ec64b8b1925f5237db8fe0ff9b6f1972ffd67c3))
-* **ci:** update actions/create-github-app-token action (v1.11.0 → v1.11.1) ([#1692](https://github.com/bpg/terraform-provider-proxmox/issues/1692)) ([0f3798b](https://github.com/bpg/terraform-provider-proxmox/commit/0f3798b371944eaa5a75c723128af53fd26cb25f))
-* **ci:** update jetbrains/qodana-action action (v2024.3.3 → v2024.3.4) ([#1694](https://github.com/bpg/terraform-provider-proxmox/issues/1694)) ([493cbac](https://github.com/bpg/terraform-provider-proxmox/commit/493cbac0066d5d3884c6c7db9f304e863f41b27d))
-* **ci:** update lycheeverse/lychee-action action (v2.1.0 → v2.2.0) ([#1690](https://github.com/bpg/terraform-provider-proxmox/issues/1690)) ([1afaf6c](https://github.com/bpg/terraform-provider-proxmox/commit/1afaf6cc440586c404ebaff83abe841182024cd3))
-* **deps:** update golang.org/x/exp digest (b2144cd → 7d7fa50) ([#1696](https://github.com/bpg/terraform-provider-proxmox/issues/1696)) ([100e8c7](https://github.com/bpg/terraform-provider-proxmox/commit/100e8c7f8bd9de8bb7c64f71075fade3230db1b2))
-* **deps:** update module github.com/golangci/golangci-lint (v1.62.2 → v1.63.4) in /tools ([#1697](https://github.com/bpg/terraform-provider-proxmox/issues/1697)) ([9257a11](https://github.com/bpg/terraform-provider-proxmox/commit/9257a11336b5cc6d68c837e109ea911e4cdd125d))
-* **deps:** update module golang.org/x/net (v0.32.0 → v0.33.0) [security] ([#1688](https://github.com/bpg/terraform-provider-proxmox/issues/1688)) ([a637884](https://github.com/bpg/terraform-provider-proxmox/commit/a63788450b68cde1be7ff79d52d719f828f3ec85))
-* **docs:** update README.md ([#1698](https://github.com/bpg/terraform-provider-proxmox/issues/1698)) ([b3170c3](https://github.com/bpg/terraform-provider-proxmox/commit/b3170c3751dad52c2466d24da1edeb91564b5454))
-
-## [0.69.0](https://github.com/bpg/terraform-provider-proxmox/compare/v0.68.1...v0.69.0) (2024-12-18)
-
-
-### ⚠ BREAKING CHANGES
-
-* **vm:** improve `cpu.architecture` handling ([#1683](https://github.com/bpg/terraform-provider-proxmox/issues/1683))
-
-### Bug Fixes
-
-* **vm:** edge case of deleting incomplete VM if `create` fails and provider retries ([#1684](https://github.com/bpg/terraform-provider-proxmox/issues/1684)) ([bf9e243](https://github.com/bpg/terraform-provider-proxmox/commit/bf9e2436d4e0b3c51fe56be8c839de5a692c2ae1))
-* **vm:** improve `cpu.architecture` handling ([#1683](https://github.com/bpg/terraform-provider-proxmox/issues/1683)) ([be6f220](https://github.com/bpg/terraform-provider-proxmox/commit/be6f2207797dc12bac1a3f964d1628d6ffbdc66c))
-* **vm:** retry `start` if it fails with a transient error ([#1685](https://github.com/bpg/terraform-provider-proxmox/issues/1685)) ([9d2118d](https://github.com/bpg/terraform-provider-proxmox/commit/9d2118d7625f7448c44ecc1d158a608479121ee4))
-
-
-### Miscellaneous
-
-* **ci:** pin image versions in CI workflows ([#1686](https://github.com/bpg/terraform-provider-proxmox/issues/1686)) ([59c9f1e](https://github.com/bpg/terraform-provider-proxmox/commit/59c9f1e6bea7c4c818c1ad706f3f3aca993c8f46))
-* **ci:** update jetbrains/qodana-action action (v2024.2.6 → v2024.3.2) ([#1676](https://github.com/bpg/terraform-provider-proxmox/issues/1676)) ([c6e0d94](https://github.com/bpg/terraform-provider-proxmox/commit/c6e0d94798add00b1ad26725a15bba55b9867365))
-* **ci:** update jetbrains/qodana-action action (v2024.3.2 → v2024.3.3) ([#1687](https://github.com/bpg/terraform-provider-proxmox/issues/1687)) ([943889d](https://github.com/bpg/terraform-provider-proxmox/commit/943889de52d6b706049327662f3806aff470114f))
-* **deps:** update golang.org/x/exp digest (1829a12 → b2144cd) ([#1682](https://github.com/bpg/terraform-provider-proxmox/issues/1682)) ([1069543](https://github.com/bpg/terraform-provider-proxmox/commit/1069543ac5f704e970e50ffa01e4557e0bba0632))
-* **deps:** update golang.org/x/exp digest (43b7b7c → 1829a12) ([#1675](https://github.com/bpg/terraform-provider-proxmox/issues/1675)) ([3ac0c57](https://github.com/bpg/terraform-provider-proxmox/commit/3ac0c57bae98239bd87358308dc742488b4a2ec4))
-* **deps:** update module github.com/hashicorp/terraform-plugin-framework-validators (v0.15.0 → v0.16.0) ([#1678](https://github.com/bpg/terraform-provider-proxmox/issues/1678)) ([84fbdce](https://github.com/bpg/terraform-provider-proxmox/commit/84fbdceb248ab63b3eb6e3afe1dcb49640cc2664))
-* **deps:** update module golang.org/x/crypto (v0.30.0 → v0.31.0) [security] ([#1673](https://github.com/bpg/terraform-provider-proxmox/issues/1673)) ([476a6b8](https://github.com/bpg/terraform-provider-proxmox/commit/476a6b8c9baf438838b50878c154b7d9fea7038a))
-
-## [0.68.1](https://github.com/bpg/terraform-provider-proxmox/compare/v0.68.0...v0.68.1) (2024-12-07)
-
-
-### Bug Fixes
-
-* **vm:** `timeout_create` / `timeout_clone` does not always apply ([#1671](https://github.com/bpg/terraform-provider-proxmox/issues/1671)) ([a57bd7e](https://github.com/bpg/terraform-provider-proxmox/commit/a57bd7e14cfb9d096eabae9b5a525be708bb658b))
-* **vm:** add validation for `node_name` values ([#1659](https://github.com/bpg/terraform-provider-proxmox/issues/1659)) ([106bcd2](https://github.com/bpg/terraform-provider-proxmox/commit/106bcd2ff9c92edaf0b33c12f209bddfc84a28c8))
-
-
-### Miscellaneous
-
-* **deps:** update github.com/hashicorp/go-cty digest (8598007 → a0325cb) ([#1661](https://github.com/bpg/terraform-provider-proxmox/issues/1661)) ([c865896](https://github.com/bpg/terraform-provider-proxmox/commit/c8658967e8b4fa196ff34315ff6fe4f9a91f3566))
-* **deps:** update golang.org/x/exp digest (2d47ceb → 43b7b7c) ([#1667](https://github.com/bpg/terraform-provider-proxmox/issues/1667)) ([4490fe8](https://github.com/bpg/terraform-provider-proxmox/commit/4490fe8b286c6b19d3b27c50ae079288692a40bd))
-* **deps:** update module github.com/hashicorp/terraform-plugin-docs (v0.20.0 → v0.20.1) in /tools ([#1662](https://github.com/bpg/terraform-provider-proxmox/issues/1662)) ([3a9764e](https://github.com/bpg/terraform-provider-proxmox/commit/3a9764e85ffb8c8e7d2a71c4ec2f25e52db5fe57))
-* **deps:** update module golang.org/x/crypto (v0.29.0 → v0.30.0) ([#1668](https://github.com/bpg/terraform-provider-proxmox/issues/1668)) ([b97df0b](https://github.com/bpg/terraform-provider-proxmox/commit/b97df0b6361399d6ce3e8c54e87059e360a67579))
-* **deps:** update module golang.org/x/net (v0.31.0 → v0.32.0) ([#1669](https://github.com/bpg/terraform-provider-proxmox/issues/1669)) ([e56c627](https://github.com/bpg/terraform-provider-proxmox/commit/e56c6275eaef0cb7ad2119f2c04a7e298a48b280))
-* **docs:** add examples with VM hostname configuration to cloud-init guide ([#1670](https://github.com/bpg/terraform-provider-proxmox/issues/1670)) ([dc73e0b](https://github.com/bpg/terraform-provider-proxmox/commit/dc73e0ba048bf3762c7816e61af6d859f5ad47f7))
-* **docs:** update README.md to PVE 8.3 ([#1663](https://github.com/bpg/terraform-provider-proxmox/issues/1663)) ([00497f3](https://github.com/bpg/terraform-provider-proxmox/commit/00497f3b3527a3c43ea6b5490b55a81935153de5))
-
-## [0.68.0](https://github.com/bpg/terraform-provider-proxmox/compare/v0.67.1...v0.68.0) (2024-11-26)
-
-
-### Features
-
-* **node:** add support for node config API ([#1482](https://github.com/bpg/terraform-provider-proxmox/issues/1482)) ([3e025fd](https://github.com/bpg/terraform-provider-proxmox/commit/3e025fd6c82d7b8d2bc141ce6c029f11b6da9ba3))
-* **vm:** add bz2 (bzip2) as a valid download file compression algorithm ([#1655](https://github.com/bpg/terraform-provider-proxmox/issues/1655)) ([e29dc53](https://github.com/bpg/terraform-provider-proxmox/commit/e29dc5364fa3d8de65010ffa321e3b44e79bd818))
-
-
-### Bug Fixes
-
-* **vm:** add retries to VM `update` operation ([#1650](https://github.com/bpg/terraform-provider-proxmox/issues/1650)) ([d92710d](https://github.com/bpg/terraform-provider-proxmox/commit/d92710d0b5c54a816fc06785553c13af8a13131c))
-
-
-### Miscellaneous
-
-* **ci:** remove mergify config ([#1652](https://github.com/bpg/terraform-provider-proxmox/issues/1652)) ([45eede7](https://github.com/bpg/terraform-provider-proxmox/commit/45eede724b70fedea6d4dd32f66409324e36930d))
-* **ci:** update qodana config ([#1653](https://github.com/bpg/terraform-provider-proxmox/issues/1653)) ([6dad660](https://github.com/bpg/terraform-provider-proxmox/commit/6dad6601370c15f3a2c5c39ac6acd28fd7a2be80))
-* **deps:** update module github.com/golangci/golangci-lint (v1.62.0 → v1.62.2) in /tools ([#1657](https://github.com/bpg/terraform-provider-proxmox/issues/1657)) ([826b406](https://github.com/bpg/terraform-provider-proxmox/commit/826b406d89160c44e66ed0cbddd874388bab51d3))
-* **deps:** update module github.com/stretchr/testify (v1.9.0 → v1.10.0) ([#1654](https://github.com/bpg/terraform-provider-proxmox/issues/1654)) ([7967299](https://github.com/bpg/terraform-provider-proxmox/commit/796729935ce8ff2ef97a2562f464113a446e6946))
-
-## [0.67.1](https://github.com/bpg/terraform-provider-proxmox/compare/v0.67.0...v0.67.1) (2024-11-21)
-
-
-### Bug Fixes
-
-* **provider:** "context deadline exceeded" error when retrieving the next available VM identifier ([#1647](https://github.com/bpg/terraform-provider-proxmox/issues/1647)) ([2385975](https://github.com/bpg/terraform-provider-proxmox/commit/23859750b105b7793a15116bb6e63f4dcf94187c))
-
-## [0.67.0](https://github.com/bpg/terraform-provider-proxmox/compare/v0.66.3...v0.67.0) (2024-11-20)
-
-
-### Features
-
-* **provider:** better error logging when provider can't generate a VM/Container ID ([#1645](https://github.com/bpg/terraform-provider-proxmox/issues/1645)) ([071cad4](https://github.com/bpg/terraform-provider-proxmox/commit/071cad4df2573d07d2c7cb4216cb2b33a0c98242))
-* **vm:** add CPU type support for EPYC-v4 ([#1611](https://github.com/bpg/terraform-provider-proxmox/issues/1611)) ([8b51e99](https://github.com/bpg/terraform-provider-proxmox/commit/8b51e9991efefc404eb9fb7f0d1bc9fd1c1ce010))
-
-
-### Bug Fixes
-
-* **cluster:** `insecure` `migration_type` validation ([#1607](https://github.com/bpg/terraform-provider-proxmox/issues/1607)) ([0ba36e4](https://github.com/bpg/terraform-provider-proxmox/commit/0ba36e48da8e07ad95b776fc8a9e0fe65430bd83))
-
-
-### Miscellaneous
-
-* **ci:** remove semgrep workflow ([#1644](https://github.com/bpg/terraform-provider-proxmox/issues/1644)) ([e1e55f9](https://github.com/bpg/terraform-provider-proxmox/commit/e1e55f9b3b6608d43b27833afb8b8567bc1e702f))
-* **ci:** update crazy-max/ghaction-import-gpg action (v6.1.0 → v6.2.0) ([#1613](https://github.com/bpg/terraform-provider-proxmox/issues/1613)) ([21dd8ee](https://github.com/bpg/terraform-provider-proxmox/commit/21dd8ee708ba7010cab389de1cb3530e7dc22d75))
-* **ci:** update goreleaser/goreleaser-action action (v6.0.0 → v6.1.0) ([#1627](https://github.com/bpg/terraform-provider-proxmox/issues/1627)) ([93c391c](https://github.com/bpg/terraform-provider-proxmox/commit/93c391cf0d7d4b40e91a31a53086b13e9b0ab644))
-* **ci:** update jetbrains/qodana-action action (v2024.2.5 → v2024.2.6) ([#1612](https://github.com/bpg/terraform-provider-proxmox/issues/1612)) ([46ab49c](https://github.com/bpg/terraform-provider-proxmox/commit/46ab49ccaeeebac86c3dc2f0d77be0cacfff2746))
-* **ci:** update lycheeverse/lychee-action action (v2.0.2 → v2.1.0) ([#1628](https://github.com/bpg/terraform-provider-proxmox/issues/1628)) ([32d6b7d](https://github.com/bpg/terraform-provider-proxmox/commit/32d6b7d80f10f71e707e05df0b65f82c02801d40))
-* **config:** migrate config .github/renovate.json5 ([2e27b4a](https://github.com/bpg/terraform-provider-proxmox/commit/2e27b4ad0db143bcedcbc618794176ba40538d77))
-* **config:** migrate renovate config ([#1632](https://github.com/bpg/terraform-provider-proxmox/issues/1632)) ([2e27b4a](https://github.com/bpg/terraform-provider-proxmox/commit/2e27b4ad0db143bcedcbc618794176ba40538d77))
-* **deps:** update github.com/hashicorp/terraform-plugin-* ([#1614](https://github.com/bpg/terraform-provider-proxmox/issues/1614)) ([be6b660](https://github.com/bpg/terraform-provider-proxmox/commit/be6b660495f68b5af293eeb491b9abd87408f9d5))
-* **deps:** update golang.org/x/exp digest (f66d83c → 2d47ceb) ([#1626](https://github.com/bpg/terraform-provider-proxmox/issues/1626)) ([eeefa36](https://github.com/bpg/terraform-provider-proxmox/commit/eeefa36680fcb6250f238df457856d3f35c044a8))
-* **deps:** update module github.com/brianvoe/gofakeit/v7 (v7.0.4 → v7.1.2) ([#1606](https://github.com/bpg/terraform-provider-proxmox/issues/1606)) ([c0048db](https://github.com/bpg/terraform-provider-proxmox/commit/c0048db58a2bd0f2b0e13edbeb9f8186fa51e642))
-* **deps:** update module github.com/golangci/golangci-lint (v1.61.0 → v1.62.0) in /tools ([#1634](https://github.com/bpg/terraform-provider-proxmox/issues/1634)) ([e67a8f7](https://github.com/bpg/terraform-provider-proxmox/commit/e67a8f783d261991ceb1c105e542ee725578ccb8))
-* **deps:** update module github.com/hashicorp/terraform-plugin-docs (v0.19.4 → v0.20.0) in /tools ([#1629](https://github.com/bpg/terraform-provider-proxmox/issues/1629)) ([5aaf61e](https://github.com/bpg/terraform-provider-proxmox/commit/5aaf61ed9a932e68c0f7c07fb41fea12cbbd095e))
-* **deps:** update module github.com/hashicorp/terraform-plugin-sdk/v2 (v2.34.0 → v2.35.0) ([#1615](https://github.com/bpg/terraform-provider-proxmox/issues/1615)) ([fea548c](https://github.com/bpg/terraform-provider-proxmox/commit/fea548c1e974458cea1e9734053eb1bc1e55def9))
-* **deps:** update module github.com/hashicorp/terraform-plugin-testing (v1.10.0 → v1.11.0) ([#1643](https://github.com/bpg/terraform-provider-proxmox/issues/1643)) ([8c17e81](https://github.com/bpg/terraform-provider-proxmox/commit/8c17e81476b71e4785a68656283fbe6de5de87c4))
-* **docs:** clarify use of `dump` content type in`proxmox_virtual_environment_file` resource ([#1635](https://github.com/bpg/terraform-provider-proxmox/issues/1635)) ([ca22717](https://github.com/bpg/terraform-provider-proxmox/commit/ca227179a60f9d593792fe09dd35e95c84c4709e))
-
-## [0.66.3](https://github.com/bpg/terraform-provider-proxmox/compare/v0.66.2...v0.66.3) (2024-10-25)
-
-
-### Bug Fixes
-
-* **tests:** add missing example.tfrc to test api-authentication folder ([#1596](https://github.com/bpg/terraform-provider-proxmox/issues/1596)) ([1e57684](https://github.com/bpg/terraform-provider-proxmox/commit/1e57684029a1052c58967fdba08be69f1d284047))
-* **vm:** incorrect detection of disk resize ([#1602](https://github.com/bpg/terraform-provider-proxmox/issues/1602)) ([2781d75](https://github.com/bpg/terraform-provider-proxmox/commit/2781d7525aa87801f652559318c66689b5ccc945))
-
-
-### Miscellaneous
-
-* **ci:** update actions/checkout action (v4.2.1 → v4.2.2) ([#1603](https://github.com/bpg/terraform-provider-proxmox/issues/1603)) ([547b314](https://github.com/bpg/terraform-provider-proxmox/commit/547b3148f74af916155267e3677c9bccff5d686f))
-* **ci:** update jetbrains/qodana-action action (v2024.2.3 → v2024.2.5) ([#1604](https://github.com/bpg/terraform-provider-proxmox/issues/1604)) ([c4a6190](https://github.com/bpg/terraform-provider-proxmox/commit/c4a6190a302d78251f28c028cee02a79f22272ed))
-* **ci:** update lycheeverse/lychee-action action (v2.0.1 → v2.0.2) ([#1595](https://github.com/bpg/terraform-provider-proxmox/issues/1595)) ([18fc8d4](https://github.com/bpg/terraform-provider-proxmox/commit/18fc8d418bc46c42407b3d83d65e7c362e1bc7e7))
-* **deps:** update module github.com/hashicorp/terraform-plugin-framework-validators (v0.13.0 → v0.14.0) ([#1598](https://github.com/bpg/terraform-provider-proxmox/issues/1598)) ([7a26cfe](https://github.com/bpg/terraform-provider-proxmox/commit/7a26cfe53c8281de30e4f4244f4e57a20c1935d6))
-* **deps:** update module github.com/pkg/sftp (v1.13.6 → v1.13.7) ([#1605](https://github.com/bpg/terraform-provider-proxmox/issues/1605)) ([0453e71](https://github.com/bpg/terraform-provider-proxmox/commit/0453e71f701ba3d0f4c68e20a22f2a42bb4b154f))
-* **tests:** add script to test/view api-authentication successes/failures ([#1562](https://github.com/bpg/terraform-provider-proxmox/issues/1562)) ([bce2ceb](https://github.com/bpg/terraform-provider-proxmox/commit/bce2ceb5224a27c0deb5536a176c575dda69ca63))
-
-## [0.66.2](https://github.com/bpg/terraform-provider-proxmox/compare/v0.66.1...v0.66.2) (2024-10-12)
-
-
-### Bug Fixes
-
-* **docs:** typo in cloud-image.md guide, exiting -&gt; existing ([#1584](https://github.com/bpg/terraform-provider-proxmox/issues/1584)) ([af7b0e7](https://github.com/bpg/terraform-provider-proxmox/commit/af7b0e71303a27e22e94e5d854d1b4d83ba4ff34))
-* **docs:** update README.md ([#1578](https://github.com/bpg/terraform-provider-proxmox/issues/1578)) ([51d0338](https://github.com/bpg/terraform-provider-proxmox/commit/51d0338bbaec723ef103b256ae82a54f68a0149d))
-* **vm:** do not reboot at disk resize ([#1580](https://github.com/bpg/terraform-provider-proxmox/issues/1580)) ([90c50fc](https://github.com/bpg/terraform-provider-proxmox/commit/90c50fcb471c66448652f089039ed8cef9a3bbc7))
-
-
-### Miscellaneous
-
-* **ci:** update actions/checkout action (v4.2.0 → v4.2.1) ([#1581](https://github.com/bpg/terraform-provider-proxmox/issues/1581)) ([95f00ef](https://github.com/bpg/terraform-provider-proxmox/commit/95f00ef1e2f0717803b5d4bb3bf6993faa3af80f))
-* **ci:** Update lycheeverse/lychee-action action (v1.10.0 → v2.0.0) ([#1583](https://github.com/bpg/terraform-provider-proxmox/issues/1583)) ([d1d8228](https://github.com/bpg/terraform-provider-proxmox/commit/d1d8228d6a85f99e08d0cfeec8111794f37bb922))
-* **ci:** update lycheeverse/lychee-action action (v2.0.0 → v2.0.1) ([#1590](https://github.com/bpg/terraform-provider-proxmox/issues/1590)) ([dcb8b60](https://github.com/bpg/terraform-provider-proxmox/commit/dcb8b60ca72c6562e0436cec6f974fcd525dfc76))
-* **deps:** update golang.org/x/exp digest (225e2ab → f66d83c) ([#1586](https://github.com/bpg/terraform-provider-proxmox/issues/1586)) ([e103029](https://github.com/bpg/terraform-provider-proxmox/commit/e1030294ae3d882812b7e111b585a36c3e1f4125))
-
-## [0.66.1](https://github.com/bpg/terraform-provider-proxmox/compare/v0.66.0...v0.66.1) (2024-10-05)
-
-
-### Bug Fixes
-
-* **docs:** typo in container guide ([#1566](https://github.com/bpg/terraform-provider-proxmox/issues/1566)) ([77634cb](https://github.com/bpg/terraform-provider-proxmox/commit/77634cbd5978124b0c9a3979d47a91938a2d1479))
-* **provider:** sequentially generated `vm_id`s may clash with exiting VM / Container IDs ([#1574](https://github.com/bpg/terraform-provider-proxmox/issues/1574)) ([e838c6b](https://github.com/bpg/terraform-provider-proxmox/commit/e838c6b645f3bc70728d58384fb22a5ad1829ee4))
-
-
-### Miscellaneous
-
-* **deps:** update golang.org/x/exp digest (701f63a → 225e2ab) ([#1570](https://github.com/bpg/terraform-provider-proxmox/issues/1570)) ([65f35f3](https://github.com/bpg/terraform-provider-proxmox/commit/65f35f31c136b0e978c97d51d2f9f355aa46c652))
-* **deps:** update module golang.org/x/net (v0.29.0 → v0.30.0) ([#1572](https://github.com/bpg/terraform-provider-proxmox/issues/1572)) ([4379fca](https://github.com/bpg/terraform-provider-proxmox/commit/4379fcafa9d1063ae90f25e28fba78d73f6359e2))
-
-## [0.66.0](https://github.com/bpg/terraform-provider-proxmox/compare/v0.65.0...v0.66.0) (2024-10-04)
-
-
-### Features
-
-* **provider:** add support for pre(external) auth'd session tokens ([#1441](https://github.com/bpg/terraform-provider-proxmox/issues/1441)) ([eb2f36b](https://github.com/bpg/terraform-provider-proxmox/commit/eb2f36be21bc8a74bbd7e74bc7a7f3f6ed2d8daf))
-* **provider:** reliable sequential and random `vm_id` generation ([#1557](https://github.com/bpg/terraform-provider-proxmox/issues/1557)) ([72f7cb8](https://github.com/bpg/terraform-provider-proxmox/commit/72f7cb81a8bbe0fcd9aa739073db6e552820a7de))
-* **vm:** add support for `watchdog` ([#1556](https://github.com/bpg/terraform-provider-proxmox/issues/1556)) ([d226b59](https://github.com/bpg/terraform-provider-proxmox/commit/d226b59e2e37ffebc737e27cc9bb0182d4bda993))
-
-
-### Bug Fixes
-
-* **docs:** correct url for template download in container resource example ([#1563](https://github.com/bpg/terraform-provider-proxmox/issues/1563)) ([7266583](https://github.com/bpg/terraform-provider-proxmox/commit/72665830be975f0671c6aecca47fc52906cb21e2))
-* **lxc:** add new storage-backed mount point to existing container ([#1553](https://github.com/bpg/terraform-provider-proxmox/issues/1553)) ([89d72cd](https://github.com/bpg/terraform-provider-proxmox/commit/89d72cd37f63fd6238dbb09709ce90020e42e18a))
-* **provider:** handle IPv6 in ssh client ([#1558](https://github.com/bpg/terraform-provider-proxmox/issues/1558)) ([18a7f8e](https://github.com/bpg/terraform-provider-proxmox/commit/18a7f8ec358a158ccc4f927e0c07b5eab77b01dd))
-
-
-### Miscellaneous
-
-* **ci:** update actions/checkout action (v4.1.7 → v4.2.0) ([#1555](https://github.com/bpg/terraform-provider-proxmox/issues/1555)) ([471c5f2](https://github.com/bpg/terraform-provider-proxmox/commit/471c5f23bb67323abab77e57a359e07050ac536c))
-* **ci:** update peter-evans/create-issue-from-file action (v5.0.0 → v5.0.1) ([#1554](https://github.com/bpg/terraform-provider-proxmox/issues/1554)) ([049362a](https://github.com/bpg/terraform-provider-proxmox/commit/049362a94e585c17359a61ad410ad0c20b207d62))
-* **docs:** document specifics of "ballooning device" in the `vm.memory` block ([#1550](https://github.com/bpg/terraform-provider-proxmox/issues/1550)) ([0b29ae2](https://github.com/bpg/terraform-provider-proxmox/commit/0b29ae281ed5075aa1349fbe262176d8f8791dfc))
-
-## [0.65.0](https://github.com/bpg/terraform-provider-proxmox/compare/v0.64.0...v0.65.0) (2024-09-21)
-
-
-### Features
-
-* **vm:** remove deprecated `vga.enabled` ([#1533](https://github.com/bpg/terraform-provider-proxmox/issues/1533)) ([f4ee629](https://github.com/bpg/terraform-provider-proxmox/commit/f4ee6291ccd42ef6c6c7d0e8d6780f68a46ac218))
-
-
-### Bug Fixes
-
-* **file:** respect `download_file.override` attr when checking for the file size change ([#1537](https://github.com/bpg/terraform-provider-proxmox/issues/1537)) ([44e2814](https://github.com/bpg/terraform-provider-proxmox/commit/44e2814adf69588e219c522fa415fa38cef9dc3a))
-* **vm:** handle more than 4 `hostpci` devices ([#1543](https://github.com/bpg/terraform-provider-proxmox/issues/1543)) ([569db6d](https://github.com/bpg/terraform-provider-proxmox/commit/569db6df3bcacd86d0c1dab77512ca73d7b04560))
-
-
-### Miscellaneous
-
-* **ci:** update actions/create-github-app-token action (v1.10.4 → v1.11.0) ([#1532](https://github.com/bpg/terraform-provider-proxmox/issues/1532)) ([831207b](https://github.com/bpg/terraform-provider-proxmox/commit/831207b0e30ed0b91ec612681c130fb412210e61))
-* **ci:** update jetbrains/qodana-action action (v2024.1.9 → v2024.2.3) ([#1544](https://github.com/bpg/terraform-provider-proxmox/issues/1544)) ([13ceab8](https://github.com/bpg/terraform-provider-proxmox/commit/13ceab820501933c5b3b5d24aae1e9db69b2816b))
-* **deps:** update github.com/hashicorp/terraform-plugin-* ([#1545](https://github.com/bpg/terraform-provider-proxmox/issues/1545)) ([b5a4e32](https://github.com/bpg/terraform-provider-proxmox/commit/b5a4e32d7a9b7dc0328e114b60eaf42875d4fab6))
-* **deps:** update golang.org/x/exp digest (e7e105d → 701f63a) ([#1526](https://github.com/bpg/terraform-provider-proxmox/issues/1526)) ([b96532f](https://github.com/bpg/terraform-provider-proxmox/commit/b96532f884af73b562199d3b049b4ee4251fbf78))
-* **deps:** update module github.com/golangci/golangci-lint (v1.60.3 → v1.61.0) in /tools ([#1527](https://github.com/bpg/terraform-provider-proxmox/issues/1527)) ([356c978](https://github.com/bpg/terraform-provider-proxmox/commit/356c978ece6c60e3b130d753f9bcd644d8507fce))
-* **docs:** add example for host disk pass-through to VM ([#1547](https://github.com/bpg/terraform-provider-proxmox/issues/1547)) ([e23d2f3](https://github.com/bpg/terraform-provider-proxmox/commit/e23d2f375cb72a1e8a7f67490cbcbe1a3ea5d86f))
-* **docs:** improve `network_linux_bridge` documentation ([#1538](https://github.com/bpg/terraform-provider-proxmox/issues/1538)) ([8f9b036](https://github.com/bpg/terraform-provider-proxmox/commit/8f9b03685791088353b7ac0872130ebc7c832626))
-* **docs:** update terraform local (2.5.1 → 2.5.2) ([#1535](https://github.com/bpg/terraform-provider-proxmox/issues/1535)) ([f1ce62e](https://github.com/bpg/terraform-provider-proxmox/commit/f1ce62eeeb26d37ae1be2580869cd5baa95741be))
-* **docs:** update terraform tls (4.0.5 → 4.0.6) ([#1536](https://github.com/bpg/terraform-provider-proxmox/issues/1536)) ([a89cfbf](https://github.com/bpg/terraform-provider-proxmox/commit/a89cfbf045f2bddde3ac0d769686434467bb61d6))
-* **lxc:** update list of supported OS-es in `operating_system.type` ([#1548](https://github.com/bpg/terraform-provider-proxmox/issues/1548)) ([14a62a7](https://github.com/bpg/terraform-provider-proxmox/commit/14a62a712ae4109bc5345b6e09248bd5e68002b5))
-
-## [0.64.0](https://github.com/bpg/terraform-provider-proxmox/compare/v0.63.0...v0.64.0) (2024-09-08)
-
-
-### Features
-
-* **acme:** implement resources and data sources for ACME plugins ([#1479](https://github.com/bpg/terraform-provider-proxmox/issues/1479)) ([a6eb81a](https://github.com/bpg/terraform-provider-proxmox/commit/a6eb81af08f175ab078ae0369e0246425e77de6a))
-* **lxc:** Implement support for container's "protection flag" ([#1512](https://github.com/bpg/terraform-provider-proxmox/issues/1512)) ([9b34c48](https://github.com/bpg/terraform-provider-proxmox/commit/9b34c485ab6ee8e29e8df2269d7789820a980558))
-
-
-### Bug Fixes
-
-* **docs:** improve "SSH User" section describing `sudo` privileges ([#1522](https://github.com/bpg/terraform-provider-proxmox/issues/1522)) ([84d55cf](https://github.com/bpg/terraform-provider-proxmox/commit/84d55cf5690df0d7a5231e2d664f5fec38064df8))
-* **vm:** `cpu.architecture` showed as new attribute at re-apply after creation ([#1524](https://github.com/bpg/terraform-provider-proxmox/issues/1524)) ([c20d79d](https://github.com/bpg/terraform-provider-proxmox/commit/c20d79dfbe34b4f161d49a6c9b595354444bacd9))
-
-
-### Miscellaneous
-
-* **ci:** update actions/create-github-app-token action (v1.10.3 → v1.10.4) ([#1518](https://github.com/bpg/terraform-provider-proxmox/issues/1518)) ([112f058](https://github.com/bpg/terraform-provider-proxmox/commit/112f058e66a5bb410696d1d40b11e7216ab3986e))
-* **deps:** update golang.org/x/exp digest (0cdaa3a → 9b4947d) ([#1506](https://github.com/bpg/terraform-provider-proxmox/issues/1506)) ([0623bfd](https://github.com/bpg/terraform-provider-proxmox/commit/0623bfd1561a7a30771685d8fa3f46c9bfb4d1d8))
-* **deps:** update golang.org/x/exp digest (9b4947d → e7e105d) ([#1517](https://github.com/bpg/terraform-provider-proxmox/issues/1517)) ([273b3c9](https://github.com/bpg/terraform-provider-proxmox/commit/273b3c93b3ffafa448076ca07f6d53066844f164))
-* **deps:** update module github.com/golangci/golangci-lint (v1.60.1 → v1.60.2) in /tools ([#1499](https://github.com/bpg/terraform-provider-proxmox/issues/1499)) ([35cbe98](https://github.com/bpg/terraform-provider-proxmox/commit/35cbe98d6b26b47c0b8797dd6d4f084585f846c7))
-* **deps:** update module github.com/golangci/golangci-lint (v1.60.2 → v1.60.3) in /tools ([#1507](https://github.com/bpg/terraform-provider-proxmox/issues/1507)) ([5707fea](https://github.com/bpg/terraform-provider-proxmox/commit/5707feab06750a4782e66c0be0e5cc2edd612aa0))
-* **deps:** update module go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp (v0.53.0 → v0.54.0) in /tools ([#1509](https://github.com/bpg/terraform-provider-proxmox/issues/1509)) ([9172ec6](https://github.com/bpg/terraform-provider-proxmox/commit/9172ec6a9fd01e876e18fa3e8664aee3b639c891))
-* **deps:** update module golang.org/x/crypto (v0.26.0 → v0.27.0) ([#1519](https://github.com/bpg/terraform-provider-proxmox/issues/1519)) ([3951bda](https://github.com/bpg/terraform-provider-proxmox/commit/3951bdab4a958761e6978ab0dc03857b797bd417))
-* **deps:** update module golang.org/x/net (v0.28.0 → v0.29.0) ([#1520](https://github.com/bpg/terraform-provider-proxmox/issues/1520)) ([a0bce8d](https://github.com/bpg/terraform-provider-proxmox/commit/a0bce8d699b6d633acb309c55e43e8743afb7122))
-* **vm:** add acc test for no cdrom by default ([#1523](https://github.com/bpg/terraform-provider-proxmox/issues/1523)) ([35b6571](https://github.com/bpg/terraform-provider-proxmox/commit/35b6571bf468d09902c899f3e1782db9a13b78a0))
-
-## [0.63.0](https://github.com/bpg/terraform-provider-proxmox/compare/v0.62.0...v0.63.0) (2024-08-21)
-
-
-### Features
-
-* **file:** add support to set the file mode ([#1478](https://github.com/bpg/terraform-provider-proxmox/issues/1478)) ([cc9d0e7](https://github.com/bpg/terraform-provider-proxmox/commit/cc9d0e713190d736861883f97058c1ec7f0a179d))
-
-
-### Bug Fixes
-
-* **doc:** update virtual_environment_vm.md ([#1495](https://github.com/bpg/terraform-provider-proxmox/issues/1495)) ([4f8e18d](https://github.com/bpg/terraform-provider-proxmox/commit/4f8e18da04419c0077d53c3eaf90e5d18a8d947f))
-* **firewall:** remove limit for number of CIRDs in `ipset` ([#1487](https://github.com/bpg/terraform-provider-proxmox/issues/1487)) ([55bfe14](https://github.com/bpg/terraform-provider-proxmox/commit/55bfe14ce18a432849e544360561d7b9091ac4d8))
-
-
-### Miscellaneous
-
-* **ci:** update hashicorp/setup-terraform action (v3.1.1 → v3.1.2) ([#1498](https://github.com/bpg/terraform-provider-proxmox/issues/1498)) ([3f6bc5e](https://github.com/bpg/terraform-provider-proxmox/commit/3f6bc5eba223c789e9b87bf74af6ec8c49bb6b60))
-* **ci:** update jetbrains/qodana-action action (v2024.1.8 → v2024.1.9) ([#1484](https://github.com/bpg/terraform-provider-proxmox/issues/1484)) ([dd6d5ec](https://github.com/bpg/terraform-provider-proxmox/commit/dd6d5ec88ffefc41cf68aeac6260915a05450463))
-* **code:** align resource/datasource names in the fwprovider code ([#1488](https://github.com/bpg/terraform-provider-proxmox/issues/1488)) ([8f82d1a](https://github.com/bpg/terraform-provider-proxmox/commit/8f82d1a3848571f09aea400960b252d4b6c39fb1))
-* **deps:** update go (1.22.6 → 1.23.0) ([#1489](https://github.com/bpg/terraform-provider-proxmox/issues/1489)) ([3343a93](https://github.com/bpg/terraform-provider-proxmox/commit/3343a938409adc2d61658e7d2c2a52b452c50d48))
-* **deps:** update golang.org/x/exp digest (8a7402a → 0cdaa3a) ([#1483](https://github.com/bpg/terraform-provider-proxmox/issues/1483)) ([e566c4e](https://github.com/bpg/terraform-provider-proxmox/commit/e566c4e35e6680c2d24cbc42fb78aa1e753f1dd1))
-* **deps:** update module github.com/hashicorp/terraform-plugin-testing (v1.9.0 → v1.10.0) ([#1485](https://github.com/bpg/terraform-provider-proxmox/issues/1485)) ([767f680](https://github.com/bpg/terraform-provider-proxmox/commit/767f680cc3428484a6c5fe15c22c6ab7acf1dce8))
-* **deps:** update tools ([#1490](https://github.com/bpg/terraform-provider-proxmox/issues/1490)) ([6635c89](https://github.com/bpg/terraform-provider-proxmox/commit/6635c89f632f61041382ea08344380f777ee54ba))
-* **devcontainer:** configure provider override in post attach command ([#1481](https://github.com/bpg/terraform-provider-proxmox/issues/1481)) ([daaedf2](https://github.com/bpg/terraform-provider-proxmox/commit/daaedf2d99ee56a1873aeb6da4af94eb06fc7d5f))
-* **example:** update links to container images, use faster mirror ([#1497](https://github.com/bpg/terraform-provider-proxmox/issues/1497)) ([abb0be4](https://github.com/bpg/terraform-provider-proxmox/commit/abb0be4684fa21dd5e7b600f238348c509b6c9af))
-
-## [0.62.0](https://github.com/bpg/terraform-provider-proxmox/compare/v0.61.1...v0.62.0) (2024-08-08)
-
-
-### Features
-
-* **acme:** implement resources and data sources for ACME accounts ([#1455](https://github.com/bpg/terraform-provider-proxmox/issues/1455)) ([9de4037](https://github.com/bpg/terraform-provider-proxmox/commit/9de4037a8222fbf9d524df989d0b670c0ae13771))
-
-
-### Bug Fixes
-
-* **docs:** document role privileges required by `proxmox_virtual_environment_download_file` ([#1442](https://github.com/bpg/terraform-provider-proxmox/issues/1442)) ([2475d99](https://github.com/bpg/terraform-provider-proxmox/commit/2475d99317bbef3f4a2372ed1377c64590ad5df8))
-* **storage:** ignore `os.ErrClosed` from deferred `fileReader.Close()` in storage.APIUpload ([#1468](https://github.com/bpg/terraform-provider-proxmox/issues/1468)) ([e8bd1fc](https://github.com/bpg/terraform-provider-proxmox/commit/e8bd1fcda7c60de485714af6ab788f6e6a99d28f))
-* **tools:** ensure docs/guides files are copied correctly ([#1464](https://github.com/bpg/terraform-provider-proxmox/issues/1464)) ([f7c3560](https://github.com/bpg/terraform-provider-proxmox/commit/f7c35602608a7cfcdebceadd725ebae02c9b6cf6))
-
-
-### Miscellaneous
-
-* **deps:** update go (1.22.5 → 1.22.6) ([#1469](https://github.com/bpg/terraform-provider-proxmox/issues/1469)) ([966ea7a](https://github.com/bpg/terraform-provider-proxmox/commit/966ea7aa40e89990177ead67598a642bce355b27))
-* **deps:** update go (1.22.5 → 1.22.6) in /tools ([#1470](https://github.com/bpg/terraform-provider-proxmox/issues/1470)) ([10b2340](https://github.com/bpg/terraform-provider-proxmox/commit/10b2340c5b820260ffd3efdb930f830783aea330))
-* **deps:** update golang.org/x/exp digest (46b0784 → e3f2596) ([#1448](https://github.com/bpg/terraform-provider-proxmox/issues/1448)) ([1ba422a](https://github.com/bpg/terraform-provider-proxmox/commit/1ba422a68ef86ef8903aafd0030a4dcdb76023e1))
-* **deps:** update golang.org/x/exp digest (e3f2596 → 8a7402a) ([#1452](https://github.com/bpg/terraform-provider-proxmox/issues/1452)) ([76ce03f](https://github.com/bpg/terraform-provider-proxmox/commit/76ce03f6142f5811400ba3f3724a9a35decbefc3))
-* **deps:** update module github.com/hashicorp/terraform-plugin-framework (v1.10.0 → v1.11.0) ([#1471](https://github.com/bpg/terraform-provider-proxmox/issues/1471)) ([b7a110e](https://github.com/bpg/terraform-provider-proxmox/commit/b7a110e8fbe341f4347f517153ef36da286e1ae8))
-* **deps:** update module github.com/skeema/knownhosts (v1.2.2 → v1.3.0) ([#1449](https://github.com/bpg/terraform-provider-proxmox/issues/1449)) ([f116127](https://github.com/bpg/terraform-provider-proxmox/commit/f1161276ad4106033a88de0ed99ceb1258817ea7))
-* **deps:** update module golang.org/x/crypto (v0.25.0 → v0.26.0) ([#1472](https://github.com/bpg/terraform-provider-proxmox/issues/1472)) ([e641b55](https://github.com/bpg/terraform-provider-proxmox/commit/e641b55734944ebe8b359c158e5ea2ee798f433d))
-* **deps:** update module golang.org/x/net (v0.27.0 → v0.28.0) ([#1474](https://github.com/bpg/terraform-provider-proxmox/issues/1474)) ([56b98bd](https://github.com/bpg/terraform-provider-proxmox/commit/56b98bd4e698ab26aef773dcd7ec2aa94be9ae35))
-* **docs:** minor documentation updates ([#1463](https://github.com/bpg/terraform-provider-proxmox/issues/1463)) ([2bf9a94](https://github.com/bpg/terraform-provider-proxmox/commit/2bf9a9456210b7b0f60f7a5059b3dca108eef7b3))
-
-## [0.61.1](https://github.com/bpg/terraform-provider-proxmox/compare/v0.61.0...v0.61.1) (2024-07-11)
-
-
-### Bug Fixes
-
-* **time:** embed timezone data to fix set/get TZ on windows  ([#1436](https://github.com/bpg/terraform-provider-proxmox/issues/1436)) ([b4d4e4f](https://github.com/bpg/terraform-provider-proxmox/commit/b4d4e4f9d4d1c38a5954e76beb0067f20652da19))
-* **vm:** improve reliability of VM create / get operations ([#1431](https://github.com/bpg/terraform-provider-proxmox/issues/1431)) ([d193abd](https://github.com/bpg/terraform-provider-proxmox/commit/d193abd33e8f09aae0dc00d2405297908b21b7d5))
-* **vm:** panic when reading VM with SPICE USB passthrough ([#1438](https://github.com/bpg/terraform-provider-proxmox/issues/1438)) ([fc42ac3](https://github.com/bpg/terraform-provider-proxmox/commit/fc42ac3a5e49daf391af21ec7cce7d97ecf8af20))
-
-
-### Miscellaneous
-
-* **deps:** update github.com/hashicorp/terraform-plugin-* ([#1437](https://github.com/bpg/terraform-provider-proxmox/issues/1437)) ([b63c98b](https://github.com/bpg/terraform-provider-proxmox/commit/b63c98b13f7f4dde06f3fbc873939be9898571f8))
-* **deps:** update golang.org/x/exp digest (7f521ea → 46b0784) ([#1432](https://github.com/bpg/terraform-provider-proxmox/issues/1432)) ([0a978e5](https://github.com/bpg/terraform-provider-proxmox/commit/0a978e566417156b55a5973b2535a5314db992fd))
-
-## [0.61.0](https://github.com/bpg/terraform-provider-proxmox/compare/v0.60.1...v0.61.0) (2024-07-06)
-
-
-### Features
-
-* **node:** implement initial support to manage APT repositories ([#1325](https://github.com/bpg/terraform-provider-proxmox/issues/1325)) ([357f7c7](https://github.com/bpg/terraform-provider-proxmox/commit/357f7c70a701c42dda62e0adef1337d319aaed04))
-* **vm:** implement filtering in vms data source. ([#1423](https://github.com/bpg/terraform-provider-proxmox/issues/1423)) ([65f8ba5](https://github.com/bpg/terraform-provider-proxmox/commit/65f8ba5bfe3a8ca3872fd87830b1a858f24a7237))
-
-
-### Bug Fixes
-
-* **repo:** fix source.list path validation on Windows ([#1429](https://github.com/bpg/terraform-provider-proxmox/issues/1429)) ([6103e67](https://github.com/bpg/terraform-provider-proxmox/commit/6103e67ae97434991e1d85d368dbea738f6c8041))
-
-
-### Miscellaneous
-
-* **ci:** update actions/create-github-app-token action (v1.10.1 → v1.10.2) ([#1416](https://github.com/bpg/terraform-provider-proxmox/issues/1416)) ([692ea94](https://github.com/bpg/terraform-provider-proxmox/commit/692ea944c34d85ec54d40c8b1d5f15ed887f42d9))
-* **ci:** update actions/create-github-app-token action (v1.10.2 → v1.10.3) ([#1419](https://github.com/bpg/terraform-provider-proxmox/issues/1419)) ([877251c](https://github.com/bpg/terraform-provider-proxmox/commit/877251c86eaa01aa1cce3f69afeb0e0214e87486))
-* **ci:** update jetbrains/qodana-action action (v2024.1.5 → v2024.1.8) ([#1425](https://github.com/bpg/terraform-provider-proxmox/issues/1425)) ([91a16af](https://github.com/bpg/terraform-provider-proxmox/commit/91a16af747332215b9bfccc58cccb13a478222b2))
-* **deps:** update go (1.22.4 → 1.22.5) ([#1420](https://github.com/bpg/terraform-provider-proxmox/issues/1420)) ([a521c60](https://github.com/bpg/terraform-provider-proxmox/commit/a521c60f0c7e9b36eac94ac78c9cfac83856e294))
-* **deps:** update go (1.22.4 → 1.22.5) in /tools ([#1421](https://github.com/bpg/terraform-provider-proxmox/issues/1421)) ([d55f670](https://github.com/bpg/terraform-provider-proxmox/commit/d55f6706a49232869efd7319a6d3fda14e9e9372))
-* **deps:** update module go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp (v0.52.0 → v0.53.0) in /tools ([#1426](https://github.com/bpg/terraform-provider-proxmox/issues/1426)) ([cf1142e](https://github.com/bpg/terraform-provider-proxmox/commit/cf1142e24b4c308637bfa481107f82d149a3b585))
-* **deps:** update module golang.org/x/crypto (v0.24.0 → v0.25.0) ([#1427](https://github.com/bpg/terraform-provider-proxmox/issues/1427)) ([3ad5b0a](https://github.com/bpg/terraform-provider-proxmox/commit/3ad5b0a9e10ff8d6a5e707dd2dfb2a9f0d70bd4b))
-* **deps:** update module golang.org/x/net (v0.26.0 → v0.27.0) ([#1430](https://github.com/bpg/terraform-provider-proxmox/issues/1430)) ([6436967](https://github.com/bpg/terraform-provider-proxmox/commit/6436967903970e7cdece9f85bbddc00afa9ce8f9))
-
-## [0.60.1](https://github.com/bpg/terraform-provider-proxmox/compare/v0.60.0...v0.60.1) (2024-06-25)
-
-
-### Bug Fixes
-
-* **docs:** Mention alternate valid use of Volid's for containers ([#1407](https://github.com/bpg/terraform-provider-proxmox/issues/1407)) ([763654a](https://github.com/bpg/terraform-provider-proxmox/commit/763654ac8f88787de7c4d64e18aaf33e82990719))
-* **lxc:** use default rootfs size (4Gb) prevents creation of mount points ([#1398](https://github.com/bpg/terraform-provider-proxmox/issues/1398)) ([4a8bf8d](https://github.com/bpg/terraform-provider-proxmox/commit/4a8bf8da27295d6fcca4be8cae05aedfe48d7cf3))
-
-
-### Miscellaneous
-
-* **code:** fix code quality warnings ([#1409](https://github.com/bpg/terraform-provider-proxmox/issues/1409)) ([4f70459](https://github.com/bpg/terraform-provider-proxmox/commit/4f70459c264e1d9d3e6541fa7276d5de57fa5d46))
-* **deps:** update module github.com/brianvoe/gofakeit/v7 (v7.0.3 → v7.0.4) ([#1405](https://github.com/bpg/terraform-provider-proxmox/issues/1405)) ([c926484](https://github.com/bpg/terraform-provider-proxmox/commit/c926484249af93b75c64d2acba3e1460f16f35da))
-* refactor container acc test ([#1408](https://github.com/bpg/terraform-provider-proxmox/issues/1408)) ([a0d9300](https://github.com/bpg/terraform-provider-proxmox/commit/a0d9300f0ff1f49b4df08691f4c2286b276f84b5))
-* **vm:** fix regression after storage devices refactoring ([#1399](https://github.com/bpg/terraform-provider-proxmox/issues/1399)) ([5d1c8c6](https://github.com/bpg/terraform-provider-proxmox/commit/5d1c8c606d61d91360325228655ccd372848602a))
-* **vm:** refactor storage devices handling from/to API ([#1394](https://github.com/bpg/terraform-provider-proxmox/issues/1394)) ([cc7fc63](https://github.com/bpg/terraform-provider-proxmox/commit/cc7fc63ec1c167344191cd2d3496139747e5c112))
-
-## [0.60.0](https://github.com/bpg/terraform-provider-proxmox/compare/v0.59.1...v0.60.0) (2024-06-14)
-
-
-### Features
-
-* **vm:** add support for `disk.serial` attribute  ([#1385](https://github.com/bpg/terraform-provider-proxmox/issues/1385)) ([de34952](https://github.com/bpg/terraform-provider-proxmox/commit/de349523fedac8185468620a7088c55deefdbd79))
-
-
-### Bug Fixes
-
-* **docs:** add more details about the `usb` block in VM ([#1382](https://github.com/bpg/terraform-provider-proxmox/issues/1382)) ([1eb64a2](https://github.com/bpg/terraform-provider-proxmox/commit/1eb64a25226d6c2ae48ac5cc4c24499e0bbb84cf))
-* **docs:** update virtual_environment_vm.md ([#1377](https://github.com/bpg/terraform-provider-proxmox/issues/1377)) ([63f0cbf](https://github.com/bpg/terraform-provider-proxmox/commit/63f0cbfd27387a9d4fd0b5aa853be9a5a52475f2))
-* **lxc:** make container vm_id computed ([#1386](https://github.com/bpg/terraform-provider-proxmox/issues/1386)) ([bc079c0](https://github.com/bpg/terraform-provider-proxmox/commit/bc079c0c192d1b3cb99c2b646f639a57cfbff7f6))
-
-
-### Miscellaneous
-
-* **ci:** update actions/checkout action (v4.1.6 → v4.1.7) ([#1390](https://github.com/bpg/terraform-provider-proxmox/issues/1390)) ([fbf41dd](https://github.com/bpg/terraform-provider-proxmox/commit/fbf41dde93ff344950e4b879102b0070406bb227))
-* **ci:** update googleapis/release-please-action action (v4.1.1 → v4.1.3) ([#1380](https://github.com/bpg/terraform-provider-proxmox/issues/1380)) ([77f62e1](https://github.com/bpg/terraform-provider-proxmox/commit/77f62e1500e7d8468a4dcf60fba3bda907d5c7d9))
-* **code:** remove goreleaser from `/tools` ([#1384](https://github.com/bpg/terraform-provider-proxmox/issues/1384)) ([cfe1b1c](https://github.com/bpg/terraform-provider-proxmox/commit/cfe1b1cc4b151a7ab5fee7a051429ecf57b497d6))
-* **deps:** update golang.org/x/exp digest (fc45aab → 7f521ea) ([#1391](https://github.com/bpg/terraform-provider-proxmox/issues/1391)) ([f22858c](https://github.com/bpg/terraform-provider-proxmox/commit/f22858ce4e311395f3127da4dd22d45c533caa2e))
-* **deps:** Update module github.com/goreleaser/goreleaser (v1.26.2 → v2.0.0) in /tools ([#1381](https://github.com/bpg/terraform-provider-proxmox/issues/1381)) ([095be69](https://github.com/bpg/terraform-provider-proxmox/commit/095be69d8d6ad281db0670d4a22d88c860eff0ff))
-
-## [0.59.1](https://github.com/bpg/terraform-provider-proxmox/compare/v0.59.0...v0.59.1) (2024-06-10)
-
-
-### Bug Fixes
-
-* **vm:** ignore 599 task status response when waiting for VM start ([#1365](https://github.com/bpg/terraform-provider-proxmox/issues/1365)) ([5d4193b](https://github.com/bpg/terraform-provider-proxmox/commit/5d4193b6beb2b4b71b9f5be7507d4ddc6ea3b6b7))
-
-
-### Miscellaneous
-
-* **api:** refactor `nodes/vms/vms_types.go`: split into multiple files ([#1368](https://github.com/bpg/terraform-provider-proxmox/issues/1368)) ([580381f](https://github.com/bpg/terraform-provider-proxmox/commit/580381f89248f40ad645d8f9208e2223c66d6e4f))
-* **code:** fix code inspection warnings ([#1375](https://github.com/bpg/terraform-provider-proxmox/issues/1375)) ([e647b21](https://github.com/bpg/terraform-provider-proxmox/commit/e647b21e3a90d49f0f1300fcaaa9e23312f67b2b))
-* **deps:** update module github.com/golangci/golangci-lint (v1.59.0 → v1.59.1) in /tools ([#1373](https://github.com/bpg/terraform-provider-proxmox/issues/1373)) ([24f9990](https://github.com/bpg/terraform-provider-proxmox/commit/24f9990249037893312636abdae8f30391cff207))
-* **docs:** clarify `disk.file_id` format ([#1374](https://github.com/bpg/terraform-provider-proxmox/issues/1374)) ([f3ac15a](https://github.com/bpg/terraform-provider-proxmox/commit/f3ac15ad12b0638ed421e25b561f1d16f7d3a41d))
-* **vm2:** add initial support for `cdrom` ([#1370](https://github.com/bpg/terraform-provider-proxmox/issues/1370)) ([80cafa6](https://github.com/bpg/terraform-provider-proxmox/commit/80cafa689f3795a808dc0c2ecbcf81608181e370))
-
-## [0.59.0](https://github.com/bpg/terraform-provider-proxmox/compare/v0.58.1...v0.59.0) (2024-06-05)
-
-
-### Features
-
-* **vm:** allow `none` `cdrom` ([#1347](https://github.com/bpg/terraform-provider-proxmox/issues/1347)) ([994f367](https://github.com/bpg/terraform-provider-proxmox/commit/994f367cc2bb444a61ecc5b04e1280394aa6b345))
-
-
-### Bug Fixes
-
-* **access:** fix `user` and `role` import ([#1346](https://github.com/bpg/terraform-provider-proxmox/issues/1346)) ([bdd9225](https://github.com/bpg/terraform-provider-proxmox/commit/bdd9225041d1dbbc834f7df6adc7463bb3c09b9f))
-* **lxc,vm:** fix panics when a resource block is empty ([#1345](https://github.com/bpg/terraform-provider-proxmox/issues/1345)) ([9bbbf8d](https://github.com/bpg/terraform-provider-proxmox/commit/9bbbf8db390ed43291126eca2d3fc391b7308acc))
-
-
-### Miscellaneous
-
-* **ci:** update actions/create-github-app-token action (v1.10.0 → v1.10.1) ([#1356](https://github.com/bpg/terraform-provider-proxmox/issues/1356)) ([92476d4](https://github.com/bpg/terraform-provider-proxmox/commit/92476d4f4024c9746c3da987a0d7e210525b14ab))
-* **ci:** Update goreleaser/goreleaser-action action (v5.1.0 → v6.0.0) ([#1362](https://github.com/bpg/terraform-provider-proxmox/issues/1362)) ([9dbee1a](https://github.com/bpg/terraform-provider-proxmox/commit/9dbee1a12c2435db00fbf2011d45fbeffdb2b15c))
-* **deps:** update go (1.22.3 → 1.22.4) ([#1357](https://github.com/bpg/terraform-provider-proxmox/issues/1357)) ([ea509b2](https://github.com/bpg/terraform-provider-proxmox/commit/ea509b289ec002a085d500521519c93873eb0f65))
-* **deps:** update golang.org/x/exp digest (23cca88 → fd00a4e) ([#1343](https://github.com/bpg/terraform-provider-proxmox/issues/1343)) ([eaeff08](https://github.com/bpg/terraform-provider-proxmox/commit/eaeff08571e390cd29f037f00b0c08086e704f70))
-* **deps:** update golang.org/x/exp digest (fd00a4e → fc45aab) ([#1355](https://github.com/bpg/terraform-provider-proxmox/issues/1355)) ([8fb6410](https://github.com/bpg/terraform-provider-proxmox/commit/8fb64105075e370945c007411b0e74f703e51f4d))
-* **deps:** Update module github.com/goreleaser/goreleaser (v1.26.2 → v2.0.0) in /tools ([#1363](https://github.com/bpg/terraform-provider-proxmox/issues/1363)) ([7064f12](https://github.com/bpg/terraform-provider-proxmox/commit/7064f1259a7830e493e7a3e07a2dce79eef030fc))
-* **deps:** update module github.com/hashicorp/terraform-plugin-framework (v1.8.0 → v1.9.0) ([#1359](https://github.com/bpg/terraform-provider-proxmox/issues/1359)) ([27ad93e](https://github.com/bpg/terraform-provider-proxmox/commit/27ad93e793864310d0944591802876efcbfafbc2))
-* **deps:** update tools ([#1358](https://github.com/bpg/terraform-provider-proxmox/issues/1358)) ([9c4b9db](https://github.com/bpg/terraform-provider-proxmox/commit/9c4b9dbcbad247d2926d9ee8b6407efc0ab91cb8))
-
-## [0.58.1](https://github.com/bpg/terraform-provider-proxmox/compare/v0.58.0...v0.58.1) (2024-05-30)
-
-
-### Bug Fixes
-
-* **vm:** adding disks causes VM to be re-created ([#1336](https://github.com/bpg/terraform-provider-proxmox/issues/1336)) ([d02dc1e](https://github.com/bpg/terraform-provider-proxmox/commit/d02dc1eb0a524d89a06b4b96b1d36c504ab737fe))
-* **vm:** host parameter is optional if using mapping for usb ([#1338](https://github.com/bpg/terraform-provider-proxmox/issues/1338)) ([76d9806](https://github.com/bpg/terraform-provider-proxmox/commit/76d980683c5349ac2376d4f8523df241c5c05e0b))
-* **vm:** regression: `vga.clipboard` attribute check ([#1340](https://github.com/bpg/terraform-provider-proxmox/issues/1340)) ([2785c40](https://github.com/bpg/terraform-provider-proxmox/commit/2785c40d44ca950742cbd78e6b720b25bb6e7826))
-
-
-### Miscellaneous
-
-* **deps:** update golang.org/x/exp digest (4c93da0 → 23cca88) ([#1333](https://github.com/bpg/terraform-provider-proxmox/issues/1333)) ([804b498](https://github.com/bpg/terraform-provider-proxmox/commit/804b498453621d308a3d3a4caae168076d494a08))
-* **deps:** update module github.com/hashicorp/terraform-plugin-docs (v0.19.2 → v0.19.3) in /tools ([#1334](https://github.com/bpg/terraform-provider-proxmox/issues/1334)) ([2f87941](https://github.com/bpg/terraform-provider-proxmox/commit/2f87941f2b370bdda681d4f51dde78ca0e40154a))
-
-## [0.58.0](https://github.com/bpg/terraform-provider-proxmox/compare/v0.57.1...v0.58.0) (2024-05-28)
-
-
-### Features
-
-* **vm:** add support for `vga.clipboard`, `virtio-gl` type ([#1326](https://github.com/bpg/terraform-provider-proxmox/issues/1326)) ([32de050](https://github.com/bpg/terraform-provider-proxmox/commit/32de05060527b68198a4746ec1402f531fe9c77f))
-
-
-### Bug Fixes
-
-* **lxc:** `mount_point.backup` should be `false` by default ([#1327](https://github.com/bpg/terraform-provider-proxmox/issues/1327)) ([206fc4b](https://github.com/bpg/terraform-provider-proxmox/commit/206fc4b03ddfcc7ecf43b01ee22df2e66a4505b5))
-* **vm:** check task warning status against exit code ([#1330](https://github.com/bpg/terraform-provider-proxmox/issues/1330)) ([b7afd02](https://github.com/bpg/terraform-provider-proxmox/commit/b7afd02cc3bccfc43ab91f2484bf0bca4f532cbc))
-
-
-### Miscellaneous
-
-* **deps:** update golang.org/x/exp digest (9bf2ced → 4c93da0) ([#1321](https://github.com/bpg/terraform-provider-proxmox/issues/1321)) ([1c6b9e4](https://github.com/bpg/terraform-provider-proxmox/commit/1c6b9e4935d448a00552323c0e8679656bf6978d))
-* **deps:** update module github.com/golangci/golangci-lint (v1.58.2 → v1.59.0) in /tools ([#1332](https://github.com/bpg/terraform-provider-proxmox/issues/1332)) ([e0097d9](https://github.com/bpg/terraform-provider-proxmox/commit/e0097d9880698203b9b293c4b9c76e46a697f662))
-* **deps:** update module github.com/goreleaser/goreleaser (v1.26.1 → v1.26.2) in /tools ([#1322](https://github.com/bpg/terraform-provider-proxmox/issues/1322)) ([93f86b1](https://github.com/bpg/terraform-provider-proxmox/commit/93f86b1e13ca092bb77ad0972927e52463358b5d))
-* **docs:** document expectations for the default `root` shell on PVE nodes ([#1329](https://github.com/bpg/terraform-provider-proxmox/issues/1329)) ([ffffa56](https://github.com/bpg/terraform-provider-proxmox/commit/ffffa56518aed38ae93706ebdb22f5386baffcb1))
-* **vm2:** add support for `vga` ([#1328](https://github.com/bpg/terraform-provider-proxmox/issues/1328)) ([d843e46](https://github.com/bpg/terraform-provider-proxmox/commit/d843e46b375e27a9cb0364537adad272beb3bcdb))
-
-## [0.57.1](https://github.com/bpg/terraform-provider-proxmox/compare/v0.57.0...v0.57.1) (2024-05-22)
-
-
-### Bug Fixes
-
-* **file:** upload timeout with 596 response code ([#1315](https://github.com/bpg/terraform-provider-proxmox/issues/1315)) ([a6c6b98](https://github.com/bpg/terraform-provider-proxmox/commit/a6c6b98d449e2039edb76a9bdbb0a71ed7fdeb16))
-* **vm:** allow `clone` to pass with warnings ([#1317](https://github.com/bpg/terraform-provider-proxmox/issues/1317)) ([fb1105d](https://github.com/bpg/terraform-provider-proxmox/commit/fb1105d93bd2fec4d9fe0cfa9155539d17d8b418))
-
-
-### Miscellaneous
-
-* **ci:** update actions/checkout action (v4.1.5 → v4.1.6) ([#1305](https://github.com/bpg/terraform-provider-proxmox/issues/1305)) ([0494fcb](https://github.com/bpg/terraform-provider-proxmox/commit/0494fcb16772cd69d510d42594badfc83ae2e0ac))
-* **ci:** update jetbrains/qodana-action action (v2024.1.4 → v2024.1.5) ([#1306](https://github.com/bpg/terraform-provider-proxmox/issues/1306)) ([48fdb03](https://github.com/bpg/terraform-provider-proxmox/commit/48fdb03c8aac90f15040e7a7cad317acb535c797))
-* **deps:** update github.com/hashicorp/terraform-plugin-* ([#1309](https://github.com/bpg/terraform-provider-proxmox/issues/1309)) ([7d1b400](https://github.com/bpg/terraform-provider-proxmox/commit/7d1b4006412962aeef40bd64d38021c807543e0e))
-* **deps:** update tools ([#1316](https://github.com/bpg/terraform-provider-proxmox/issues/1316)) ([3f97a7b](https://github.com/bpg/terraform-provider-proxmox/commit/3f97a7b5c3eb8926375e02f87f84d23a9b644d2c))
-* **vm2:** add datasource implementation  ([#1318](https://github.com/bpg/terraform-provider-proxmox/issues/1318)) ([e3dd31f](https://github.com/bpg/terraform-provider-proxmox/commit/e3dd31f55e41047e004ebff34a713a4e9ed8616f))
-* **vm2:** add support for `cpu` ([#1310](https://github.com/bpg/terraform-provider-proxmox/issues/1310)) ([aa309fd](https://github.com/bpg/terraform-provider-proxmox/commit/aa309fd9eabad00e7694b8bd7d63cad6180d7118))
-* **vm2:** cleanup `cpu` implementation, refactor rearrange acc tests ([#1311](https://github.com/bpg/terraform-provider-proxmox/issues/1311)) ([2e34c57](https://github.com/bpg/terraform-provider-proxmox/commit/2e34c57f6c95bff2f3e35ee617e783a78616c900))
-
-## [0.57.0](https://github.com/bpg/terraform-provider-proxmox/compare/v0.56.1...v0.57.0) (2024-05-16)
-
-
-### Features
-
-* **vm:** remove support for `initialization.upgrade` attribute ([#1295](https://github.com/bpg/terraform-provider-proxmox/issues/1295)) ([2b7dd08](https://github.com/bpg/terraform-provider-proxmox/commit/2b7dd08020c542b5e08d241aa577be1627f19301))
-
-
-### Bug Fixes
-
-* **access:** user token `expiration_date` handling ([#1293](https://github.com/bpg/terraform-provider-proxmox/issues/1293)) ([a436c24](https://github.com/bpg/terraform-provider-proxmox/commit/a436c24923d314575bebcebb4e2173dffc753651))
-* **vm:** yet another fix for disk reordering ([#1297](https://github.com/bpg/terraform-provider-proxmox/issues/1297)) ([3180f81](https://github.com/bpg/terraform-provider-proxmox/commit/3180f81b4a14868bb0076ec8ab6299b3f6945510))
-
-
-### Miscellaneous
-
-* **ci:** update google-github-actions/release-please-action action (v4.1.0 → v4.1.1) ([#1296](https://github.com/bpg/terraform-provider-proxmox/issues/1296)) ([71480bf](https://github.com/bpg/terraform-provider-proxmox/commit/71480bf9340d11d3a06c72a4eb5425f920ea03e3))
-* **ci:** update release-please action ref ([bfb20e0](https://github.com/bpg/terraform-provider-proxmox/commit/bfb20e0bfdd7a326844351f6ece8d47c1a343085))
-* **deps:** update module github.com/goreleaser/goreleaser (v1.26.0 → v1.26.1) in /tools [security] ([#1301](https://github.com/bpg/terraform-provider-proxmox/issues/1301)) ([ea6bb93](https://github.com/bpg/terraform-provider-proxmox/commit/ea6bb93be5e8ae0ba645995165548a780424f008))
-
-## [0.56.1](https://github.com/bpg/terraform-provider-proxmox/compare/v0.56.0...v0.56.1) (2024-05-13)
-
-
-### Bug Fixes
-
-* **vm:** `cdrom` is not attached when creating a VM from scratch ([#1287](https://github.com/bpg/terraform-provider-proxmox/issues/1287)) ([be4a3b7](https://github.com/bpg/terraform-provider-proxmox/commit/be4a3b7c6f73a441f5e562f2b97c1fafef06bad0))
-
-
-### Miscellaneous
-
-* **deps:** update module github.com/goreleaser/goreleaser (v1.25.1 → v1.26.0) in /tools ([#1289](https://github.com/bpg/terraform-provider-proxmox/issues/1289)) ([7853a53](https://github.com/bpg/terraform-provider-proxmox/commit/7853a535270aa2a0782de8fad20a9d0c57f0b322))
-
-## [0.56.0](https://github.com/bpg/terraform-provider-proxmox/compare/v0.55.1...v0.56.0) (2024-05-12)
-
-
-### Features
-
-* **access:** add ACL resource ([#1166](https://github.com/bpg/terraform-provider-proxmox/issues/1166)) ([afcbb41](https://github.com/bpg/terraform-provider-proxmox/commit/afcbb415a30fdf67912fc0c8ecace338c88fd003))
-* **access:** add proxmox user token ([#1159](https://github.com/bpg/terraform-provider-proxmox/issues/1159)) ([8220271](https://github.com/bpg/terraform-provider-proxmox/commit/8220271eee5755e1d0d87f5064bfb00304a307bb))
-* **provider:** add support for `ssh-agent` on Windows ([#1270](https://github.com/bpg/terraform-provider-proxmox/issues/1270)) ([ccf4834](https://github.com/bpg/terraform-provider-proxmox/commit/ccf4834c16797e099782a13254ab1ef011833133))
-
-
-### Miscellaneous
-
-* **ci:** update actions/checkout action (v4.1.4 → v4.1.5) ([#1278](https://github.com/bpg/terraform-provider-proxmox/issues/1278)) ([10774f4](https://github.com/bpg/terraform-provider-proxmox/commit/10774f49e17ec4585508989ed225b9d10c2710fb))
-* **ci:** update goreleaser/goreleaser-action action (v5.0.0 → v5.1.0) ([#1284](https://github.com/bpg/terraform-provider-proxmox/issues/1284)) ([78f9d6e](https://github.com/bpg/terraform-provider-proxmox/commit/78f9d6e2bfecebd47018c16ab1ec22e6f00eb878))
-* **ci:** update hashicorp/setup-terraform action (v3.1.0 → v3.1.1) ([#1279](https://github.com/bpg/terraform-provider-proxmox/issues/1279)) ([e79cf12](https://github.com/bpg/terraform-provider-proxmox/commit/e79cf12f44602d9ca9c6e90b1554ac602d79f2b7))
-* **ci:** update jetbrains/qodana-action action (v2024.1.3 → v2024.1.4) ([#1280](https://github.com/bpg/terraform-provider-proxmox/issues/1280)) ([6ae9b58](https://github.com/bpg/terraform-provider-proxmox/commit/6ae9b581df6e82cfe9bae2bb9174d8cc3b46ea6c))
-* **deps:** update go (1.22.2 → 1.22.3) ([#1273](https://github.com/bpg/terraform-provider-proxmox/issues/1273)) ([097f3f9](https://github.com/bpg/terraform-provider-proxmox/commit/097f3f947ca97708a6acf67e036205d459b9c0bd))
-* **deps:** update module github.com/brianvoe/gofakeit/v7 (v7.0.2 → v7.0.3) ([#1274](https://github.com/bpg/terraform-provider-proxmox/issues/1274)) ([2be83eb](https://github.com/bpg/terraform-provider-proxmox/commit/2be83eba1ea4512579ea0188c77709fd5a409c29))
-* **deps:** update module github.com/gorilla/schema (v1.2.1 → v1.3.0) ([#1276](https://github.com/bpg/terraform-provider-proxmox/issues/1276)) ([1f80e9d](https://github.com/bpg/terraform-provider-proxmox/commit/1f80e9dc3132f16eca7533c918f2928e0eaf33e5))
-* **deps:** update module github.com/hashicorp/terraform-plugin-mux (v0.15.0 → v0.16.0) ([#1277](https://github.com/bpg/terraform-provider-proxmox/issues/1277)) ([ff98439](https://github.com/bpg/terraform-provider-proxmox/commit/ff9843945943ab0287535f84c3fe1bd60ec2b4d5))
-* **deps:** update tools ([#1275](https://github.com/bpg/terraform-provider-proxmox/issues/1275)) ([d3ea1ac](https://github.com/bpg/terraform-provider-proxmox/commit/d3ea1ac560620552ac4d4f67a9a0a0eb4de43012))
-
-## [0.55.1](https://github.com/bpg/terraform-provider-proxmox/compare/v0.55.0...v0.55.1) (2024-05-06)
-
-
-### Bug Fixes
-
-* **code:** update acc tests to PVE 8.2 ([#1269](https://github.com/bpg/terraform-provider-proxmox/issues/1269)) ([0b35f47](https://github.com/bpg/terraform-provider-proxmox/commit/0b35f47780a15d5c89b3d229e90c3af4ac35f7ce))
-* **vm:** fix timeout when resizing custom disk at create ([#1260](https://github.com/bpg/terraform-provider-proxmox/issues/1260)) ([10790f6](https://github.com/bpg/terraform-provider-proxmox/commit/10790f668d4b57b8bfe0f62cb691bdb75e12fca3))
-* **vm:** only set `initialization.upgrade` attribute when not using custom cloud-init file ([#1253](https://github.com/bpg/terraform-provider-proxmox/issues/1253)) ([9762405](https://github.com/bpg/terraform-provider-proxmox/commit/97624052f152d43cf325908ed717ef444306cbd7))
-* **vm:** use `raw` file format for `efi_disk` by default ([#1249](https://github.com/bpg/terraform-provider-proxmox/issues/1249)) ([b3caf6a](https://github.com/bpg/terraform-provider-proxmox/commit/b3caf6af8252e1fc737489f71534b96188f50631))
-
-
-### Miscellaneous
-
-* **ci:** update actions/create-github-app-token action (v1.9.3 → v1.10.0) ([#1262](https://github.com/bpg/terraform-provider-proxmox/issues/1262)) ([ce47411](https://github.com/bpg/terraform-provider-proxmox/commit/ce47411f99115a85d900a2671b2e57e21d680189))
-* **ci:** update jetbrains/qodana-action action (v2024.1.2 → v2024.1.3) ([#1261](https://github.com/bpg/terraform-provider-proxmox/issues/1261)) ([f08d139](https://github.com/bpg/terraform-provider-proxmox/commit/f08d139ba8b8e5bf3fececeda852a2d02ffd80cd))
-* **deps:** update module github.com/golangci/golangci-lint (v1.57.2 → v1.58.0) in /tools ([#1258](https://github.com/bpg/terraform-provider-proxmox/issues/1258)) ([452b24b](https://github.com/bpg/terraform-provider-proxmox/commit/452b24b36b15eb98cddba313227a37a770553f64))
-* **deps:** update module github.com/hashicorp/terraform-plugin-go (v0.22.2 → v0.23.0) ([#1266](https://github.com/bpg/terraform-provider-proxmox/issues/1266)) ([02302cb](https://github.com/bpg/terraform-provider-proxmox/commit/02302cb498999c09fe71479f2f35676a472c98fa))
-* **deps:** update module golang.org/x/crypto (v0.22.0 → v0.23.0) ([#1267](https://github.com/bpg/terraform-provider-proxmox/issues/1267)) ([c21da7e](https://github.com/bpg/terraform-provider-proxmox/commit/c21da7e1831a929703bac0ac98b3b4f3db55ea4d))
-* **deps:** update module golang.org/x/exp (v0.0.0-20240416160154-fe59bbe5cc7f → v0.0.0-20240506185415-9bf2ced13842) ([#1265](https://github.com/bpg/terraform-provider-proxmox/issues/1265)) ([6bacbe8](https://github.com/bpg/terraform-provider-proxmox/commit/6bacbe8b56562c5c814c65bbb44f03602fae41be))
-* **deps:** update module golang.org/x/net (v0.24.0 → v0.25.0) ([#1268](https://github.com/bpg/terraform-provider-proxmox/issues/1268)) ([2672bf3](https://github.com/bpg/terraform-provider-proxmox/commit/2672bf3ca12a134bc6daa5943a01e66a87ed77d6))
-
-## [0.55.0](https://github.com/bpg/terraform-provider-proxmox/compare/v0.54.0...v0.55.0) (2024-04-30)
-
-
-### Features
-
-* **cluster:** Extend the available attributes for the `proxmox_virtual_environment_cluster_options` resource ([#1241](https://github.com/bpg/terraform-provider-proxmox/issues/1241)) ([2eb36f4](https://github.com/bpg/terraform-provider-proxmox/commit/2eb36f4134a7f89e2e3fb1f69f39d359730c2acc))
-* **vm:** add initial support for IDE ([#1237](https://github.com/bpg/terraform-provider-proxmox/issues/1237)) ([bd195d6](https://github.com/bpg/terraform-provider-proxmox/commit/bd195d66069485fc290e13fc66d2b80b220ea731))
-
-
-### Miscellaneous
-
-* **ci:** update actions/checkout action (v4.1.1 → v4.1.3) ([bb44a8d](https://github.com/bpg/terraform-provider-proxmox/commit/bb44a8d84491cdca770bbbf58df4d8b0c5605f1e))
-* **ci:** update actions/checkout action (v4.1.3 → v4.1.4) ([229883b](https://github.com/bpg/terraform-provider-proxmox/commit/229883b110f6e6ab22b9e79a52167d044971c4c8))
-* **ci:** update hashicorp/setup-terraform action (v3.0.0 → v3.1.0) ([84778a3](https://github.com/bpg/terraform-provider-proxmox/commit/84778a39656cc8c2bb36f767d1ce55916353073c))
-* **ci:** update jetbrains/qodana-action action (v2024.1.1 → v2024.1.2) ([4da06ec](https://github.com/bpg/terraform-provider-proxmox/commit/4da06ecb94b1d3097e2a0fb12c7aeafc907d60a1))
-* **ci:** update lycheeverse/lychee-action action (v1.9.3 → v1.10.0) ([0839c92](https://github.com/bpg/terraform-provider-proxmox/commit/0839c92ba69eb3ba53aa098a0b3a970ba405a533))
-* **deps:** update go (1.22.0 → 1.22.2) ([#1234](https://github.com/bpg/terraform-provider-proxmox/issues/1234)) ([ee939a3](https://github.com/bpg/terraform-provider-proxmox/commit/ee939a38a35bf4a490cbb549c14a8a5538e47e23))
-* **deps:** update module github.com/hashicorp/terraform-plugin-docs (v0.19.1 → v0.19.2) in /tools ([#1247](https://github.com/bpg/terraform-provider-proxmox/issues/1247)) ([b9429cb](https://github.com/bpg/terraform-provider-proxmox/commit/b9429cbd682ab1fff65f05fd67bc9f34bd6f5906))
-* **deps:** update tools ([#1238](https://github.com/bpg/terraform-provider-proxmox/issues/1238)) ([e13bb03](https://github.com/bpg/terraform-provider-proxmox/commit/e13bb03ddafac41e7e9ca815ab3e615b839b56e3))
-* remove unused code ([#1236](https://github.com/bpg/terraform-provider-proxmox/issues/1236)) ([efd0d7b](https://github.com/bpg/terraform-provider-proxmox/commit/efd0d7b4662b0bb0bebf7827f9b3b508a2f298b6))
-* **vm2:** experiment with sets, add `tags` support ([#1232](https://github.com/bpg/terraform-provider-proxmox/issues/1232)) ([961404d](https://github.com/bpg/terraform-provider-proxmox/commit/961404dd0b2be71c1b612201cc454226ac12c04e))
-* **vm2:** experimental support for `clone` and inherited attributes ([#1235](https://github.com/bpg/terraform-provider-proxmox/issues/1235)) ([7209fe0](https://github.com/bpg/terraform-provider-proxmox/commit/7209fe03215c7fda32dd74ab9647b9824e0b8d61))
-
-## [0.54.0](https://github.com/bpg/terraform-provider-proxmox/compare/v0.53.1...v0.54.0) (2024-04-19)
-
-
-### Features
-
-* **cluster:** Implement initial support for "hardware mappings" ([#1213](https://github.com/bpg/terraform-provider-proxmox/issues/1213)) ([76c1c22](https://github.com/bpg/terraform-provider-proxmox/commit/76c1c2282bb24ccc01cd5dd138ad19e830633d10))
-
-
-### Bug Fixes
-
-* **vm,lxc,file:** improve timeouts handling ([#1222](https://github.com/bpg/terraform-provider-proxmox/issues/1222)) ([0c9c206](https://github.com/bpg/terraform-provider-proxmox/commit/0c9c2066fd88abf2ec422423113de29651be0417))
-* **vm:** state drift due to disk re-ordering ([#1215](https://github.com/bpg/terraform-provider-proxmox/issues/1215)) ([ad036a6](https://github.com/bpg/terraform-provider-proxmox/commit/ad036a67e8129ce6a50096792c33cb1ce364967e))
-
-
-### Miscellaneous
-
-* **code:** reorganize HA & node network code ([#1218](https://github.com/bpg/terraform-provider-proxmox/issues/1218)) ([163a773](https://github.com/bpg/terraform-provider-proxmox/commit/163a7730888dac2d436988499af87d4ff8f7d118))
-* **deps:** bump golang.org/x/net from 0.22.0 to 0.23.0 in /tools ([#1225](https://github.com/bpg/terraform-provider-proxmox/issues/1225)) ([7e4710d](https://github.com/bpg/terraform-provider-proxmox/commit/7e4710d3f01ab076d2ed702885f660fd1d14b90f))
-* **deps:** update github.com/hashicorp/terraform-plugin-* ([#1228](https://github.com/bpg/terraform-provider-proxmox/issues/1228)) ([5a606ec](https://github.com/bpg/terraform-provider-proxmox/commit/5a606ec18e27a89289880cff06d767758f716ce6))
-* **deps:** update go (1.22.0 → 1.22.2) in /tools ([#1227](https://github.com/bpg/terraform-provider-proxmox/issues/1227)) ([c7e36ee](https://github.com/bpg/terraform-provider-proxmox/commit/c7e36ee1a18375e15fbc365e7014f9fa9d7be24b))
-* **deps:** update golang.org/x/exp digest (93d18d7 → fe59bbe) ([#1226](https://github.com/bpg/terraform-provider-proxmox/issues/1226)) ([83d835f](https://github.com/bpg/terraform-provider-proxmox/commit/83d835ff3ebaf05e960ab500192feb12e4ef6cc6))
-* **deps:** update module github.com/avast/retry-go/v4 (v4.5.1 → v4.6.0) ([#1229](https://github.com/bpg/terraform-provider-proxmox/issues/1229)) ([9387845](https://github.com/bpg/terraform-provider-proxmox/commit/938784531f331afddc1e0639a11b75e96e96af17))
-* **deps:** update tools ([#1216](https://github.com/bpg/terraform-provider-proxmox/issues/1216)) ([1bf3bf0](https://github.com/bpg/terraform-provider-proxmox/commit/1bf3bf0f68bf73efd82e153d3efdc1ed4db75dd1))
-* **vm2:** initial experimental VM resource implementation using Plugin Framework ([#1230](https://github.com/bpg/terraform-provider-proxmox/issues/1230)) ([d8202dd](https://github.com/bpg/terraform-provider-proxmox/commit/d8202dd7a1c4f41ba9503f83b97633bd1cba30d4))
-* **vm:** fix acceptance test for hardware mapping ([#1223](https://github.com/bpg/terraform-provider-proxmox/issues/1223)) ([653e6f2](https://github.com/bpg/terraform-provider-proxmox/commit/653e6f25f848ccd13549b6e5d6ca7ba2e713ecc4))
-
-## [0.53.1](https://github.com/bpg/terraform-provider-proxmox/compare/v0.53.0...v0.53.1) (2024-04-12)
-
-
-### Bug Fixes
-
-* **vm:** error 'resizing of efidisks is not supported' when clonning a VM with re-defined `efi_disk` ([#1206](https://github.com/bpg/terraform-provider-proxmox/issues/1206)) ([46d323d](https://github.com/bpg/terraform-provider-proxmox/commit/46d323d31b1568af363bbee84f7ea7e6a46a62cc))
-* **vm:** regression: force VM recreation due to `initialization.upgrade` when it is not in the plan ([#1209](https://github.com/bpg/terraform-provider-proxmox/issues/1209)) ([628d0f1](https://github.com/bpg/terraform-provider-proxmox/commit/628d0f15dd7499a15b7ae1a00441a72191b130be))
-
-
-### Miscellaneous
-
-* **deps:** bump github.com/sigstore/cosign/v2 from 2.2.3 to 2.2.4 in /tools ([#1207](https://github.com/bpg/terraform-provider-proxmox/issues/1207)) ([19a13be](https://github.com/bpg/terraform-provider-proxmox/commit/19a13bee0a023c850854be02310a424762b7ed8c))
-
-## [0.53.0](https://github.com/bpg/terraform-provider-proxmox/compare/v0.52.0...v0.53.0) (2024-04-10)
-
-
-### Features
-
-* **vm:** add Intel E1000E support ([#1191](https://github.com/bpg/terraform-provider-proxmox/issues/1191)) ([f0a7afa](https://github.com/bpg/terraform-provider-proxmox/commit/f0a7afa57d7dc538320efe436890e23cc89993e3))
-* **vm:** add support for `initialization.upgrade` attribute ([#1203](https://github.com/bpg/terraform-provider-proxmox/issues/1203)) ([59972dc](https://github.com/bpg/terraform-provider-proxmox/commit/59972dc1b5c4171224c4e3ad3d9790a6efc66759))
-
-
-### Bug Fixes
-
-* **firewall:** remove strict validation for `rule.iface` attribute ([#1199](https://github.com/bpg/terraform-provider-proxmox/issues/1199)) ([ae88cf6](https://github.com/bpg/terraform-provider-proxmox/commit/ae88cf603d1d7e3ca86ba1506944be0f23f9301c))
-* **vm:** panic if `initialization.user_account_keys` contains `null` ([#1197](https://github.com/bpg/terraform-provider-proxmox/issues/1197)) ([b4174a7](https://github.com/bpg/terraform-provider-proxmox/commit/b4174a7c82398970f9f318955fdd07d7ab378360))
-* **vm:** panic if `numa` block is empty ([#1196](https://github.com/bpg/terraform-provider-proxmox/issues/1196)) ([c273111](https://github.com/bpg/terraform-provider-proxmox/commit/c27311183ab74bec3e12228917e1b5468a4b941c))
-
-
-### Miscellaneous
-
-* **deps:** update golang.org/x/exp digest (c0f41cb → 93d18d7) ([#1201](https://github.com/bpg/terraform-provider-proxmox/issues/1201)) ([ead36dc](https://github.com/bpg/terraform-provider-proxmox/commit/ead36dcafbe1a475748dd846b0a05c94b831c600))
-* **docs:** minor documentation updates ([#1200](https://github.com/bpg/terraform-provider-proxmox/issues/1200)) ([c14b7eb](https://github.com/bpg/terraform-provider-proxmox/commit/c14b7ebe1d524783badf299cb4e146168011729e))
-* refactor acceptance tests ([#1195](https://github.com/bpg/terraform-provider-proxmox/issues/1195)) ([c772fb3](https://github.com/bpg/terraform-provider-proxmox/commit/c772fb3cf658fcda9051f8305125fdfc78ce3b3b))
-
-## [0.52.0](https://github.com/bpg/terraform-provider-proxmox/compare/v0.51.1...v0.52.0) (2024-04-07)
-
-
-### Features
-
-* **vm:** add support for numa architecture attribute ([#1156](https://github.com/bpg/terraform-provider-proxmox/issues/1156)) ([#1175](https://github.com/bpg/terraform-provider-proxmox/issues/1175)) ([dbbd966](https://github.com/bpg/terraform-provider-proxmox/commit/dbbd966736716ab730da04ef1099cc82d2e85019))
-
-
-### Bug Fixes
-
-* **vm:** regression: provider always tries to update `memory.*hugepages` even if it is not specified ([#1188](https://github.com/bpg/terraform-provider-proxmox/issues/1188)) ([31b6812](https://github.com/bpg/terraform-provider-proxmox/commit/31b6812ce281da214261786f633ed7e93c197fb0))
-
-
-### Miscellaneous
-
-* **ci:** update actions/create-github-app-token action (v1.9.2 → v1.9.3) ([#1190](https://github.com/bpg/terraform-provider-proxmox/issues/1190)) ([24daca5](https://github.com/bpg/terraform-provider-proxmox/commit/24daca59410bb3974045e7dd5825fdbe0ef1356e))
-* **deps:** update tools ([#1184](https://github.com/bpg/terraform-provider-proxmox/issues/1184)) ([f4e5ef8](https://github.com/bpg/terraform-provider-proxmox/commit/f4e5ef8aaacdee4063eb65cd5fb53d197229335a))
-* improve acceptance tests on CI ([#1173](https://github.com/bpg/terraform-provider-proxmox/issues/1173)) ([268c861](https://github.com/bpg/terraform-provider-proxmox/commit/268c8616494219463fc2f20b2279a166f17c791a))
-
-## [0.51.1](https://github.com/bpg/terraform-provider-proxmox/compare/v0.51.0...v0.51.1) (2024-04-04)
-
-
-### Bug Fixes
-
-* **vm:** regressions: provider always tries to update `cpu.affinity` even if it is not specified ([#1182](https://github.com/bpg/terraform-provider-proxmox/issues/1182)) ([82d435f](https://github.com/bpg/terraform-provider-proxmox/commit/82d435f575576e495e0558d4f32b1620bbc4f842))
-
-
-### Miscellaneous
-
-* **ci:** update actions/create-github-app-token action (v1.9.0 → v1.9.2) ([#1177](https://github.com/bpg/terraform-provider-proxmox/issues/1177)) ([7358257](https://github.com/bpg/terraform-provider-proxmox/commit/7358257dbaa0f5d4c9de2aaaa24c7142d390baf6))
-* **deps:** update golang.org/x/exp digest (a685a6e → c0f41cb) ([#1183](https://github.com/bpg/terraform-provider-proxmox/issues/1183)) ([e680aa9](https://github.com/bpg/terraform-provider-proxmox/commit/e680aa9318b638d0ea7d235893eccb6ef102c925))
-
-## [0.51.0](https://github.com/bpg/terraform-provider-proxmox/compare/v0.50.0...v0.51.0) (2024-03-30)
-
-
-### Features
-
-* **vm:** add proxmox_virtual_environment_node datasource ([#1151](https://github.com/bpg/terraform-provider-proxmox/issues/1151)) ([9fee8c1](https://github.com/bpg/terraform-provider-proxmox/commit/9fee8c1e2e24a61cd8e75c3744227f5d44662c0f))
-* **vm:** add support for cpu `affinity` attribute ([#1148](https://github.com/bpg/terraform-provider-proxmox/issues/1148)) ([#1153](https://github.com/bpg/terraform-provider-proxmox/issues/1153)) ([83a5971](https://github.com/bpg/terraform-provider-proxmox/commit/83a5971cf64451f41d9a24b6245f59cdfae14569))
-* **vm:** add support for memory `hugepages` and `keep_hugepages` attributes ([#1158](https://github.com/bpg/terraform-provider-proxmox/issues/1158)) ([a2f055a](https://github.com/bpg/terraform-provider-proxmox/commit/a2f055a916104b1ba8008b7b359080acacb605f6))
-
-
-### Bug Fixes
-
-* **lxc:** improve configurable timeouts for containers operations ([#1161](https://github.com/bpg/terraform-provider-proxmox/issues/1161)) ([c45e336](https://github.com/bpg/terraform-provider-proxmox/commit/c45e3367e7128f82e6931fdf88bd31f9736147fd))
-* prevent authenticating multiple times in parallel ([#1168](https://github.com/bpg/terraform-provider-proxmox/issues/1168)) ([e87bc4b](https://github.com/bpg/terraform-provider-proxmox/commit/e87bc4b941564aace95d60ff987b7ec0d508b437))
-* **vm:** re-use ide, sata, and scsi cloud-init storage ([#1083](https://github.com/bpg/terraform-provider-proxmox/issues/1083)) ([#1141](https://github.com/bpg/terraform-provider-proxmox/issues/1141)) ([d41463d](https://github.com/bpg/terraform-provider-proxmox/commit/d41463de79dbae512a5560926cc95c2e46aba70f))
-
-
-### Miscellaneous
-
-* **deps:** update golang.org/x/exp digest (a85f2c6 → a685a6e) ([#1171](https://github.com/bpg/terraform-provider-proxmox/issues/1171)) ([e60ee99](https://github.com/bpg/terraform-provider-proxmox/commit/e60ee990fa691228bdfe64c32d52ee8e381689a0))
-* **deps:** update module github.com/golangci/golangci-lint (v1.56.2 → v1.57.1) in /tools ([#1149](https://github.com/bpg/terraform-provider-proxmox/issues/1149)) ([48756b6](https://github.com/bpg/terraform-provider-proxmox/commit/48756b69ba8f1fcafd88b1186a925236cb93cc30))
-* **deps:** update module github.com/golangci/golangci-lint (v1.57.1 → v1.57.2) in /tools ([#1172](https://github.com/bpg/terraform-provider-proxmox/issues/1172)) ([02efdc4](https://github.com/bpg/terraform-provider-proxmox/commit/02efdc40bf28d85f08d7b1b185386063db81cd7a))
-* **deps:** update module github.com/hashicorp/terraform-plugin-framework (v1.6.1 → v1.7.0) ([#1150](https://github.com/bpg/terraform-provider-proxmox/issues/1150)) ([e5ef91e](https://github.com/bpg/terraform-provider-proxmox/commit/e5ef91e72d896b45fbe3e3d0c7179028db632b1d))
-
-## [0.50.0](https://github.com/bpg/terraform-provider-proxmox/compare/v0.49.0...v0.50.0) (2024-03-21)
-
-
-### Features
-
-* **lxc:** add configurable timeout for container creation ([#1146](https://github.com/bpg/terraform-provider-proxmox/issues/1146)) ([84440d8](https://github.com/bpg/terraform-provider-proxmox/commit/84440d8329c607d7a1fd7ced8a078251cf23908c))
-* **lxc:** support hook script for LXC ([#1140](https://github.com/bpg/terraform-provider-proxmox/issues/1140)) ([0deaf18](https://github.com/bpg/terraform-provider-proxmox/commit/0deaf1801ade7896500c43d4903a69ee5da240a3))
-* **vm:** add support for `disconnected` attribute in network interface ([#1129](https://github.com/bpg/terraform-provider-proxmox/issues/1129)) ([11ca880](https://github.com/bpg/terraform-provider-proxmox/commit/11ca880f28b68c7beec1feb7e9dc7a6fbf00bf40))
-
-
-### Bug Fixes
-
-* **docs:** fix `sudo` configuration steps ([#1132](https://github.com/bpg/terraform-provider-proxmox/issues/1132)) ([0c6ecb8](https://github.com/bpg/terraform-provider-proxmox/commit/0c6ecb85ed0cc236db13874f87bf5f1b17c6c933))
-* **docs:** typo in `container.console` attribute `mode` -&gt; `type` ([#1133](https://github.com/bpg/terraform-provider-proxmox/issues/1133)) ([5cd6b4a](https://github.com/bpg/terraform-provider-proxmox/commit/5cd6b4acdfd4777fb7eaa48b74328284a88e53ec))
-* **examples:** `datastore_id` is missing in `initialization` block for vm ([#1136](https://github.com/bpg/terraform-provider-proxmox/issues/1136)) ([6a5becc](https://github.com/bpg/terraform-provider-proxmox/commit/6a5beccf9133c3c8306be37d6812f90f97508799))
-
-
-### Miscellaneous
-
-* **deps:** bump github.com/docker/docker from 24.0.7+incompatible to 24.0.9+incompatible in /tools ([#1142](https://github.com/bpg/terraform-provider-proxmox/issues/1142)) ([f4c80ad](https://github.com/bpg/terraform-provider-proxmox/commit/f4c80ad297c11e139d7a0b2bb851b00dd02b7ff7))
-* **deps:** update golang.org/x/exp digest (814bf88 → c7f7c64) ([#1130](https://github.com/bpg/terraform-provider-proxmox/issues/1130)) ([ab51262](https://github.com/bpg/terraform-provider-proxmox/commit/ab512622f7f21bbfcbae48793cf9d0b24af5c2d5))
-* **deps:** update golang.org/x/exp digest (c7f7c64 → a85f2c6) ([#1139](https://github.com/bpg/terraform-provider-proxmox/issues/1139)) ([6f8a472](https://github.com/bpg/terraform-provider-proxmox/commit/6f8a472981a3d1f478f9a0fd44abb83f2e19d641))
-* **vm:** refactoring: extract network device code from vm.go ([#1127](https://github.com/bpg/terraform-provider-proxmox/issues/1127)) ([29b5438](https://github.com/bpg/terraform-provider-proxmox/commit/29b5438faf7c1d09291c549516ac359952e2a87b))
-
-## [0.49.0](https://github.com/bpg/terraform-provider-proxmox/compare/v0.48.4...v0.49.0) (2024-03-15)
-
-
-### Features
-
-* **vm:** add support for `protection` attribute ([#1126](https://github.com/bpg/terraform-provider-proxmox/issues/1126)) ([cea65a8](https://github.com/bpg/terraform-provider-proxmox/commit/cea65a8a129168581451ecda5b84be8ddd2e3a3e))
-* **vm:** add support for disk `aio`, `backup`, `iops*` attributes ([#1124](https://github.com/bpg/terraform-provider-proxmox/issues/1124)) ([014b59e](https://github.com/bpg/terraform-provider-proxmox/commit/014b59e04f30fc08bc512f68cf471fe2cfdc481c))
-
-
-### Miscellaneous
-
-* **deps:** bump google.golang.org/protobuf from 1.31.0 to 1.33.0 in /tools ([#1121](https://github.com/bpg/terraform-provider-proxmox/issues/1121)) ([1ffc40b](https://github.com/bpg/terraform-provider-proxmox/commit/1ffc40b77ae6d76c8eccf64373ef982e2b14f4d1))
-* **deps:** update module github.com/skeema/knownhosts (v1.2.1 → v1.2.2) ([#1123](https://github.com/bpg/terraform-provider-proxmox/issues/1123)) ([732f018](https://github.com/bpg/terraform-provider-proxmox/commit/732f0188d798fc082fcc01312b41a9f5ded2ae0c))
-
-## [0.48.4](https://github.com/bpg/terraform-provider-proxmox/compare/v0.48.3...v0.48.4) (2024-03-13)
-
-
-### Bug Fixes
-
-* **ci:** missing releases from HashiCorp Registry ([#1118](https://github.com/bpg/terraform-provider-proxmox/issues/1118)) ([ffc64d2](https://github.com/bpg/terraform-provider-proxmox/commit/ffc64d209a392afb3198acee3ee5449b7392e579))
-
-## [0.48.3](https://github.com/bpg/terraform-provider-proxmox/compare/v0.48.2...v0.48.3) (2024-03-12)
-
-
-### Bug Fixes
-
-* **provider:** EOF error when closing SSH session ([#1113](https://github.com/bpg/terraform-provider-proxmox/issues/1113)) ([b63f1b7](https://github.com/bpg/terraform-provider-proxmox/commit/b63f1b7889287558510526f8392cfdaa9d22524b))
-* **vm:** timeout when resizing a disk during clone ([#1103](https://github.com/bpg/terraform-provider-proxmox/issues/1103)) ([449f9fc](https://github.com/bpg/terraform-provider-proxmox/commit/449f9fc31c0d737d2094b4c0db7a207b3e764122))
-
-
-### Miscellaneous
-
-* **ci:** update google-github-actions/release-please-action action (v4.0.2 → v4.1.0) ([#1115](https://github.com/bpg/terraform-provider-proxmox/issues/1115)) ([04e7421](https://github.com/bpg/terraform-provider-proxmox/commit/04e74219e3cac4805c3ae9cedced42f7f64ed461))
-* **deps:** update module github.com/hashicorp/terraform-plugin-go (v0.22.0 → v0.22.1) ([#1114](https://github.com/bpg/terraform-provider-proxmox/issues/1114)) ([a059728](https://github.com/bpg/terraform-provider-proxmox/commit/a0597289b56219a07ece3296e587a8317b1251e9))
-* **docs:** update terraform local (2.4.1 → 2.5.1) ([#1116](https://github.com/bpg/terraform-provider-proxmox/issues/1116)) ([29d60f5](https://github.com/bpg/terraform-provider-proxmox/commit/29d60f593232f08440f7e2c9426d12c24eacd572))
-* minor cleanups and doc updates ([#1108](https://github.com/bpg/terraform-provider-proxmox/issues/1108)) ([27dbcad](https://github.com/bpg/terraform-provider-proxmox/commit/27dbcad5cdd732a4777e886806c5eeb1a06129a4))
-
-## [0.48.2](https://github.com/bpg/terraform-provider-proxmox/compare/v0.48.1...v0.48.2) (2024-03-09)
-
-
-### Bug Fixes
-
-* **network:** multiple fixes to `network_linux_bridge` resource ([#1095](https://github.com/bpg/terraform-provider-proxmox/issues/1095)) ([4aed7cb](https://github.com/bpg/terraform-provider-proxmox/commit/4aed7cb085c87aed68f3dc426644a9d76c075db1))
-* **provider:** allow LDAP realm API tokens ([#1101](https://github.com/bpg/terraform-provider-proxmox/issues/1101)) ([461321c](https://github.com/bpg/terraform-provider-proxmox/commit/461321cf5e15dfd1b89a506ecf6a410e24bc8c5d))
-
-
-### Miscellaneous
-
-* **deps:** bump gopkg.in/go-jose/go-jose.v2 from 2.6.1 to 2.6.3 in /tools ([#1102](https://github.com/bpg/terraform-provider-proxmox/issues/1102)) ([4bc7b29](https://github.com/bpg/terraform-provider-proxmox/commit/4bc7b291fe9cedd41eb0a1c26107ff77710cf517))
-* **deps:** update github.com/hashicorp/terraform-plugin-* ([#1096](https://github.com/bpg/terraform-provider-proxmox/issues/1096)) ([4cac320](https://github.com/bpg/terraform-provider-proxmox/commit/4cac320ff9008b1274a944af4a6b3b302af276e0))
-* **deps:** update module golang.org/x/crypto (v0.20.0 → v0.21.0) ([#1097](https://github.com/bpg/terraform-provider-proxmox/issues/1097)) ([3b9739a](https://github.com/bpg/terraform-provider-proxmox/commit/3b9739ab5986acc4e0b25772704ce57d20818384))
-* **deps:** update module golang.org/x/net (v0.21.0 → v0.22.0) ([#1105](https://github.com/bpg/terraform-provider-proxmox/issues/1105)) ([7dea6f6](https://github.com/bpg/terraform-provider-proxmox/commit/7dea6f6ee8d3d8b5ff8027eea388c62a559ef4d6))
-
-## [0.48.1](https://github.com/bpg/terraform-provider-proxmox/compare/v0.48.0...v0.48.1) (2024-03-05)
-
-
-### Bug Fixes
-
-* **ci:** TestAccResourceVMNetwork acc test fails when run on CI ([#1092](https://github.com/bpg/terraform-provider-proxmox/issues/1092)) ([61a0fcd](https://github.com/bpg/terraform-provider-proxmox/commit/61a0fcd936c3c88e6eb0b7b5d5517795b4c3c092))
-* **docs:** fix wrong startup delay attributes ([#1088](https://github.com/bpg/terraform-provider-proxmox/issues/1088)) ([85705fd](https://github.com/bpg/terraform-provider-proxmox/commit/85705fdd51b5e64662bea169d86922ff85f062cb))
-
-
-### Miscellaneous
-
-* **deps:** update tools ([#1017](https://github.com/bpg/terraform-provider-proxmox/issues/1017)) ([fbd04ed](https://github.com/bpg/terraform-provider-proxmox/commit/fbd04ed95061f23747e4bb7224901f6a409f7547))
-* **docs:** minor improvements around SSH private key usage ([#1091](https://github.com/bpg/terraform-provider-proxmox/issues/1091)) ([171dd2f](https://github.com/bpg/terraform-provider-proxmox/commit/171dd2f234b7e1effe00bbe66bc42c30f78f9e2d))
-
-## [0.48.0](https://github.com/bpg/terraform-provider-proxmox/compare/v0.47.0...v0.48.0) (2024-03-03)
-
-
-### ⚠ BREAKING CHANGES
-
-* **file:** snippets upload using SSH input stream ([#1085](https://github.com/bpg/terraform-provider-proxmox/issues/1085))
-
-### Features
-
-* **file:** snippets upload using SSH input stream ([#1085](https://github.com/bpg/terraform-provider-proxmox/issues/1085)) ([3195b3c](https://github.com/bpg/terraform-provider-proxmox/commit/3195b3cdf4c7c9d0c9e23177b4bd097de3b1fa65))
-* **provider:** add support for private key authentication for SSH ([#1076](https://github.com/bpg/terraform-provider-proxmox/issues/1076)) ([2c6d3ad](https://github.com/bpg/terraform-provider-proxmox/commit/2c6d3ad01d7b6882597415d032380cd32cbaa68f))
-* **vm:** add `VLAN` trunk support ([#1086](https://github.com/bpg/terraform-provider-proxmox/issues/1086)) ([cb5fc27](https://github.com/bpg/terraform-provider-proxmox/commit/cb5fc279cd44de9b9782aff5749a771975f72f51))
-
-
-### Miscellaneous
-
-* **ci:** setup acceptance tests ([#1071](https://github.com/bpg/terraform-provider-proxmox/issues/1071)) ([0bf42d5](https://github.com/bpg/terraform-provider-proxmox/commit/0bf42d52e5af26c423730bd5c339bd295abf2533))
-* **ci:** split acceptance tests into a separate workflow ([#1084](https://github.com/bpg/terraform-provider-proxmox/issues/1084)) ([e38b45f](https://github.com/bpg/terraform-provider-proxmox/commit/e38b45f033a147f216228df0bf9a527665bbd808))
-* **ci:** update actions/create-github-app-token action (v1.8.1 → v1.9.0) ([66ec9f4](https://github.com/bpg/terraform-provider-proxmox/commit/66ec9f4b9b027eb963be6b9d1e8a56c6a4610fc4))
-* **ci:** update dorny/paths-filter action (v3.0.1 → v3.0.2) ([3d6cc75](https://github.com/bpg/terraform-provider-proxmox/commit/3d6cc75107c52d8eb42a46e83cd21673770968be))
-* **deps:** update github.com/hashicorp/terraform-plugin-* ([#1078](https://github.com/bpg/terraform-provider-proxmox/issues/1078)) ([2398f6c](https://github.com/bpg/terraform-provider-proxmox/commit/2398f6c339c891d78eae501648c673af470793a8))
-* **deps:** update module github.com/brianvoe/gofakeit/v7 (v7.0.1 → v7.0.2) ([#1080](https://github.com/bpg/terraform-provider-proxmox/issues/1080)) ([0d4740f](https://github.com/bpg/terraform-provider-proxmox/commit/0d4740fb90dad40c16994269e03de8b73ffee5dd))
-* **deps:** update module github.com/stretchr/testify (v1.8.4 → v1.9.0) ([#1081](https://github.com/bpg/terraform-provider-proxmox/issues/1081)) ([dbd1655](https://github.com/bpg/terraform-provider-proxmox/commit/dbd1655974b31f1fae1f4c02766ef35cca77fa1e))
-* **deps:** update module golang.org/x/crypto (v0.19.0 → v0.20.0) ([#1082](https://github.com/bpg/terraform-provider-proxmox/issues/1082)) ([e3ddd6f](https://github.com/bpg/terraform-provider-proxmox/commit/e3ddd6f5fa70728607849077fdc426d71bcf2338))
-* switch to `terraform-plugin-testing` for acceptance tests ([#1067](https://github.com/bpg/terraform-provider-proxmox/issues/1067)) ([14fce33](https://github.com/bpg/terraform-provider-proxmox/commit/14fce3366da5cf3bca04511535a2898026c3210c))
-
-## [0.47.0](https://github.com/bpg/terraform-provider-proxmox/compare/v0.46.6...v0.47.0) (2024-02-27)
-
-
-### Features
-
-* **file:** add `overwrite_unmanaged` attribute to `virtual_environment_download_file` resource ([#1064](https://github.com/bpg/terraform-provider-proxmox/issues/1064)) ([c64fcd2](https://github.com/bpg/terraform-provider-proxmox/commit/c64fcd2948bf6ffbcf6c907fb3f15931a5595596))
-
-
-### Bug Fixes
-
-* **provider:** race condition in`~/.ssh` path existence check ([#1052](https://github.com/bpg/terraform-provider-proxmox/issues/1052)) ([f7f67db](https://github.com/bpg/terraform-provider-proxmox/commit/f7f67dbd3d3edb2b6e092b77c898962d7641256f))
-* **user:** `expiration_date` attribute handling ([#1066](https://github.com/bpg/terraform-provider-proxmox/issues/1066)) ([3c52760](https://github.com/bpg/terraform-provider-proxmox/commit/3c5276093a6edc2282512aa8a489b7d5ad4eee51))
-
-
-### Miscellaneous
-
-* **ci:** update actions/create-github-app-token action (v1.8.0 → v1.8.1) ([#1063](https://github.com/bpg/terraform-provider-proxmox/issues/1063)) ([9b52c12](https://github.com/bpg/terraform-provider-proxmox/commit/9b52c127ba11a4e01f7d63e2b1d06d7090cbadcb))
-* **deps:** update golang.org/x/exp digest (v0.0.0-20240213143201-ec583247a57a → ) ([#1057](https://github.com/bpg/terraform-provider-proxmox/issues/1057)) ([4959480](https://github.com/bpg/terraform-provider-proxmox/commit/4959480f02f08354bfc009128ddc33c25aa22cae))
-* **deps:** update module github.com/brianvoe/gofakeit/v7 (v7.0.0 → v7.0.1) ([#1058](https://github.com/bpg/terraform-provider-proxmox/issues/1058)) ([190ec39](https://github.com/bpg/terraform-provider-proxmox/commit/190ec39234bbe9a2d51f8cafa343dfa66df88e66))
-* **vm:** refactor: move disks code out of vm.go ([#1062](https://github.com/bpg/terraform-provider-proxmox/issues/1062)) ([493ad1c](https://github.com/bpg/terraform-provider-proxmox/commit/493ad1c1219e666e61e05a6ad50a5fe746b4a69c))
-
-## [0.46.6](https://github.com/bpg/terraform-provider-proxmox/compare/v0.46.5...v0.46.6) (2024-02-21)
-
-
-### Bug Fixes
-
-* **vm:** regression: `mac_addresses` list is missing some interfaces ([#1049](https://github.com/bpg/terraform-provider-proxmox/issues/1049)) ([518e25e](https://github.com/bpg/terraform-provider-proxmox/commit/518e25efaf6db6863d34ea3d83432eb0cd54d18a))
-
-
-### Miscellaneous
-
-* **lxc,vm:** refactor: move vm and container code to subpackages ([#1046](https://github.com/bpg/terraform-provider-proxmox/issues/1046)) ([0791194](https://github.com/bpg/terraform-provider-proxmox/commit/079119444d9f5a4c1266a4859c1aabe416c70b5d))
-
-## [0.46.5](https://github.com/bpg/terraform-provider-proxmox/compare/v0.46.4...v0.46.5) (2024-02-20)
-
-
-### Bug Fixes
-
-* **lxc:** panic on empty `initialization.ip_config.ipv4|6` block ([#1043](https://github.com/bpg/terraform-provider-proxmox/issues/1043)) ([69c4a66](https://github.com/bpg/terraform-provider-proxmox/commit/69c4a66345547b79f4e1add7cb34d04125c6d451))
-* **lxc:** panic when handling `network_interface.firewall` attribute ([#1042](https://github.com/bpg/terraform-provider-proxmox/issues/1042)) ([eb3e374](https://github.com/bpg/terraform-provider-proxmox/commit/eb3e3744321c2f5abc796b5e21e263703cff8916))
-
-
-### Miscellaneous
-
-* **deps:** Update module github.com/brianvoe/gofakeit/v6 (v6.28.0 → v7.0.0) ([#1044](https://github.com/bpg/terraform-provider-proxmox/issues/1044)) ([7fda43f](https://github.com/bpg/terraform-provider-proxmox/commit/7fda43f4ea78695d4c962b99df196fa0a1535dc5))
-* **docs:** update README.md ([#1045](https://github.com/bpg/terraform-provider-proxmox/issues/1045)) ([8e620dc](https://github.com/bpg/terraform-provider-proxmox/commit/8e620dc59b3562de84d94e9088c82158663a3b8c))
-* **vm:** refactoring, add acceptance tests ([#1040](https://github.com/bpg/terraform-provider-proxmox/issues/1040)) ([b648e5b](https://github.com/bpg/terraform-provider-proxmox/commit/b648e5bcb0ca21874aa7d7a081995ff0d7bc1040))
-
-## [0.46.4](https://github.com/bpg/terraform-provider-proxmox/compare/v0.46.3...v0.46.4) (2024-02-16)
-
-
-### Bug Fixes
-
-* **vm:** fix panic when a config block is empty ([#1033](https://github.com/bpg/terraform-provider-proxmox/issues/1033)) ([027cf1e](https://github.com/bpg/terraform-provider-proxmox/commit/027cf1e81a2ab25f9d934921c6510d091870e3ee))
-* **vm:** multi-line description field is always marked as changed ([#1030](https://github.com/bpg/terraform-provider-proxmox/issues/1030)) ([797873b](https://github.com/bpg/terraform-provider-proxmox/commit/797873b257614246fbadf167e7649cc5ed8e17e8))
-
-
-### Miscellaneous
-
-* **ci:** update actions/create-github-app-token action (v1.7.0 → v1.8.0) ([#1022](https://github.com/bpg/terraform-provider-proxmox/issues/1022)) ([0469192](https://github.com/bpg/terraform-provider-proxmox/commit/046919275607986c4ff380a846171f0c56e5e5f2))
-* **ci:** update dorny/paths-filter action (v3.0.0 → v3.0.1) ([#1032](https://github.com/bpg/terraform-provider-proxmox/issues/1032)) ([d444202](https://github.com/bpg/terraform-provider-proxmox/commit/d444202ab8b2f80f6d144d46ea2af55f25aa8af7))
-* **ci:** update mergify config to auto-approve renovate PRs ([#1023](https://github.com/bpg/terraform-provider-proxmox/issues/1023)) ([dfb95a8](https://github.com/bpg/terraform-provider-proxmox/commit/dfb95a85f437c3e414f2e8c7020d0077ebe01bc7))
-* **deps:** update golang.org/x/exp digest (v0.0.0-20240205201215-2c58cdc269a3 → ) ([#1031](https://github.com/bpg/terraform-provider-proxmox/issues/1031)) ([4fab30e](https://github.com/bpg/terraform-provider-proxmox/commit/4fab30e5dfd62d63e29986b86dca57943f13d8af))
-* **deps:** update module golang.org/x/crypto (v0.18.0 → v0.19.0) ([#1018](https://github.com/bpg/terraform-provider-proxmox/issues/1018)) ([34d31e2](https://github.com/bpg/terraform-provider-proxmox/commit/34d31e2ed080dc944900f5219338dbe9846a3aad))
-* **deps:** update module golang.org/x/net (v0.20.0 → v0.21.0) ([#1020](https://github.com/bpg/terraform-provider-proxmox/issues/1020)) ([ed3bdb5](https://github.com/bpg/terraform-provider-proxmox/commit/ed3bdb5187dbf5588eedfc8d9ed193ab108edd64))
-* **docs:** update links disk image link in examples ([#1028](https://github.com/bpg/terraform-provider-proxmox/issues/1028)) ([62a2130](https://github.com/bpg/terraform-provider-proxmox/commit/62a2130554c9ad09a7406d40e19678c4471f9364))
-
-## [0.46.3](https://github.com/bpg/terraform-provider-proxmox/compare/v0.46.2...v0.46.3) (2024-02-07)
-
-
-### Bug Fixes
-
-* **file:** `error moving file` when uploading snippets ([#1013](https://github.com/bpg/terraform-provider-proxmox/issues/1013)) ([b6fbdcf](https://github.com/bpg/terraform-provider-proxmox/commit/b6fbdcf5ab3c191136c60814404153785aec806b))
-
-
-### Miscellaneous
-
-* **deps:** update module go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp (v0.47.0 → v0.48.0) in /tools ([#1014](https://github.com/bpg/terraform-provider-proxmox/issues/1014)) ([303b7da](https://github.com/bpg/terraform-provider-proxmox/commit/303b7da684dcf2f986fd6a70a74e40b75d71911a))
-
-## [0.46.2](https://github.com/bpg/terraform-provider-proxmox/compare/v0.46.1...v0.46.2) (2024-02-06)
-
-
-### Bug Fixes
-
-* **docs:** update sudo configuration to a more restrictive variant ([#1001](https://github.com/bpg/terraform-provider-proxmox/issues/1001)) ([6bd8ba5](https://github.com/bpg/terraform-provider-proxmox/commit/6bd8ba566a60c18121d9a66f1cdd056878fe6114))
-* **file:** use `sudo` for snippets upload ([#1004](https://github.com/bpg/terraform-provider-proxmox/issues/1004)) ([60fb679](https://github.com/bpg/terraform-provider-proxmox/commit/60fb679e9f31b3be3e05bb9b25a0deb0ab37c48c))
-* **vm:** error when creating custom disks on PVE with non-default shell ([#983](https://github.com/bpg/terraform-provider-proxmox/issues/983)) ([1f333ea](https://github.com/bpg/terraform-provider-proxmox/commit/1f333ea097f43097e3847d08153145ac2a44faad))
-* **vm:** panic at import / state refresh if disk size is not set ([#994](https://github.com/bpg/terraform-provider-proxmox/issues/994)) ([363e502](https://github.com/bpg/terraform-provider-proxmox/commit/363e502a567f8c75c45b682795ce5974e993d082))
-
-
-### Miscellaneous
-
-* **ci:** update lycheeverse/lychee-action action (v1.9.2 → v1.9.3) ([#999](https://github.com/bpg/terraform-provider-proxmox/issues/999)) ([f8004b0](https://github.com/bpg/terraform-provider-proxmox/commit/f8004b0e2a35616b94804fdb272df598cd2b88a2))
-* **deps:** update golang.org/x/exp digest (v0.0.0-20240119083558-1b970713d09a → ) ([9cfd383](https://github.com/bpg/terraform-provider-proxmox/commit/9cfd3833da3a8c38ef5800fae1e65f3cd6d3b696))
-* **deps:** update golang.org/x/exp digest (v0.0.0-20240119083558-1b970713d09a 1b97071 → 2c58cdc) ([#1007](https://github.com/bpg/terraform-provider-proxmox/issues/1007)) ([9cfd383](https://github.com/bpg/terraform-provider-proxmox/commit/9cfd3833da3a8c38ef5800fae1e65f3cd6d3b696))
-* **deps:** update module github.com/goreleaser/goreleaser (v1.23.0 → v1.24.0) in /tools [security] ([#1006](https://github.com/bpg/terraform-provider-proxmox/issues/1006)) ([e132f5a](https://github.com/bpg/terraform-provider-proxmox/commit/e132f5af4bbb892efd130777f7046269ddb0cfa6))
-* **deps:** update module github.com/hashicorp/terraform-plugin-mux (v0.13.0 → v0.14.0) ([#989](https://github.com/bpg/terraform-provider-proxmox/issues/989)) ([eb6377e](https://github.com/bpg/terraform-provider-proxmox/commit/eb6377e6fdbd84d3cbd59b254106f94325dbc479))
-* **deps:** update module github.com/hashicorp/terraform-plugin-sdk/v2 (v2.31.0 → v2.32.0) ([#990](https://github.com/bpg/terraform-provider-proxmox/issues/990)) ([c1eeefb](https://github.com/bpg/terraform-provider-proxmox/commit/c1eeefbb1214ef9c14341eac94b9469e7161e96f))
-* **deps:** update module golang.org/x/net (v0.18.0 → v0.20.0) ([#994](https://github.com/bpg/terraform-provider-proxmox/issues/994)) ([b196cdb](https://github.com/bpg/terraform-provider-proxmox/commit/b196cdb65bed27c34a755c3bab1654f71ef4a5e6))
-
-## [0.46.1](https://github.com/bpg/terraform-provider-proxmox/compare/v0.46.0...v0.46.1) (2024-01-28)
-
-
-### Bug Fixes
-
-* **docs:** fix documentation tree structure in the TF registry ([#980](https://github.com/bpg/terraform-provider-proxmox/issues/980)) ([49a76bb](https://github.com/bpg/terraform-provider-proxmox/commit/49a76bb1a10c56ab2537e83b4b9fb20d2c7c9b9e))
-
-## [0.46.0](https://github.com/bpg/terraform-provider-proxmox/compare/v0.45.1...v0.46.0) (2024-01-28)
-
-
-### Features
-
-* **docs:** rename howtos -&gt; guides and publish to the Terraform Registry ([#971](https://github.com/bpg/terraform-provider-proxmox/issues/971)) ([c39494b](https://github.com/bpg/terraform-provider-proxmox/commit/c39494b939afb0e1316776eea8730f2545135b4b))
-* **provider:** add SOCKS5 proxy support for SSH connections ([#970](https://github.com/bpg/terraform-provider-proxmox/issues/970)) ([da1d780](https://github.com/bpg/terraform-provider-proxmox/commit/da1d7804af6b2ad6d6a1d698e52d19de3c1d5cb6))
-
-
-### Bug Fixes
-
-* **docs:** fix broken links ([#976](https://github.com/bpg/terraform-provider-proxmox/issues/976)) ([0e2eb80](https://github.com/bpg/terraform-provider-proxmox/commit/0e2eb80e9f4f2e13678ad9ca6afb3cf5de4d5f19))
-* **lxc:** panic on empty `initialization.ip_config` block ([#977](https://github.com/bpg/terraform-provider-proxmox/issues/977)) ([0253eb9](https://github.com/bpg/terraform-provider-proxmox/commit/0253eb97576c6f6b06e4cf652b5c1e74ad20639d))
-* **pool:** missing `pool_id` after import ([#974](https://github.com/bpg/terraform-provider-proxmox/issues/974)) ([ed33a18](https://github.com/bpg/terraform-provider-proxmox/commit/ed33a18c9b6499ff33bacb79cebfd510b24a29c8))
-* **vm:** `timeout_start_vm` is ignored ([#978](https://github.com/bpg/terraform-provider-proxmox/issues/978)) ([625bdb6](https://github.com/bpg/terraform-provider-proxmox/commit/625bdb696f5c41f76c12f5572c89bb4594f81853))
-
-
-### Miscellaneous
-
-* **ci:** update actions/create-github-app-token action (v1.6.4 → v1.7.0) ([2fad644](https://github.com/bpg/terraform-provider-proxmox/commit/2fad644ffd732283875ab38f70c852bf9723c409))
-* **ci:** Update dorny/paths-filter action (v2.12.0 → v3.0.0) ([#959](https://github.com/bpg/terraform-provider-proxmox/issues/959)) ([3790b52](https://github.com/bpg/terraform-provider-proxmox/commit/3790b522e71ccbab69ea0549b0a12b390bfb8848))
-* **ci:** update lycheeverse/lychee-action action (v1.9.1 → v1.9.2) ([105a694](https://github.com/bpg/terraform-provider-proxmox/commit/105a694ddf8ff3c8e60440d995ffa2f42cc70788))
-* **ci:** Update peter-evans/create-issue-from-file action (v4.0.1 → v5.0.0) ([#960](https://github.com/bpg/terraform-provider-proxmox/issues/960)) ([2ec8c1d](https://github.com/bpg/terraform-provider-proxmox/commit/2ec8c1d2cdd518d34245ce120937e852a6eedea0))
-
-## [0.45.1](https://github.com/bpg/terraform-provider-proxmox/compare/v0.45.0...v0.45.1) (2024-01-27)
-
-
-### Bug Fixes
-
-* **docs:** inconsistent indentations in docs ([#961](https://github.com/bpg/terraform-provider-proxmox/issues/961)) ([0d548a7](https://github.com/bpg/terraform-provider-proxmox/commit/0d548a78078ee9ae3e0653ea8f5e75b228dc17ac))
-* **docs:** update HOW-TOs for cloud-init ([#955](https://github.com/bpg/terraform-provider-proxmox/issues/955)) ([d91ec25](https://github.com/bpg/terraform-provider-proxmox/commit/d91ec25bfae08e6f24bb9923c0ba962792e765db))
-* **vm:** regression: `sudo: command not found` when creating a VM ([#966](https://github.com/bpg/terraform-provider-proxmox/issues/966)) ([01a8f97](https://github.com/bpg/terraform-provider-proxmox/commit/01a8f9779c87a844f7d74ccaa8f9a3d4bc28bb55))
-
-
-### Miscellaneous
-
-* **ci:** update dorny/paths-filter action (v2.11.1 → v2.12.0) ([#958](https://github.com/bpg/terraform-provider-proxmox/issues/958)) ([3a5e69d](https://github.com/bpg/terraform-provider-proxmox/commit/3a5e69d9c8e647a72b9e6141fe3e2d0f2363c991))
-* **deps:** update module github.com/google/uuid (v1.5.0 → v1.6.0) ([#954](https://github.com/bpg/terraform-provider-proxmox/issues/954)) ([b6474f8](https://github.com/bpg/terraform-provider-proxmox/commit/b6474f8ddbd8c1d3564c7d2f2bbe5a996862d443))
-* **deps:** update module github.com/hashicorp/terraform-plugin-docs (v0.17.0 → v0.18.0) in /tools ([#957](https://github.com/bpg/terraform-provider-proxmox/issues/957)) ([4a03a78](https://github.com/bpg/terraform-provider-proxmox/commit/4a03a78dcd6d350b3a17fccabffb85b23c7f9fc3))
-* **deps:** update module github.com/hashicorp/terraform-plugin-go (v0.20.0 → v0.21.0) ([#964](https://github.com/bpg/terraform-provider-proxmox/issues/964)) ([63e7bfc](https://github.com/bpg/terraform-provider-proxmox/commit/63e7bfc042bd5f4b60f6fbf70c7fdfd344b91b05))
-
-## [0.45.0](https://github.com/bpg/terraform-provider-proxmox/compare/v0.44.0...v0.45.0) (2024-01-22)
-
-
-### Features
-
-* **provider:** use `sudo` when running commands over SSH ([#950](https://github.com/bpg/terraform-provider-proxmox/issues/950)) ([9d764e5](https://github.com/bpg/terraform-provider-proxmox/commit/9d764e588976a5b1d35662501de2a6bc804fb693))
-
-
-### Miscellaneous
-
-* **ci:** add link checker, reformat actions code ([#944](https://github.com/bpg/terraform-provider-proxmox/issues/944)) ([a030542](https://github.com/bpg/terraform-provider-proxmox/commit/a030542da0524caa7f7bdb996892b18c78d45804))
-* **ci:** update actions/create-github-app-token action (v1.6.3 → v1.6.4) ([#939](https://github.com/bpg/terraform-provider-proxmox/issues/939)) ([25db34b](https://github.com/bpg/terraform-provider-proxmox/commit/25db34b149f29b25935ae14245fc97837bffc0d6))
-* **ci:** Update google-github-actions/release-please-action action (v3.7.13 → v4.0.2) ([#905](https://github.com/bpg/terraform-provider-proxmox/issues/905)) ([d4832b3](https://github.com/bpg/terraform-provider-proxmox/commit/d4832b3d5991c6b4610dacae7c43a31dea3f94ee))
-* **ci:** update issue templates, renovate config ([#951](https://github.com/bpg/terraform-provider-proxmox/issues/951)) ([9644590](https://github.com/bpg/terraform-provider-proxmox/commit/96445909989fbb65a8a28aad4f98ce072db93e79))
-* **docs:** move list of contributors to CONTRIBUTORS.md ([#945](https://github.com/bpg/terraform-provider-proxmox/issues/945)) ([aabfeb8](https://github.com/bpg/terraform-provider-proxmox/commit/aabfeb86a204bdd109b885e7e1cda84eff42d8a5))
-* **docs:** update README.md, add note about OpenTofu support ([#943](https://github.com/bpg/terraform-provider-proxmox/issues/943)) ([b926c57](https://github.com/bpg/terraform-provider-proxmox/commit/b926c57a53002f955651dde8e95ac3734d453e8f))
-
-## [0.44.0](https://github.com/bpg/terraform-provider-proxmox/compare/v0.43.3...v0.44.0) (2024-01-20)
-
-
-### Features
-
-* **lxc:** add container startup options ([#923](https://github.com/bpg/terraform-provider-proxmox/issues/923)) ([c9c3067](https://github.com/bpg/terraform-provider-proxmox/commit/c9c3067b61bf6fe7930c6d8281040aa382eac09d))
-* **provider:** add min_tls option to provider config ([#931](https://github.com/bpg/terraform-provider-proxmox/issues/931)) ([01ff2cb](https://github.com/bpg/terraform-provider-proxmox/commit/01ff2cb7dba6e74e5aae51114dd13883740d028f))
-
-
-### Bug Fixes
-
-* **vm:** panic on empty `initialization.dns` block ([#928](https://github.com/bpg/terraform-provider-proxmox/issues/928)) ([e5bccbc](https://github.com/bpg/terraform-provider-proxmox/commit/e5bccbc53de66f73b95e92f00a80ba98af6becf1))
-
-
-### Miscellaneous
-
-* **deps:** update golang.org/x/exp digest (v0.0.0-20240112132812-db7319d0e0e3 → ) ([#934](https://github.com/bpg/terraform-provider-proxmox/issues/934)) ([3ffd230](https://github.com/bpg/terraform-provider-proxmox/commit/3ffd2306828af30ffd25aaa753ed086700bd71a2))
-* **deps:** update module github.com/brianvoe/gofakeit/v6 (v6.27.0 → v6.28.0) ([#937](https://github.com/bpg/terraform-provider-proxmox/issues/937)) ([c1e9c08](https://github.com/bpg/terraform-provider-proxmox/commit/c1e9c089ba921bc522a363531cb8835dd14fc30a))
-* **deps:** update module github.com/hashicorp/terraform-plugin-docs (v0.16.0 → v0.17.0) in /tools ([#922](https://github.com/bpg/terraform-provider-proxmox/issues/922)) ([c8e298c](https://github.com/bpg/terraform-provider-proxmox/commit/c8e298cc4c6071f47fdaf90328548b5e690b674b))
-* **deps:** update module go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp (v0.46.1 → v0.47.0) in /tools ([#933](https://github.com/bpg/terraform-provider-proxmox/issues/933)) ([9326131](https://github.com/bpg/terraform-provider-proxmox/commit/932613110dc0ee0f4a6c438a910d14b64761f8a2))
-* **docs:** remove static website generator with ruby dependencies ([#929](https://github.com/bpg/terraform-provider-proxmox/issues/929)) ([7d94bf7](https://github.com/bpg/terraform-provider-proxmox/commit/7d94bf73ec37bed1802cc2a37399832498ee35e7))
-* **docs:** update activesupport (7.1.2 → 7.1.3) ([#925](https://github.com/bpg/terraform-provider-proxmox/issues/925)) ([85109cb](https://github.com/bpg/terraform-provider-proxmox/commit/85109cbe3d3c2cfa8068e56978eae7a1472f9cc5))
-* **docs:** update jekyll (3.9.3 → 3.9.4) ([#921](https://github.com/bpg/terraform-provider-proxmox/issues/921)) ([93283ef](https://github.com/bpg/terraform-provider-proxmox/commit/93283ef3ab684d6155202d1fd62190a73fee1792))
-* **docs:** update terraform proxmox (0.43.2 → 0.43.3) ([#919](https://github.com/bpg/terraform-provider-proxmox/issues/919)) ([5cffafc](https://github.com/bpg/terraform-provider-proxmox/commit/5cffafc26e3d9e7b668cd53232c78006f757faea))
-
-## [0.43.3](https://github.com/bpg/terraform-provider-proxmox/compare/v0.43.2...v0.43.3) (2024-01-16)
-
-
-### Bug Fixes
-
-* **docs:** fix indentation in `virtual_environment_container.md` ([#882](https://github.com/bpg/terraform-provider-proxmox/issues/882)) ([10dbfdd](https://github.com/bpg/terraform-provider-proxmox/commit/10dbfddc57c5dc3245b9a1827ec3f5d43f783e21))
-
-
-### Miscellaneous
-
-* **ci:** switch to renovate ([#891](https://github.com/bpg/terraform-provider-proxmox/issues/891)) ([01e6698](https://github.com/bpg/terraform-provider-proxmox/commit/01e669854bb4044afcf22144a1b6e3c4cbfe92b5))
-* **ci:** update ([#890](https://github.com/bpg/terraform-provider-proxmox/issues/890)) ([c635044](https://github.com/bpg/terraform-provider-proxmox/commit/c635044db341422b458202a62538cffdaadb5fcc))
-* **ci:** update dorny/paths-filter action ( v2.2.1 → v2.11.1 ) ([#911](https://github.com/bpg/terraform-provider-proxmox/issues/911)) ([daa94d4](https://github.com/bpg/terraform-provider-proxmox/commit/daa94d4f8791d68747cf9be0dc7451fb466833bb))
-* **ci:** update dorny/paths-filter digest ( 4512585 → 3b817c9 ) ([#910](https://github.com/bpg/terraform-provider-proxmox/issues/910)) ([5574e60](https://github.com/bpg/terraform-provider-proxmox/commit/5574e60542861e5b3010f427aa295f780ce90437))
-* **ci:** update renovate config ([8226c42](https://github.com/bpg/terraform-provider-proxmox/commit/8226c421f5e99fc4e8ca6254a9b0738d6395df1b))
-* **deps:** bump github.com/hashicorp/terraform-plugin-framework from 1.4.2 to 1.5.0 ([#889](https://github.com/bpg/terraform-provider-proxmox/issues/889)) ([c7bbb47](https://github.com/bpg/terraform-provider-proxmox/commit/c7bbb47223bce86a653f236841fa1285f2a5dfe5))
-* **deps:** update activesupport (7.0.7.1 → 7.1.2) ([#897](https://github.com/bpg/terraform-provider-proxmox/issues/897)) ([9a0b897](https://github.com/bpg/terraform-provider-proxmox/commit/9a0b8979befe5875b67315f231fbebc4ed7f0d63))
-* **deps:** update github.com/hashicorp/go-cty digest ( d3edf31 → 8598007 ) ([#892](https://github.com/bpg/terraform-provider-proxmox/issues/892)) ([34cb5a7](https://github.com/bpg/terraform-provider-proxmox/commit/34cb5a7c4eae16695b0e2ae84d078c783d6bf78f))
-* **deps:** update golang.org/x/exp digest ( 9212866 → db7319d ) ([#893](https://github.com/bpg/terraform-provider-proxmox/issues/893)) ([21264c0](https://github.com/bpg/terraform-provider-proxmox/commit/21264c039af6ee714006e3f6f84798ade22cf46a))
-* **deps:** update jekyll (3.9.3 → 3.9.4) ([#894](https://github.com/bpg/terraform-provider-proxmox/issues/894)) ([65f429e](https://github.com/bpg/terraform-provider-proxmox/commit/65f429e81cae3f83cf989eac4bf5d0a846459d90))
-* **deps:** update just-the-docs (0.5.4 → 0.7.0) ([#898](https://github.com/bpg/terraform-provider-proxmox/issues/898)) ([2f074d6](https://github.com/bpg/terraform-provider-proxmox/commit/2f074d6b2d5bc046036b8eaac66396ef924dc0a7))
-* **deps:** update module github.com/brianvoe/gofakeit/v6 (v6.26.4 → v6.27.0) ([#900](https://github.com/bpg/terraform-provider-proxmox/issues/900)) ([c500cc5](https://github.com/bpg/terraform-provider-proxmox/commit/c500cc5b9b54257cb8fd551034efa5a206ce84bb))
-* **deps:** update module github.com/nats-io/nkeys (v0.4.6 → v0.4.7) ([#895](https://github.com/bpg/terraform-provider-proxmox/issues/895)) ([268722c](https://github.com/bpg/terraform-provider-proxmox/commit/268722c1214627298aa1e34da5cd8d7ba73b20a2))
-* **deps:** update module go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp (v0.44.0 → v0.46.1) ([#901](https://github.com/bpg/terraform-provider-proxmox/issues/901)) ([8d5ef9a](https://github.com/bpg/terraform-provider-proxmox/commit/8d5ef9a73fbf99b112729ea34235d8c0ee259bf9))
-* **deps:** update terraform local (2.2.2 → 2.4.1) ([#902](https://github.com/bpg/terraform-provider-proxmox/issues/902)) ([c116db5](https://github.com/bpg/terraform-provider-proxmox/commit/c116db592b7b0d7dc345f84589075e1c9e679811))
-* **deps:** update tzinfo-data (1.2023.3 → 1.2023.4) ([#896](https://github.com/bpg/terraform-provider-proxmox/issues/896)) ([2edf2cb](https://github.com/bpg/terraform-provider-proxmox/commit/2edf2cbb1d5d4996c4f33f8a5be18983ffe3e9d9))
-* **docs:** update terraform proxmox (0.38.1 → 0.43.2) in docs ([#903](https://github.com/bpg/terraform-provider-proxmox/issues/903)) ([5d9f41c](https://github.com/bpg/terraform-provider-proxmox/commit/5d9f41c877e82a500da212c03cb611d5530f290a))
-* **docs:** update terraform tls (3.1.0 → 3.4.0) in docs ([#904](https://github.com/bpg/terraform-provider-proxmox/issues/904)) ([699f19d](https://github.com/bpg/terraform-provider-proxmox/commit/699f19d135529eb9772bd0dcacd8169e01abd1d7))
-* **docs:** Update Terraform tls (3.4.0 → 4.0.5) in docs ([#908](https://github.com/bpg/terraform-provider-proxmox/issues/908)) ([9e7d7d1](https://github.com/bpg/terraform-provider-proxmox/commit/9e7d7d17cb62bffcacacbfab64e2473f33d2f086))
-
-## [0.43.2](https://github.com/bpg/terraform-provider-proxmox/compare/v0.43.1...v0.43.2) (2024-01-11)
-
-
-### Bug Fixes
-
-* **provider:** node DNS lookup fallback does not produce an IP ([#874](https://github.com/bpg/terraform-provider-proxmox/issues/874)) ([e436427](https://github.com/bpg/terraform-provider-proxmox/commit/e436427e00bd39ffe0df4ae7d6c3f445f0a0cb31))
-* **vm:** missing disks when importing VM to a TF state ([#877](https://github.com/bpg/terraform-provider-proxmox/issues/877)) ([a8bf497](https://github.com/bpg/terraform-provider-proxmox/commit/a8bf497c7f3331e0c92501d479ccf04a8481e926))
-
-
-### Miscellaneous
-
-* **deps:** bump github.com/brianvoe/gofakeit/v6 from 6.26.3 to 6.26.4 ([#879](https://github.com/bpg/terraform-provider-proxmox/issues/879)) ([6aa56b3](https://github.com/bpg/terraform-provider-proxmox/commit/6aa56b3f6e7639ddd1190d84e4d53bd6c516a977))
-* **deps:** bump golang.org/x/crypto from 0.17.0 to 0.18.0 ([#878](https://github.com/bpg/terraform-provider-proxmox/issues/878)) ([0f198eb](https://github.com/bpg/terraform-provider-proxmox/commit/0f198eb66b44d6aea23f6489587c404ef3d7ffdf))
-
-## [0.43.1](https://github.com/bpg/terraform-provider-proxmox/compare/v0.43.0...v0.43.1) (2024-01-10)
-
-
-### Bug Fixes
-
-* **docs:** typos in `proxmox_virtual_environment_file` resource ([#872](https://github.com/bpg/terraform-provider-proxmox/issues/872)) ([74e0ef3](https://github.com/bpg/terraform-provider-proxmox/commit/74e0ef3b1e37c02b8671fb650b4593c378bf96d1))
-* **vm:** optimize retrieval of VM volume attributes from a datastore ([#862](https://github.com/bpg/terraform-provider-proxmox/issues/862)) ([613be84](https://github.com/bpg/terraform-provider-proxmox/commit/613be842bee37eec4d0f74ddfa91a3a0bf8db43a))
-
-
-### Miscellaneous
-
-* **deps:** bump github.com/cloudflare/circl from 1.3.3 to 1.3.7 ([#869](https://github.com/bpg/terraform-provider-proxmox/issues/869)) ([ea653e1](https://github.com/bpg/terraform-provider-proxmox/commit/ea653e1f253655c0a97677376cbab8544b2a9c3c))
-* **deps:** bump github.com/cloudflare/circl from 1.3.5 to 1.3.7 in /tools ([#870](https://github.com/bpg/terraform-provider-proxmox/issues/870)) ([ffafa06](https://github.com/bpg/terraform-provider-proxmox/commit/ffafa063af28e4c7b7d5180c82a937b9abd17ccb))
-
-## [0.43.0](https://github.com/bpg/terraform-provider-proxmox/compare/v0.42.1...v0.43.0) (2024-01-04)
-
-
-### Features
-
-* **provider:** add DNS lookup fallback for node IP resolution ([#848](https://github.com/bpg/terraform-provider-proxmox/issues/848)) ([d398c9c](https://github.com/bpg/terraform-provider-proxmox/commit/d398c9c102fc2f6741b3e6d574fcfb8a4f7f49aa))
-* **storage:** add new resource `proxmox_virtual_environment_download_file`  ([#837](https://github.com/bpg/terraform-provider-proxmox/issues/837)) ([58347c0](https://github.com/bpg/terraform-provider-proxmox/commit/58347c09fe012e35025613923d95c5aa8340318a))
-
-
-### Miscellaneous
-
-* **deps:** bump crazy-max/ghaction-import-gpg from 6.0.0 to 6.1.0 ([#855](https://github.com/bpg/terraform-provider-proxmox/issues/855)) ([620bb84](https://github.com/bpg/terraform-provider-proxmox/commit/620bb84635d38181e841a8d41cd8a01dd4afd83b))
-* **deps:** bump github.com/goreleaser/goreleaser from 1.22.1 to 1.23.0 in /tools ([#854](https://github.com/bpg/terraform-provider-proxmox/issues/854)) ([3914bc2](https://github.com/bpg/terraform-provider-proxmox/commit/3914bc28b64decbcc853c0e6aa3188b3343ebf81))
-* **docs:** update provider documentation with more details about token use ([#846](https://github.com/bpg/terraform-provider-proxmox/issues/846)) ([2677445](https://github.com/bpg/terraform-provider-proxmox/commit/2677445802bf792fbd2b92ec8120f1ddacdb299a))
-
-## [0.42.1](https://github.com/bpg/terraform-provider-proxmox/compare/v0.42.0...v0.42.1) (2023-12-29)
-
-
-### Bug Fixes
-
-* **lxc:** add missing `onboot` param on container clone create ([#838](https://github.com/bpg/terraform-provider-proxmox/issues/838)) ([40102a6](https://github.com/bpg/terraform-provider-proxmox/commit/40102a6a501a5ead3219492f34255a25c4f21371))
-* **vm,lxc:** accept IPv6 in `initialization.dns.servers` attribute ([#842](https://github.com/bpg/terraform-provider-proxmox/issues/842)) ([bf5cbd9](https://github.com/bpg/terraform-provider-proxmox/commit/bf5cbd9dad116a4515bd2eb193c296097b1e4b84))
-* **vm,lxc:** unexpected state drift when using `initialization.dns.servers` ([#844](https://github.com/bpg/terraform-provider-proxmox/issues/844)) ([ac923cd](https://github.com/bpg/terraform-provider-proxmox/commit/ac923cd1b42c0c64d9829beb1ab552680b21d98b))
-* **vm:** Fixed missing default for disk discard ([#840](https://github.com/bpg/terraform-provider-proxmox/issues/840)) ([5281ac2](https://github.com/bpg/terraform-provider-proxmox/commit/5281ac24921795ed933047e5d9ca953add15bdd0))
-
-
-### Miscellaneous
-
-* **deps:** bump github.com/go-git/go-git/v5 from 5.7.0 to 5.11.0 in /tools ([#839](https://github.com/bpg/terraform-provider-proxmox/issues/839)) ([f860c4b](https://github.com/bpg/terraform-provider-proxmox/commit/f860c4bab54344beb4fd54366adcf940ea1463fe))
-* **tests:** Update acceptance tests to PVE 8.1, add docs ([#834](https://github.com/bpg/terraform-provider-proxmox/issues/834)) ([d8f82d4](https://github.com/bpg/terraform-provider-proxmox/commit/d8f82d47b3a74e4b64a26757522c067a635e4fa3))
-
-## [0.42.0](https://github.com/bpg/terraform-provider-proxmox/compare/v0.41.0...v0.42.0) (2023-12-23)
-
-
-### Features
-
-* **vm, lxc:** add new `initialization.dns.servers` param to vm and container ([#832](https://github.com/bpg/terraform-provider-proxmox/issues/832)) ([16e571d](https://github.com/bpg/terraform-provider-proxmox/commit/16e571dc199c8977b3954e3c56c9b96cc351503e))
-* **vm:** add new dns servers param to vm and container, deprecated server param ([16e571d](https://github.com/bpg/terraform-provider-proxmox/commit/16e571dc199c8977b3954e3c56c9b96cc351503e))
-* **vm:** add support for up to 32 network interfaces ([#822](https://github.com/bpg/terraform-provider-proxmox/issues/822)) ([4113bec](https://github.com/bpg/terraform-provider-proxmox/commit/4113bec1b5184cd30c0435ae50470a8f7ab3ba39))
-
-
-### Bug Fixes
-
-* **provider:** allow FQDN for `ssh.node.address` in provider's config ([#824](https://github.com/bpg/terraform-provider-proxmox/issues/824)) ([34df977](https://github.com/bpg/terraform-provider-proxmox/commit/34df9773c34b43ba39b5d8505b5916b52f87ff3e))
-* **vm:** update `smbios` during clone ([#827](https://github.com/bpg/terraform-provider-proxmox/issues/827)) ([0ffe75a](https://github.com/bpg/terraform-provider-proxmox/commit/0ffe75afa44995d4b648687281974e990029977e))
-
-
-### Miscellaneous
-
-* **deps:** bump golang.org/x/crypto from 0.14.0 to 0.17.0 in /tools ([#819](https://github.com/bpg/terraform-provider-proxmox/issues/819)) ([21a4b01](https://github.com/bpg/terraform-provider-proxmox/commit/21a4b01cd16fec6d3f04ae0e2c7eab9a021ee1e6))
-* **deps:** bump golang.org/x/crypto from 0.16.0 to 0.17.0 ([#820](https://github.com/bpg/terraform-provider-proxmox/issues/820)) ([ec31d75](https://github.com/bpg/terraform-provider-proxmox/commit/ec31d75fe1a93e110f4e21108c4f69d12c9a38d7))
-* **docs:** improve make example docs and add proxmox setup how-to ([#829](https://github.com/bpg/terraform-provider-proxmox/issues/829)) ([4f54f89](https://github.com/bpg/terraform-provider-proxmox/commit/4f54f89b5db4cf37321b9c021a411b747093325f))
-
-## [0.41.0](https://github.com/bpg/terraform-provider-proxmox/compare/v0.40.0...v0.41.0) (2023-12-18)
-
-
-### Features
-
-* **vm:** add `cpu.limit` attribute ([#814](https://github.com/bpg/terraform-provider-proxmox/issues/814)) ([9712952](https://github.com/bpg/terraform-provider-proxmox/commit/9712952e2614a9af6a5a35a4cf318af44684f063))
-* **vm:** support stopping (rather than shutting down) VMs on resource destroy ([#783](https://github.com/bpg/terraform-provider-proxmox/issues/783)) ([6ebe8dc](https://github.com/bpg/terraform-provider-proxmox/commit/6ebe8dcc60be12276d9f2847fb9242e93be98441))
-
-
-### Bug Fixes
-
-* **docs:** add clone/full parameter for vms ([#797](https://github.com/bpg/terraform-provider-proxmox/issues/797)) ([86d0f07](https://github.com/bpg/terraform-provider-proxmox/commit/86d0f07e9b6023d0c3627f45f9944f26d26a4e1d))
-* **provider:** typo in provider example ([#785](https://github.com/bpg/terraform-provider-proxmox/issues/785)) ([32bdc21](https://github.com/bpg/terraform-provider-proxmox/commit/32bdc2175076a4a3cc89bc0ff18035fb9b8aa4d6))
-* **vm:** hostpci devices not showing up in refresh plan ([#578](https://github.com/bpg/terraform-provider-proxmox/issues/578)) ([aa939c7](https://github.com/bpg/terraform-provider-proxmox/commit/aa939c731f7bc36213b6d0abc51cc284a1295338))
-* **vm:** panic at read when cloud-init drive is on directory storage ([#811](https://github.com/bpg/terraform-provider-proxmox/issues/811)) ([3e0ef1d](https://github.com/bpg/terraform-provider-proxmox/commit/3e0ef1d08b036297a5d8326aedce6c43c1200bb2))
-
-
-### Miscellaneous
-
-* **deps:** bump actions/setup-go from 4 to 5 ([#791](https://github.com/bpg/terraform-provider-proxmox/issues/791)) ([164a72d](https://github.com/bpg/terraform-provider-proxmox/commit/164a72d19d9c3a952364bfbedb5a4295e2fd48ea))
-* **deps:** bump actions/stale from 8 to 9 ([#790](https://github.com/bpg/terraform-provider-proxmox/issues/790)) ([02b5da7](https://github.com/bpg/terraform-provider-proxmox/commit/02b5da705da682b9325a1ac882f30993c8f96bb0))
-* **deps:** bump github.com/brianvoe/gofakeit/v6 from 6.26.0 to 6.26.3 ([#807](https://github.com/bpg/terraform-provider-proxmox/issues/807)) ([1d69c69](https://github.com/bpg/terraform-provider-proxmox/commit/1d69c691acdacf062406f27e5daf993c70ed04d8))
-* **deps:** bump github.com/google/uuid from 1.4.0 to 1.5.0 ([#805](https://github.com/bpg/terraform-provider-proxmox/issues/805)) ([3b4a69e](https://github.com/bpg/terraform-provider-proxmox/commit/3b4a69edfae45eaa7edb0b5bff7310f79fe542be))
-* **deps:** bump github.com/hashicorp/terraform-plugin-mux from 0.12.0 to 0.13.0 ([#806](https://github.com/bpg/terraform-provider-proxmox/issues/806)) ([53270e2](https://github.com/bpg/terraform-provider-proxmox/commit/53270e23108657e0e878859950205a6dcc7e9b1c))
-* **deps:** bump github.com/hashicorp/terraform-plugin-sdk/v2 from 2.30.0 to 2.31.0 ([#808](https://github.com/bpg/terraform-provider-proxmox/issues/808)) ([5c91b91](https://github.com/bpg/terraform-provider-proxmox/commit/5c91b91938e0f7e3101a3472ae3be866b3ec0f26))
-
-## [0.40.0](https://github.com/bpg/terraform-provider-proxmox/compare/v0.39.0...v0.40.0) (2023-12-06)
-
-
-### ⚠ BREAKING CHANGES
-
-* **lxc:** allow to update `features`, add mount type support ([#765](https://github.com/bpg/terraform-provider-proxmox/issues/765))
-
-### Features
-
-* **lxc:** allow to update `features`, add mount type support ([#765](https://github.com/bpg/terraform-provider-proxmox/issues/765)) ([8bf2609](https://github.com/bpg/terraform-provider-proxmox/commit/8bf26099e0da5db85f1997789cb867aa11db9906))
-* **vm:** Add support for setting the VM TPM State device ([#743](https://github.com/bpg/terraform-provider-proxmox/issues/743)) ([66bba2a](https://github.com/bpg/terraform-provider-proxmox/commit/66bba2a0275e2e9e3a2c5c2de7414d89be89a53c))
-
-
-### Bug Fixes
-
-* **docs:** add more details about local testing of the provider ([#698](https://github.com/bpg/terraform-provider-proxmox/issues/698)) ([f1450cb](https://github.com/bpg/terraform-provider-proxmox/commit/f1450cb6dd13e291ce885130f0550cd26e97e99f))
-* **lxc:** description is always showed as changed ([#762](https://github.com/bpg/terraform-provider-proxmox/issues/762)) ([d1f2093](https://github.com/bpg/terraform-provider-proxmox/commit/d1f2093d3977ff9d30b1af95f97e1fe601d22991))
-* **lxc:** fixes for datastore-backed volume mounts ([#772](https://github.com/bpg/terraform-provider-proxmox/issues/772)) ([25deebb](https://github.com/bpg/terraform-provider-proxmox/commit/25deebba265ccea0031ea2261ee2e03f1c09f5d7))
-
-
-### Miscellaneous
-
-* configure vscode's linter to use proper .golangci.yml file ([#774](https://github.com/bpg/terraform-provider-proxmox/issues/774)) ([d0f43e1](https://github.com/bpg/terraform-provider-proxmox/commit/d0f43e1497325a5aafd915771c5da5d99f2c7ead))
-* **deps:** bump github.com/brianvoe/gofakeit/v6 from 6.25.0 to 6.26.0 ([#775](https://github.com/bpg/terraform-provider-proxmox/issues/775)) ([006b5e9](https://github.com/bpg/terraform-provider-proxmox/commit/006b5e9caa51a24ae3a573abdb3bd7e21506e974))
-* **docs:** update CONTRIBUTING.md and other project docs ([#771](https://github.com/bpg/terraform-provider-proxmox/issues/771)) ([7505b37](https://github.com/bpg/terraform-provider-proxmox/commit/7505b377087f08773c88819d287364c0f5be8d20))
-* **docs:** update PR and issue templates ([#777](https://github.com/bpg/terraform-provider-proxmox/issues/777)) ([54288dd](https://github.com/bpg/terraform-provider-proxmox/commit/54288ddd76c4e96542921123c2f081aff51075be))
-
-## [0.39.0](https://github.com/bpg/terraform-provider-proxmox/compare/v0.38.1...v0.39.0) (2023-11-30)
-
-
-### Features
-
-* **docs:** add initial mini-howtos for VM ([#730](https://github.com/bpg/terraform-provider-proxmox/issues/730)) ([e2717a9](https://github.com/bpg/terraform-provider-proxmox/commit/e2717a9a9ee542e7e17c0b518ccd1da78d5abdea))
-* **provider:** modify the proxmox api client to support connecting through an https proxy ([#748](https://github.com/bpg/terraform-provider-proxmox/issues/748)) ([13e911c](https://github.com/bpg/terraform-provider-proxmox/commit/13e911cf592770740d88880e9e12d16f5d9bb8b6))
-* **vm:** Support hook script ([#733](https://github.com/bpg/terraform-provider-proxmox/issues/733)) ([0eb04b2](https://github.com/bpg/terraform-provider-proxmox/commit/0eb04b2a250999893996ce62ea1b9109081494a7))
-
-
-### Bug Fixes
-
-* **cluster:** can't read back cluster options on PVE 8.1 ([#755](https://github.com/bpg/terraform-provider-proxmox/issues/755)) ([cd24cf2](https://github.com/bpg/terraform-provider-proxmox/commit/cd24cf238cb11c3ffb4b9e5378c52b04c6961068))
-* **docs:** improve documentation for container feature flags ([#747](https://github.com/bpg/terraform-provider-proxmox/issues/747)) ([d5193b3](https://github.com/bpg/terraform-provider-proxmox/commit/d5193b3e9b0ddbaf0fde45381b2bc9d9e28bca18))
-* **vm,lxc:** file ID validator to allow . in a storage name ([#750](https://github.com/bpg/terraform-provider-proxmox/issues/750)) ([a6fa40e](https://github.com/bpg/terraform-provider-proxmox/commit/a6fa40e1772dd29d919dc62be071a95b871facbd))
-* **vm:** resize image once imported ([#753](https://github.com/bpg/terraform-provider-proxmox/issues/753)) ([d16b8e1](https://github.com/bpg/terraform-provider-proxmox/commit/d16b8e1696a50d5aca6bcce02a220069bfed0e87))
-* **vm:** unable to clone as non-root due to `hook_script` ([#756](https://github.com/bpg/terraform-provider-proxmox/issues/756)) ([728eceb](https://github.com/bpg/terraform-provider-proxmox/commit/728eceb5e9fc342984218a0baf0155afae53fd71))
-
-
-### Miscellaneous
-
-* **deps:** bump github.com/brianvoe/gofakeit/v6 from 6.24.0 to 6.25.0 ([#741](https://github.com/bpg/terraform-provider-proxmox/issues/741)) ([9016641](https://github.com/bpg/terraform-provider-proxmox/commit/9016641c34d839ee1b5eb34892171897fac75880))
-* **deps:** bump golang.org/x/crypto from 0.15.0 to 0.16.0 ([#752](https://github.com/bpg/terraform-provider-proxmox/issues/752)) ([a4ac84a](https://github.com/bpg/terraform-provider-proxmox/commit/a4ac84a78cca4b3f972d38e856adb294bb60fb2b))
-
-## [0.38.1](https://github.com/bpg/terraform-provider-proxmox/compare/v0.38.0...v0.38.1) (2023-11-17)
-
-
-### Bug Fixes
-
-* **vm:** type error when unmarshalling `GetResponseData.data.memory` ([#728](https://github.com/bpg/terraform-provider-proxmox/issues/728)) ([b429f95](https://github.com/bpg/terraform-provider-proxmox/commit/b429f95ca578c530d08caae95228f20e57de0c03))
-
-## [0.38.0](https://github.com/bpg/terraform-provider-proxmox/compare/v0.37.1...v0.38.0) (2023-11-17)
-
-
-### Features
-
-* **file:** rename content type `backup` -&gt; `dump` for backups ([#724](https://github.com/bpg/terraform-provider-proxmox/issues/724)) ([3280370](https://github.com/bpg/terraform-provider-proxmox/commit/3280370155ef339e5cf05ac4c94eb0e412d81d5c))
-* **vm:** Add Win 11 as os type ([#720](https://github.com/bpg/terraform-provider-proxmox/issues/720)) ([0eeb7a7](https://github.com/bpg/terraform-provider-proxmox/commit/0eeb7a7fd924f4cd09e424219c532e55cc3ea721))
-
-
-### Bug Fixes
-
-* **vm:** memory size datatype conversion causing `null` on read ([#715](https://github.com/bpg/terraform-provider-proxmox/issues/715)) ([2bbf228](https://github.com/bpg/terraform-provider-proxmox/commit/2bbf228eecd4f34120f38b32102688d4b78eb220))
-* **vm:** use int64 for resource memory and disk size ([#694](https://github.com/bpg/terraform-provider-proxmox/issues/694)) ([5fe6892](https://github.com/bpg/terraform-provider-proxmox/commit/5fe6892724a74906400d30a67c3047e1a0e86781))
-
-
-### Miscellaneous
-
-* **deps:** bump github.com/avast/retry-go/v4 from 4.5.0 to 4.5.1 ([#722](https://github.com/bpg/terraform-provider-proxmox/issues/722)) ([b0fea6d](https://github.com/bpg/terraform-provider-proxmox/commit/b0fea6d681301501826b95ae60e3f701e7bf79c2))
-* **deps:** bump github.com/hashicorp/terraform-plugin-go from 0.19.0 to 0.19.1 ([#723](https://github.com/bpg/terraform-provider-proxmox/issues/723)) ([6c83e07](https://github.com/bpg/terraform-provider-proxmox/commit/6c83e07bdf65367f23326f8bd9f6f35cf254509f))
-* **deps:** bump google-github-actions/release-please-action from 3.7.12 to 3.7.13 ([#716](https://github.com/bpg/terraform-provider-proxmox/issues/716)) ([4898d4d](https://github.com/bpg/terraform-provider-proxmox/commit/4898d4d80c352b47455431f1408366e4504ac524))
-
-## [0.37.1](https://github.com/bpg/terraform-provider-proxmox/compare/v0.37.0...v0.37.1) (2023-11-12)
-
-
-### Bug Fixes
-
-* **docs:** add SSH info box to ressources needing it ([#690](https://github.com/bpg/terraform-provider-proxmox/issues/690)) ([e45c1c8](https://github.com/bpg/terraform-provider-proxmox/commit/e45c1c81263c723d1665c26c36d57f8c570b6ca3))
-* **file:** display warning if directory is not found ([#703](https://github.com/bpg/terraform-provider-proxmox/issues/703)) ([e10b4b5](https://github.com/bpg/terraform-provider-proxmox/commit/e10b4b561793fd462f18ff1aa616b62ccfe586f2))
-* **provider:** do not blindly use first IP for SSH ([#704](https://github.com/bpg/terraform-provider-proxmox/issues/704)) ([a586d03](https://github.com/bpg/terraform-provider-proxmox/commit/a586d0381e9c892b4b9aa2a0699f6c039c151ad2))
-* **provider:** sanitize PVE endpoint value ([#686](https://github.com/bpg/terraform-provider-proxmox/issues/686)) ([3f582d8](https://github.com/bpg/terraform-provider-proxmox/commit/3f582d816334d4db370e8a5124f27ae4842c93f1))
-* **storage:** unmarshal error when list storage containing large files ([#688](https://github.com/bpg/terraform-provider-proxmox/issues/688)) ([64c67d9](https://github.com/bpg/terraform-provider-proxmox/commit/64c67d947362e2653feaab7fa9ffb3b6016d0650))
-* **vm:** update validation and docs for `machine` attribute ([#681](https://github.com/bpg/terraform-provider-proxmox/issues/681)) ([3fd6b6b](https://github.com/bpg/terraform-provider-proxmox/commit/3fd6b6b2ce36fa4bead31fa737f1137cd43cc16e))
-
-
-### Miscellaneous
-
-* **build:** add devcontainer ([#699](https://github.com/bpg/terraform-provider-proxmox/issues/699)) ([5bf9d1b](https://github.com/bpg/terraform-provider-proxmox/commit/5bf9d1b9da7359d3cc38ac123cfeb0629f215eca))
-* **deps:** bump github.com/golangci/golangci-lint from 1.55.1 to 1.55.2 in /tools ([#680](https://github.com/bpg/terraform-provider-proxmox/issues/680)) ([2b8fd1a](https://github.com/bpg/terraform-provider-proxmox/commit/2b8fd1ad48540ad4552ab54b28e1d12379703c77))
-* **deps:** bump github.com/goreleaser/goreleaser from 1.21.2 to 1.22.1 in /tools ([#709](https://github.com/bpg/terraform-provider-proxmox/issues/709)) ([48c89ff](https://github.com/bpg/terraform-provider-proxmox/commit/48c89ffe1327fe29ff8ccb22d298153d44d7669a))
-* **deps:** bump github.com/hashicorp/terraform-plugin-sdk/v2 from 2.29.0 to 2.30.0 ([#708](https://github.com/bpg/terraform-provider-proxmox/issues/708)) ([817e43c](https://github.com/bpg/terraform-provider-proxmox/commit/817e43c912134be89c389cce1e718922ab993dde))
-* **deps:** bump github.com/sigstore/cosign/v2 from 2.0.3-0.20230523133326-0544abd8fc8a to 2.2.1 in /tools ([#705](https://github.com/bpg/terraform-provider-proxmox/issues/705)) ([3e6fe4d](https://github.com/bpg/terraform-provider-proxmox/commit/3e6fe4db5598bfe475a0a844c3bd5937bc83aec3))
-* **docs:** update hostpci id to mentions requirement around root user ([#710](https://github.com/bpg/terraform-provider-proxmox/issues/710)) ([0bf3a2a](https://github.com/bpg/terraform-provider-proxmox/commit/0bf3a2aea3d8d5e2821a24b3613bc44cd60b7b2d))
-* **docs:** update VM ip address to mention the CIDR suffic requirement ([#697](https://github.com/bpg/terraform-provider-proxmox/issues/697)) ([d61cdc2](https://github.com/bpg/terraform-provider-proxmox/commit/d61cdc2b5c7efa50cc8228d5cebf789cc3f1cb5e))
-
-## [0.37.0](https://github.com/bpg/terraform-provider-proxmox/compare/v0.36.0...v0.37.0) (2023-10-31)
-
-
-### Features
-
-* **vm:** add support for USB devices passthrough ([#666](https://github.com/bpg/terraform-provider-proxmox/issues/666)) ([cec4e65](https://github.com/bpg/terraform-provider-proxmox/commit/cec4e6586834feb876321520b93caf7ce4cb68d7))
-
-
-### Bug Fixes
-
-* **docs:** document qemu-guest-agent behavior ([#670](https://github.com/bpg/terraform-provider-proxmox/issues/670)) ([e2e5b4e](https://github.com/bpg/terraform-provider-proxmox/commit/e2e5b4e3441f46fbaef36751c6e5a6d1bc5ad671))
-* **docs:** update `README.md` and file resource documentation ([#659](https://github.com/bpg/terraform-provider-proxmox/issues/659)) ([f6f05a5](https://github.com/bpg/terraform-provider-proxmox/commit/f6f05a56e4c9296491044ec8d5d0215a44da6f56))
-* **vm:** MAC address validator should allow lowercase hex ([#660](https://github.com/bpg/terraform-provider-proxmox/issues/660)) ([7867e66](https://github.com/bpg/terraform-provider-proxmox/commit/7867e66d531484815b529fcdf0b8607fa837dc89))
-
-
-### Miscellaneous
-
-* **deps:** bump github.com/docker/docker from 24.0.2+incompatible to 24.0.7+incompatible in /tools ([#667](https://github.com/bpg/terraform-provider-proxmox/issues/667)) ([aea4a6f](https://github.com/bpg/terraform-provider-proxmox/commit/aea4a6f1cb0848a3274799dc605446c96dc192df))
-* **deps:** bump github.com/golangci/golangci-lint from 1.55.0 to 1.55.1 in /tools ([#664](https://github.com/bpg/terraform-provider-proxmox/issues/664)) ([6ab1d5f](https://github.com/bpg/terraform-provider-proxmox/commit/6ab1d5fffbe265291e2991db162fb68fd1b50b02))
-* **deps:** bump github.com/google/uuid from 1.3.1 to 1.4.0 ([#662](https://github.com/bpg/terraform-provider-proxmox/issues/662)) ([0ec8c24](https://github.com/bpg/terraform-provider-proxmox/commit/0ec8c2498b56a7f3d206409590f943e6764f8586))
-* **deps:** bump github.com/hashicorp/terraform-plugin-framework from 1.4.1 to 1.4.2 ([#663](https://github.com/bpg/terraform-provider-proxmox/issues/663)) ([b389080](https://github.com/bpg/terraform-provider-proxmox/commit/b38908063f523fc5738a9e1c987b848b80ecb5d3))
-
-## [0.36.0](https://github.com/bpg/terraform-provider-proxmox/compare/v0.35.1...v0.36.0) (2023-10-26)
-
-
-### Features
-
-* **vm:** add configurable timeout for VM create operation ([#648](https://github.com/bpg/terraform-provider-proxmox/issues/648)) ([a30f96c](https://github.com/bpg/terraform-provider-proxmox/commit/a30f96c348888522ca9278d8fef4bd9b12b1b634))
-
-
-### Bug Fixes
-
-* **file:** handle missing file on state refresh ([#649](https://github.com/bpg/terraform-provider-proxmox/issues/649)) ([2a56c23](https://github.com/bpg/terraform-provider-proxmox/commit/2a56c23f52abda293f328196a0d80b9becd749a7))
-* **vm:** better handle of ctrl+c when qemu is not responding  ([#627](https://github.com/bpg/terraform-provider-proxmox/issues/627)) ([aec09e4](https://github.com/bpg/terraform-provider-proxmox/commit/aec09e4ecd8f9df937a04845162a679098f0c480))
-
-
-### Miscellaneous
-
-* **deps:** bump github.com/brianvoe/gofakeit/v6 from 6.23.2 to 6.24.0 ([#642](https://github.com/bpg/terraform-provider-proxmox/issues/642)) ([72951dc](https://github.com/bpg/terraform-provider-proxmox/commit/72951dc65691bdb44bae5f31b218a31811ffdfb7))
-* **deps:** bump google.golang.org/grpc from 1.57.0 to 1.57.1 ([#652](https://github.com/bpg/terraform-provider-proxmox/issues/652)) ([4740da0](https://github.com/bpg/terraform-provider-proxmox/commit/4740da0d1f413743c252be963f7b6252ed3f0d96))
-* **deps:** bump google.golang.org/grpc from 1.57.0 to 1.57.1 in /tools ([#653](https://github.com/bpg/terraform-provider-proxmox/issues/653)) ([db9140d](https://github.com/bpg/terraform-provider-proxmox/commit/db9140d05ef71753c8a8e1310c259717fef6e417))
-* fix linter error ([#645](https://github.com/bpg/terraform-provider-proxmox/issues/645)) ([1056180](https://github.com/bpg/terraform-provider-proxmox/commit/1056180ca571ef171870be5e864461fb49732bdf))
-
-## [0.35.1](https://github.com/bpg/terraform-provider-proxmox/compare/v0.35.0...v0.35.1) (2023-10-22)
-
-
-### Bug Fixes
-
-* **vm:** better check for disk ownership ([#633](https://github.com/bpg/terraform-provider-proxmox/issues/633)) ([6753582](https://github.com/bpg/terraform-provider-proxmox/commit/6753582e4b1999fdf2fd9ea0f499c0cd0f7cd64c))
-* **vm:** set FileVolume for disks with file_id ([#635](https://github.com/bpg/terraform-provider-proxmox/issues/635)) ([d1d7bd3](https://github.com/bpg/terraform-provider-proxmox/commit/d1d7bd39c741d99b2395ef858bf739cb067f0542))
-
-
-### Miscellaneous
-
-* **deps:** bump github.com/golangci/golangci-lint from 1.54.2 to 1.55.0 in /tools ([#636](https://github.com/bpg/terraform-provider-proxmox/issues/636)) ([bcd33bb](https://github.com/bpg/terraform-provider-proxmox/commit/bcd33bb139d20ea4986d7dadf145e6ebbe497e79))
-
-## [0.35.0](https://github.com/bpg/terraform-provider-proxmox/compare/v0.34.0...v0.35.0) (2023-10-17)
-
-
-### Features
-
-* **vm:** add 'path_in_datastore' disk argument ([#606](https://github.com/bpg/terraform-provider-proxmox/issues/606)) ([aeb5e88](https://github.com/bpg/terraform-provider-proxmox/commit/aeb5e88bc9112686675c7058501fa9378b69af93))
-
-
-### Bug Fixes
-
-* **lxc:** unmarshal string/int vmid as int when read container status ([#622](https://github.com/bpg/terraform-provider-proxmox/issues/622)) ([b90445a](https://github.com/bpg/terraform-provider-proxmox/commit/b90445a12c31c970c1cd1d2f37508ffcee586bf8))
-* **provider:** add informative error around ssh-agent  ([#620](https://github.com/bpg/terraform-provider-proxmox/issues/620)) ([388ce7c](https://github.com/bpg/terraform-provider-proxmox/commit/388ce7ce8d37964da427d2430c9e03b14f790856))
-
-
-### Miscellaneous
-
-* **deps:** bump github.com/google/go-cmp from 0.5.9 to 0.6.0 ([#624](https://github.com/bpg/terraform-provider-proxmox/issues/624)) ([21e48c7](https://github.com/bpg/terraform-provider-proxmox/commit/21e48c7fb8aef8b5f5a48fea76ca9a030ccd59cc))
-* **deps:** bump golang.org/x/net from 0.13.0 to 0.17.0 ([#616](https://github.com/bpg/terraform-provider-proxmox/issues/616)) ([29894bd](https://github.com/bpg/terraform-provider-proxmox/commit/29894bda234baca2645fc5e0d5d6f05101406b18))
-* **deps:** bump golang.org/x/net from 0.15.0 to 0.17.0 in /tools ([#617](https://github.com/bpg/terraform-provider-proxmox/issues/617)) ([7287f5d](https://github.com/bpg/terraform-provider-proxmox/commit/7287f5de4801d0f56faa8e3b99c80d41ac2f1f01))
-
-## [0.34.0](https://github.com/bpg/terraform-provider-proxmox/compare/v0.33.0...v0.34.0) (2023-10-10)
-
-
-### Features
-
-* **lxc:** add support for the `start_on_boot` option ([#605](https://github.com/bpg/terraform-provider-proxmox/issues/605)) ([d36cf4e](https://github.com/bpg/terraform-provider-proxmox/commit/d36cf4eab81955184c926c86ce692bcf6c01b840))
-* **provider:** configure temp directory ([#607](https://github.com/bpg/terraform-provider-proxmox/issues/607)) ([06ad004](https://github.com/bpg/terraform-provider-proxmox/commit/06ad00463c8ec0426f72a559924e6a0adfe4e2a8))
-* **vm:** add option to enable multiqueue in network devices ([#614](https://github.com/bpg/terraform-provider-proxmox/issues/614)) ([be5251d](https://github.com/bpg/terraform-provider-proxmox/commit/be5251dd5ad535be6bdf8f9ef73c43f54a9dc2c7))
-
-
-### Bug Fixes
-
-* **lxc:** cloned container does not start by default ([#615](https://github.com/bpg/terraform-provider-proxmox/issues/615)) ([d5994a2](https://github.com/bpg/terraform-provider-proxmox/commit/d5994a2bd5323cef34b71f3fea895539a0cfccd8))
-* **lxc:** create container when authenticated with API token ([#610](https://github.com/bpg/terraform-provider-proxmox/issues/610)) ([32bdc94](https://github.com/bpg/terraform-provider-proxmox/commit/32bdc94167253b7b3ec6eaecbccc2d2cc0104b61))
-* **lxc:** multi-line description always shows as changed ([#611](https://github.com/bpg/terraform-provider-proxmox/issues/611)) ([088ad09](https://github.com/bpg/terraform-provider-proxmox/commit/088ad09e356e1baf17b7cb84656155d192d2909d))
-
-
-### Miscellaneous
-
-* **deps:** bump github.com/hashicorp/terraform-plugin-framework from 1.4.0 to 1.4.1 ([#612](https://github.com/bpg/terraform-provider-proxmox/issues/612)) ([a266496](https://github.com/bpg/terraform-provider-proxmox/commit/a266496fcbf9c044712896ea1af5827f47869be1))
-* **deps:** bump golang.org/x/crypto from 0.13.0 to 0.14.0 ([#613](https://github.com/bpg/terraform-provider-proxmox/issues/613)) ([0150a97](https://github.com/bpg/terraform-provider-proxmox/commit/0150a97cd4a2489311db943459f7d41b8ef8e61e))
-
-## [0.33.0](https://github.com/bpg/terraform-provider-proxmox/compare/v0.32.2...v0.33.0) (2023-10-02)
-
-
-### Features
-
-* **file:** add optional `overwrite` flag to the file resource ([#593](https://github.com/bpg/terraform-provider-proxmox/issues/593)) ([5e24a75](https://github.com/bpg/terraform-provider-proxmox/commit/5e24a75d09b930aef07a067b37be0507c1948de1))
-* **vm:** allow `scsi` and `sata` interfaces for CloudInit Drive ([#598](https://github.com/bpg/terraform-provider-proxmox/issues/598)) ([0b8f2e2](https://github.com/bpg/terraform-provider-proxmox/commit/0b8f2e2c6f80b0370290e6b32ba1e7add977018c))
-
-
-### Bug Fixes
-
-* **api:** set min TLS version 1.3, secure HTTP-only cookie ([#596](https://github.com/bpg/terraform-provider-proxmox/issues/596)) ([16ebf30](https://github.com/bpg/terraform-provider-proxmox/commit/16ebf30a79e8e3cc2df48787b210fd78950f8260))
-
-
-### Miscellaneous
-
-* **ci:** cleanup CI flows ([#595](https://github.com/bpg/terraform-provider-proxmox/issues/595)) ([bd09fd3](https://github.com/bpg/terraform-provider-proxmox/commit/bd09fd3d6ec954e6d2c8d01e51050faf5677d422))
-
-## [0.32.2](https://github.com/bpg/terraform-provider-proxmox/compare/v0.32.1...v0.32.2) (2023-09-28)
-
-
-### Bug Fixes
-
-* **tasks:** fix UPID (task id) parsing error ([#591](https://github.com/bpg/terraform-provider-proxmox/issues/591)) ([294a9da](https://github.com/bpg/terraform-provider-proxmox/commit/294a9daa8711f7a2dbb054f1de750bf9f1bb4f3a))
-
-
-### Miscellaneous
-
-* **deps:** bump github.com/goreleaser/goreleaser from 1.20.0 to 1.21.0 in /tools ([#587](https://github.com/bpg/terraform-provider-proxmox/issues/587)) ([2573323](https://github.com/bpg/terraform-provider-proxmox/commit/257332393f48dc2c5367c8934923bea28964ffdc))
-* **deps:** bump github.com/goreleaser/goreleaser from 1.21.0 to 1.21.2 in /tools ([#592](https://github.com/bpg/terraform-provider-proxmox/issues/592)) ([2621aad](https://github.com/bpg/terraform-provider-proxmox/commit/2621aadb5f089a88b6ddf027ce906c20031ee2a0))
-
-## [0.32.1](https://github.com/bpg/terraform-provider-proxmox/compare/v0.32.0...v0.32.1) (2023-09-23)
-
-
-### Bug Fixes
-
-* **cluster:** inconsistencies in applying cluster options ([#573](https://github.com/bpg/terraform-provider-proxmox/issues/573)) ([03f3ed7](https://github.com/bpg/terraform-provider-proxmox/commit/03f3ed7871e2a2fe653d6cfe9dcb28196738e1e2))
-* **network:** remove computed flag from mtu attribute ([#572](https://github.com/bpg/terraform-provider-proxmox/issues/572)) ([5720fe4](https://github.com/bpg/terraform-provider-proxmox/commit/5720fe4673873166e7dbf7bc687b57837b99b117))
-
-
-### Miscellaneous
-
-* **code:** bump go to v1.21 ([#585](https://github.com/bpg/terraform-provider-proxmox/issues/585)) ([11c0940](https://github.com/bpg/terraform-provider-proxmox/commit/11c09405ea2f6d9dfc28191ce50739f811b5f0c4))
-* **code:** re-organize and cleanup "fwk provider"'s code ([#568](https://github.com/bpg/terraform-provider-proxmox/issues/568)) ([7d064a8](https://github.com/bpg/terraform-provider-proxmox/commit/7d064a8b27d78a1564c9da914f17340966d955d1))
-* **deps:** bump github.com/skeema/knownhosts from 1.2.0 to 1.2.1 ([#584](https://github.com/bpg/terraform-provider-proxmox/issues/584)) ([7890212](https://github.com/bpg/terraform-provider-proxmox/commit/7890212a566036bf448f4db149a7f8816de187ab))
-* **docs:** add "Proof of Work" section to the PR template ([#583](https://github.com/bpg/terraform-provider-proxmox/issues/583)) ([de1eb2b](https://github.com/bpg/terraform-provider-proxmox/commit/de1eb2b950ae6a001ad07a93f27a90858500749b))
-* **docs:** add a note about DCO to CONTRIBUTING.md ([#574](https://github.com/bpg/terraform-provider-proxmox/issues/574)) ([d0c9b45](https://github.com/bpg/terraform-provider-proxmox/commit/d0c9b4594d46c327b5a0f09288ac5b88a48af61e))
-* **docs:** update `proxmox_virtual_environment_file` documentation ([#580](https://github.com/bpg/terraform-provider-proxmox/issues/580)) ([7dde53c](https://github.com/bpg/terraform-provider-proxmox/commit/7dde53cf1cee1127cecb86cab3b6e75331410c56))
-
-## [0.32.0](https://github.com/bpg/terraform-provider-proxmox/compare/v0.31.0...v0.32.0) (2023-09-13)
-
-
-### Features
-
-* **cluster:** add cluster options resource ([#548](https://github.com/bpg/terraform-provider-proxmox/issues/548)) ([de8b4ec](https://github.com/bpg/terraform-provider-proxmox/commit/de8b4ec41ada527b5a14883b5dcacdab2684fc37))
-
-
-### Bug Fixes
-
-* **lxc,vm:** error unmarshalling string `cpulimit` ([#563](https://github.com/bpg/terraform-provider-proxmox/issues/563)) ([11a8ec0](https://github.com/bpg/terraform-provider-proxmox/commit/11a8ec0c9594c1b9ff305edcd47f090309bc1466))
-
-
-### Miscellaneous
-
-* **ci:** cleanup and update project configs ([#549](https://github.com/bpg/terraform-provider-proxmox/issues/549)) ([edec5bf](https://github.com/bpg/terraform-provider-proxmox/commit/edec5bfd1cc25886fa36e1344a6de4a6d2427786))
-* **code:** remove redundant `types2` import aliases ([#564](https://github.com/bpg/terraform-provider-proxmox/issues/564)) ([2dee65b](https://github.com/bpg/terraform-provider-proxmox/commit/2dee65bd0b872b795f559530cbd5b12c856e5771))
-* **deps:** bump crazy-max/ghaction-import-gpg from 5 to 6 ([#558](https://github.com/bpg/terraform-provider-proxmox/issues/558)) ([1f8330a](https://github.com/bpg/terraform-provider-proxmox/commit/1f8330afc7f189964ab09fa652b39e2123e6187e))
-* **deps:** bump github.com/hashicorp/terraform-plugin-* dependencies ([#561](https://github.com/bpg/terraform-provider-proxmox/issues/561)) ([3d7fbaa](https://github.com/bpg/terraform-provider-proxmox/commit/3d7fbaa7c7f8ce7a1cedf1dae3d31fceecad5ea1))
-* **deps:** bump golang.org/x/crypto from 0.12.0 to 0.13.0 ([#554](https://github.com/bpg/terraform-provider-proxmox/issues/554)) ([1040aab](https://github.com/bpg/terraform-provider-proxmox/commit/1040aabb23d6eb7ff3841315aa5f608b24437e26))
-* **deps:** bump goreleaser/goreleaser-action from 4.4.0 to 5.0.0 ([#560](https://github.com/bpg/terraform-provider-proxmox/issues/560)) ([ac556b5](https://github.com/bpg/terraform-provider-proxmox/commit/ac556b55150d271c098916b2134d3991f765891a))
-
-## [0.31.0](https://github.com/bpg/terraform-provider-proxmox/compare/v0.30.3...v0.31.0) (2023-09-04)
-
-
-### Features
-
-* **file:** FORMAT CHANGE: update import id, so it matches the resource's format: `&lt;node_name&gt;/<datastore_id>:<content_type>/<file>` ([#543](https://github.com/bpg/terraform-provider-proxmox/issues/543)) ([7ace07d](https://github.com/bpg/terraform-provider-proxmox/commit/7ace07dfa47c4a6750973d04cb8d853fc9640047))
-* **lxc:** add support for `keyctl` and `fuse` features ([#537](https://github.com/bpg/terraform-provider-proxmox/issues/537)) ([8ce9006](https://github.com/bpg/terraform-provider-proxmox/commit/8ce9006eed15dadc6f051464b8b98e3a1abd7d6d))
-* **provider:** add optional SSH port param to node in provider ssh block ([#520](https://github.com/bpg/terraform-provider-proxmox/issues/520)) ([124cac2](https://github.com/bpg/terraform-provider-proxmox/commit/124cac247ce34e2603b0d1c1c94106d958185708))
-
-
-### Bug Fixes
-
-* **provider:** panic crash in provider, interface conversion error ([#545](https://github.com/bpg/terraform-provider-proxmox/issues/545)) ([13326bb](https://github.com/bpg/terraform-provider-proxmox/commit/13326bbd33648391f0f87d339db272145e3066ac))
-* **vm:** explicitly allow `""` as a value for CloudInit interfaces ([#546](https://github.com/bpg/terraform-provider-proxmox/issues/546)) ([0233053](https://github.com/bpg/terraform-provider-proxmox/commit/0233053dd8f8aa0fbfae8f7c11bb8ce359576bce))
-
-
-### Miscellaneous
-
-* **code:** fix `proxmox` package dependencies ([#536](https://github.com/bpg/terraform-provider-proxmox/issues/536)) ([5ecf135](https://github.com/bpg/terraform-provider-proxmox/commit/5ecf13539862bb9602696a7575568f228fc85e29))
-* **deps:** bump actions/checkout from 3 to 4 ([#541](https://github.com/bpg/terraform-provider-proxmox/issues/541)) ([44d6d6b](https://github.com/bpg/terraform-provider-proxmox/commit/44d6d6b080c534ad16b3d9911ae445d4e16acfa3))
-
-## [0.30.3](https://github.com/bpg/terraform-provider-proxmox/compare/v0.30.2...v0.30.3) (2023-09-01)
-
-
-### Bug Fixes
-
-* **file:** file upload in multi-node PVE cluster ([#533](https://github.com/bpg/terraform-provider-proxmox/issues/533)) ([ef2f2c1](https://github.com/bpg/terraform-provider-proxmox/commit/ef2f2c115976dfd97de2ce557be899927672f4b8))
-
-## [0.30.2](https://github.com/bpg/terraform-provider-proxmox/compare/v0.30.1...v0.30.2) (2023-08-31)
-
-
-### Bug Fixes
-
-* **core:** improve error handling while waiting for PVE tasks to complete ([#526](https://github.com/bpg/terraform-provider-proxmox/issues/526)) ([6f02df4](https://github.com/bpg/terraform-provider-proxmox/commit/6f02df4440566ed1d97e0c6d016311b91bd53125))
-* **file:** forced replacement of file resources that missing `timeout_upload` attribute ([#528](https://github.com/bpg/terraform-provider-proxmox/issues/528)) ([11d8261](https://github.com/bpg/terraform-provider-proxmox/commit/11d82614e628d24d9ee8db5cccc33427bf5a811c))
-* **node:** creating linux_bridge with 'vlan_aware=false' or 'autostart=false' ([#529](https://github.com/bpg/terraform-provider-proxmox/issues/529)) ([f00e48a](https://github.com/bpg/terraform-provider-proxmox/commit/f00e48a51e1618bccf1d1800590b81696db15071))
-* **provider:** User-settable VLAN ID and name ([#518](https://github.com/bpg/terraform-provider-proxmox/issues/518)) ([5599c7a](https://github.com/bpg/terraform-provider-proxmox/commit/5599c7afe45dbea217457b1452186c02b07db90f))
-
-
-### Miscellaneous
-
-* **deps:** bump activesupport from 7.0.6 to 7.0.7.1 in /docs ([#522](https://github.com/bpg/terraform-provider-proxmox/issues/522)) ([cd7927b](https://github.com/bpg/terraform-provider-proxmox/commit/cd7927bec347f22ecce500147866fbe01e742b51))
-* **deps:** bump github.com/hashicorp/terraform-plugin-framework-validators from 0.11.0 to 0.12.0 ([#530](https://github.com/bpg/terraform-provider-proxmox/issues/530)) ([e35443a](https://github.com/bpg/terraform-provider-proxmox/commit/e35443a23b9528290952c24db573971d115e9877))
-* **deps:** bump github.com/hashicorp/terraform-plugin-sdk/v2 from 2.27.0 to 2.28.0 ([#524](https://github.com/bpg/terraform-provider-proxmox/issues/524)) ([5556b17](https://github.com/bpg/terraform-provider-proxmox/commit/5556b17a1ed1e4e92343d17d534461348d3da30c))
-
-## [0.30.1](https://github.com/bpg/terraform-provider-proxmox/compare/v0.30.0...v0.30.1) (2023-08-22)
-
-
-### Bug Fixes
-
-* **vm:** fix PCI device resource mapping changed ([#517](https://github.com/bpg/terraform-provider-proxmox/issues/517)) ([b1ac87d](https://github.com/bpg/terraform-provider-proxmox/commit/b1ac87df1df96a9172fee7cb4aa5934c6afb4ef1))
-
-
-### Miscellaneous
-
-* **deps:** bump github.com/golangci/golangci-lint from 1.54.1 to 1.54.2 in /tools ([#514](https://github.com/bpg/terraform-provider-proxmox/issues/514)) ([731dad8](https://github.com/bpg/terraform-provider-proxmox/commit/731dad87945335ebd3f897ff747edfc3e30607c4))
-* **deps:** bump github.com/google/uuid from 1.3.0 to 1.3.1 ([#515](https://github.com/bpg/terraform-provider-proxmox/issues/515)) ([79c7f10](https://github.com/bpg/terraform-provider-proxmox/commit/79c7f100f6cfd2ea52d50aa69b92f5c99a0deded))
-
-## [0.30.0](https://github.com/bpg/terraform-provider-proxmox/compare/v0.29.0...v0.30.0) (2023-08-21)
-
-
-### Features
-
-* **ha:** add support for Proxmox High Availability objects ([#498](https://github.com/bpg/terraform-provider-proxmox/issues/498)) ([03c9b36](https://github.com/bpg/terraform-provider-proxmox/commit/03c9b36b86914583c1709e99db305682b7b7dc99))
-* **vm:** add support for migration when the node name is modified ([#501](https://github.com/bpg/terraform-provider-proxmox/issues/501)) ([a285360](https://github.com/bpg/terraform-provider-proxmox/commit/a2853606ad294476e9b5f17a994cb230643e9277))
-* **vm:** add support for non-default CloudInit interface and CloudInit storage change ([#486](https://github.com/bpg/terraform-provider-proxmox/issues/486)) ([5475936](https://github.com/bpg/terraform-provider-proxmox/commit/547593661f5bcab1141edc9a7203dca65c6b539d))
-* **vm:** add support for pool update ([#505](https://github.com/bpg/terraform-provider-proxmox/issues/505)) ([e6c15ec](https://github.com/bpg/terraform-provider-proxmox/commit/e6c15eccc6fd2076afb2f521e28f27976abba892))
-* **vm:** fix adding/removing hostpci devices forcing vm recreation ([#504](https://github.com/bpg/terraform-provider-proxmox/issues/504)) ([a038fd3](https://github.com/bpg/terraform-provider-proxmox/commit/a038fd31420fe23963c7d68198ed5f40b6583058))
-* **vm:** support PCI device resource mapping ([#500](https://github.com/bpg/terraform-provider-proxmox/issues/500)) ([2697054](https://github.com/bpg/terraform-provider-proxmox/commit/26970541c48495b7b9fd220960c83f54956e8132))
-
-
-### Bug Fixes
-
-* **vm:** fix CloudInit datastore change support ([#509](https://github.com/bpg/terraform-provider-proxmox/issues/509)) ([73c1294](https://github.com/bpg/terraform-provider-proxmox/commit/73c1294979b956939b755ac05796fb1a68f92f75))
-* **vm:** fix index out of range when unmarshalling custompcidevice ([#496](https://github.com/bpg/terraform-provider-proxmox/issues/496)) ([78d6683](https://github.com/bpg/terraform-provider-proxmox/commit/78d668377f383badd8a53a18dbd4cb65e67176c2))
-* **vm:** fixed startup / shutdown behaviour on HA clusters ([#508](https://github.com/bpg/terraform-provider-proxmox/issues/508)) ([148a9e0](https://github.com/bpg/terraform-provider-proxmox/commit/148a9e0c9c3f8d78645846b39646ad7d8c78c4a5))
-* **vm:** no IP address detection when VM contains bridges ([#493](https://github.com/bpg/terraform-provider-proxmox/issues/493)) ([9fd9d21](https://github.com/bpg/terraform-provider-proxmox/commit/9fd9d211d75e760ef1c7e44d13de9ce8d38bf834))
-
-
-### Miscellaneous
-
-* **deps:** bump github.com/golangci/golangci-lint from 1.54.0 to 1.54.1 in /tools ([#489](https://github.com/bpg/terraform-provider-proxmox/issues/489)) ([e4f9888](https://github.com/bpg/terraform-provider-proxmox/commit/e4f9888f6f6db835d425e52878631517ef4d5e14))
-* **deps:** bump github.com/hashicorp/terraform-plugin-framework from 1.3.4 to 1.3.5 ([#512](https://github.com/bpg/terraform-provider-proxmox/issues/512)) ([98ae6a8](https://github.com/bpg/terraform-provider-proxmox/commit/98ae6a8d8f489b98c05d88598594d43c004b6316))
-* **deps:** bump github.com/pkg/sftp from 1.13.5 to 1.13.6 ([#488](https://github.com/bpg/terraform-provider-proxmox/issues/488)) ([9045183](https://github.com/bpg/terraform-provider-proxmox/commit/9045183c1dd18ba2ebd3c1afcd7c16e73213bf27))
-* **vm:** fix linter errors ([#506](https://github.com/bpg/terraform-provider-proxmox/issues/506)) ([1896ea0](https://github.com/bpg/terraform-provider-proxmox/commit/1896ea08f09ec4e684a886d11a5915c6e573eac1))
-
-## [0.29.0](https://github.com/bpg/terraform-provider-proxmox/compare/v0.28.0...v0.29.0) (2023-08-10)
-
-
-### Features
-
-* **file:** ensure upload of ISO/VSTMPL is completed upon resource creation ([#471](https://github.com/bpg/terraform-provider-proxmox/issues/471)) ([f901e71](https://github.com/bpg/terraform-provider-proxmox/commit/f901e711dd4e8cd59b3a1e34c58a1a03564bd13a))
-
-
-### Bug Fixes
-
-* **user:** make `password` attribute optional ([#474](https://github.com/bpg/terraform-provider-proxmox/issues/474)) ([244e061](https://github.com/bpg/terraform-provider-proxmox/commit/244e061779f05752bd0760ea6b5a15c869e26505))
-* **vm:** default disk cache is not set to `none` if not specified for an existing disk ([#478](https://github.com/bpg/terraform-provider-proxmox/issues/478)) ([8d0b3ed](https://github.com/bpg/terraform-provider-proxmox/commit/8d0b3ed25fa1c2dcc0d319d725aea34f3e18aef8))
-* **vm:** ensure startup / shutdown delay is applied when order is not configured ([#479](https://github.com/bpg/terraform-provider-proxmox/issues/479)) ([2cf64b8](https://github.com/bpg/terraform-provider-proxmox/commit/2cf64b88c35991db19f83a1fa69ed41cbceebd32))
-
-
-### Miscellaneous
-
-* **deps-dev:** bump commonmarker from 0.23.9 to 0.23.10 in /docs ([#472](https://github.com/bpg/terraform-provider-proxmox/issues/472)) ([2e16fbb](https://github.com/bpg/terraform-provider-proxmox/commit/2e16fbb44bf45e58c9296d1e1e28d3fbea9d732c))
-* **deps:** bump github.com/golangci/golangci-lint from 1.53.3 to 1.54.0 in /tools ([#482](https://github.com/bpg/terraform-provider-proxmox/issues/482)) ([390f03c](https://github.com/bpg/terraform-provider-proxmox/commit/390f03c1590725d7f89a1f38c3848269bbe4c402))
-* **deps:** bump github.com/goreleaser/goreleaser from 1.19.2 to 1.20.0 in /tools ([#481](https://github.com/bpg/terraform-provider-proxmox/issues/481)) ([eb3d847](https://github.com/bpg/terraform-provider-proxmox/commit/eb3d8473acd593ef0e876b711c3ffc3441fc4b54))
-* **deps:** bump github.com/hashicorp/terraform-plugin-framework from 1.3.3 to 1.3.4 ([#466](https://github.com/bpg/terraform-provider-proxmox/issues/466)) ([8a5a533](https://github.com/bpg/terraform-provider-proxmox/commit/8a5a53301b3e2e7ecad9322c80f2700726ea0504))
-* **deps:** bump github.com/hashicorp/terraform-plugin-framework-validators from 0.10.0 to 0.11.0 ([#467](https://github.com/bpg/terraform-provider-proxmox/issues/467)) ([7c9e3ed](https://github.com/bpg/terraform-provider-proxmox/commit/7c9e3ed1afaa3bf50b78be1aefd77cc76fc3d06d))
-* **deps:** bump golang.org/x/crypto from 0.11.0 to 0.12.0 ([#465](https://github.com/bpg/terraform-provider-proxmox/issues/465)) ([185e98f](https://github.com/bpg/terraform-provider-proxmox/commit/185e98fe802119ab0de53bb2eeb34d7510517475))
-* **deps:** bump goreleaser/goreleaser-action from 4.3.0 to 4.4.0 ([#480](https://github.com/bpg/terraform-provider-proxmox/issues/480)) ([a7047da](https://github.com/bpg/terraform-provider-proxmox/commit/a7047dac7269143ce833da1310ca6f03646ccbf1))
-
-## [0.28.0](https://github.com/bpg/terraform-provider-proxmox/compare/v0.27.0...v0.28.0) (2023-08-06)
-
-
-### Features
-
-* **vm:** add support for SMBIOS settings ([#454](https://github.com/bpg/terraform-provider-proxmox/issues/454)) ([85ff60d](https://github.com/bpg/terraform-provider-proxmox/commit/85ff60d4bd928880eebeb6bbd9440a65a3e2cc9d))
-
-
-### Bug Fixes
-
-* **api:** remove HTTP client timeout ([#464](https://github.com/bpg/terraform-provider-proxmox/issues/464)) ([824e51c](https://github.com/bpg/terraform-provider-proxmox/commit/824e51c6508fe0e5905b143ef6d8dd161b1acbfe))
-* **user:** make `password` attribute optional ([#463](https://github.com/bpg/terraform-provider-proxmox/issues/463)) ([5a3b1cc](https://github.com/bpg/terraform-provider-proxmox/commit/5a3b1ccaf703db260ba25e564c04506ea0de6247))
-* **vm:** give `cache` the correct default value ([#450](https://github.com/bpg/terraform-provider-proxmox/issues/450)) ([0d3227a](https://github.com/bpg/terraform-provider-proxmox/commit/0d3227a890b4df12ecb71fbd3215e5f1d4babff8))
-
-
-### Miscellaneous
-
-* **doc:** add all-contributors to README.md ([#455](https://github.com/bpg/terraform-provider-proxmox/issues/455)) ([d885e64](https://github.com/bpg/terraform-provider-proxmox/commit/d885e643728c1da30deca3f26150a57ba75593db))
-* **doc:** add existing contributors ([#459](https://github.com/bpg/terraform-provider-proxmox/issues/459)) ([cb71d73](https://github.com/bpg/terraform-provider-proxmox/commit/cb71d731f1903ec9fbfa2eb5d4b78c53c961f86f))
-* **doc:** cleanup readme ([#461](https://github.com/bpg/terraform-provider-proxmox/issues/461)) ([368b133](https://github.com/bpg/terraform-provider-proxmox/commit/368b133427e14753b287469b814591141126913d))
-
-## [0.27.0](https://github.com/bpg/terraform-provider-proxmox/compare/v0.26.0...v0.27.0) (2023-07-30)
-
-
-### Features
-
-* **vm:** add support for disk `cache` option ([#443](https://github.com/bpg/terraform-provider-proxmox/issues/443)) ([cfe3d96](https://github.com/bpg/terraform-provider-proxmox/commit/cfe3d96576b521cb294f217fb3f7caf45347e58e))
-* **vm:** add support for start/shutdown order configuration ([#445](https://github.com/bpg/terraform-provider-proxmox/issues/445)) ([b045746](https://github.com/bpg/terraform-provider-proxmox/commit/b045746a94d2717b69fc48234b9ece101b53bdcd))
-
-
-### Bug Fixes
-
-* **vm:** cloned VM with `efi_disk` got re-created at re-apply ([#447](https://github.com/bpg/terraform-provider-proxmox/issues/447)) ([c1e7cea](https://github.com/bpg/terraform-provider-proxmox/commit/c1e7cea21ed7d49375de8850f9cd3737d485c3d2))
-
-
-### Miscellaneous
-
-* update dependencies, cleanup docs ([#446](https://github.com/bpg/terraform-provider-proxmox/issues/446)) ([a3b95c8](https://github.com/bpg/terraform-provider-proxmox/commit/a3b95c80536c7b69ab5b4c10e434d410ec5e05e5))
-
-## [0.26.0](https://github.com/bpg/terraform-provider-proxmox/compare/v0.25.0...v0.26.0) (2023-07-29)
-
-
-### Features
-
-* **core:** migrate `version` datasource to TF plugin framework ([#440](https://github.com/bpg/terraform-provider-proxmox/issues/440)) ([a9a7329](https://github.com/bpg/terraform-provider-proxmox/commit/a9a7329d9fef42466f6fe2a7eeff9645100459c6))
-
-
-### Miscellaneous
-
-* **deps:** bump github.com/hashicorp/terraform-plugin-framework from 1.3.2 to 1.3.3 ([#439](https://github.com/bpg/terraform-provider-proxmox/issues/439)) ([d82a08d](https://github.com/bpg/terraform-provider-proxmox/commit/d82a08dcb434e3b2aa0241332aeb3b43eac372d1))
-* **docs:** Update README.md  ([#442](https://github.com/bpg/terraform-provider-proxmox/issues/442)) ([8e2d180](https://github.com/bpg/terraform-provider-proxmox/commit/8e2d18053f0fca807ecd81cbf2c4a3b5169f0d49))
-
-## [0.25.0](https://github.com/bpg/terraform-provider-proxmox/compare/v0.24.2...v0.25.0) (2023-07-20)
-
-
-### Features
-
-* **lxc:** add support for lxc mount points ([#394](https://github.com/bpg/terraform-provider-proxmox/issues/394)) ([beef9b1](https://github.com/bpg/terraform-provider-proxmox/commit/beef9b1219dc078cc7a3adeae9e6162235c603f8))
-
-
-### Bug Fixes
-
-* **vm:** Don't add an extra efi_disk entry ([#435](https://github.com/bpg/terraform-provider-proxmox/issues/435)) ([6781c03](https://github.com/bpg/terraform-provider-proxmox/commit/6781c03ca1eb794ed9e5ab322e1b73d57969b721))
-* **vm:** fix for the api call upon empty disks ([#436](https://github.com/bpg/terraform-provider-proxmox/issues/436)) ([aea9846](https://github.com/bpg/terraform-provider-proxmox/commit/aea9846c6f5399d721458f21e94f253922103432))
-
-
-### Miscellaneous
-
-* cleanup resource validators & utility code ([#438](https://github.com/bpg/terraform-provider-proxmox/issues/438)) ([b2a27f3](https://github.com/bpg/terraform-provider-proxmox/commit/b2a27f3ccfa6e318d2243bae2c855f47e5523240))
-* **deps:** bump github.com/hashicorp/terraform-plugin-mux from 0.11.1 to 0.11.2 ([#432](https://github.com/bpg/terraform-provider-proxmox/issues/432)) ([4324b29](https://github.com/bpg/terraform-provider-proxmox/commit/4324b294239bca04de550027402deabe1e6f1615))
-* **deps:** bump github.com/skeema/knownhosts from 1.1.1 to 1.2.0 ([#433](https://github.com/bpg/terraform-provider-proxmox/issues/433)) ([b9ee3ae](https://github.com/bpg/terraform-provider-proxmox/commit/b9ee3ae10d942b3700fa057553471c9ed47ce4d4))
-
-## [0.24.2](https://github.com/bpg/terraform-provider-proxmox/compare/v0.24.1...v0.24.2) (2023-07-16)
-
-
-### Bug Fixes
-
-* **vm:** do not reboot VM on config change if it is not running ([#430](https://github.com/bpg/terraform-provider-proxmox/issues/430)) ([0281bc8](https://github.com/bpg/terraform-provider-proxmox/commit/0281bc83e2d64fdfe2782feb6f21395706dbcc32))
-
-## [0.24.1](https://github.com/bpg/terraform-provider-proxmox/compare/v0.24.0...v0.24.1) (2023-07-16)
-
-
-### Bug Fixes
-
-* **firewall:** add VM / container ID validation to firewall rules ([#424](https://github.com/bpg/terraform-provider-proxmox/issues/424)) ([6a3bc03](https://github.com/bpg/terraform-provider-proxmox/commit/6a3bc034706cef4190651118bfc2e8f62de8aecd))
-* **vm:** add `interface` argument to `cdrom` block ([#429](https://github.com/bpg/terraform-provider-proxmox/issues/429)) ([b86fa23](https://github.com/bpg/terraform-provider-proxmox/commit/b86fa239ddd29f0cfc60d66ac4cede39b0167985))
-* **vm:** add missing unmarshal for vm custom startup order ([#428](https://github.com/bpg/terraform-provider-proxmox/issues/428)) ([e59b06e](https://github.com/bpg/terraform-provider-proxmox/commit/e59b06e5195da90da837f5b660e6b76cca9fd632))
-
-## [0.24.0](https://github.com/bpg/terraform-provider-proxmox/compare/v0.23.0...v0.24.0) (2023-07-09)
-
-
-### Features
-
-* add import support for a lot of resources ([#390](https://github.com/bpg/terraform-provider-proxmox/issues/390)) ([4147ff6](https://github.com/bpg/terraform-provider-proxmox/commit/4147ff6a29500dd47cd905a0239abdc28cffc596))
-* **vm:** add more valid cpu types ([#411](https://github.com/bpg/terraform-provider-proxmox/issues/411)) ([e9a9fd7](https://github.com/bpg/terraform-provider-proxmox/commit/e9a9fd76dae22be24767cdf44cb9668f96c9ea90))
-
-
-### Bug Fixes
-
-* **firewall:** ignore non-existent rules at read/delete ([#415](https://github.com/bpg/terraform-provider-proxmox/issues/415)) ([fc3bbc3](https://github.com/bpg/terraform-provider-proxmox/commit/fc3bbc3d92466fc069db69619b5f1a7f338fc391))
-* **node:** fix error when listing network interfaces of a node ([#412](https://github.com/bpg/terraform-provider-proxmox/issues/412)) ([16ee6a9](https://github.com/bpg/terraform-provider-proxmox/commit/16ee6a9f955f0452b80ba4ee88667edd4bd34fde))
-* **node:** ignore field `bridge_fd` when listing network interfaces of a node ([#414](https://github.com/bpg/terraform-provider-proxmox/issues/414)) ([01a8456](https://github.com/bpg/terraform-provider-proxmox/commit/01a845636ae7242ea78b52365468f496fc52372b))
-
-
-### Miscellaneous
-
-* **deps:** bump github.com/goreleaser/goreleaser from 1.18.2 to 1.19.1 in /tools ([#403](https://github.com/bpg/terraform-provider-proxmox/issues/403)) ([0597217](https://github.com/bpg/terraform-provider-proxmox/commit/059721741ac5508bb98a1ca50b83a67e6a86c206))
-* **deps:** bump github.com/goreleaser/goreleaser from 1.19.1 to 1.19.2 in /tools ([#417](https://github.com/bpg/terraform-provider-proxmox/issues/417)) ([7240715](https://github.com/bpg/terraform-provider-proxmox/commit/72407157614179f4368698235f957ead68dd51b1))
-* **deps:** bump github.com/hashicorp/terraform-plugin-docs from 0.15.0 to 0.16.0 in /tools ([#418](https://github.com/bpg/terraform-provider-proxmox/issues/418)) ([6a309ac](https://github.com/bpg/terraform-provider-proxmox/commit/6a309ac4abec72e54529a84e17a360763110dfaa))
-* **deps:** bump github.com/hashicorp/terraform-plugin-framework from 1.3.1 to 1.3.2 ([#401](https://github.com/bpg/terraform-provider-proxmox/issues/401)) ([908713a](https://github.com/bpg/terraform-provider-proxmox/commit/908713a08493e46796438c7bc5585efab25fc4e0))
-* **deps:** bump github.com/hashicorp/terraform-plugin-go from 0.16.0 to 0.17.0 ([#399](https://github.com/bpg/terraform-provider-proxmox/issues/399)) ([24ee318](https://github.com/bpg/terraform-provider-proxmox/commit/24ee318cc33a0faad76045644ac03394a13c7605))
-* **deps:** bump github.com/hashicorp/terraform-plugin-go from 0.17.0 to 0.18.0 ([#408](https://github.com/bpg/terraform-provider-proxmox/issues/408)) ([f494525](https://github.com/bpg/terraform-provider-proxmox/commit/f49452543c6c88f90fb46d245b39ea9942eca5ea))
-* **deps:** bump github.com/hashicorp/terraform-plugin-mux from 0.10.0 to 0.11.1 ([#400](https://github.com/bpg/terraform-provider-proxmox/issues/400)) ([1a6cfb2](https://github.com/bpg/terraform-provider-proxmox/commit/1a6cfb2cf1039694e594b45cb79ac5bba7810383))
-* **deps:** bump github.com/hashicorp/terraform-plugin-sdk/v2 from 2.26.1 to 2.27.0 ([#402](https://github.com/bpg/terraform-provider-proxmox/issues/402)) ([af56c4b](https://github.com/bpg/terraform-provider-proxmox/commit/af56c4b2a75b6611e6dbcddc755a00ccddfd5248))
-* **deps:** bump golang.org/x/crypto from 0.10.0 to 0.11.0 ([#416](https://github.com/bpg/terraform-provider-proxmox/issues/416)) ([5e173e0](https://github.com/bpg/terraform-provider-proxmox/commit/5e173e0bc9d2d7219e385e8b64ae82b3fcfdb42f))
-* **refactoring:** remove accidentally added `types2` import alias ([#409](https://github.com/bpg/terraform-provider-proxmox/issues/409)) ([feac6b0](https://github.com/bpg/terraform-provider-proxmox/commit/feac6b0128520a16c4ecd4850d4f73e311ec1f7b))
-
-## [0.23.0](https://github.com/bpg/terraform-provider-proxmox/compare/v0.22.0...v0.23.0) (2023-07-03)
-
-
-### Features
-
-* **vm:** efi disk, cpu numa ([#384](https://github.com/bpg/terraform-provider-proxmox/issues/384)) ([e9a74e9](https://github.com/bpg/terraform-provider-proxmox/commit/e9a74e90374570dee4af93fed4454209157bcbb7))
-
-
-### Bug Fixes
-
-* **docs:** minor firewall options page improvement ([#396](https://github.com/bpg/terraform-provider-proxmox/issues/396)) ([b0b5fa1](https://github.com/bpg/terraform-provider-proxmox/commit/b0b5fa153253102ecf4bcae896426296188f83be))
-* **file:** spurious unsupported content type warning ([#395](https://github.com/bpg/terraform-provider-proxmox/issues/395)) ([4da2b68](https://github.com/bpg/terraform-provider-proxmox/commit/4da2b682de1f2c7f456c6f7c7bc06048881cb8b9))
-* **lxc:** add support for 'nixos' ([#387](https://github.com/bpg/terraform-provider-proxmox/issues/387)) ([23a5194](https://github.com/bpg/terraform-provider-proxmox/commit/23a519475d2eddf2f2145166ff2593c60c807f53))
-* **provider:** better handling of root@pam token ([#386](https://github.com/bpg/terraform-provider-proxmox/issues/386)) ([03eaf72](https://github.com/bpg/terraform-provider-proxmox/commit/03eaf72767082ca4b5642538f64730dc9c4e34aa))
-* **provider:** config environment variables handling caused "rpc error" ([#397](https://github.com/bpg/terraform-provider-proxmox/issues/397)) ([d748a7d](https://github.com/bpg/terraform-provider-proxmox/commit/d748a7de7b16fd792e6e3d8d6b60a951f6031ac3))
-* **vm:** do not error on `read` at state refresh if VM is missing ([#398](https://github.com/bpg/terraform-provider-proxmox/issues/398)) ([253a59e](https://github.com/bpg/terraform-provider-proxmox/commit/253a59ece6c8f505362d7cd40f62a076b7caa590))
-* **vm:** search for vm in cluster resources before calling node api ([#393](https://github.com/bpg/terraform-provider-proxmox/issues/393)) ([99fda9c](https://github.com/bpg/terraform-provider-proxmox/commit/99fda9cbcdbd2f254cd4c8e48559a0f7ce7a3b01))
-
-
-### Miscellaneous
-
-* **deps:** bump github.com/hashicorp/terraform-plugin-framework from 1.3.0 to 1.3.1 ([#381](https://github.com/bpg/terraform-provider-proxmox/issues/381)) ([c1219ec](https://github.com/bpg/terraform-provider-proxmox/commit/c1219ecd3c5bb3ef3c728b479056f5309a02b6a8))
-* **deps:** bump github.com/hashicorp/terraform-plugin-go from 0.15.0 to 0.16.0 ([#380](https://github.com/bpg/terraform-provider-proxmox/issues/380)) ([9146703](https://github.com/bpg/terraform-provider-proxmox/commit/91467037d56bcf612c32648c0fcb5ceb2df547df))
-
-## [0.22.0](https://github.com/bpg/terraform-provider-proxmox/compare/v0.21.1...v0.22.0) (2023-06-24)
-
-
-### Features
-
-* **vm:** add network device resources ([#376](https://github.com/bpg/terraform-provider-proxmox/issues/376)) ([343e804](https://github.com/bpg/terraform-provider-proxmox/commit/343e8045c125a4e216443855be3fc794e56399cd))
-* **vm:** add support for meta-data in cloud-init ([#378](https://github.com/bpg/terraform-provider-proxmox/issues/378)) ([7aa25b8](https://github.com/bpg/terraform-provider-proxmox/commit/7aa25b8d058ae6f1807252fb731fab0aec3a4814))
-
-
-### Bug Fixes
-
-* **file:** add check for supported content types when uploading file to a storage ([#379](https://github.com/bpg/terraform-provider-proxmox/issues/379)) ([4e1ce30](https://github.com/bpg/terraform-provider-proxmox/commit/4e1ce30619ccf7db141874f4daa5873ca9f012f1))
-
-
-### Miscellaneous
-
-* **deps:** bump github.com/golangci/golangci-lint from 1.53.2 to 1.53.3 in /tools ([#375](https://github.com/bpg/terraform-provider-proxmox/issues/375)) ([2863aa6](https://github.com/bpg/terraform-provider-proxmox/commit/2863aa6e2d1a472259c8f60bd63a934c0161f598))
-* **deps:** bump golang.org/x/crypto from 0.9.0 to 0.10.0 ([#374](https://github.com/bpg/terraform-provider-proxmox/issues/374)) ([f6e20bd](https://github.com/bpg/terraform-provider-proxmox/commit/f6e20bd787977b99b9d934bb6ba4d7d06244ef42))
-* **deps:** bump goreleaser/goreleaser-action from 4.2.0 to 4.3.0 ([#371](https://github.com/bpg/terraform-provider-proxmox/issues/371)) ([e3a62d7](https://github.com/bpg/terraform-provider-proxmox/commit/e3a62d79ad0fc319d4f57c9ae12cfae14f8e25f6))
-
-## [0.21.1](https://github.com/bpg/terraform-provider-proxmox/compare/v0.21.0...v0.21.1) (2023-06-07)
-
-
-### Bug Fixes
-
-* **core:** Do not limit cluster size to 1 in provider's `ssh` config ([#369](https://github.com/bpg/terraform-provider-proxmox/issues/369)) ([926382c](https://github.com/bpg/terraform-provider-proxmox/commit/926382c155169f1be07cba26b3fda0572fdc1002))
-* **doc:** Update documentation for resource `proxmox_virtual_environment_firewall_ipset` ([#366](https://github.com/bpg/terraform-provider-proxmox/issues/366)) ([0aa33f0](https://github.com/bpg/terraform-provider-proxmox/commit/0aa33f0929c4b9588cce8bcde67d297137c4ddc0))
-* **firewall:** Improve firewall resources argument validation ([#359](https://github.com/bpg/terraform-provider-proxmox/issues/359)) ([8c1f246](https://github.com/bpg/terraform-provider-proxmox/commit/8c1f246b5a6288195dce25ab2417ae5218b7888d))
-* **vm:** fix incorrect disk interface ref when reading VM info from PVE ([#365](https://github.com/bpg/terraform-provider-proxmox/issues/365)) ([de3935d](https://github.com/bpg/terraform-provider-proxmox/commit/de3935d462cd074ae8f1bfa2ead655efec8256b7))
-* **vm:** Make `vm_id` computed ([#367](https://github.com/bpg/terraform-provider-proxmox/issues/367)) ([2a5abb1](https://github.com/bpg/terraform-provider-proxmox/commit/2a5abb10fc43603d2c786ad806cba056886c7f29))
-
-
-### Miscellaneous
-
-* **deps:** bump github.com/golangci/golangci-lint from 1.52.2 to 1.53.2 in /tools ([#363](https://github.com/bpg/terraform-provider-proxmox/issues/363)) ([a546a82](https://github.com/bpg/terraform-provider-proxmox/commit/a546a8292803d9645bdba48e2aa2d6c845c70a0a))
-* **deps:** bump github.com/hashicorp/terraform-plugin-log from 0.8.0 to 0.9.0 ([#362](https://github.com/bpg/terraform-provider-proxmox/issues/362)) ([170ec8a](https://github.com/bpg/terraform-provider-proxmox/commit/170ec8ad924cc4bb9683ec87cbd39d8f1e8a1ee3))
-* **deps:** bump github.com/stretchr/testify from 1.8.3 to 1.8.4 ([#361](https://github.com/bpg/terraform-provider-proxmox/issues/361)) ([46e0f8f](https://github.com/bpg/terraform-provider-proxmox/commit/46e0f8f6e79ba0c859507aee97aaf3be931640cd))
-* **doc:** project documentation update ([#356](https://github.com/bpg/terraform-provider-proxmox/issues/356)) ([9587c63](https://github.com/bpg/terraform-provider-proxmox/commit/9587c6383c37be894f6ca5a8d8f3edbb1826c219))
-
-## [0.21.0](https://github.com/bpg/terraform-provider-proxmox/compare/v0.20.1...v0.21.0) (2023-06-01)
-
-
-### Features
-
-* API client cleanup and refactoring ([#323](https://github.com/bpg/terraform-provider-proxmox/issues/323)) ([1f006aa](https://github.com/bpg/terraform-provider-proxmox/commit/1f006aa82bc79125a63543dbbf765629692b7b38))
-* **core:** Add ability to override node IP used for SSH connection ([80c94a5](https://github.com/bpg/terraform-provider-proxmox/commit/80c94a51262df7c5cd49a938f58c7fd09a1a3540))
-* **core:** Add API Token authentication ([#350](https://github.com/bpg/terraform-provider-proxmox/issues/350)) ([ab54aa1](https://github.com/bpg/terraform-provider-proxmox/commit/ab54aa1092534c323b85c46571de33bee80ae950))
-
-
-### Bug Fixes
-
-* **vm:** Make mac_address computed, fix [#339](https://github.com/bpg/terraform-provider-proxmox/issues/339) ([#354](https://github.com/bpg/terraform-provider-proxmox/issues/354)) ([e15c4a6](https://github.com/bpg/terraform-provider-proxmox/commit/e15c4a678409a378ce10ed47fb73051e9dcdae61))
-
-
-### Miscellaneous
-
-* **deps:** bump github.com/goreleaser/nfpm/v2 from 2.28.0 to 2.29.0 in /tools ([#347](https://github.com/bpg/terraform-provider-proxmox/issues/347)) ([2358557](https://github.com/bpg/terraform-provider-proxmox/commit/23585570ab379948edab12fff85542a8aadf1792))
-* **deps:** bump github.com/sigstore/rekor from 1.1.1 to 1.2.0 in /tools ([#349](https://github.com/bpg/terraform-provider-proxmox/issues/349)) ([6e59360](https://github.com/bpg/terraform-provider-proxmox/commit/6e593607bb40419d27cfeebfc3d7c11ea1061828))
-
-## [0.20.1](https://github.com/bpg/terraform-provider-proxmox/compare/v0.20.0...v0.20.1) (2023-05-23)
-
-
-### Bug Fixes
-
-* **vm:** Regression: wait for 'net.IsGlobalUnicast' IP address  ([#100](https://github.com/bpg/terraform-provider-proxmox/issues/100)) ([#345](https://github.com/bpg/terraform-provider-proxmox/issues/345)) ([20131b0](https://github.com/bpg/terraform-provider-proxmox/commit/20131b0ffcad256835256fb28bf177c20d344482))
-
-## [0.20.0](https://github.com/bpg/terraform-provider-proxmox/compare/v0.19.1...v0.20.0) (2023-05-22)
-
-
-### Features
-
-* bump Go to 1.20 to resolve MacOS DNS resolution issues ([#342](https://github.com/bpg/terraform-provider-proxmox/issues/342)) ([1c920de](https://github.com/bpg/terraform-provider-proxmox/commit/1c920de71d4e07bd7a29700cdffd4e6b319f95c3))
-* SSH-Agent Support ([#306](https://github.com/bpg/terraform-provider-proxmox/issues/306)) ([9fa9242](https://github.com/bpg/terraform-provider-proxmox/commit/9fa92423b5b3960ee7f46fb66fc18d12fcc8af29))
-
-
-### Miscellaneous
-
-* **deps:** bump github.com/skeema/knownhosts from 1.1.0 to 1.1.1 ([#336](https://github.com/bpg/terraform-provider-proxmox/issues/336)) ([0d8e6d3](https://github.com/bpg/terraform-provider-proxmox/commit/0d8e6d31584b418677c5e8579d9e41649e9790a7))
-* **deps:** bump github.com/stretchr/testify from 1.8.2 to 1.8.3 ([#343](https://github.com/bpg/terraform-provider-proxmox/issues/343)) ([fc1e03f](https://github.com/bpg/terraform-provider-proxmox/commit/fc1e03f0949ee730a8c14cf2346a053d8f1a28e2))
-* **deps:** bump golang.org/x/crypto from 0.8.0 to 0.9.0 ([#337](https://github.com/bpg/terraform-provider-proxmox/issues/337)) ([b1cb49c](https://github.com/bpg/terraform-provider-proxmox/commit/b1cb49cf7a829a6112ce6e7d363e7bf537e5c52c))
-
-## [0.19.1](https://github.com/bpg/terraform-provider-proxmox/compare/v0.19.0...v0.19.1) (2023-05-14)
-
-
-### Bug Fixes
-
-* **vm:** Regression: cannot create disks larger than 99G ([#335](https://github.com/bpg/terraform-provider-proxmox/issues/335)) ([79e5a8e](https://github.com/bpg/terraform-provider-proxmox/commit/79e5a8ebb07d9c7858a32dbef280dfab5e78c19e))
-
-
-### Miscellaneous
-
-* **deps:** bump github.com/docker/distribution from 2.8.1+incompatible to 2.8.2+incompatible in /tools ([#331](https://github.com/bpg/terraform-provider-proxmox/issues/331)) ([37a1234](https://github.com/bpg/terraform-provider-proxmox/commit/37a1234bb05cb57229d276ec568096043c2073e0))
-
-## [0.19.0](https://github.com/bpg/terraform-provider-proxmox/compare/v0.18.2...v0.19.0) (2023-05-11)
-
-
-### Features
-
-* **vm,lxc:** Improved support for different disk size units ([#326](https://github.com/bpg/terraform-provider-proxmox/issues/326)) ([4be9914](https://github.com/bpg/terraform-provider-proxmox/commit/4be9914757cb9fee38f1c2c08772daca364b1ac9))
-
-
-### Bug Fixes
-
-* **vm,lxc:** Add validation for non-empty tags ([#330](https://github.com/bpg/terraform-provider-proxmox/issues/330)) ([8359c03](https://github.com/bpg/terraform-provider-proxmox/commit/8359c03aa8069d8816e0802e41fb36a220040673))
-
-
-### Miscellaneous
-
-* **deps:** bump github.com/goreleaser/goreleaser from 1.17.2 to 1.18.1 in /tools ([#324](https://github.com/bpg/terraform-provider-proxmox/issues/324)) ([aea079e](https://github.com/bpg/terraform-provider-proxmox/commit/aea079e0b11e2f1a07b734ed1edde3c468518429))
-* **deps:** bump github.com/goreleaser/goreleaser from 1.18.1 to 1.18.2 in /tools ([#327](https://github.com/bpg/terraform-provider-proxmox/issues/327)) ([d94a4ce](https://github.com/bpg/terraform-provider-proxmox/commit/d94a4ce7cf86974b93987904d430130108d9984c))
-
-## [0.18.2](https://github.com/bpg/terraform-provider-proxmox/compare/v0.18.1...v0.18.2) (2023-05-05)
-
-
-### Bug Fixes
-
-* **vm,lxc:** Fix tags reordering on plan re-apply ([#322](https://github.com/bpg/terraform-provider-proxmox/issues/322)) ([f0b88e3](https://github.com/bpg/terraform-provider-proxmox/commit/f0b88e336c48d76f5119fba78af9ce8b087d240e))
-* **vm:** Fix IPv6 handling ([#319](https://github.com/bpg/terraform-provider-proxmox/issues/319)) ([97ca22a](https://github.com/bpg/terraform-provider-proxmox/commit/97ca22abbba4bf50895b56324ce3c3e693b46e2f))
-
-
-### Miscellaneous
-
-* **deps:** bump github.com/goreleaser/goreleaser from 1.17.1 to 1.17.2 in /tools ([#313](https://github.com/bpg/terraform-provider-proxmox/issues/313)) ([2a03818](https://github.com/bpg/terraform-provider-proxmox/commit/2a03818d4034a6ae9a0ca9153fdb2d3012cd4b97))
-* **deps:** bump github.com/sigstore/rekor from 1.0.1 to 1.1.1 in /tools ([#320](https://github.com/bpg/terraform-provider-proxmox/issues/320)) ([b8184e4](https://github.com/bpg/terraform-provider-proxmox/commit/b8184e47c1af12423202385aeb7eb456e98bb42d))
-* **make:** Add `lint`, `release-build` targets ([#317](https://github.com/bpg/terraform-provider-proxmox/issues/317)) ([aa99290](https://github.com/bpg/terraform-provider-proxmox/commit/aa9929066491765cfe421a7f3ede163b74473149))
-
-## [0.18.1](https://github.com/bpg/terraform-provider-proxmox/compare/v0.18.0...v0.18.1) (2023-04-23)
-
-
-### Bug Fixes
-
-* **file:** fix SSH file upload on Windows ([#308](https://github.com/bpg/terraform-provider-proxmox/issues/308)) ([7c9505d](https://github.com/bpg/terraform-provider-proxmox/commit/7c9505d11f7cc99f6052e814f549004fe97e8b49))
-* **firewall:** use correct default value for firewall ([#312](https://github.com/bpg/terraform-provider-proxmox/issues/312)) ([496bda4](https://github.com/bpg/terraform-provider-proxmox/commit/496bda4edcab1e52a3877581828080f62ef525d7))
-
-## [0.18.0](https://github.com/bpg/terraform-provider-proxmox/compare/v0.17.1...v0.18.0) (2023-04-18)
-
-
-### Features
-
-* **vm:** Wait for the VM creation task to complete ([#305](https://github.com/bpg/terraform-provider-proxmox/issues/305)) ([8addb1d](https://github.com/bpg/terraform-provider-proxmox/commit/8addb1d1d547197ab7502b33105a17737c06788a))
-
-
-### Miscellaneous
-
-* **deps:** bump commonmarker from 0.23.8 to 0.23.9 in /docs ([#298](https://github.com/bpg/terraform-provider-proxmox/issues/298)) ([fc4a6e8](https://github.com/bpg/terraform-provider-proxmox/commit/fc4a6e8ace24db9a44102b878f09bd5d30329bd8))
-* **deps:** bump github.com/goreleaser/goreleaser from 1.16.2 to 1.17.1 in /tools ([#303](https://github.com/bpg/terraform-provider-proxmox/issues/303)) ([d24f60a](https://github.com/bpg/terraform-provider-proxmox/commit/d24f60aaa22867d536a35712a0f7d8209a7d1ac2))
-* **deps:** bump golang.org/x/crypto from 0.7.0 to 0.8.0 ([#296](https://github.com/bpg/terraform-provider-proxmox/issues/296)) ([a896b50](https://github.com/bpg/terraform-provider-proxmox/commit/a896b5051ec6103cd8449234102917d9f17a1011))
-* **deps:** bump nokogiri from 1.14.2 to 1.14.3 in /docs ([#299](https://github.com/bpg/terraform-provider-proxmox/issues/299)) ([6722492](https://github.com/bpg/terraform-provider-proxmox/commit/672249246f921eaba7ffa5020c0427bf95c3ed29))
-
-## [0.17.1](https://github.com/bpg/terraform-provider-proxmox/compare/v0.17.0...v0.17.1) (2023-04-10)
-
-
-### Bug Fixes
-
-* **core:** Error when open SSH session on Windows ([#293](https://github.com/bpg/terraform-provider-proxmox/issues/293)) ([be3995e](https://github.com/bpg/terraform-provider-proxmox/commit/be3995e969e16eac08c3e1d0fbaadb60244a5576))
-* **file:** "Permission denied" error when creating a file by a non-root user ([#291](https://github.com/bpg/terraform-provider-proxmox/issues/291)) ([401b397](https://github.com/bpg/terraform-provider-proxmox/commit/401b39782f857382b30ab71b3e49a8ab44fbac48))
-* **firewall:** Add support for `firewall` flag for LXC/VM net adapters ([#295](https://github.com/bpg/terraform-provider-proxmox/issues/295)) ([f4783f8](https://github.com/bpg/terraform-provider-proxmox/commit/f4783f8cda701b6800403d50840240da6469fd38))
-
-## [0.17.0](https://github.com/bpg/terraform-provider-proxmox/compare/v0.17.0-rc2...v0.17.0) (2023-04-07)
-
-
-### Features
-
-* **vm:** add support for `boot_order` argument for VM ([#219](https://github.com/bpg/terraform-provider-proxmox/issues/219)) ([f9e263a](https://github.com/bpg/terraform-provider-proxmox/commit/f9e263ad5edf47fb12f5321af0090d928da50d42))
-
-
-### Bug Fixes
-
-* **provider:** Deprecate `virtual_environment` block ([#288](https://github.com/bpg/terraform-provider-proxmox/issues/288)) ([ed3dfea](https://github.com/bpg/terraform-provider-proxmox/commit/ed3dfeae9907757f42c0cce63fe1f00a4e2ec0a2))
-
-
-### Miscellaneous
-
-* cleanup and fix linter errors ([#290](https://github.com/bpg/terraform-provider-proxmox/issues/290)) ([2fa9229](https://github.com/bpg/terraform-provider-proxmox/commit/2fa922930f6c3b6c1e0c32789b44ef6ab9189e6d))
-
-## [0.17.0-rc2](https://github.com/bpg/terraform-provider-proxmox/compare/v0.17.0-rc1...v0.17.0-rc2) (2023-04-04)
-
-
-### Bug Fixes
-
-* **firewall:** fw controls bugfixes ([#287](https://github.com/bpg/terraform-provider-proxmox/issues/287)) ([1bfc29e](https://github.com/bpg/terraform-provider-proxmox/commit/1bfc29e2cc3342699f491d0225da474078220ecd))
-
-
-### Miscellaneous
-
-* **deps:** bump activesupport from 7.0.4.2 to 7.0.4.3 in /docs ([#285](https://github.com/bpg/terraform-provider-proxmox/issues/285)) ([fc08e19](https://github.com/bpg/terraform-provider-proxmox/commit/fc08e19f867ef652ae7597e89fd49fb3ecc3a9a8))
-
-## [0.17.0-rc1](https://github.com/bpg/terraform-provider-proxmox/compare/v0.16.0...v0.17.0-rc1) (2023-04-02)
-
-
-### Features
-
-* Add firewall resources ([#246](https://github.com/bpg/terraform-provider-proxmox/issues/246)) ([98e1cff](https://github.com/bpg/terraform-provider-proxmox/commit/98e1cff7fef0f24d932933bcba56ebc5b6ca7548))
-
-## [0.16.0](https://github.com/bpg/terraform-provider-proxmox/compare/v0.15.0...v0.16.0) (2023-04-02)
-
-
-### Features
-
-* Update to Go 1.19 ([#280](https://github.com/bpg/terraform-provider-proxmox/issues/280)) ([8edfe9c](https://github.com/bpg/terraform-provider-proxmox/commit/8edfe9c7c54c9554adca52ffcf31c091f1fce11f))
-* **vm:** Add scsi_hardware field ([#282](https://github.com/bpg/terraform-provider-proxmox/issues/282)) ([f0f31ee](https://github.com/bpg/terraform-provider-proxmox/commit/f0f31eee470dc954fdd5d1c952ea3067a2a68f1b))
-
-
-### Miscellaneous
-
-* add missing docs ([#283](https://github.com/bpg/terraform-provider-proxmox/issues/283)) ([db7afe2](https://github.com/bpg/terraform-provider-proxmox/commit/db7afe2e4a93ae3f97c0533dba0adaf82123c49f))
-* **deps:** bump actions/stale from 7 to 8 ([#276](https://github.com/bpg/terraform-provider-proxmox/issues/276)) ([edd9685](https://github.com/bpg/terraform-provider-proxmox/commit/edd96857e64f73b041ed76a9c1818a864b4a0cca))
-* **deps:** bump github.com/golangci/golangci-lint from 1.52.1 to 1.52.2 in /tools ([#278](https://github.com/bpg/terraform-provider-proxmox/issues/278)) ([d8c1fb3](https://github.com/bpg/terraform-provider-proxmox/commit/d8c1fb3573de553bc2eb26d8e37cdcfe8a78f384))
-* **deps:** bump github.com/hashicorp/terraform-plugin-sdk/v2 from 2.25.0 to 2.26.1 ([#277](https://github.com/bpg/terraform-provider-proxmox/issues/277)) ([b403a49](https://github.com/bpg/terraform-provider-proxmox/commit/b403a4940fd31eacef90deaa11f2696fa7c03910))
-
-## [0.15.0](https://github.com/bpg/terraform-provider-proxmox/compare/v0.14.1...v0.15.0) (2023-03-25)
-
-
-### Features
-
-* **vm:** Add bare minimum VM datasource ([#268](https://github.com/bpg/terraform-provider-proxmox/issues/268)) ([c2d3f46](https://github.com/bpg/terraform-provider-proxmox/commit/c2d3f46474fc0d0603c34596eb81b82c06713b17))
-
-
-### Bug Fixes
-
-* **vm:** Prevent `file_format` override with default `qcow2` in TF state ([#275](https://github.com/bpg/terraform-provider-proxmox/issues/275)) ([17dca98](https://github.com/bpg/terraform-provider-proxmox/commit/17dca987eb240454dbd980ed8f0c4a939e327ff0))
-
-
-### Miscellaneous
-
-* **deps:** bump actions/setup-go from 3 to 4 ([#269](https://github.com/bpg/terraform-provider-proxmox/issues/269)) ([fdb9dc7](https://github.com/bpg/terraform-provider-proxmox/commit/fdb9dc7714f12a1682f47e57ab319753fc18e4f4))
-* **deps:** bump github.com/golangci/golangci-lint from 1.51.2 to 1.52.1 in /tools ([#274](https://github.com/bpg/terraform-provider-proxmox/issues/274)) ([1150163](https://github.com/bpg/terraform-provider-proxmox/commit/1150163b4b66249b79e446cf20f9df54fc204f7c))
-* **deps:** bump github.com/goreleaser/goreleaser from 1.16.1 to 1.16.2 in /tools ([#271](https://github.com/bpg/terraform-provider-proxmox/issues/271)) ([7a0e1db](https://github.com/bpg/terraform-provider-proxmox/commit/7a0e1db6c4a117e0599b4899df781eb3c3fe600f))
-
-## [0.14.1](https://github.com/bpg/terraform-provider-proxmox/compare/v0.14.0...v0.14.1) (2023-03-19)
-
-
-### Bug Fixes
-
-* authentication error logging in API client ([#267](https://github.com/bpg/terraform-provider-proxmox/issues/267)) ([763527e](https://github.com/bpg/terraform-provider-proxmox/commit/763527e53584e8121b1138830ad97e8e89780322))
-* **build:** Fix make example-init for TF 1.4 ([#262](https://github.com/bpg/terraform-provider-proxmox/issues/262)) ([914631f](https://github.com/bpg/terraform-provider-proxmox/commit/914631f58b40ceb25248727ac23a6400df0264a3))
-
-
-### Miscellaneous
-
-* **deps:** bump activesupport from 6.1.7.1 to 6.1.7.3 in /docs ([#263](https://github.com/bpg/terraform-provider-proxmox/issues/263)) ([ce8bd30](https://github.com/bpg/terraform-provider-proxmox/commit/ce8bd3008bc65745eb62e17dc4849d3a4b3f740a))
-* **docs:** Minor documentation Improvements ([#266](https://github.com/bpg/terraform-provider-proxmox/issues/266)) ([696ecb0](https://github.com/bpg/terraform-provider-proxmox/commit/696ecb05d8796540dc21d62dce930c4a2c2d8246))
-
-## [0.14.0](https://github.com/bpg/terraform-provider-proxmox/compare/v0.13.1...v0.14.0) (2023-03-14)
-
-
-### Features
-
-* **lxc:** Add option for nested container feature ([4d44739](https://github.com/bpg/terraform-provider-proxmox/commit/4d447390e684a90c9672528f4bdc22aa1433296b))
-* **vm:** Add custom CPU models support ([82016fc](https://github.com/bpg/terraform-provider-proxmox/commit/82016fc8ff018867783839c916dce686cb38d1b6))
-
-
-### Bug Fixes
-
-* **vm:** Fix `file_format` setting for new empty disks ([#259](https://github.com/bpg/terraform-provider-proxmox/issues/259)) ([d29fd97](https://github.com/bpg/terraform-provider-proxmox/commit/d29fd97babab9a8f217b6ea0ffd89511c55624eb))
-
-
-### Miscellaneous
-
-* **deps:** bump github.com/goreleaser/goreleaser from 1.15.2 to 1.16.1 in /tools ([#258](https://github.com/bpg/terraform-provider-proxmox/issues/258)) ([9afca3b](https://github.com/bpg/terraform-provider-proxmox/commit/9afca3b88caade184e536450534666431f2c00d5))
-
-## [0.13.1](https://github.com/bpg/terraform-provider-proxmox/compare/v0.13.0...v0.13.1) (2023-03-07)
-
-
-### Miscellaneous
-
-* **deps:** bump dependencies ([#242](https://github.com/bpg/terraform-provider-proxmox/issues/242)) ([890fb53](https://github.com/bpg/terraform-provider-proxmox/commit/890fb536846d2582cbf025f2045be3c5f903fc0a))
-* **deps:** bump github.com/golangci/golangci-lint from 1.51.1 to 1.51.2 in /tools ([#244](https://github.com/bpg/terraform-provider-proxmox/issues/244)) ([e01844a](https://github.com/bpg/terraform-provider-proxmox/commit/e01844a0d73750d0ce65c76e9eaae0b3b952c206))
-* **deps:** bump github.com/stretchr/testify from 1.8.1 to 1.8.2 ([#245](https://github.com/bpg/terraform-provider-proxmox/issues/245)) ([6cca133](https://github.com/bpg/terraform-provider-proxmox/commit/6cca13383527a1f33a30e5766bb520c0a575793a))
-* **deps:** bump golang.org/x/crypto from 0.6.0 to 0.7.0 ([#248](https://github.com/bpg/terraform-provider-proxmox/issues/248)) ([1aa668e](https://github.com/bpg/terraform-provider-proxmox/commit/1aa668e03bcb15333772575029a07c2134d8e291))
-
-## [0.13.0](https://github.com/bpg/terraform-provider-proxmox/compare/v0.12.1...v0.13.0) (2023-02-17)
-
-
-### Features
-
-* **vm:** update VM disc import logic ([#241](https://github.com/bpg/terraform-provider-proxmox/issues/241)) ([fcf9810](https://github.com/bpg/terraform-provider-proxmox/commit/fcf98102522821c9dfb4534731747233bd627d38))
-
-
-### Bug Fixes
-
-* **vm:** `proxmox_virtual_environment_file.changed` stored as `true` at file creation ([#240](https://github.com/bpg/terraform-provider-proxmox/issues/240)) ([197c9e5](https://github.com/bpg/terraform-provider-proxmox/commit/197c9e5152fd6524c82977001a759c36c644f8e5))
-
-
-### Miscellaneous
-
-* **deps:** bump activesupport from 6.0.6.1 to 6.1.7.1 in /docs ([#235](https://github.com/bpg/terraform-provider-proxmox/issues/235)) ([ffa39c1](https://github.com/bpg/terraform-provider-proxmox/commit/ffa39c13e0d8283da51980532c83919edcf1cbc6))
-* **deps:** bump github.com/goreleaser/goreleaser from 1.15.1 to 1.15.2 in /tools ([#237](https://github.com/bpg/terraform-provider-proxmox/issues/237)) ([80dfceb](https://github.com/bpg/terraform-provider-proxmox/commit/80dfceba8433379a64a1ff86d174447e229325ab))
-* **deps:** bump github.com/hashicorp/terraform-plugin-log from 0.7.0 to 0.8.0 ([#239](https://github.com/bpg/terraform-provider-proxmox/issues/239)) ([dbe26ed](https://github.com/bpg/terraform-provider-proxmox/commit/dbe26ed58f1ed668e5a059f9659bd12fd6b1a54c))
-* **deps:** bump golang.org/x/crypto from 0.5.0 to 0.6.0 ([#238](https://github.com/bpg/terraform-provider-proxmox/issues/238)) ([2b99349](https://github.com/bpg/terraform-provider-proxmox/commit/2b99349f1fe89e804fb45c439470bd2474068f1c))
-
-## [0.12.1](https://github.com/bpg/terraform-provider-proxmox/compare/v0.12.0...v0.12.1) (2023-02-07)
-
-
-### Bug Fixes
-
-* **build:** trailing space in provider's version ([#233](https://github.com/bpg/terraform-provider-proxmox/issues/233)) ([f97407d](https://github.com/bpg/terraform-provider-proxmox/commit/f97407dc00c425b8d015abf72488b5a4fd31f043))
-* **vm:** ignore ssd disk flag with virtio interface ([#231](https://github.com/bpg/terraform-provider-proxmox/issues/231)) ([1de9294](https://github.com/bpg/terraform-provider-proxmox/commit/1de92947666d45fdcae881e3a6bd651bfea493a4))
-
-
-### Miscellaneous
-
-* **deps:** bump github.com/golangci/golangci-lint from 1.50.1 to 1.51.1 in /tools ([#229](https://github.com/bpg/terraform-provider-proxmox/issues/229)) ([f1022a5](https://github.com/bpg/terraform-provider-proxmox/commit/f1022a5cae0c99696292421edb28b3007d3bbb51))
-* **deps:** bump github.com/goreleaser/goreleaser from 1.14.1 to 1.15.1 in /tools ([#230](https://github.com/bpg/terraform-provider-proxmox/issues/230)) ([722003e](https://github.com/bpg/terraform-provider-proxmox/commit/722003ee5ac23c4946af2257eaeb6f91028f879d))
-
-## [0.12.0](https://github.com/bpg/terraform-provider-proxmox/compare/v0.11.0...v0.12.0) (2023-02-06)
-
-
-### Features
-
-* **core:** Add known hosts callback check for ssh connections ([#217](https://github.com/bpg/terraform-provider-proxmox/issues/217)) ([598c628](https://github.com/bpg/terraform-provider-proxmox/commit/598c62864d0a8a4e1b7dcda0cb7a3d5e380a5863))
-* **lxc:** Add unprivileged option ([#225](https://github.com/bpg/terraform-provider-proxmox/issues/225)) ([1918561](https://github.com/bpg/terraform-provider-proxmox/commit/19185611b37c85a071ac4d3fd0c9a6b865b7c28d))
-
-
-### Bug Fixes
-
-* **vm:** Don't add an extra hostpci entry ([#223](https://github.com/bpg/terraform-provider-proxmox/issues/223)) ([346c92b](https://github.com/bpg/terraform-provider-proxmox/commit/346c92b2734caed90b30df423ac8019cf08c5900))
-* **vm:** Fix handling of empty kvm arguments ([#228](https://github.com/bpg/terraform-provider-proxmox/issues/228)) ([e2802d0](https://github.com/bpg/terraform-provider-proxmox/commit/e2802d0654f0d6d5e99bef4987a84862e3ffbde7))
-
-
-### Miscellaneous
-
-* **deps:** bump commonmarker from 0.23.6 to 0.23.7 in /docs ([#220](https://github.com/bpg/terraform-provider-proxmox/issues/220)) ([cef0227](https://github.com/bpg/terraform-provider-proxmox/commit/cef0227ef59df55388632e775b34cc3f4644075f))
-* **deps:** bump gem dependencies in /docs ([#221](https://github.com/bpg/terraform-provider-proxmox/issues/221)) ([e0864c0](https://github.com/bpg/terraform-provider-proxmox/commit/e0864c098a2e5a9d1da1c133ebaeee8650ceb4e0))
-* **deps:** bump goreleaser/goreleaser-action from 4.1.0 to 4.2.0 ([#222](https://github.com/bpg/terraform-provider-proxmox/issues/222)) ([11fe9e5](https://github.com/bpg/terraform-provider-proxmox/commit/11fe9e539c56101360e5be0f5bb042f5318a4d4c))
-* disable code coverage ([#227](https://github.com/bpg/terraform-provider-proxmox/issues/227)) ([a72fd27](https://github.com/bpg/terraform-provider-proxmox/commit/a72fd27a13395b9d061cdc450f68e171f1b30cbe))
-
-## [0.11.0](https://github.com/bpg/terraform-provider-proxmox/compare/v0.10.0...v0.11.0) (2023-01-24)
-
-
-### Features
-
-* **lxc:** Add support for container tags ([#212](https://github.com/bpg/terraform-provider-proxmox/issues/212)) ([5c8ae3c](https://github.com/bpg/terraform-provider-proxmox/commit/5c8ae3c3f826969f70d5af79cfca00c0c49da418))
-
-
-### Miscellaneous
-
-* **ci:** set up code coverage ([06bd5ae](https://github.com/bpg/terraform-provider-proxmox/commit/06bd5aef0f0aac54e412e475ccdc85f8f61398d9))
-* **deps:** bump dependencies ([#216](https://github.com/bpg/terraform-provider-proxmox/issues/216)) ([f157e3b](https://github.com/bpg/terraform-provider-proxmox/commit/f157e3bd532bd3b0fa728478f44986b1ef5f245b))
-
-## [0.10.0](https://github.com/bpg/terraform-provider-proxmox/compare/v0.9.1...v0.10.0) (2023-01-18)
-
-
-### Features
-
-* **lxc:** Add option to customize RootFS size at LXC creation ([#207](https://github.com/bpg/terraform-provider-proxmox/issues/207)) ([dd9ffe1](https://github.com/bpg/terraform-provider-proxmox/commit/dd9ffe190cd9eaee7ac6a9e2c830eee45b4b69df))
-* **vm:** add support for "args" flag for VM ([#205](https://github.com/bpg/terraform-provider-proxmox/issues/205)) ([8bd3fd7](https://github.com/bpg/terraform-provider-proxmox/commit/8bd3fd7b1d71e37eeee2c222e4896b857a01cabf))
-
-
-### Bug Fixes
-
-* **vm:** Add parser for CustomEFIDisk ([#208](https://github.com/bpg/terraform-provider-proxmox/issues/208)) ([b539aab](https://github.com/bpg/terraform-provider-proxmox/commit/b539aab22851817aea981727eb27a8da73edcc43))
-
-## [0.9.1](https://github.com/bpg/terraform-provider-proxmox/compare/v0.9.0...v0.9.1) (2023-01-02)
-
-
-### Bug Fixes
-
-* **vm:** Make so that on_boot can be changed with update ([#199](https://github.com/bpg/terraform-provider-proxmox/issues/199)) ([496ab32](https://github.com/bpg/terraform-provider-proxmox/commit/496ab322be7f12257f562d53a9920377cded8aa5))
-
-## [0.9.0](https://github.com/bpg/terraform-provider-proxmox/compare/v0.8.0...v0.9.0) (2023-01-01)
-
-
-### Features
-
-* **vm:** Add cloud-init network-config support ([#197](https://github.com/bpg/terraform-provider-proxmox/issues/197)) ([79a2101](https://github.com/bpg/terraform-provider-proxmox/commit/79a2101933d6001cb843050a83076a39cd503db8))
-* **vm:** Add hostpci support ([01d2050](https://github.com/bpg/terraform-provider-proxmox/commit/01d20504a1924552611a92dd3f718bad270a7309))
-* **vm:** Deletion of VM should also purge all storages and configs ([13080b4](https://github.com/bpg/terraform-provider-proxmox/commit/13080b44dcb08fbeabd0b20501631f52e022e46d))
-* **vm:** OnBoot: change default to `true` ([#191](https://github.com/bpg/terraform-provider-proxmox/issues/191)) ([60a6818](https://github.com/bpg/terraform-provider-proxmox/commit/60a68184cf7c6239eb5cc540c746f11e2a78c240))
-
-## [0.8.0](https://github.com/bpg/terraform-provider-proxmox/compare/v0.7.0...v0.8.0) (2022-12-13)
-
-
-### Features
-
-* add support for "ssd" disk flag for VM ([#181](https://github.com/bpg/terraform-provider-proxmox/issues/181)) ([2907346](https://github.com/bpg/terraform-provider-proxmox/commit/290734655ce28306ae910b76b8de5fedbd3b4bb8))
-* add support for network_device MTU ([#176](https://github.com/bpg/terraform-provider-proxmox/issues/176)) ([3c02cb1](https://github.com/bpg/terraform-provider-proxmox/commit/3c02cb13895f7095ef0b0aaf58fe799e396a0715))
-* add support for VM tags ([#169](https://github.com/bpg/terraform-provider-proxmox/issues/169)) ([ade1d49](https://github.com/bpg/terraform-provider-proxmox/commit/ade1d49117f5390e5ee58ddeadef0adf02143d33))
-* add the ability to clone to non-shared storage on different nodes ([#178](https://github.com/bpg/terraform-provider-proxmox/issues/178)) ([0df14f9](https://github.com/bpg/terraform-provider-proxmox/commit/0df14f9d6aa139cb6478317da7ff6b632242b02d))
-
-
-### Bug Fixes
-
-* Check if any interface has global unicast address instead of all interfaces ([#182](https://github.com/bpg/terraform-provider-proxmox/issues/182)) ([722e010](https://github.com/bpg/terraform-provider-proxmox/commit/722e01053bdb51c038a7bd86d4018465417ea6fb))
-* handling `datastore_id` in LXC template ([#180](https://github.com/bpg/terraform-provider-proxmox/issues/180)) ([63dc5cb](https://github.com/bpg/terraform-provider-proxmox/commit/63dc5cb8f6dbb6d273bd519c7768893df02a3b97))
-* Remove cloned ide2 before creating new one ([#174](https://github.com/bpg/terraform-provider-proxmox/issues/174)) ([#175](https://github.com/bpg/terraform-provider-proxmox/issues/175)) ([2766555](https://github.com/bpg/terraform-provider-proxmox/commit/27665554de4a35ec678f5c63b529ccaa7d99bc74))
-
-## [0.7.0](https://github.com/bpg/terraform-provider-proxmox/compare/v0.6.4...v0.7.0) (2022-11-18)
-
-
-### Features
-
-* Add support for custom cloud-init vendor data file ([#162](https://github.com/bpg/terraform-provider-proxmox/issues/162)) ([9e34dfb](https://github.com/bpg/terraform-provider-proxmox/commit/9e34dfb36213fc524957921e2d5b07cdf3585491))
-
-
-### Bug Fixes
-
-* linter issues ([#158](https://github.com/bpg/terraform-provider-proxmox/issues/158)) ([0fad160](https://github.com/bpg/terraform-provider-proxmox/commit/0fad160ed61cf763ce294a76e35b8c0f56cd33e8))
-
-## [0.6.4](https://github.com/bpg/terraform-provider-proxmox/compare/v0.6.3...v0.6.4) (2022-10-17)
-
-
-### Bug Fixes
-
-* bump vulnerable dependencies ([#143](https://github.com/bpg/terraform-provider-proxmox/issues/143)) ([f9f357e](https://github.com/bpg/terraform-provider-proxmox/commit/f9f357e200681d56500316d204ed3c2dc836b551))
-
-## [v0.6.3](https://github.com/bpg/terraform-provider-proxmox/compare/v0.6.2...v0.6.3) (2022-10-17)
-
-
-### Bug Fixes
-
-* Non-default VM disk format is not preserved in TF state ([#134](https://github.com/bpg/terraform-provider-proxmox/issues/134)) ([b09389f](https://github.com/bpg/terraform-provider-proxmox/commit/b09389f0a9c65f8f6ab82ae989d29951dd643ed2))
-
-## [v0.6.2](https://github.com/bpg/terraform-provider-proxmox/tree/v0.6.2) (2022-09-28)
-
-[Full Changelog](https://github.com/bpg/terraform-provider-proxmox/compare/v0.6.1...v0.6.2)
+## 4.52.2 (September 5th, 2025)
 
 ENHANCEMENTS:
 
-- Add discard option to vm disk creation [\#122](https://github.com/bpg/terraform-provider-proxmox/issues/122)
+* internal/sdkv2provider/schema_cloudflare_access_service_tokens.go: Add graceful rotation support for client secrets
+* internal/sdkv2provider/resource_cloudflare_access_service_tokens_test.go: Add graceful rotation support for client secrets
+* internal/sdkv2provider/resource_cloudflare_access_service_tokens.go: Add graceful rotation support for client secrets
 
-**Merged pull requests:**
-
-- Add support for "discard" disk option for VM [\#128](https://github.com/bpg/terraform-provider-proxmox/pull/128) ([bpg](https://github.com/bpg))
-
-## [v0.6.1](https://github.com/bpg/terraform-provider-proxmox/tree/v0.6.1) (2022-08-15)
-
-[Full Changelog](https://github.com/bpg/terraform-provider-proxmox/compare/v0.6.0...v0.6.1)
-
-BUG FIXES:
-
-- Waiting for proxmox\_virtual\_environment\_vm's ipv4\_addresses does not really work [\#100](https://github.com/bpg/terraform-provider-proxmox/issues/100)
-
-## [v0.6.0](https://github.com/bpg/terraform-provider-proxmox/tree/v0.6.0) (2022-08-09)
-
-[Full Changelog](https://github.com/bpg/terraform-provider-proxmox/compare/v0.5.3...v0.6.0)
-
-BREAKING CHANGES:
-
-- Upgrade the provider codebase to use Terraform SDK v2 [\#91](https://github.com/bpg/terraform-provider-proxmox/pull/91) ([bpg](https://github.com/bpg))
+## 4.52.1 (July 22th, 2025)
 
 ENHANCEMENTS:
 
-- Add support for "iothread" disk option for VM [\#87](https://github.com/bpg/terraform-provider-proxmox/issues/87)
+* internal/sdkv2provider/schema_cloudflare_load_balancer.go: remove "Computed" primitive from user configurable properties ([#5621](https://github.com/cloudflare/terraform-provider-cloudflare/pull/5621))
+
+## 4.52.0 (February 5th, 2025)
+
+ENHANCEMENTS:
+
+* resource/cloudflare_waiting_room: add support for Turnstile fields ([#4952](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4952))
+* resource/cloudflare_zero_trust_gateway_policy: allow configuring isolate rules with BISO admin control V2 settings ([#4962](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4962))
+* resource/snippets-rules: make terraform consistent with the API and do not require "enabled" and "description" fields
+resource/snippets: use list instead of set
+resource/cloud_connector_rules: use list instead of set ([#4787](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4787))
 
 BUG FIXES:
 
-- Powered off VM breaks plan/apply [\#105](https://github.com/bpg/terraform-provider-proxmox/issues/105)
-- Disk resize causes reboot [\#102](https://github.com/bpg/terraform-provider-proxmox/issues/102)
-- Typing error - dvResourceVirtualEnvironmentVMAgentEnabled instead of dvResourceVirtualEnvironmentVMAgentTrim [\#101](https://github.com/bpg/terraform-provider-proxmox/issues/101)
-- Error creating VM with multiple disks on different storages [\#88](https://github.com/bpg/terraform-provider-proxmox/issues/88)
+* resource/cloudflare_device_posture_integration: fix bug where `custom_s2s` and `tanium_s2s` was not included in the type validation for s2s posture integrations. ([#4933](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4933))
 
-**Merged pull requests:**
+DEPENDENCIES:
 
-- Fixed Typo  [\#107](https://github.com/bpg/terraform-provider-proxmox/pull/107) ([PrajwalBorkar](https://github.com/PrajwalBorkar))
-- Avoid reboot when resizing disks. [\#104](https://github.com/bpg/terraform-provider-proxmox/pull/104) ([otopetrik](https://github.com/otopetrik))
-- Add support for "iothread" disk option for VM [\#97](https://github.com/bpg/terraform-provider-proxmox/pull/97) ([bpg](https://github.com/bpg))
-- Fix disk import when VM template has multiple disks [\#96](https://github.com/bpg/terraform-provider-proxmox/pull/96) ([bpg](https://github.com/bpg))
+* provider: bump github.com/hashicorp/terraform-plugin-go from 0.25.0 to 0.26.0 ([#4928](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4928))
+* provider: bump github.com/hashicorp/terraform-plugin-mux from 0.17.0 to 0.18.0 ([#4934](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4934))
 
-## [v0.5.3](https://github.com/bpg/terraform-provider-proxmox/tree/v0.5.3) (2022-06-02)
+## 4.51.0 (January 22nd, 2025)
 
-[Full Changelog](https://github.com/bpg/terraform-provider-proxmox/compare/v0.5.2...v0.5.3)
+NOTES:
 
-**Merged pull requests:**
+* resource/cloudflare_ruleset: remove deprecated `http_request_sbfm` phase ([#4860](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4860))
 
-- Bump hashicorp/go-getter for CVE-2022-30323 fix [\#82](https://github.com/bpg/terraform-provider-proxmox/pull/82) ([bpg](https://github.com/bpg))
-- Update docs [\#57](https://github.com/bpg/terraform-provider-proxmox/pull/57) ([bpg](https://github.com/bpg))
+ENHANCEMENTS:
 
-## [v0.5.2](https://github.com/bpg/terraform-provider-proxmox/tree/v0.5.2) (2022-05-10)
-
-[Full Changelog](https://github.com/bpg/terraform-provider-proxmox/compare/v0.5.1...v0.5.2)
-
-**Closed issues:**
-
-- proxmox\_virtual\_environment\_file json unmarshalling type issue [\#41](https://github.com/bpg/terraform-provider-proxmox/issues/41)
-
-## [v0.5.1](https://github.com/bpg/terraform-provider-proxmox/tree/v0.5.1) (2022-03-22)
-
-[Full Changelog](https://github.com/bpg/terraform-provider-proxmox/compare/v0.5.0...v0.5.1)
+* resource/cloudflare_access_application:  add private destination fields to access application ([#4892](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4892))
+* resource/cloudflare_zero_trust_gateway_policy: allow configuring resolver rules with internal DNS ([#4918](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4918))
 
 BUG FIXES:
 
-- Version mismatch in the code [\#44](https://github.com/bpg/terraform-provider-proxmox/issues/44)
-- virtual\_environment\_datastores.go: Update remote command to get datasource path [\#49](https://github.com/bpg/terraform-provider-proxmox/pull/49) ([mattburchett](https://github.com/mattburchett))
+* resource/cloudflare_api_shield_operation: fixed a bug when using variable names other than `var1 ... varN` in endpoint definitions causing these resources to be recreated when nothing has changed.
+If this affects you, after upgrading to this version, the resource has to be recreated once more to fix the state, after which the bug is fixed. ([#4894](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4894))
+* resource/cloudflare_teams_location: Fix import failures on teams locations ([#4859](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4859))
+* resource/cloudflare_zero_trust_device_posture_rule: Fix 'last_seen' not being written to the state file ([#4855](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4855))
 
-## [v0.5.0](https://github.com/bpg/terraform-provider-proxmox/tree/v0.5.0) (2021-11-06)
+INTERNAL:
 
-[Full Changelog](https://github.com/bpg/terraform-provider-proxmox/compare/v0.4.6...v0.5.0)
+* resource/cloudflare_api_shield_operation: migrated to the `terraform-plugin-framework`. ([#4894](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4894))
 
-BREAKING CHANGES:
+DEPENDENCIES:
 
-- Bump provider version to 0.5.0 [\#32](https://github.com/bpg/terraform-provider-proxmox/pull/32) ([bpg](https://github.com/bpg))
+* provider: bump github.com/cloudflare/cloudflare-go from 0.113.0 to 0.114.0 ([#4893](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4893))
+* provider: bump github.com/go-git/go-git/v5 from 5.11.0 to 5.13.0 in /tools ([#4903](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4903))
 
-## [v0.4.6](https://github.com/bpg/terraform-provider-proxmox/tree/v0.4.6) (2021-09-10)
+## 4.50.0 (January 8th, 2025)
 
-[Full Changelog](https://github.com/bpg/terraform-provider-proxmox/compare/v0.4.5...v0.4.6)
+ENHANCEMENTS:
 
-BUG FIXES:
-
-- JSON unmarshal error when deploying LCX container [\#15](https://github.com/bpg/terraform-provider-proxmox/issues/15)
-- \[BUG\] SIGSEGV if cloned VM disk is in the different storage [\#2](https://github.com/bpg/terraform-provider-proxmox/issues/2)
-- fix `make test` error [\#1](https://github.com/bpg/terraform-provider-proxmox/pull/1) ([bpg](https://github.com/bpg))
-
-## [v0.4.5](https://github.com/bpg/terraform-provider-proxmox/tree/v0.4.5) (2021-07-16)
-
-[Full Changelog](https://github.com/bpg/terraform-provider-proxmox/compare/v0.4.4...v0.4.5)
-
-## v0.4.4
+* cloudflare_teams_location: support endpoints + BYOIPv6 + DNS IPv4 destinations ([#4805](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4805))
+* resource/cloudflare_zone_settings_override: Add support for `aegis` ([#4820](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4820))
+* resource/cloudflare_zone_settings_override: add support for `ssl_automatic_mode` ([#4465](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4465))
 
 BUG FIXES:
 
-* resource/virtual_environment_vm: Fix watchdog deserialization issue
+* resource/cloudflare_access_application: Fix access application saas apps attributes crashing provider when no changes were made to those ([#4843](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4843))
 
-## v0.4.3
+DEPENDENCIES:
 
-BUG FIXES:
+* provider: bump github.com/cloudflare/cloudflare-go from 0.112.0 to 0.113.0 ([#4826](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4826))
+* provider: bump golang.org/x/net from 0.33.0 to 0.34.0 ([#4837](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4837))
 
-* resource/virtual_environment_container: Fix IP initialization issue
+## 4.49.1 (December 25th, 2024)
 
-## v0.4.2
+No functional differences to v4.49.0. Republished to fix a bad cached asset in the Terraform Registry.
 
-BUG FIXES:
+## 4.49.0 (December 25th, 2024)
 
-* resource/virtual_environment_vm: Fix `disk.file_id` diff issue
-* resource/virtual_environment_vm: Fix disk resizing issue
+NOTES:
 
-OTHER:
-
-* provider/example: Remove support for Terraform v0.11 and older
-* provider/makefile: Update to use plugin caching to support local builds
-
-## v0.4.1
-
-OTHER:
-
-* provider/docs: Fix issue with navigational link titles in Terraform Registry
-
-## v0.4.0
+* resource/cloudflare_teams_location: remove unusable `policy_ids` attribute ([#4817](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4817))
 
 FEATURES:
 
-* **New Data Source:** `proxmox_virtual_environment_time`
-* **New Resource:** `proxmox_virtual_environment_time`
-
-BREAKING CHANGES:
-
-* resource/virtual_environment_vm: `interface` is now required to create disks
-
-    ```
-      disk {
-        datastore_id = "local-lvm"
-        file_id      = "${proxmox_virtual_environment_file.ubuntu_cloud_image.id}"
-        interface    = "scsi0"
-      }
-    ```
+* **New Resource:** `cloudflare_content_scanning_expression` ([#4734](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4734))
+* **New Resource:** `cloudflare_content_scanning` ([#4719](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4719))
 
 ENHANCEMENTS:
 
-* provider/configuration: Add `virtual_environment.otp` argument for TOTP support
-* resource/virtual_environment_vm: Clone supports resize and datastore_id for moving disks
-* resource/virtual_environment_vm: Bulk clones can now use retries as argument to try multiple times to create a clone.
-* resource/virtual_environment_vm: `on_boot` parameter can be used to start a VM after the Node has been rebooted.
-* resource/virtual_environment_vm: `reboot` parameter can be used to reboot a VM after creation
-* resource/virtual_environment_vm: Has now multiple new parameters to set timeouts for the vm creation/cloning `timeout_clone`, `timeout_move_disk`, `timeout_reboot`, `timeout_shutdown_vm`, `timeout_start_vm`, `timeout_stop_vm`
+* resource/access_application: support multi-valued + Access service token authentication for SCIM provisioning to Access applications ([#4743](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4743))
 
 BUG FIXES:
 
-* library/virtual_environment_nodes: Fix node IP address format
-* library/virtual_environment_nodes: Fix WaitForNodeTask now detects errors correctly
-* library/virtual_environment_vm: Fix CloneVM now waits for the task to be finished and detect errors.
-* resource/virtual_environment_container: Fix VM ID collision when `vm_id` is not specified
-* resource/virtual_environment_vm: Fix VM ID collision when `vm_id` is not specified
-* resource/virtual_environment_vm: Fix disk import issue when importing from directory-based datastores
-* resource/virtual_environment_vm: Fix handling of storage name - correct handling of `-`
+* resource/cloudflare_ruleset: handle when `disable_stale_while_updating` is an empty object but not nil ([#4814](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4814))
 
-WORKAROUNDS:
+DEPENDENCIES:
 
-* resource/virtual_environment_vm: Ignore default value for `cpu.architecture` when the root account is not being used
+* provider: bump github.com/cloudflare/cloudflare-go from 0.111.0 to 0.112.0 ([#4803](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4803))
+* provider: bump github.com/hashicorp/terraform-plugin-framework-validators from 0.15.0 to 0.16.0 ([#4762](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4762))
+* provider: bump golang.org/x/crypto from 0.21.0 to 0.31.0 in /tools ([#4755](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4755))
+* provider: bump golang.org/x/crypto from 0.30.0 to 0.31.0 ([#4756](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4756))
+* provider: bump golang.org/x/net from 0.32.0 to 0.33.0 ([#4802](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4802))
 
-## 0.3.0
+## 4.48.0 (December 11th, 2024)
+
+NOTES:
+
+* resource/cloudflare_ruleset: rules must now be given an explicit `ref` to avoid their IDs changing across ruleset updates, see https://developers.cloudflare.com/terraform/troubleshooting/rule-id-changes/ ([#4697](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4697))
+
+FEATURES:
+
+* **New Resource:** `cloudflare_leaked_credential_check` ([#4674](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4674))
+* **New Resource:** `cloudflare_leaked_credential_check_rule` ([#4676](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4676))
+* **New Resource:** `cloudflare_snippet` ([#4565](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4565))
+* **New Resource:** `cloudflare_snippet_rules` ([#4565](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4565))
 
 ENHANCEMENTS:
 
-* resource/virtual_environment_container: Add `clone` argument
-* resource/virtual_environment_container: Add `disk` argument
-* resource/virtual_environment_container: Add `template` argument
-* resource/virtual_environment_vm: Add `agent.timeout` argument
-* resource/virtual_environment_vm: Add `audio_device` argument
-* resource/virtual_environment_vm: Add `clone` argument
-* resource/virtual_environment_vm: Add `initialization.datastore_id` argument
-* resource/virtual_environment_vm: Add `serial_device` argument
-* resource/virtual_environment_vm: Add `template` argument
+* resource/access_application: add support for destinations and domain_type ([#4661](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4661))
+* resource/access_identity_provider: document scim_config fields ([#4721](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4721))
+* resource/cloudflare_access_policy: adds support for Access infrastructure `allow_email_alias` connection rule flag ([#4665](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4665))
+* resource/cloudflare_ruleset: improve diffs when only some rules are changed ([#4697](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4697))
+* resource/cloudflare_teams_list: use PUT call to update list items ([#4737](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4737))
+* resource/cloudflare_zero_trust_access_policy: adds support for Access infrastructure `allow_email_alias` connection rule flag ([#4665](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4665))
 
 BUG FIXES:
 
-* resource/virtual_environment_container: Fix `network_interface` deletion issue
-* resource/virtual_environment_vm: Fix `network_device` deletion issue
-* resource/virtual_environment_vm: Fix slow refresh when VM is stopped and agent is enabled
-* resource/virtual_environment_vm: Fix crash caused by assuming IP addresses are always reported by the QEMU agent
-* resource/virtual_environment_vm: Fix timeout issue while waiting for IP addresses to be reported by the QEMU agent
+* resource/cloudflare_authenticated_origin_pulls: Fix issue where resources are disabled instead of being destroyed on `tf destroy` ([#4649](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4649))
+* resource/cloudflare_leaked_credential_check_rule: Fix bug in update method ([#4741](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4741))
 
-OTHER:
+DEPENDENCIES:
 
-* provider/docs: Add HTML documentation powered by GitHub Pages
+* provider: bump github.com/cloudflare/cloudflare-go from 0.110.0 to 0.111.0 ([#4709](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4709))
+* provider: bump golang.org/x/net from 0.31.0 to 0.32.0 ([#4718](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4718))
 
-## 0.2.0
-
-BREAKING CHANGES:
-
-* resource/virtual_environment_vm: Rename `cloud_init` argument to `initialization`
-* resource/virtual_environment_vm: Rename `os_type` argument to `operating_system.type`
-
-FEATURES:
-
-* **New Data Source:** `proxmox_virtual_environment_dns`
-* **New Data Source:** `proxmox_virtual_environment_hosts`
-* **New Resource:** `proxmox_virtual_environment_certificate`
-* **New Resource:** `proxmox_virtual_environment_container`
-* **New Resource:** `proxmox_virtual_environment_dns`
-* **New Resource:** `proxmox_virtual_environment_hosts`
+## 4.47.0 (November 27th, 2024)
 
 ENHANCEMENTS:
 
-* resource/virtual_environment_vm: Add `acpi` argument
-* resource/virtual_environment_vm: Add `bios` argument
-* resource/virtual_environment_vm: Add `cpu.architecture`, `cpu.flags`, `cpu.type` and `cpu.units` arguments
-* resource/virtual_environment_vm: Add `tablet_device` argument
-* resource/virtual_environment_vm: Add `vga` argument
+* resource/cloudflare_access_application: support SCIM schema strictness setting for outbound provisioning ([#4419](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4419))
+* resource/cloudflare_access_identity_provider: Adds identity update behavior field in SCIM configuration ([#4602](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4602))
+* resource/cloudflare_notification_policy: Added support for D1 in the `cloudflare_notification_policy` resource and data source. ([#4615](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4615))
+* resource/cloudflare_notification_policy: add support for `image_resizing_notification` alert type ([#4588](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4588))
+* resource/cloudflare_r2_bucket: Added support for Oceania region in location hints. ([#4660](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4660))
 
-## 0.1.0
+BUG FIXES:
+
+* resource/cloudflare_logpush_job: add dlp_forensic_copies to allowed dataset values ([#4598](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4598))
+* resource/cloudflare_zero_trust_access_policy: make gsuite  parameters required ([#4597](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4597))
+
+DEPENDENCIES:
+
+* provider: bump github.com/cloudflare/cloudflare-go from 0.109.0 to 0.110.0 ([#4632](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4632))
+* provider: bump github.com/hashicorp/terraform-plugin-testing from 1.10.0 to 1.11.0 ([#4613](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4613))
+* provider: bump github.com/stretchr/testify from 1.9.0 to 1.10.0 ([#4663](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4663))
+
+## 4.46.0 (November 13th, 2024)
+
+ENHANCEMENTS:
+
+* resource/cloudflare_waiting_room: add "bg-BG", "hr-HR", "cs-CZ", "da-DK", "fi-FI", "lt-LT", "ms-MY", "nb-NO", "ro-RO", "el-GR", "he-IL" "hi-IN", "hu-HU", "sr-BA", "sk-SK", "sl-SI", "sv-SE", "tl-PH", "th-TH", "uk-UA", and "vi-VN" to default_template_language field ([#4509](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4509))
+
+BUG FIXES:
+
+* resource/cloudflare_certificate_pack: Fix importing existing resources issue due to 3 ignored required fields in importer ([#4544](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4544))
+* resource/cloudflare_list: Don't read list items if there are none configured ([#4511](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4511))
+* resource/cloudflare_zero_trust_list: Consider `items_with_description` when updating a ZT list ([#4477](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4477))
+* resource/turnstile: Force recreate on region update ([#4496](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4496))
+
+DEPENDENCIES:
+
+* provider: bump github.com/cloudflare/cloudflare-go from 0.108.0 to 0.109.0 ([#4523](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4523))
+* provider: bump github.com/hashicorp/terraform-plugin-framework-validators from 0.14.0 to 0.15.0 ([#4492](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4492))
+* provider: bump github.com/hashicorp/terraform-plugin-go from 0.24.0 to 0.25.0 ([#4483](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4483))
+* provider: bump github.com/hashicorp/terraform-plugin-mux from 0.16.0 to 0.17.0 ([#4484](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4484))
+* provider: bump github.com/hashicorp/terraform-plugin-sdk/v2 from 2.34.0 to 2.35.0 ([#4491](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4491))
+* provider: bump golang.org/x/net from 0.30.0 to 0.31.0 ([#4541](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4541))
+* provider: bump goreleaser/goreleaser-action from 6.0.0 to 6.1.0 ([#4531](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4531))
+
+## 4.45.0 (October 30th, 2024)
+
+NOTES:
+
+* datasource/cloudflare_infrastructure_access_targets: deprecated in favour of `cloudflare_zero_trust_infrastructure_access_targets` and will be removed in the next major version. ([#4403](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4403))
+* resource/cloudflare_infrastructure_access_target: deprecated in favour of `cloudflare_zero_trust_infrastructure_access_target` and will be removed in the next major version. ([#4403](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4403))
 
 FEATURES:
 
-* **New Data Source:** `proxmox_virtual_environment_datastores`
-* **New Data Source:** `proxmox_virtual_environment_group`
-* **New Data Source:** `proxmox_virtual_environment_groups`
-* **New Data Source:** `proxmox_virtual_environment_nodes`
-* **New Data Source:** `proxmox_virtual_environment_pool`
-* **New Data Source:** `proxmox_virtual_environment_pools`
-* **New Data Source:** `proxmox_virtual_environment_role`
-* **New Data Source:** `proxmox_virtual_environment_roles`
-* **New Data Source:** `proxmox_virtual_environment_user`
-* **New Data Source:** `proxmox_virtual_environment_users`
-* **New Data Source:** `proxmox_virtual_environment_version`
-* **New Resource:** `proxmox_virtual_environment_file`
-* **New Resource:** `proxmox_virtual_environment_group`
-* **New Resource:** `proxmox_virtual_environment_pool`
-* **New Resource:** `proxmox_virtual_environment_role`
-* **New Resource:** `proxmox_virtual_environment_user`
-* **New Resource:** `proxmox_virtual_environment_vm`
+* **New Resource:** `cloudflare_zero_trust_infrastructure_access_target` ([#4403](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4403))
 
+ENHANCEMENTS:
 
-\* *This Changelog was automatically generated by [github_changelog_generator](https://github.com/github-changelog-generator/github-changelog-generator)*
+* resource/cloudflare_ruleset: add support for `zstd` compression in the `compress_response` action ([#4300](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4300))
+
+BUG FIXES:
+
+* resource/cloudflare_workers_cron_trigger: fix incorrectly reported deprecated resource ([#4295](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4295))
+* resource/cloudflare_zero_trust_dlp_profile: Include more fields in `entry` set hash function ([#4464](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4464))
+
+DEPENDENCIES:
+
+* provider: bump github.com/cloudflare/cloudflare-go from 0.107.0 to 0.108.0 ([#4394](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4394))
+* provider: bump github.com/hashicorp/terraform-plugin-framework-validators from 0.13.0 to 0.14.0 ([#4313](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4313))
+
+## 4.44.0 (October 16th, 2024)
+
+NOTES:
+
+* `cloudflare_list` has been migrated to the `terraform-plugin-framework` in doing so addresses issues with the internal representation of zero values. A downside to this is that to get the full benefits, you will need to remove the resource from your Terraform state (`terraform state rm ...`) and then import the resource back into your state. ([#4228](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4228))
+
+ENHANCEMENTS:
+
+* resource/cloudflare_certificate_pack: Add SSL.com as valid certificate authority ([#4267](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4267))
+* resource/cloudflare_device_posture_rule: Add support for SentinelOne posture check operational_state field ([#4200](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4200))
+
+BUG FIXES:
+
+* resource/cloudflare_device_posture_rule: fix bug where locations were not parsed correctly for client_certificate_v2 posture rules ([#4168](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4168))
+* resource/cloudflare_teams_rule: start persisting rule settings, wo rules may not stuck in plan cycle ([#4261](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4261))
+* resource/cloudflare_zone: When changing `type` to or from `partial` the `verification_key` attribute will properly show that it will receive a new value. ([#4019](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4019))
+
+INTERNAL:
+
+* resource/cloudflare_list: migrate from SDKv2 to `terraform-plugin-framework` ([#4228](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4228))
+
+DEPENDENCIES:
+
+* provider: bump github.com/cloudflare/cloudflare-go from 0.106.0 to 0.107.0 ([#4251](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4251))
+* provider: bump golang.org/x/net from 0.29.0 to 0.30.0 ([#4213](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4213))
+
+## 4.43.0 (September 30th, 2024)
+
+FEATURES:
+
+* **New Resource:** `cloudflare_infrastructure_access_target` ([#4077](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4077))
+
+ENHANCEMENTS:
+
+* resource/cloudflare_access_application: added target contexts support for access application type infrastructure ([#4128](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4128))
+* resource/cloudflare_access_policy: added infrastructure connection rule support for access policy ([#4128](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4128))
+* resource/cloudflare_device_posture_integration: add support for managing `custom_s2s` third party posture provider. ([#3917](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3917))
+* resource/cloudflare_device_posture_rule: add ability to create custom_s2s posture rule ([#3917](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3917))
+* resource/cloudflare_zone_settings_override: add support for Speed Brain ([#4113](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4113))
+
+DEPENDENCIES:
+
+* provider: bump `github.com/aws/aws-sdk-go-v2/config` from 1.27.34 to 1.27.37 ([#4124](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4124))
+* provider: bump `github.com/aws/aws-sdk-go-v2/config` from 1.27.37 to 1.27.38 ([#4127](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4127))
+* provider: bump `github.com/aws/aws-sdk-go-v2/credentials` from 1.17.32 to 1.17.35 ([#4124](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4124))
+* provider: bump `github.com/aws/aws-sdk-go-v2/credentials` from 1.17.35 to 1.17.36 ([#4127](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4127))
+* provider: bump `github.com/aws/aws-sdk-go-v2/service/s3` from 1.61.2 to 1.63.1 ([#4124](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4124))
+* provider: bump `github.com/aws/aws-sdk-go-v2/service/s3` from 1.63.1 to 1.63.2 ([#4127](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4127))
+* provider: bump `github.com/aws/aws-sdk-go-v2` from 1.30.5 to 1.31.0 ([#4124](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4124))
+* provider: bump actions/checkout from 3 to 4 ([#4101](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4101))
+* provider: bump github.com/cloudflare/cloudflare-go from 0.104.0 to 0.105.0 ([#4125](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4125))
+* provider: bump github.com/cloudflare/cloudflare-go from 0.105.0 to 0.106.0 ([#4137](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4137))
+* provider: bump github.com/hashicorp/terraform-plugin-framework from 1.11.0 to 1.12.0 ([#4061](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4061))
+* provider: bump github.com/hashicorp/terraform-plugin-go from 0.23.0 to 0.24.0 ([#4060](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4060))
+
+## 4.42.0 (September 18th, 2024)
+
+FEATURES:
+
+* **New Resource:** `cloudflare_zero_trust_gateway_certificate` ([#3547](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3547))
+
+ENHANCEMENTS:
+
+* resource/cloudflare_notification_policy: add support for `image_notification` alert type ([#3981](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3981))
+* resource/cloudflare_access_group: Added description strings to all rule types ([#3792](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3792))
+* resource/cloudflare_bot_management: Add support for ai_bots_protection settings ([#3960](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3960))
+* resource/cloudflare_record: remove internal references to deprecated ZoneID and ZoneName fields ([#4018](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4018))
+* resource/cloudflare_workers_script: Add support for `hyperdrive` binding type ([#3821](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3821))
+* resource/cloudflare_zone_settings_override: Add optional setting `replace_insecure_js` ([#3602](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3602))
+* resource/rulesets: add cache_reserve terraform support and fix typo ([#3923](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3923))
+* resource/zero_trust_gateway_settings: Add missing disable_for_time example field ([#3931](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3931))
+
+BUG FIXES:
+
+* resource/cloudflare_access_application: fix the name of the new resource to use when upgrading ([#4044](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4044))
+* resource/cloudflare_access_application: reconcile access application custom attributes logic ([#3987](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3987))
+* resource/cloudflare_hyperdrive_config: fix bug when calling passing Hyperdrive config ID to update method ([#4042](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4042))
+
+DEPENDENCIES:
+
+* provider: bump `github.com/aws/aws-sdk-go-v2/config` from 1.27.31 to 1.27.32 ([#3892](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3892))
+* provider: bump `github.com/aws/aws-sdk-go-v2/config` from 1.27.32 to 1.27.33 ([#3901](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3901))
+* provider: bump `github.com/aws/aws-sdk-go-v2/credentials` from 1.17.30 to 1.17.31 ([#3892](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3892))
+* provider: bump `github.com/aws/aws-sdk-go-v2/credentials` from 1.17.31 to 1.17.32 ([#3901](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3901))
+* provider: bump `github.com/aws/aws-sdk-go-v2/service/s3` from 1.61.0 to 1.61.1 ([#3892](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3892))
+* provider: bump `github.com/aws/aws-sdk-go-v2/service/s3` from 1.61.1 to 1.61.2 ([#3901](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3901))
+* provider: bump `github.com/aws/aws-sdk-go-v2` from 1.30.4 to 1.30.5 ([#3892](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3892))
+* provider: bump github.com/aws/aws-sdk-go-v2/config from 1.27.33 to 1.27.34 in the aws group ([#4020](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4020))
+* provider: bump github.com/cloudflare/cloudflare-go from 0.103.0 to 0.104.0 ([#3974](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3974))
+* provider: bump golang.org/x/net from 0.28.0 to 0.29.0 ([#3911](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3911))
+
+## 4.41.0 (September 4th, 2024)
+
+NOTES:
+
+* resource/cloudflare_logpush_job: Deprecate `frequency` in favour of `max_upload_interval_seconds` ([#3745](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3745))
+* resource/cloudflare_record: remove deprecated zone_name field ([#3855](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3855))
+
+FEATURES:
+
+* **New Data Source:** `cloudflare_dcv_delegation` ([#3885](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3885))
+* **New Resource:** `cloudflare_cloud_connector_rules` ([#3622](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3622))
+
+ENHANCEMENTS:
+
+* resource/cloudflare_device_posture_rule: Modify Tanium's eid_last_seen field to be relative instead of a timestamp value ([#3764](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3764))
+* resource/cloudflare_teams_account: Add `disable_for_time` attribute ([#3526](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3526))
+* resource/cloudflare_waiting_room: Add enabled_origin_commands field. ([#3805](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3805))
+* resource/rulesets: add "contains" support to custom cache key headers ([#3820](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3820))
+
+BUG FIXES:
+
+* resource/cloudflare_access_mutual_tls_certificate: change associated hostnames to a set ([#3498](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3498))
+* resource/cloudflare_access_policy: Fix forcing new access policies when account id is not set through import ([#3358](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3358))
+* resource/cloudflare_record: Suppress matching ipv6 dns record ([#3888](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3888))
+* resource/cloudflare_record: handle scenarios where `content` and `value` are both being set in state and erroneously always thinking the `content` field is the source of truth ([#3776](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3776))
+* resource/cloudflare_zero_trust_access_group: Fix false deprecation warnings ([#3740](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3740))
+* resource/cloudflare_zone_settings_override: fix migration process with nil initial_settings ([#3829](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3829))
+* resource/hyperdrive_config: use hyperdrive_config id when updating resource ([#3704](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3704))
+
+DEPENDENCIES:
+
+* provider: bump `github.com/aws/aws-sdk-go-v2/config` from 1.27.27 to 1.27.31 ([#3801](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3801))
+* provider: bump `github.com/aws/aws-sdk-go-v2/credentials` from 1.17.27 to 1.17.30 ([#3801](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3801))
+* provider: bump `github.com/aws/aws-sdk-go-v2/service/s3` from 1.58.3 to 1.60.1 ([#3801](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3801))
+* provider: bump `github.com/aws/aws-sdk-go-v2` from 1.30.3 to 1.30.4 ([#3801](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3801))
+* provider: bump github.com/aws/aws-sdk-go-v2/service/s3 from 1.60.1 to 1.61.0 in the aws group ([#3823](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3823))
+* provider: bump github.com/cloudflare/cloudflare-go from 0.101.0 to 0.102.0 ([#3713](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3713))
+* provider: bump github.com/cloudflare/cloudflare-go from 0.102.0 to 0.103.0 ([#3824](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3824))
+
+## 4.40.0 (August 21st, 2024)
+
+NOTES:
+
+* resource/cloudflare_access_application: deprecated in favour of `cloudflare_zero_trust_access_application` and will be removed in the next major version. ([#3584](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3584))
+* resource/cloudflare_access_ca_certificate: deprecated in favour of `cloudflare_zero_trust_access_short_lived_certificate` and will be removed in the next major version. ([#3584](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3584))
+* resource/cloudflare_access_custom_page: deprecated in favour of `cloudflare_zero_trust_access_custom_page` and will be removed in the next major version. ([#3584](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3584))
+* resource/cloudflare_access_group: deprecated in favour of `cloudflare_zero_trust_access_group` and will be removed in the next major version. ([#3584](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3584))
+* resource/cloudflare_access_identity_provider: deprecated in favour of `cloudflare_zero_trust_access_identity_provider` and will be removed in the next major version. ([#3584](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3584))
+* resource/cloudflare_access_keys_configuration: deprecated in favour of `cloudflare_zero_trust_access_key_configuration` and will be removed in the next major version. ([#3584](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3584))
+* resource/cloudflare_access_mutual_tls_certificate: deprecated in favour of `cloudflare_zero_trust_access_mtls_certificate` and will be removed in the next major version. ([#3584](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3584))
+* resource/cloudflare_access_mutual_tls_hostname_settings: deprecated in favour of `cloudflare_zero_trust_access_mtls_hostname_settings` and will be removed in the next major version. ([#3584](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3584))
+* resource/cloudflare_access_organization: deprecated in favour of `cloudflare_zero_trust_organization` and will be removed in the next major version. ([#3584](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3584))
+* resource/cloudflare_access_policy: deprecated in favour of `cloudflare_zero_trust_access_policy` and will be removed in the next major version. ([#3584](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3584))
+* resource/cloudflare_access_service_token: deprecated in favour of `cloudflare_zero_trust_access_service_token` and will be removed in the next major version. ([#3584](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3584))
+* resource/cloudflare_access_tag: deprecated in favour of `cloudflare_zero_trust_access_tag` and will be removed in the next major version. ([#3584](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3584))
+* resource/cloudflare_device_dex_test: deprecated in favour of `cloudflare_zero_trust_dex_test` and will be removed in the next major version. ([#3584](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3584))
+* resource/cloudflare_device_managed_networks: deprecated in favour of `cloudflare_zero_trust_device_managed_networks` and will be removed in the next major version. ([#3584](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3584))
+* resource/cloudflare_device_policy_certificates: deprecated in favour of `cloudflare_zero_trust_device_certificates` and will be removed in the next major version. ([#3584](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3584))
+* resource/cloudflare_device_posture_integration: deprecated in favour of `cloudflare_zero_trust_device_posture_integration` and will be removed in the next major version. ([#3584](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3584))
+* resource/cloudflare_device_posture_rule: deprecated in favour of `cloudflare_zero_trust_device_posture_rule` and will be removed in the next major version. ([#3584](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3584))
+* resource/cloudflare_device_settings_policy: deprecated in favour of `cloudflare_zero_trust_device_profiles` and will be removed in the next major version. ([#3584](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3584))
+* resource/cloudflare_dlp_custom_profile: deprecated in favour of `cloudflare_zero_trust_dlp_custom_profile` and will be removed in the next major version. ([#3584](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3584))
+* resource/cloudflare_dlp_predefined_profile: deprecated in favour of `cloudflare_zero_trust_dlp_predefined_profile` and will be removed in the next major version. ([#3584](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3584))
+* resource/cloudflare_dlp_profile: deprecated in favour of `cloudflare_zero_trust_dlp_profile` and will be removed in the next major version. ([#3584](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3584))
+* resource/cloudflare_fallback_domain: deprecated in favour of `cloudflare_zero_trust_local_domain_fallback` and will be removed in the next major version. ([#3584](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3584))
+* resource/cloudflare_gre_tunnel: deprecated in favour of `cloudflare_magic_wan_gre_tunnel` and will be removed in the next major version. ([#3584](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3584))
+* resource/cloudflare_ipsec_tunnel: deprecated in favour of `cloudflare_magic_wan_ipsec_tunnel` and will be removed in the next major version. ([#3584](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3584))
+* resource/cloudflare_record: fix a bug that prematurely removed the ability to set the deprecated `value` field. ([#3674](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3674))
+* resource/cloudflare_risk_behavior: deprecated in favour of `cloudflare_zero_trust_risk_behavior` and will be removed in the next major version. ([#3584](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3584))
+* resource/cloudflare_split_tunnel: deprecated in favour of `cloudflare_zero_trust_split_tunnels` and will be removed in the next major version. ([#3584](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3584))
+* resource/cloudflare_static_route: deprecated in favour of `cloudflare_magic_wan_static_route` and will be removed in the next major version. ([#3584](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3584))
+* resource/cloudflare_teams_account: deprecated in favour of `cloudflare_zero_trust_gateway_settings` and will be removed in the next major version. ([#3584](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3584))
+* resource/cloudflare_teams_list: deprecated in favour of `cloudflare_zero_trust_list` and will be removed in the next major version. ([#3584](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3584))
+* resource/cloudflare_teams_location: deprecated in favour of `cloudflare_zero_trust_dns_location` and will be removed in the next major version. ([#3584](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3584))
+* resource/cloudflare_teams_proxy_endpoint: deprecated in favour of `cloudflare_zero_trust_gateway_proxy_endpoint` and will be removed in the next major version. ([#3584](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3584))
+* resource/cloudflare_teams_rule: deprecated in favour of `cloudflare_zero_trust_gateway_policy` and will be removed in the next major version. ([#3584](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3584))
+* resource/cloudflare_tunnel: deprecated in favour of `cloudflare_zero_trust_tunnel_cloudflared` and will be removed in the next major version. ([#3584](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3584))
+* resource/cloudflare_tunnel_config: deprecated in favour of `cloudflare_zero_trust_tunnel_cloudflared_config` and will be removed in the next major version. ([#3584](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3584))
+* resource/cloudflare_tunnel_route: deprecated in favour of `cloudflare_zero_trust_tunnel_route` and will be removed in the next major version. ([#3584](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3584))
+* resource/cloudflare_tunnel_virtual_network: deprecated in favour of `cloudflare_zero_trust_tunnel_virtual_network` and will be removed in the next major version. ([#3584](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3584))
+* resource/cloudflare_worker_cron_trigger: deprecated in favour of `cloudflare_workers_cron_trigger` and will be removed in the next major version. ([#3584](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3584))
+* resource/cloudflare_worker_domain: deprecated in favour of `cloudflare_workers_custom_domain` and will be removed in the next major version. ([#3584](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3584))
+* resource/cloudflare_worker_script: deprecated in favour of `cloudflare_workers_script` and will be removed in the next major version. ([#3584](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3584))
+* resource/cloudflare_worker_secret: deprecated in favour of `cloudflare_workers_secret` and will be removed in the next major version. ([#3584](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3584))
+* resource/cloudflare_workers_for_platforms_namespace: deprecated in favour of `cloudflare_workers_for_platforms_dispatch_namespace` and will be removed in the next major version. ([#3584](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3584))
+
+FEATURES:
+
+* **New Resource:** `cloudflare_magic_wan_gre_tunnel` ([#3584](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3584))
+* **New Resource:** `cloudflare_magic_wan_ipsec_tunnel` ([#3584](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3584))
+* **New Resource:** `cloudflare_magic_wan_static_route` ([#3584](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3584))
+* **New Resource:** `cloudflare_workers_cron_trigger` ([#3584](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3584))
+* **New Resource:** `cloudflare_workers_custom_domain` ([#3584](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3584))
+* **New Resource:** `cloudflare_workers_for_platforms_dispatch_namespace` ([#3584](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3584))
+* **New Resource:** `cloudflare_workers_script` ([#3584](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3584))
+* **New Resource:** `cloudflare_workers_secret` ([#3584](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3584))
+* **New Resource:** `cloudflare_zero_trust_access_application` ([#3584](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3584))
+* **New Resource:** `cloudflare_zero_trust_access_custom_page` ([#3584](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3584))
+* **New Resource:** `cloudflare_zero_trust_access_group` ([#3584](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3584))
+* **New Resource:** `cloudflare_zero_trust_access_identity_provider` ([#3584](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3584))
+* **New Resource:** `cloudflare_zero_trust_access_key_configuration` ([#3584](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3584))
+* **New Resource:** `cloudflare_zero_trust_access_mtls_certificate` ([#3584](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3584))
+* **New Resource:** `cloudflare_zero_trust_access_mtls_hostname_settings` ([#3584](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3584))
+* **New Resource:** `cloudflare_zero_trust_access_policy` ([#3584](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3584))
+* **New Resource:** `cloudflare_zero_trust_access_service_token` ([#3584](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3584))
+* **New Resource:** `cloudflare_zero_trust_access_short_lived_certificate` ([#3584](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3584))
+* **New Resource:** `cloudflare_zero_trust_access_tag` ([#3584](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3584))
+* **New Resource:** `cloudflare_zero_trust_device_certificates` ([#3584](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3584))
+* **New Resource:** `cloudflare_zero_trust_device_managed_networks` ([#3584](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3584))
+* **New Resource:** `cloudflare_zero_trust_device_posture_integration` ([#3584](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3584))
+* **New Resource:** `cloudflare_zero_trust_device_posture_rule` ([#3584](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3584))
+* **New Resource:** `cloudflare_zero_trust_device_profiles` ([#3584](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3584))
+* **New Resource:** `cloudflare_zero_trust_dex_test` ([#3584](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3584))
+* **New Resource:** `cloudflare_zero_trust_dlp_custom_profile` ([#3584](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3584))
+* **New Resource:** `cloudflare_zero_trust_dlp_predefined_profile` ([#3584](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3584))
+* **New Resource:** `cloudflare_zero_trust_dlp_profile` ([#3584](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3584))
+* **New Resource:** `cloudflare_zero_trust_dns_location` ([#3584](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3584))
+* **New Resource:** `cloudflare_zero_trust_gateway_policy` ([#3584](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3584))
+* **New Resource:** `cloudflare_zero_trust_gateway_proxy_endpoint` ([#3584](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3584))
+* **New Resource:** `cloudflare_zero_trust_gateway_settings` ([#3584](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3584))
+* **New Resource:** `cloudflare_zero_trust_list` ([#3584](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3584))
+* **New Resource:** `cloudflare_zero_trust_local_domain_fallback` ([#3584](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3584))
+* **New Resource:** `cloudflare_zero_trust_organization` ([#3584](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3584))
+* **New Resource:** `cloudflare_zero_trust_risk_behavior` ([#3584](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3584))
+* **New Resource:** `cloudflare_zero_trust_risk_score_integration` ([#3563](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3563))
+* **New Resource:** `cloudflare_zero_trust_split_tunnels` ([#3584](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3584))
+* **New Resource:** `cloudflare_zero_trust_tunnel_cloudflared` ([#3584](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3584))
+* **New Resource:** `cloudflare_zero_trust_tunnel_cloudflared_config` ([#3584](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3584))
+* **New Resource:** `cloudflare_zero_trust_tunnel_route` ([#3584](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3584))
+* **New Resource:** `cloudflare_zero_trust_tunnel_virtual_network` ([#3584](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3584))
+
+ENHANCEMENTS:
+
+* resource/cloudflare_device_posture_rule: add ability to create client_certificate_v2 posture rule ([#3512](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3512))
+* resource/cloudflare_device_settings_policy: Add tunnel_protocol field for device policies ([#3513](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3513))
+
+BUG FIXES:
+
+* resource/cloudflare_access_policy: handle multiple okta idps in access policies ([#3579](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3579))
+* resource/cloudflare_record: refactor validation to use `ExactlyOneOf` instead of custom logic ([#3699](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3699))
+
+DEPENDENCIES:
+
+* provider: bump github.com/hashicorp/terraform-plugin-framework from 1.10.0 to 1.11.0 ([#3575](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3575))
+* provider: bump github.com/hashicorp/terraform-plugin-testing from 1.9.0 to 1.10.0 ([#3583](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3583))
+* provider: bump golang.org/x/net from 0.27.0 to 0.28.0 ([#3576](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3576))
+
+## 4.39.0 (August 7th, 2024)
+
+NOTES:
+
+* resource/cloudflare_access_policy: remove deprecation notice related to precedence ([#3556](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3556))
+* resource/cloudflare_record: `value` is now deprecated in favour of `content` ([#3509](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3509))
+* resource/cloudflare_worker_cron_trigger: deprecated in favour of `cloudflare_workers_cron_trigger` and will be removed in the next major version. ([#3500](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3500))
+* resource/cloudflare_worker_domain: deprecated in favour of `cloudflare_workers_domain` and will be removed in the next major version. ([#3500](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3500))
+* resource/cloudflare_worker_route: deprecated in favour of `cloudflare_workers_route` and will be removed in the next major version. ([#3500](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3500))
+* resource/cloudflare_worker_script: deprecated in favour of `cloudflare_workers_script` and will be removed in the next major version. ([#3500](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3500))
+* resource/cloudflare_worker_secret: deprecated in favour of `cloudflare_workers_secret` and will be removed in the next major version. ([#3500](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3500))
+* resource/cloudflare_workers_for_platforms_namespace: deprecated in favour of `cloudflare_workers_for_platforms_dispatch_namespace` and will be removed in the next major version. ([#3500](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3500))
+* resource/zone_settings_override: deprecate `minify` setting and include state migration to remove from local state. You should immediately remove the configuration from the resource to prevent permadiffs. Automatic migration of user configuration can be handled with [Grit](https://docs.grit.io/cli/quickstart) by running `grit apply github.com/cloudflare/terraform-provider-cloudflare#cloudflare_zone_settings_override_remove_minify` ([#3521](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3521))
+
+FEATURES:
+
+* **New Data Source:** `cloudflare_gateway_app_types` ([#3470](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3470))
+* **New Resource:** `cloudflare_workers_cron_trigger` ([#3500](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3500))
+* **New Resource:** `cloudflare_workers_domain` ([#3500](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3500))
+* **New Resource:** `cloudflare_workers_for_platforms_dispatch_namespace` ([#3500](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3500))
+* **New Resource:** `cloudflare_workers_route` ([#3500](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3500))
+* **New Resource:** `cloudflare_workers_script` ([#3500](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3500))
+* **New Resource:** `cloudflare_workers_secret` ([#3500](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3500))
+
+ENHANCEMENTS:
+
+* resource/access_application: add `skip_app_launcher_login_page` flag to skip the App Launcher landing page ([#3519](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3519))
+* resource/cloudflare_device_posture_rules: added support for intune compliance_status values ([#3492](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3492))
+* resource/cloudflare_teams_rule: Add `disable_clipboard_redirection` attribute to `BISOAdminControls` ([#3511](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3511))
+* resource/hyperdrive_config: Add support for creating Hyperdrive over Access configs ([#3516](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3516))
+* resource/hyperdrive_config: Add support for max_age and stale_while_revalidate in Hyperdrive Config caching settings ([#3516](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3516))
+
+BUG FIXES:
+
+* resource/cloudflare_list_item: handle overlapping hostname `url_hostname` ([#3515](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3515))
+* resource/cloudflare_risk_behavior: fix bug where partial definition of risk behaviors resulted in a provider error ([#3463](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3463))
+
+DEPENDENCIES:
+
+* provider: bump github.com/aws/aws-sdk-go-v2/service/s3 from 1.58.2 to 1.58.3 in the aws group ([#3557](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3557))
+* provider: bump github.com/cloudflare/cloudflare-go from 0.100.0 to 0.101.0 ([#3540](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3540))
+* provider: bump github.com/cloudflare/cloudflare-go from 0.99.0 to 0.100.0 ([#3499](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3499))
+
+## 4.38.0 (July 24th, 2024)
+
+FEATURES:
+
+* **New Data Source:** `cloudflare_gateway_categories` ([#3443](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3443))
+
+ENHANCEMENTS:
+
+* resource/cloudflare_teams_list: add support for descriptions on list items ([#3488](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3488))
+* resource/cloudflare_teams_rules: add support for `ignore_cname_category_matches` ([#3473](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3473))
+
+BUG FIXES:
+
+* resource/cloudflare-access-application: fixes bug when updating self_hosted_domains ([#3468](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3468))
+* resource/cloudflare_access_application: Fix bug that was not cleaning the API when removing all ids from the 'policies' list ([#3469](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3469))
+
+DEPENDENCIES:
+
+* provider: bump `github.com/aws/aws-sdk-go-v2/config` from 1.27.24 to 1.27.25 ([#3449](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3449))
+* provider: bump `github.com/aws/aws-sdk-go-v2/config` from 1.27.25 to 1.27.27 ([#3483](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3483))
+* provider: bump `github.com/aws/aws-sdk-go-v2/credentials` from 1.17.24 to 1.17.25 ([#3449](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3449))
+* provider: bump `github.com/aws/aws-sdk-go-v2/credentials` from 1.17.25 to 1.17.27 ([#3483](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3483))
+* provider: bump `github.com/aws/aws-sdk-go-v2/service/s3` from 1.58.0 to 1.58.1 ([#3449](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3449))
+* provider: bump `github.com/aws/aws-sdk-go-v2/service/s3` from 1.58.1 to 1.58.2 ([#3483](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3483))
+* provider: bump `github.com/aws/aws-sdk-go-v2` from 1.30.1 to 1.30.2 ([#3449](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3449))
+* provider: bump `github.com/aws/aws-sdk-go-v2` from 1.30.2 to 1.30.3 ([#3483](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3483))
+* provider: bump github.com/cloudflare/cloudflare-go/v2 from 2.3.0 to 2.4.0 ([#3480](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3480))
+
+## 4.37.0 (July 11th, 2024)
+
+ENHANCEMENTS:
+
+* resource/cloudflare_notification_policy: Add tunnel_name filter for Magic Health Checks ([#3417](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3417))
+
+BUG FIXES:
+
+* resource/cloudflare_r2_bucket: add validation to location hint to prevent invalid values from drifting ([#3441](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3441))
+
+DEPENDENCIES:
+
+* provider: bump `github.com/aws/aws-sdk-go-v2/config` from 1.27.21 to 1.27.22 ([#3404](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3404))
+* provider: bump `github.com/aws/aws-sdk-go-v2/config` from 1.27.22 to 1.27.23 ([#3412](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3412))
+* provider: bump `github.com/aws/aws-sdk-go-v2/config` from 1.27.23 to 1.27.24 ([#3437](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3437))
+* provider: bump `github.com/aws/aws-sdk-go-v2/credentials` from 1.17.21 to 1.17.22 ([#3404](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3404))
+* provider: bump `github.com/aws/aws-sdk-go-v2/credentials` from 1.17.22 to 1.17.23 ([#3412](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3412))
+* provider: bump `github.com/aws/aws-sdk-go-v2/credentials` from 1.17.23 to 1.17.24 ([#3437](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3437))
+* provider: bump `github.com/aws/aws-sdk-go-v2/service/s3` from 1.56.1 to 1.57.0 ([#3404](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3404))
+* provider: bump `github.com/aws/aws-sdk-go-v2/service/s3` from 1.57.0 to 1.57.1 ([#3412](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3412))
+* provider: bump `github.com/aws/aws-sdk-go-v2` from 1.30.0 to 1.30.1 ([#3412](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3412))
+* provider: bump github.com/aws/aws-sdk-go-v2/service/s3 from 1.57.1 to 1.58.0 in the aws group ([#3429](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3429))
+* provider: bump github.com/cloudflare/cloudflare-go from 0.98.0 to 0.99.0 ([#3438](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3438))
+* provider: bump github.com/hashicorp/terraform-plugin-framework from 1.9.0 to 1.10.0 ([#3445](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3445))
+* provider: bump github.com/hashicorp/terraform-plugin-framework-validators from 0.12.0 to 0.13.0 ([#3447](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3447))
+* provider: bump github.com/hashicorp/terraform-plugin-testing from 1.8.0 to 1.9.0 ([#3446](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3446))
+* provider: bump golang.org/x/net from 0.26.0 to 0.27.0 ([#3442](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3442))
+
+## 4.36.0 (June 26th, 2024)
+
+NOTES:
+
+* resource/zone_settings_override: deprecate `mobile_redirect` setting and include state migration to remove from local state. You should immediately remove the configuration from the resource to prevent permadiffs. ([#3337](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3337))
+
+ENHANCEMENTS:
+
+* resource/cloudflare_access_application: Support configuring OIDC SaaS access token lifetime ([#3353](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3353))
+
+BUG FIXES:
+
+* resource/cloudflare_list_item: fix crash when not using `type = "redirect"` due to attempting to compare `nil` ([#3368](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3368))
+* resource/cloudflare_list_item: implement exact match for IP values to prevent overlapping IP prefixes from not being found ([#3368](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3368))
+
+DEPENDENCIES:
+
+* provider: bump `github.com/aws/aws-sdk-go-v2/config` from 1.27.18 to 1.27.19 ([#3360](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3360))
+* provider: bump `github.com/aws/aws-sdk-go-v2/config` from 1.27.19 to 1.27.20 ([#3362](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3362))
+* provider: bump `github.com/aws/aws-sdk-go-v2/config` from 1.27.20 to 1.27.21 ([#3364](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3364))
+* provider: bump `github.com/aws/aws-sdk-go-v2/credentials` from 1.17.18 to 1.17.19 ([#3360](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3360))
+* provider: bump `github.com/aws/aws-sdk-go-v2/credentials` from 1.17.19 to 1.17.20 ([#3362](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3362))
+* provider: bump `github.com/aws/aws-sdk-go-v2/credentials` from 1.17.20 to 1.17.21 ([#3364](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3364))
+* provider: bump `github.com/aws/aws-sdk-go-v2/service/s3` from 1.55.1 to 1.55.2 ([#3360](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3360))
+* provider: bump `github.com/aws/aws-sdk-go-v2/service/s3` from 1.55.2 to 1.56.0 ([#3362](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3362))
+* provider: bump `github.com/aws/aws-sdk-go-v2/service/s3` from 1.56.0 to 1.56.1 ([#3364](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3364))
+* provider: bump `github.com/aws/aws-sdk-go-v2` from 1.27.2 to 1.28.0 ([#3360](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3360))
+* provider: bump `github.com/aws/aws-sdk-go-v2` from 1.28.0 to 1.29.0 ([#3362](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3362))
+* provider: bump `github.com/aws/aws-sdk-go-v2` from 1.29.0 to 1.30.0 ([#3364](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3364))
+* provider: bump github.com/cloudflare/cloudflare-go from 0.97.0 to 0.98.0 ([#3365](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3365))
+* provider: bump github.com/cloudflare/cloudflare-go/v2 from 2.2.0 to 2.3.0 ([#3363](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3363))
+* provider: bump github.com/hashicorp/go-retryablehttp from 0.7.4 to 0.7.7 in /tools ([#3395](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3395))
+
+## 4.35.0 (June 12th, 2024)
+
+ENHANCEMENTS:
+
+* resource/cloudflare_access_application: Add Hybrid and Implicit flow support to OIDC SaaS Apps ([#3324](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3324))
+* resource/cloudflare_access_organization: Fix 'name' being optional ([#3343](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3343))
+* resource/cloudflare_load_balancer_pool: Add support for virtual_network_id ([#3333](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3333))
+* resource/cloudflare_teams_account: add support for 'virtual_ip' ([#3321](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3321))
+* resource/resource_cloudflare_zone: add support for 'vanity_name_servers' ([#3315](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3315))
+
+BUG FIXES:
+
+* resource/cloudflare_access_application: Fix bug requiring explicit account_id or zone_id ([#3352](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3352))
+* resource/cloudflare_access_application: force recreation if SaaS app `auth_type` is changed ([#3332](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3332))
+* resource/cloudflare_list_item: handle overlapping redirect `source_url` ([#3335](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3335))
+* resource/cloudflare_logpush_job: Mirror API defaults for record_delimiter to include newline ([#3334](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3334))
+* resource/cloudflare_waiting_room_event: fix panic when trying to import a resource ([#3351](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3351))
+
+DEPENDENCIES:
+
+* provider: bump `github.com/aws/aws-sdk-go-v2/config` from 1.27.16 to 1.27.17 ([#3339](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3339))
+* provider: bump `github.com/aws/aws-sdk-go-v2/config` from 1.27.17 to 1.27.18 ([#3350](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3350))
+* provider: bump `github.com/aws/aws-sdk-go-v2/credentials` from 1.17.16 to 1.17.17 ([#3339](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3339))
+* provider: bump `github.com/aws/aws-sdk-go-v2/credentials` from 1.17.17 to 1.17.18 ([#3350](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3350))
+* provider: bump `github.com/aws/aws-sdk-go-v2/service/s3` from 1.54.3 to 1.54.4 ([#3339](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3339))
+* provider: bump `github.com/aws/aws-sdk-go-v2/service/s3` from 1.55.0 to 1.55.1 ([#3350](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3350))
+* provider: bump `github.com/aws/aws-sdk-go-v2` from 1.27.0 to 1.27.1 ([#3339](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3339))
+* provider: bump `github.com/aws/aws-sdk-go-v2` from 1.27.1 to 1.27.2 ([#3350](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3350))
+* provider: bump github.com/aws/aws-sdk-go-v2/service/s3 from 1.54.4 to 1.55.0 in the aws group ([#3346](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3346))
+* provider: bump github.com/cloudflare/cloudflare-go from 0.96.0 to 0.97.0 ([#3347](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3347))
+* provider: bump github.com/hashicorp/terraform-plugin-framework from 1.8.0 to 1.9.0 ([#3341](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3341))
+* provider: bump golang.org/x/net from 0.25.0 to 0.26.0 ([#3342](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3342))
+* provider: bump goreleaser/goreleaser-action from 5.1.0 to 6.0.0 ([#3345](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3345))
+
+## 4.34.0 (May 29th, 2024)
+
+FEATURES:
+
+* **New Resource:** `cloudflare_risk_behavior` ([#3307](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3307))
+
+ENHANCEMENTS:
+
+* resource/cloudflare_access_application: Add support for OIDC refresh tokens, allowing PKCE without client secret, custom claims, and specifying name_by_idp for custom attributes/claims ([#3306](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3306))
+* resource/cloudflare_access_application: improve validation logic for zone level reusable policies ([#3325](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3325))
+* resource/cloudflare_access_group: improve validation logic for zone level reusable policies ([#3325](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3325))
+* resource/cloudflare_ruleset: add support for `fonts` and `disable_rum` action parameters ([#3261](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3261))
+
+DEPENDENCIES:
+
+* provider: bump `github.com/aws/aws-sdk-go-v2/config` from 1.27.13 to 1.27.14 ([#3310](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3310))
+* provider: bump `github.com/aws/aws-sdk-go-v2/config` from 1.27.14 to 1.27.15 ([#3313](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3313))
+* provider: bump `github.com/aws/aws-sdk-go-v2/config` from 1.27.15 to 1.27.16 ([#3326](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3326))
+* provider: bump `github.com/aws/aws-sdk-go-v2/credentials` from 1.17.13 to 1.17.14 ([#3310](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3310))
+* provider: bump `github.com/aws/aws-sdk-go-v2/credentials` from 1.17.14 to 1.17.15 ([#3313](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3313))
+* provider: bump `github.com/aws/aws-sdk-go-v2/credentials` from 1.17.15 to 1.17.16 ([#3326](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3326))
+* provider: bump `github.com/aws/aws-sdk-go-v2/service/s3` from 1.54.0 to 1.54.1 ([#3310](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3310))
+* provider: bump `github.com/aws/aws-sdk-go-v2/service/s3` from 1.54.1 to 1.54.2 ([#3313](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3313))
+* provider: bump `github.com/aws/aws-sdk-go-v2/service/s3` from 1.54.2 to 1.54.3 ([#3326](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3326))
+* provider: bump `github.com/aws/aws-sdk-go-v2` from 1.26.1 to 1.26.2 ([#3310](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3310))
+* provider: bump `github.com/aws/aws-sdk-go-v2` from 1.26.2 to 1.27.0 ([#3313](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3313))
+* provider: bump github.com/aws/aws-sdk-go-v2/service/s3 from 1.53.2 to 1.54.0 in the aws group ([#3308](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3308))
+* provider: bump github.com/cloudflare/cloudflare-go from 0.95.0 to 0.96.0 ([#3322](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3322))
+* provider: bump github.com/hashicorp/terraform-plugin-sdk/v2 from 2.33.0 to 2.34.0 ([#3316](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3316))
+* provider: bump github.com/hashicorp/terraform-plugin-testing from 1.6.0 to 1.8.0 ([#3317](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3317))
+
+## 4.33.0 (May 15th, 2024)
+
+ENHANCEMENTS:
+
+* resource/cloudflare_access_application: added support for 'policies' argument ([#3288](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3288))
+* resource/cloudflare_access_policy: added support for reusable policies ([#3288](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3288))
+* resource/cloudflare_zone_settings_override: add support for NEL ([#3305](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3305))
+
+BUG FIXES:
+
+* resource/cloudflare_list_item: retry list ID fetch operations for the identifiers ([#3303](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3303))
+
+DEPENDENCIES:
+
+* provider: bump `github.com/aws/aws-sdk-go-v2/config` from 1.27.11 to 1.27.12 ([#3295](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3295))
+* provider: bump `github.com/aws/aws-sdk-go-v2/config` from 1.27.12 to 1.27.13 ([#3301](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3301))
+* provider: bump `github.com/aws/aws-sdk-go-v2/credentials` from 1.17.11 to 1.17.12 ([#3295](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3295))
+* provider: bump `github.com/aws/aws-sdk-go-v2/credentials` from 1.17.12 to 1.17.13 ([#3301](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3301))
+* provider: bump `github.com/aws/aws-sdk-go-v2/service/s3` from 1.53.1 to 1.53.2 ([#3295](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3295))
+* provider: bump bflad/action-milestone-comment from 1 to 2 ([#3299](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3299))
+* provider: bump github.com/cloudflare/cloudflare-go/v2 from 2.1.0 to 2.2.0 ([#3298](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3298))
+* provider: bump github.com/hashicorp/terraform-plugin-mux from 0.15.0 to 0.16.0 ([#3296](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3296))
+* provider: bump goreleaser/goreleaser-action from 5.0.0 to 5.1.0 ([#3302](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3302))
+
+## 4.32.0 (May 8th, 2024)
+
+NOTES:
+
+* resource/cloudflare_rate_limit: This resource is being deprecated in favor of the cloudflare_rulesets resource ([#3279](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3279))
+
+ENHANCEMENTS:
+
+* resource/cloudflare_access_application: add support for SCIM provisioning configuration ([#3291](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3291))
+* resource/cloudflare_access_group: Add the option for email_list to be used in require, include and exclude fields ([#3247](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3247))
+* resource/cloudflare_device_posture_rules: added support for os_version_extra ([#3281](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3281))
+
+BUG FIXES:
+
+* resource/cloudflare_turnstile: Fix error handling corrupting state ([#3284](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3284))
+
+DEPENDENCIES:
+
+* provider: bump github.com/cloudflare/cloudflare-go from 0.94.0 to 0.95.0 ([#3294](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3294))
+* provider: bump github.com/hashicorp/terraform-plugin-go from 0.22.2 to 0.23.0 ([#3289](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3289))
+* provider: bump golang.org/x/net from 0.24.0 to 0.25.0 ([#3290](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3290))
+* provider: bump golangci/golangci-lint-action from 5 to 6 ([#3293](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3293))
+
+## 4.31.0 (May 1st, 2024)
+
+ENHANCEMENTS:
+
+* resource/cloudflare_access_application: added support for options_preflight_bypass ([#3267](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3267))
+* resource/cloudflare_dlp_profile: Added support for `ocr_enabled` field to profiles ([#3224](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3224))
+* resource/cloudflare_notification_policy: add 'target_ip' atrribute to 'filter' nested block ([#3263](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3263))
+* resource/cloudflare_teams_account: add `custom_certificate` setting support ([#3253](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3253))
+* resource/cloudflare_teams_location: added `ecs_support` field ([#3264](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3264))
+
+BUG FIXES:
+
+* resource/cloudflare_hyperdrive_config: Fix 'HyperdriveID' not included in Update call ([#3251](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3251))
+* resource/cloudflare_managed_headers: disable header if it is deleted from terraform state ([#3260](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3260))
+* resource/cloudflare_worker_script: fix namespaced script delete trying to delete from account rather than the namespace ([#3238](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3238))
+
+INTERNAL:
+
+* provider: introduce a muxed client to support using cloudflare-go/v0 and cloudflare-go/v2 together ([#3262](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3262))
+
+DEPENDENCIES:
+
+* provider: bump github.com/cloudflare/cloudflare-go from 0.93.0 to 0.94.0 ([#3265](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3265))
+* provider: bump github.com/cloudflare/cloudflare-go/v2 from 2.0.0 to 2.1.0 ([#3274](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3274))
+* provider: bump github.com/hashicorp/terraform-plugin-framework from 1.5.0 to 1.8.0 ([#3255](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3255))
+* provider: bump github.com/hashicorp/terraform-plugin-go from 0.21.0 to 0.22.2 ([#3254](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3254))
+* provider: bump golang.org/x/net from 0.19.0 to 0.23.0 in /tools ([#3258](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3258))
+* provider: bump golangci/golangci-lint-action from 4 to 5 ([#3271](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3271))
+
+## 4.30.0 (April 17th, 2024)
+
+ENHANCEMENTS:
+
+* cloudflare/resource_logpush_job: Add support for `page_shield_events` ([#3237](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3237))
+* resource/cloudflare_access_group: added support for common_names rule list type to allow for more than one common_name rule in a policy block ([#3229](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3229))
+* resource/cloudflare_access_policy: added support for common_names rule list type to allow for more than one common_name rule in a policy block ([#3229](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3229))
+* resource/cloudflare_ipsec_tunnel: added support for replay_protection ([#3249](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3249))
+
+BUG FIXES:
+
+* resource/cloudflare_email_routing_address: Make sure schema is correctly upgraded. ([#3245](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3245))
+
+DEPENDENCIES:
+
+* provider: bump `github.com/aws/aws-sdk-go-v2/config` from 1.27.10 to 1.27.11 ([#3232](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3232))
+* provider: bump `github.com/aws/aws-sdk-go-v2/credentials` from 1.17.10 to 1.17.11 ([#3232](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3232))
+* provider: bump github.com/cloudflare/cloudflare-go from 0.92.0 to 0.93.0 ([#3239](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3239))
+* provider: bump golang.org/x/net from 0.22.0 to 0.23.0 ([#3225](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3225))
+* provider: bump golang.org/x/net from 0.23.0 to 0.24.0 ([#3230](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3230))
+
+## 4.29.0 (April 3rd, 2024)
+
+BREAKING CHANGES:
+
+* data_source/record: Remove `locked` flag which is always false ([#3220](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3220))
+
+ENHANCEMENTS:
+
+* datasource/cloudflare_tunnel: Add the option to filter deleted tunnels ([#3201](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3201))
+* resource/cloudflare_teams_rule: Add support for resolver policies ([#3198](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3198))
+
+DEPENDENCIES:
+
+* provider: bump `github.com/aws/aws-sdk-go-v2/config` from 1.27.9 to 1.27.10 ([#3222](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3222))
+* provider: bump `github.com/aws/aws-sdk-go-v2/credentials` from 1.17.9 to 1.17.10 ([#3222](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3222))
+* provider: bump `github.com/aws/aws-sdk-go-v2/service/s3` from 1.53.0 to 1.53.1 ([#3222](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3222))
+* provider: bump `github.com/aws/aws-sdk-go-v2` from 1.26.0 to 1.26.1 ([#3222](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3222))
+
+## 4.28.0 (March 28th, 2024)
+
+ENHANCEMENTS:
+
+* resource/cloudflare_access_application: adds saml_attribute_transform_jsonata` to SaaS applications ([#3187](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3187))
+* resource/cloudflare_device_posture_rule: update support for new fields for crowdstrike_s2s posture rule. ([#3216](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3216))
+* resource/cloudflare_ipsec_tunnel: Adds IPsec tunnel health_check_direction & health_check_rate parameters ([#3112](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3112))
+
+DEPENDENCIES:
+
+* provider: bump `github.com/aws/aws-sdk-go-v2/config` from 1.27.8 to 1.27.9 ([#3207](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3207))
+* provider: bump `github.com/aws/aws-sdk-go-v2/credentials` from 1.17.8 to 1.17.9 ([#3207](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3207))
+* provider: bump github.com/cloudflare/cloudflare-go from 0.90.0 to 0.91.0 ([#3208](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3208))
+* provider: bump github.com/cloudflare/cloudflare-go from 0.91.0 to 0.92.0 ([#3218](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3218))
+
+## 4.27.0 (March 20th, 2024)
+
+FEATURES:
+
+* **New Resource:** `cloudflare_access_mutual_tls_hostname_settings` ([#3173](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3173))
+* **New Resource:** `cloudflare_hyperdrive_config` ([#3111](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3111))
+
+ENHANCEMENTS:
+
+* resource/cloudflare_dlp_profile: Added support for `context_awareness` field to profiles ([#3158](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3158))
+* resource/cloudflare_logpush_job: Add `output_options` parameter ([#3171](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3171))
+* resource/cloudflare_notification_policy: Implement the `airport_code` filter ([#3183](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3183))
+* resource/cloudflare_worker_script: Add `dispatch_namespace` to support uploading to a Workers for Platforms namespace ([#3154](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3154))
+* resource/cloudflare_worker_script: Add `tags` to support tagging Workers for Platforms Workers ([#3154](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3154))
+
+BUG FIXES:
+
+* resource/cloudflare_access_application: Add Sensitive to oidc client_secret and preserve client_secret across apply ([#3168](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3168))
+* resource/cloudflare_list_item: fix id parsing for imports ([#3191](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3191))
+* resource/cloudflare_logpush_job: only set the value in state when it is defined ([#3188](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3188))
+
+DEPENDENCIES:
+
+* provider: bump `github.com/aws/aws-sdk-go-v2/config` from 1.27.6 to 1.27.7 ([#3172](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3172))
+* provider: bump `github.com/aws/aws-sdk-go-v2/config` from 1.27.7 to 1.27.8 ([#3197](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3197))
+* provider: bump `github.com/aws/aws-sdk-go-v2/credentials` from 1.17.6 to 1.17.7 ([#3172](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3172))
+* provider: bump `github.com/aws/aws-sdk-go-v2/credentials` from 1.17.7 to 1.17.8 ([#3197](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3197))
+* provider: bump `github.com/aws/aws-sdk-go-v2/service/s3` from 1.51.3 to 1.51.4 ([#3172](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3172))
+* provider: bump `github.com/aws/aws-sdk-go-v2/service/s3` from 1.51.4 to 1.52.0 ([#3182](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3182))
+* provider: bump `github.com/aws/aws-sdk-go-v2/service/s3` from 1.52.0 to 1.52.1 ([#3190](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3190))
+* provider: bump `github.com/aws/aws-sdk-go-v2/service/s3` from 1.52.1 to 1.53.0 ([#3197](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3197))
+* provider: bump `github.com/aws/aws-sdk-go-v2` from 1.25.2 to 1.25.3 ([#3172](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3172))
+* provider: bump `github.com/aws/aws-sdk-go-v2` from 1.25.3 to 1.26.0 ([#3197](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3197))
+* provider: bump github.com/cloudflare/cloudflare-go from 0.89.0 to 0.90.0 ([#3178](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3178))
+* provider: bump google.golang.org/protobuf from 1.31.0 to 1.33.0 in /tools ([#3180](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3180))
+* provider: bump google.golang.org/protobuf from 1.32.0 to 1.33.0 ([#3181](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3181))
+
+## 4.26.0 (March 6th, 2024)
+
+FEATURES:
+
+* **New Data Source:** `cloudflare_dlp_datasets` ([#3135](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3135))
+
+ENHANCEMENTS:
+
+* resource/cloudflare_access_application: adds `name_id_transform_jsonata` to SaaS applications ([#3132](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3132))
+
+BUG FIXES:
+
+* resource/cloudflare_access_application: Fix issue with sending allow_authenticate_via_warp on updates when it is not provided ([#3140](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3140))
+
+DEPENDENCIES:
+
+* provider: bump `github.com/aws/aws-sdk-go-v2/config` from 1.27.1 to 1.27.2 ([#3136](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3136))
+* provider: bump `github.com/aws/aws-sdk-go-v2/config` from 1.27.2 to 1.27.3 ([#3138](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3138))
+* provider: bump `github.com/aws/aws-sdk-go-v2/config` from 1.27.3 to 1.27.4 ([#3141](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3141))
+* provider: bump `github.com/aws/aws-sdk-go-v2/config` from 1.27.4 to 1.27.5 ([#3159](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3159))
+* provider: bump `github.com/aws/aws-sdk-go-v2/config` from 1.27.5 to 1.27.6 ([#3161](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3161))
+* provider: bump `github.com/aws/aws-sdk-go-v2/credentials` from 1.17.1 to 1.17.2 ([#3136](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3136))
+* provider: bump `github.com/aws/aws-sdk-go-v2/credentials` from 1.17.2 to 1.17.3 ([#3138](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3138))
+* provider: bump `github.com/aws/aws-sdk-go-v2/credentials` from 1.17.3 to 1.17.4 ([#3141](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3141))
+* provider: bump `github.com/aws/aws-sdk-go-v2/credentials` from 1.17.4 to 1.17.5 ([#3159](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3159))
+* provider: bump `github.com/aws/aws-sdk-go-v2/credentials` from 1.17.5 to 1.17.6 ([#3161](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3161))
+* provider: bump `github.com/aws/aws-sdk-go-v2/service/s3` from 1.50.2 to 1.50.3 ([#3136](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3136))
+* provider: bump `github.com/aws/aws-sdk-go-v2/service/s3` from 1.50.3 to 1.51.0 ([#3138](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3138))
+* provider: bump `github.com/aws/aws-sdk-go-v2/service/s3` from 1.51.0 to 1.51.1 ([#3141](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3141))
+* provider: bump `github.com/aws/aws-sdk-go-v2/service/s3` from 1.51.1 to 1.51.2 ([#3159](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3159))
+* provider: bump `github.com/aws/aws-sdk-go-v2/service/s3` from 1.51.2 to 1.51.3 ([#3161](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3161))
+* provider: bump `github.com/aws/aws-sdk-go-v2` from 1.25.0 to 1.25.1 ([#3136](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3136))
+* provider: bump `github.com/aws/aws-sdk-go-v2` from 1.25.1 to 1.25.2 ([#3141](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3141))
+* provider: bump github.com/cloudflare/cloudflare-go from 0.88.0 to 0.89.0 ([#3148](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3148))
+* provider: bump github.com/hashicorp/terraform-plugin-go from 0.21.0 to 0.22.0 ([#3139](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3139))
+* provider: bump github.com/hashicorp/terraform-plugin-mux from 0.14.0 to 0.15.0 ([#3149](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3149))
+* provider: bump github.com/hashicorp/terraform-plugin-sdk/v2 from 2.32.0 to 2.33.0 ([#3142](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3142))
+* provider: bump github.com/hashicorp/terraform-plugin-sdk/v2 from 2.32.0 to 2.33.0 ([#3147](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3147))
+* provider: bump github.com/hashicorp/terraform-plugin-testing from 1.6.0 to 1.7.0 ([#3162](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3162))
+* provider: bump github.com/stretchr/testify from 1.8.4 to 1.9.0 ([#3157](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3157))
+* provider: bump golang.org/x/net from 0.21.0 to 0.22.0 ([#3160](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3160))
+
+## 4.25.0 (February 21st, 2024)
+
+BREAKING CHANGES:
+
+* resource/cloudflare_custom_pages: Removed the `always_online` variant. This page is never generated anymore, if a requested page is unavailable in the archive the error page that would have been shown if always online wasn't enabled is shown. ([#3117](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3117))
+
+ENHANCEMENTS:
+
+* resource/cloudflare_access_application: adds oidc saas application support ([#3133](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3133))
+* resource/cloudflare_access_application: adds the ability to set allow_authenticate_via_warp. ([#3103](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3103))
+* resource/cloudflare_access_organization: adds the ability to set allow_authenticate_via_warp and warp_auth_session_duration. ([#3103](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3103))
+* resource/cloudflare_teams_account: Add support for extended e-mail matching ([#3089](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3089))
+* resource/cloudflare_teams_accounts: Added notification settings to teams antivirus settings ([#3124](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3124))
+* resource/pages_project: Add `build_caching` attribute ([#3110](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3110))
+
+BUG FIXES:
+
+* resource/cloudflare_email_routing_address: add schema migrator ([#3119](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3119))
+
+DEPENDENCIES:
+
+* provider: bump `github.com/aws/aws-sdk-go-v2/config` from 1.26.6 to 1.27.0 ([#3118](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3118))
+* provider: bump `github.com/aws/aws-sdk-go-v2/config` from 1.27.0 to 1.27.1 ([#3134](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3134))
+* provider: bump `github.com/aws/aws-sdk-go-v2/credentials` from 1.16.16 to 1.17.0 ([#3118](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3118))
+* provider: bump `github.com/aws/aws-sdk-go-v2/credentials` from 1.17.0 to 1.17.1 ([#3134](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3134))
+* provider: bump `github.com/aws/aws-sdk-go-v2/service/s3` from 1.48.1 to 1.49.0 ([#3118](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3118))
+* provider: bump `github.com/aws/aws-sdk-go-v2/service/s3` from 1.49.0 to 1.50.0 ([#3125](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3125))
+* provider: bump `github.com/aws/aws-sdk-go-v2/service/s3` from 1.50.0 to 1.50.1 ([#3128](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3128))
+* provider: bump `github.com/aws/aws-sdk-go-v2/service/s3` from 1.50.1 to 1.50.2 ([#3134](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3134))
+* provider: bump `github.com/aws/aws-sdk-go-v2` from 1.24.1 to 1.25.0 ([#3118](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3118))
+* provider: bump github.com/cloudflare/cloudflare-go from 0.87.0 to 0.88.0 ([#3122](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3122))
+* provider: bump golang.org/x/net from 0.20.0 to 0.21.0 ([#3108](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3108))
+* provider: bump golangci/golangci-lint-action from 3 to 4 ([#3115](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3115))
+
+## 4.24.0 (February 7th, 2023)
+
+ENHANCEMENTS:
+
+* datasource/cloudflare_record: Add the option to filter by "content" ([#3084](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3084))
+
+BUG FIXES:
+
+* resource/cloudflare_access_application: leave existence error handling checks to the `Read` operation when performing imports. ([#3075](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3075))
+* resource/cloudflare_device_settings_policy: updated docs that `auto_connect` is in seconds, not in minutes ([#3080](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3080))
+* resource/cloudflare_dlp_profile: fixed plan flapping with DLP custom entries ([#3090](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3090))
+* resource/email_routing_rule: add schema migration for upgrading 4.22.0 to 4.23.0 ([#3102](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3102))
+
+DEPENDENCIES:
+
+* provider: bump `github.com/aws/aws-sdk-go-v2/service/s3` from 1.48.0 to 1.48.1 ([#3078](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3078))
+* provider: bump github.com/cloudflare/cloudflare-go from 0.86.0 to 0.87.0 ([#3095](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3095))
+* provider: bump github.com/google/uuid from 1.5.0 to 1.6.0 ([#3076](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3076))
+* provider: bump github.com/hashicorp/terraform-plugin-go from 0.20.0 to 0.21.0 ([#3081](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3081))
+* provider: bump github.com/hashicorp/terraform-plugin-mux from 0.13.0 to 0.14.0 ([#3085](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3085))
+* provider: bump github.com/hashicorp/terraform-plugin-sdk/v2 from 2.31.0 to 2.32.0 ([#3086](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3086))
+* provider: bump peter-evans/create-or-update-comment from 3 to 4 ([#3079](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3079))
+
+## 4.23.0 (January 24th, 2023)
+
+BREAKING CHANGES:
+
+* resource/cloudflare_list_item: `include_subdomains` is now a boolean value. If you previously set it to `"enabled"`, you should update your configuration to use `true` instead or if you set it to "`disabled`", you should update it to `false`. The rest will be handled by the internal state migrator. ([#3026](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3026))
+* resource/cloudflare_list_item: `preserve_path_suffix` is now a boolean value. If you previously set it to `"enabled"`, you should update your configuration to use `true` instead or if you set it to "`disabled`", you should update it to `false`. The rest will be handled by the internal state migrator. ([#3026](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3026))
+* resource/cloudflare_list_item: `preserve_query_string` is now a boolean value. If you previously set it to `"enabled"`, you should update your configuration to use `true` instead or if you set it to "`disabled`", you should update it to `false`. The rest will be handled by the internal state migrator. ([#3026](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3026))
+* resource/cloudflare_list_item: `subpath_matching` is now a boolean value. If you previously set it to `"enabled"`, you should update your configuration to use `true` instead or if you set it to "`disabled`", you should update it to `false`. The rest will be handled by the internal state migrator. ([#3026](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3026))
+
+ENHANCEMENTS:
+
+* resource/cloudflare_access_application: adds the ability to set default_relay_state on saas applications. ([#3053](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3053))
+* resource/cloudflare_email_routing_address: add ability to import ([#2977](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2977))
+* resource/cloudflare_email_routing_rule: add ability to import ([#2998](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2998))
+* resource/cloudflare_notification_policy: Implement the `affected_components` option ([#3009](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3009))
+
+INTERNAL:
+
+* cloudflare_email_routing_rule: migrate to plugin framework ([#2998](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2998))
+* resource/cloudflare_email_routing_address: migrate to framework provider ([#2977](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2977))
+* resource/cloudflare_list_item: migrate to plugin framework. Due to this migration, we are removing some workaround field values that were previously in place to account for the known zero value issues in the underlying SDKv2. See the release notes for the end user facing changes that need to be made for the internal state migrator to handle the internals. ([#3026](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3026))
+
+DEPENDENCIES:
+
+* provider: bump `github.com/aws/aws-sdk-go-v2/config` from 1.26.3 to 1.26.4 ([#3065](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3065))
+* provider: bump `github.com/aws/aws-sdk-go-v2/config` from 1.26.4 to 1.26.5 ([#3071](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3071))
+* provider: bump `github.com/aws/aws-sdk-go-v2/config` from 1.26.5 to 1.26.6 ([#3074](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3074))
+* provider: bump actions/cache from 3 to 4 ([#3067](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3067))
+* provider: bump github.com/cloudflare/cloudflare-go from 0.85.0 to 0.86.0 ([#3066](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3066))
+* provider: bump github.com/hashicorp/terraform-plugin-framework from 1.4.2 to 1.5.0 ([#3058](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3058))
+
+## 4.22.0 (January 10th, 2024)
+
+FEATURES:
+
+* **New Resource:** `cloudflare_worker_secret` ([#3035](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3035))
+
+ENHANCEMENTS:
+
+* resource/cloudflare_notification_policy: Add tunnel_id filter for tunnel_health_event policies ([#3038](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3038))
+* resource/cloudflare_worker_script: adds D1 binding support ([#2960](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2960))
+
+BUG FIXES:
+
+* cloudflare_notification_policy: revert `ExactlyOneOf` ([#3032](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3032))
+* resource/cloudflare_dlp_profile: Prevent misidentified changes in dlp resources ([#3044](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3044))
+* resource/cloudflare_teams_rule: changed type & validation on the notification settings url ([#3030](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3030))
+* resource/cloudflare_teams_rules: fix block_page_enabled behaviour ([#3010](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3010))
+* resource/cloudflare_turnstile_widget: Support empty list of domains ([#3046](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3046))
+
+DEPENDENCIES:
+
+* provider: bump `github.com/aws/aws-sdk-go-v2/config` from 1.26.2 to 1.26.3 ([#3042](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3042))
+* provider: bump `github.com/aws/aws-sdk-go-v2/service/s3` from 1.47.7 to 1.47.8 ([#3042](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3042))
+* provider: bump `github.com/aws/aws-sdk-go-v2/service/s3` from 1.47.8 to 1.48.0 ([#3043](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3043))
+* provider: bump `github.com/aws/aws-sdk-go-v2` from 1.24.0 to 1.24.1 ([#3042](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3042))
+* provider: bump github.com/cloudflare/circl from 1.3.3 to 1.3.7 ([#3047](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3047))
+* provider: bump github.com/cloudflare/circl from 1.3.3 to 1.3.7 in /tools ([#3048](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3048))
+* provider: bump github.com/cloudflare/cloudflare-go from 0.84.0 to 0.85.0 ([#3034](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3034))
+* provider: bump github.com/go-git/go-git/v5 from 5.4.2 to 5.11.0 in /tools ([#3029](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3029))
+* provider: bump golang.org/x/net from 0.19.0 to 0.20.0 ([#3050](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3050))
+
+## 4.21.0 (December 27th, 2023)
+
+ENHANCEMENTS:
+
+* resource/cloudflare_access_application: adds the ability to set customization fields on the app launcher application. ([#2777](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2777))
+* resource/cloudflare_access_organization: remove default value for `session_duration`. ([#2995](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2995))
+* resource/cloudflare_access_policy: remove default value for `session_duration`. ([#2995](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2995))
+* resource/cloudflare_device_posture_integration: add support for `access_client_id` and `access_client_secret` fields ([#3013](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3013))
+* resource/cloudflare_logpush_job: add support for `magic_ids_detections`. ([#2983](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2983))
+* resource/cloudflare_notification_policy: enable `selector` filter and add `traffic_anomalies_alert` as a policy alert type ([#2976](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2976))
+* resource/cloudflare_pages_project: support `standard` usage model for functions ([#2963](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2963))
+* resource/cloudflare_tunnel_config: Destroying tunnel configurations now applies an empty configuration rather than deleting the parent cloudflare_tunnel resource ([#2769](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2769))
+
+BUG FIXES:
+
+* resource/cloudflare_list_item: fix issue preventing usage of redirect item type ([#2975](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2975))
+
+DEPENDENCIES:
+
+* provider: bump `github.com/aws/aws-sdk-go-v2/config` from 1.25.10 to 1.25.11 ([#2973](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2973))
+* provider: bump `github.com/aws/aws-sdk-go-v2/config` from 1.25.11 to 1.25.12 ([#2987](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2987))
+* provider: bump `github.com/aws/aws-sdk-go-v2/config` from 1.25.12 to 1.26.0 ([#2993](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2993))
+* provider: bump `github.com/aws/aws-sdk-go-v2/config` from 1.25.12 to 1.26.0 ([#2993](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2993))
+* provider: bump `github.com/aws/aws-sdk-go-v2/config` from 1.25.5 to 1.25.8 ([#2968](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2968))
+* provider: bump `github.com/aws/aws-sdk-go-v2/config` from 1.25.8 to 1.25.9 ([#2969](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2969))
+* provider: bump `github.com/aws/aws-sdk-go-v2/config` from 1.25.9 to 1.25.10 ([#2971](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2971))
+* provider: bump `github.com/aws/aws-sdk-go-v2/config` from 1.26.0 to 1.26.1 ([#2997](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2997))
+* provider: bump `github.com/aws/aws-sdk-go-v2/config` from 1.26.1 to 1.26.2 ([#3022](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3022))
+* provider: bump `github.com/aws/aws-sdk-go-v2/service/s3` from 1.44.0 to 1.46.0 ([#2968](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2968))
+* provider: bump `github.com/aws/aws-sdk-go-v2/service/s3` from 1.46.0 to 1.47.0 ([#2969](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2969))
+* provider: bump `github.com/aws/aws-sdk-go-v2/service/s3` from 1.47.0 to 1.47.1 ([#2971](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2971))
+* provider: bump `github.com/aws/aws-sdk-go-v2/service/s3` from 1.47.1 to 1.47.2 ([#2973](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2973))
+* provider: bump `github.com/aws/aws-sdk-go-v2/service/s3` from 1.47.2 to 1.47.3 ([#2987](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2987))
+* provider: bump `github.com/aws/aws-sdk-go-v2/service/s3` from 1.47.3 to 1.47.4 ([#2993](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2993))
+* provider: bump `github.com/aws/aws-sdk-go-v2/service/s3` from 1.47.3 to 1.47.4 ([#2993](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2993))
+* provider: bump `github.com/aws/aws-sdk-go-v2/service/s3` from 1.47.4 to 1.47.5 ([#2997](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2997))
+* provider: bump `github.com/aws/aws-sdk-go-v2/service/s3` from 1.47.5 to 1.47.6 ([#3016](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3016))
+* provider: bump `github.com/aws/aws-sdk-go-v2/service/s3` from 1.47.6 to 1.47.7 ([#3022](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3022))
+* provider: bump `github.com/aws/aws-sdk-go-v2` from 1.23.1 to 1.23.2 ([#2968](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2968))
+* provider: bump `github.com/aws/aws-sdk-go-v2` from 1.23.2 to 1.23.3 ([#2969](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2969))
+* provider: bump `github.com/aws/aws-sdk-go-v2` from 1.23.3 to 1.23.4 ([#2971](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2971))
+* provider: bump `github.com/aws/aws-sdk-go-v2` from 1.23.4 to 1.23.5 ([#2973](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2973))
+* provider: bump `github.com/aws/aws-sdk-go-v2` from 1.23.5 to 1.24.0 ([#2993](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2993))
+* provider: bump `github.com/aws/aws-sdk-go-v2` from 1.23.5 to 1.24.0 ([#2993](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2993))
+* provider: bump actions/setup-go from 4 to 5 ([#2989](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2989))
+* provider: bump actions/stale from 8 to 9 ([#2992](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2992))
+* provider: bump github.com/cloudflare/cloudflare-go from 0.82.0 to 0.83.0 ([#2988](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2988))
+* provider: bump github.com/cloudflare/cloudflare-go from 0.83.0 to 0.84.0 ([#3019](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3019))
+* provider: bump github.com/google/uuid from 1.4.0 to 1.5.0 ([#3002](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3002))
+* provider: bump github.com/hashicorp/terraform-plugin-mux from 0.12.0 to 0.13.0 ([#3006](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3006))
+* provider: bump github.com/hashicorp/terraform-plugin-sdk/v2 from 2.30.0 to 2.31.0 ([#3007](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3007))
+* provider: bump github.com/hashicorp/terraform-plugin-testing from 1.5.1 to 1.6.0 ([#2984](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2984))
+* provider: bump github/codeql-action from 2 to 3 ([#3005](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3005))
+* provider: bump golang.org/x/crypto from 0.14.0 to 0.17.0 in /tools ([#3015](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3015))
+* provider: bump golang.org/x/crypto from 0.16.0 to 0.17.0 ([#3017](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3017))
+* resource/cloudflare_teams_rule: Added support for notification settings at teams rule ([#3021](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3021))
+
+## 4.20.0 (November 29th, 2023)
+
+FEATURES:
+
+* **New Data Source:** `cloudflare_origin_ca_certificate` ([#2961](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2961))
+
+ENHANCEMENTS:
+
+* resource/cloudflare_email_routing_rule: `action.value` is now optional to support `drop` rules not requiring it ([#2449](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2449))
+* resource/cloudflare_email_routing_rule: add action type `drop` ([#2449](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2449))
+* resource/cloudflare_notification_policy: add support for `brand_protection_alert` alert type ([#2937](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2937))
+* resource/cloudflare_notification_policy: add support for `brand_protection_digest` alert type ([#2937](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2937))
+* resource/cloudflare_notification_policy: add support for `logo_match_alert` alert type ([#2937](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2937))
+* resource/cloudflare_notification_policy: add support for `magic_tunnel_health_check_event` alert type ([#2937](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2937))
+* resource/cloudflare_notification_policy: add support for `maintenance_event_notification` alert type ([#2937](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2937))
+* resource/cloudflare_notification_policy: add support for `mtls_certificate_store_certificate_expiration_type` alert type ([#2937](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2937))
+* resource/cloudflare_notification_policy: add support for `radar_notification` alert type ([#2937](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2937))
+* resource/cloudflare_ruleset: make rate limiting `requests_to_origin` optional with a default value of `false` to match the API behaviour ([#2954](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2954))
+
+BUG FIXES:
+
+* resource/cloudflare_list_item: fix list_item for `asn` and `hostname` types ([#2951](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2951))
+* resource/cloudflare_notification_policy: Fix missing new_status filter required by tunnel_health_event policies ([#2390](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2390))
+
+DEPENDENCIES:
+
+* provider: bump `github.com/aws/aws-sdk-go-v2/config` from 1.25.1 to 1.25.3 ([#2948](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2948))
+* provider: bump `github.com/aws/aws-sdk-go-v2/config` from 1.25.3 to 1.25.4 ([#2953](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2953))
+* provider: bump `github.com/aws/aws-sdk-go-v2/config` from 1.25.4 to 1.25.5 ([#2956](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2956))
+* provider: bump `github.com/aws/aws-sdk-go-v2/service/s3` from 1.42.2 to 1.43.0 ([#2948](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2948))
+* provider: bump `github.com/aws/aws-sdk-go-v2/service/s3` from 1.43.0 to 1.43.1 ([#2953](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2953))
+* provider: bump `github.com/aws/aws-sdk-go-v2/service/s3` from 1.43.1 to 1.44.0 ([#2956](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2956))
+* provider: bump `github.com/aws/aws-sdk-go-v2` from 1.23.0 to 1.23.1 ([#2953](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2953))
+* provider: bump github.com/cloudflare/cloudflare-go from 0.81.0 to 0.82.0 ([#2957](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2957))
+* provider: bump github.com/hashicorp/terraform-plugin-go from 0.19.0 to 0.19.1 ([#2942](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2942))
+* provider: bump golang.org/x/net from 0.18.0 to 0.19.0 ([#2967](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2967))
+* provider: updates `github.com/aws/aws-sdk-go-v2/config` from 1.24.0 to 1.25.1 ([#2945](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2945))
+* provider: updates `github.com/aws/aws-sdk-go-v2/service/s3` from 1.42.1 to 1.42.2 ([#2945](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2945))
+* provider: updates `github.com/aws/aws-sdk-go-v2` from 1.22.2 to 1.23.0 ([#2945](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2945))
+
+## 4.19.0 (15th November, 2023)
+
+NOTES:
+
+* resource/cloudflare_argo: `tiered_caching` attribute is deprecated in favour of the dedicated `cloudflare_tiered_cache` resource. ([#2906](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2906))
+
+FEATURES:
+
+* **New Resource:** `cloudflare_keyless_certificate` ([#2779](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2779))
+
+ENHANCEMENTS:
+
+* resource/cloudflare_notification_policy: Add support for `incident_alert` type ([#2901](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2901))
+* resource/cloudflare_zone: add support for `secondary` zone types ([#2939](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2939))
+
+BUG FIXES:
+
+* resource/cloudflare_list_item: ensure each `item` has its own ID and is not based on the latest created entry ([#2922](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2922))
+
+INTERNAL:
+
+* provider: prevent new resources and datasources from being created with `terraform-plugin-sdk` ([#2871](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2871))
+
+DEPENDENCIES:
+
+* provider: bumps github.com/aws/aws-sdk-go-v2 from 1.21.2 to 1.22.0 ([#2899](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2899))
+* provider: bumps github.com/aws/aws-sdk-go-v2 from 1.22.0 to 1.22.1 ([#2904](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2904))
+* provider: bumps github.com/aws/aws-sdk-go-v2/config from 1.19.1 to 1.20.0 ([#2898](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2898))
+* provider: bumps github.com/aws/aws-sdk-go-v2/config from 1.20.0 to 1.21.0 ([#2902](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2902))
+* provider: bumps github.com/aws/aws-sdk-go-v2/config from 1.21.0 to 1.22.0 ([#2908](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2908))
+* provider: bumps github.com/aws/aws-sdk-go-v2/config from 1.22.0 to 1.22.1 ([#2912](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2912))
+* provider: bumps github.com/aws/aws-sdk-go-v2/config from 1.22.1 to 1.22.2 ([#2917](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2917))
+* provider: bumps github.com/aws/aws-sdk-go-v2/service/s3 from 1.40.2 to 1.41.0 ([#2897](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2897))
+* provider: bumps github.com/aws/aws-sdk-go-v2/service/s3 from 1.41.0 to 1.42.0 ([#2905](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2905))
+* provider: bumps github.com/cloudflare/cloudflare-go from 0.80.0 to 0.81.0 ([#2919](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2919))
+* provider: bumps github.com/hashicorp/terraform-plugin-sdk/v2 from 2.29.0 to 2.30.0 ([#2925](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2925))
+* provider: bumps golang.org/x/net from 0.17.0 to 0.18.0 ([#2921](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2921))
+* provider: updates `github.com/aws/aws-sdk-go-v2/config` from 1.22.2 to 1.23.0 ([#2931](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2931))
+* provider: updates `github.com/aws/aws-sdk-go-v2/service/s3` from 1.42.0 to 1.42.1 ([#2931](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2931))
+* provider: updates `github.com/aws/aws-sdk-go-v2` from 1.22.1 to 1.22.2 ([#2931](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2931))
+
+## 4.18.0 (1st November, 2023)
+
+FEATURES:
+
+* **New Data Source:** `cloudflare_device_posture_rules` ([#2868](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2868))
+* **New Data Source:** `cloudflare_tunnel` ([#2866](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2866))
+* **New Data Source:** `cloudflare_tunnel_virtual_network` ([#2867](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2867))
+* **New Resource:** `cloudflare_api_shield_operation_schema_validation_settings` ([#2852](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2852))
+* **New Resource:** `cloudflare_api_shield_schema_validation_settings` ([#2841](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2841))
+
+ENHANCEMENTS:
+
+* resource/cloudflare_load_balancer: Add support for least_connections steering ([#2818](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2818))
+* resource/cloudflare_load_balancer_pool: Add support for least_connections origin steering ([#2818](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2818))
+* resource/cloudflare_logpush_job: add support for `casb_findings` dataset ([#2859](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2859))
+* resource/cloudflare_teams_account: Add `non_identity_browser_isolation_enabled` field ([#2878](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2878))
+* resource/cloudflare_teams_account: add support for `body_scanning` config ([#2887](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2887))
+* resource/cloudflare_workers_script: add support for `placement` config ([#2893](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2893))
+
+BUG FIXES:
+
+* resource/cloudflare_observatory_scheduled_test: Add missing 'asia-south1' region ([#2891](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2891))
+* resource/cloudflare_rulesets: Allow zero to not default to null for mitigation_timeout ([#2874](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2874))
+
+DEPENDENCIES:
+
+* ci: drop separate misspell installation ([#2814](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2814))
+* provider: bumps github.com/aws/aws-sdk-go-v2/config from 1.19.0 to 1.19.1 ([#2877](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2877))
+* provider: bumps github.com/cloudflare/cloudflare-go from 0.79.0 to 0.80.0 ([#2883](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2883))
+* provider: bumps github.com/google/uuid from 1.3.1 to 1.4.0 ([#2889](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2889))
+* provider: bumps github.com/hashicorp/terraform-plugin-framework from 1.4.1 to 1.4.2 ([#2876](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2876))
+
+## 4.17.0 (18th October, 2023)
+
+FEATURES:
+
+* **New Resource:** `cloudflare_access_tag` ([#2776](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2776))
+* **New Resource:** `cloudflare_api_shield_schema` ([#2784](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2784))
+* **New Resource:** `cloudflare_d1_database` ([#2850](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2850))
+* **New Resource:** `cloudflare_observatory_scheduled_test` ([#2807](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2807))
+
+ENHANCEMENTS:
+
+* provider: allow defining a user agent operator suffix through the schema field (`user_agent_operator_suffix`) and via the environment variable (`CLOUDFLARE_USER_AGENT_OPERATOR_SUFFIX`) ([#2831](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2831))
+* resource/cloudflare_access_application: Add idp_entity_id, public_key and sso_endpoint attributes to saas_app ([#2838](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2838))
+* resource/cloudflare_access_application: adds the ability to associate a tag with an application. ([#2776](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2776))
+* resource/cloudflare_access_organization: Add session_duration field ([#2857](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2857))
+* resource/cloudflare_access_policy: Add session_duration field ([#2857](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2857))
+* resource/cloudflare_ruleset: Add support for the use of Additional Cacheable Ports option in the Rulesets API ([#2854](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2854))
+* resource/cloudflare_teams_accounts: Add support for setting ssh encryption key in ZT settings ([#2826](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2826))
+* resource/cloudflare_zone_settings_override: Add support for `fonts` ([#2773](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2773))
+
+BUG FIXES:
+
+* resource/cloudflare_access_application: fix import of cloudflare_access_application not reading saas_app config ([#2843](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2843))
+* resource/cloudflare_access_policy: Send purpose justification settings properly on updates ([#2836](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2836))
+* resource/cloudflare_bot_management: fix fight mode not being sent to API ([#2833](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2833))
+* resource/cloudflare_pages_project: Fix 'preview_branch_includes' always showing it has changes if not provided ([#2796](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2796))
+* resource/cloudflare_ruleset: Add note that logging is only supported with the skip action ([#2851](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2851))
+
+INTERNAL:
+
+* provider: updated user agent string to now be `terraform-provider-cloudflare/<version> <plugin> <operator suffix>` ([#2831](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2831))
+
+DEPENDENCIES:
+
+* provider: bumps github.com/aws/aws-sdk-go-v2 from 1.21.0 to 1.21.1 ([#2820](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2820))
+* provider: bumps github.com/aws/aws-sdk-go-v2 from 1.21.1 to 1.21.2 ([#2847](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2847))
+* provider: bumps github.com/aws/aws-sdk-go-v2/config from 1.18.43 to 1.18.44 ([#2823](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2823))
+* provider: bumps github.com/aws/aws-sdk-go-v2/config from 1.18.44 to 1.18.45 ([#2846](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2846))
+* provider: bumps github.com/aws/aws-sdk-go-v2/config from 1.18.45 to 1.19.0 ([#2853](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2853))
+* provider: bumps github.com/aws/aws-sdk-go-v2/credentials from 1.13.41 to 1.13.42 ([#2821](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2821))
+* provider: bumps github.com/aws/aws-sdk-go-v2/service/s3 from 1.40.0 to 1.40.1 ([#2822](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2822))
+* provider: bumps github.com/cloudflare/cloudflare-go from 0.78.0 to 0.79.0 ([#2832](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2832))
+* provider: bumps github.com/google/go-cmp from 0.5.9 to 0.6.0 ([#2830](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2830))
+* provider: bumps github.com/hashicorp/terraform-plugin-framework from 1.4.0 to 1.4.1 ([#2828](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2828))
+* provider: bumps golang.org/x/net from 0.15.0 to 0.16.0 ([#2819](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2819))
+* provider: bumps golang.org/x/net from 0.16.0 to 0.17.0 ([#2829](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2829))
+* provider: bumps golang.org/x/net from 0.7.0 to 0.17.0 ([#2837](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2837))
+
+## 4.16.0 (4th October, 2023)
+
+BREAKING CHANGES:
+
+* resource/cloudflare_spectrum_application: Remove default values, make `edge_ips` parameter optional. ([#2629](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2629))
+
+FEATURES:
+
+* **New Resource:** `cloudflare_api_shield_operation` ([#2760](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2760))
+
+ENHANCEMENTS:
+
+* resource/cloudflare_authenticated_origin_pulls: Improve import, update documentation ([#2771](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2771))
+* resource/cloudflare_notification_policy: Add `advanced_http_alert_error` alert_type ([#2789](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2789))
+* resource/cloudflare_notification_policy: Implement the `group_by`, `where` and `actions` options ([#2789](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2789))
+* resource/cloudflare_ruleset: Add support for cache bypass by default in Edge TTL modes ([#2764](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2764))
+
+BUG FIXES:
+
+* resource/cloudflare_access_identity_provider: Fix cloudflare_access_identity_provider incorrectly discards SCIM configuration secret ([#2744](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2744))
+* resource/cloudflare_notification_policy: handle manually deleted policies by removing them from state ([#2791](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2791))
+* resource/cloudflare_ruleset: ability to use exclude_origin=true in cache_key.custom_key.header without the need of specifying include or check_presence. ([#2802](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2802))
+* resource/cloudflare_ruleset: mark `requests_to_origin` required for ratelimit blocks ([#2808](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2808))
+
+DEPENDENCIES:
+
+* provider: bumps github.com/aws/aws-sdk-go-v2/config from 1.18.40 to 1.18.41 ([#2781](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2781))
+* provider: bumps github.com/aws/aws-sdk-go-v2/config from 1.18.41 to 1.18.42 ([#2792](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2792))
+* provider: bumps github.com/aws/aws-sdk-go-v2/config from 1.18.42 to 1.18.43 ([#2811](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2811))
+* provider: bumps github.com/aws/aws-sdk-go-v2/credentials from 1.13.39 to 1.13.40 ([#2793](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2793))
+* provider: bumps github.com/aws/aws-sdk-go-v2/credentials from 1.13.40 to 1.13.41 ([#2810](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2810))
+* provider: bumps github.com/aws/aws-sdk-go-v2/service/s3 from 1.38.5 to 1.39.0 ([#2782](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2782))
+* provider: bumps github.com/aws/aws-sdk-go-v2/service/s3 from 1.39.0 to 1.40.0 ([#2795](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2795))
+* provider: bumps github.com/cloudflare/cloudflare-go from 0.77.0 to 0.78.0 ([#2797](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2797))
+
+## 4.15.0 (20th September, 2023)
+
+ENHANCEMENTS:
+
+* resource/cloudflare_access_identity_provider: Support email_claim_name, Okta authorization_server_id, and pingone ([#2765](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2765))
+* resource/cloudflare_ruleset: Add support for a new Browser Mode that allows bypass of downstream caches ([#2756](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2756))
+* resource/cloudflare_ruleset: Add support for the use of Origin Cache Control in the Rulesets API ([#2753](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2753))
+* resource/cloudflare_ruleset: Add support for the use of Proxy Read Timeout field in Rulesets API ([#2755](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2755))
+
+BUG FIXES:
+
+* resource/cloudflare_list: Fix import for cloudflare_list resource ([#2663](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2663))
+* resource/cloudflare_record: Updates the cast to a pointer to match changes in the SDK ([#2763](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2763))
+* resource/pages_project: force replace when changing pages source ([#2750](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2750))
+
+DEPENDENCIES:
+
+* provider: bumps crazy-max/ghaction-import-gpg from 5 to 6 ([#2758](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2758))
+* provider: bumps github.com/aws/aws-sdk-go-v2/config from 1.18.39 to 1.18.40 ([#2775](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2775))
+* provider: bumps github.com/cloudflare/cloudflare-go from 0.76.0 to 0.77.0 ([#2761](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2761))
+* provider: bumps github.com/hashicorp/terraform-plugin-framework from 1.3.5 to 1.4.0 ([#2745](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2745))
+* provider: bumps github.com/hashicorp/terraform-plugin-mux from 0.11.2 to 0.12.0 ([#2746](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2746))
+* provider: bumps github.com/hashicorp/terraform-plugin-sdk/v2 from 2.28.0 to 2.29.0 ([#2748](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2748))
+* provider: bumps goreleaser/goreleaser-action from 4.6.0 to 5.0.0 ([#2757](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2757))
+
+## 4.14.0 (6th September, 2023)
+
+FEATURES:
+
+* **New Resource:** `cloudflare_web_analytics_rule` ([#2686](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2686))
+* **New Resource:** `cloudflare_web_analytics_site` ([#2686](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2686))
+
+ENHANCEMENTS:
+
+* resource/cloudflare_access_application: Add custom_non_identity_deny_url field ([#2721](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2721))
+* resource/cloudflare_access_group: Improve documentation for access_group usage ([#2718](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2718))
+* resource/cloudflare_load_balancer_monitor: add support for `consecutive_up` and `consecutive_down` ([#2723](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2723))
+* resource/cloudflare_total_tls: add support for importing existing resources ([#2734](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2734))
+
+BUG FIXES:
+
+* resource/cloudflare_access_identity_provider: Fix access IDPs not importing config obj ([#2735](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2735))
+
+DEPENDENCIES:
+
+* provider: bumps actions/checkout from 3 to 4 ([#2736](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2736))
+* provider: bumps github.com/aws/aws-sdk-go-v2/config from 1.18.36 to 1.18.37 ([#2714](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2714))
+* provider: bumps github.com/aws/aws-sdk-go-v2/config from 1.18.37 to 1.18.38 ([#2731](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2731))
+* provider: bumps github.com/aws/aws-sdk-go-v2/config from 1.18.38 to 1.18.39 ([#2741](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2741))
+* provider: bumps github.com/aws/aws-sdk-go-v2/credentials from 1.13.35 to 1.13.36 ([#2732](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2732))
+* provider: bumps github.com/aws/aws-sdk-go-v2/credentials from 1.13.36 to 1.13.37 ([#2740](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2740))
+* provider: bumps github.com/cloudflare/cloudflare-go from 0.75.0 to 0.76.0 ([#2726](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2726))
+* provider: bumps github.com/hashicorp/terraform-plugin-framework-validators from 0.11.0 to 0.12.0 ([#2727](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2727))
+* provider: bumps github.com/hashicorp/terraform-plugin-sdk/v2 from 2.27.0 to 2.28.0 ([#2719](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2719))
+* provider: bumps github.com/hashicorp/terraform-plugin-testing from 1.4.0 to 1.5.1 ([#2730](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2730))
+* provider: bumps golang.org/x/net from 0.14.0 to 0.15.0 ([#2739](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2739))
+* provider: bumps goreleaser/goreleaser-action from 4.4.0 to 4.6.0 ([#2742](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2742))
+
+## 4.13.0 (23rd August, 2023)
+
+FEATURES:
+
+* **New Data Source:** `cloudflare_user` ([#2691](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2691))
+* **New Resource:** `cloudflare_bot_management` ([#2672](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2672))
+* **New Resource:** `cloudflare_hostname_tls_setting` ([#2700](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2700))
+* **New Resource:** `cloudflare_hostname_tls_setting_ciphers` ([#2700](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2700))
+* **New Resource:** `cloudflare_zone_hold` ([#2671](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2671))
+
+ENHANCEMENTS:
+
+* datasource/api_token_permission_groups: Add R2 scopes ([#2687](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2687))
+* datasource/api_token_permission_groups: Convert to plugin framework ([#2687](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2687))
+* resource/cloudflare_access_application: adds support for custom saml attributes in saas access apps ([#2676](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2676))
+* resource/cloudflare_access_group: add support for AccessGroupAzureAuthContext ([#2654](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2654))
+* resource/cloudflare_access_identity_provider: add conditional_access_enabled attr ([#2654](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2654))
+* resource/cloudflare_access_service_token: add support for managing `Duration` ([#2647](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2647))
+* resource/cloudflare_device_posture_integration: update support for managing `tanium_s2s` third party posture provider. ([#2674](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2674))
+* resource/cloudflare_device_posture_rule: update support for new fields for tanium_s2s posture rule. ([#2674](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2674))
+* resource/cloudflare_notification_policy: Add possibility to configure Pages Alerts. ([#2694](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2694))
+* resource/cloudflare_waiting_room: Add `queueing_status_code` to the Waiting Room resource ([#2666](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2666))
+* resource/cloudflare_worker_domain: add support for `Import` operations ([#2679](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2679))
+
+BUG FIXES:
+
+* resource/cloudflare_access_group: Fix issue where saml rules would not read the IDP id from the API ([#2683](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2683))
+* resource/cloudflare_rulest: allow configuring an origin `Port` value without the `Host` (and vice versa) ([#2677](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2677))
+
+DEPENDENCIES:
+
+* provider: bumps github.com/aws/aws-sdk-go-v2 from 1.20.1 to 1.20.2 ([#2695](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2695))
+* provider: bumps github.com/aws/aws-sdk-go-v2 from 1.20.3 to 1.21.0 ([#2710](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2710))
+* provider: bumps github.com/aws/aws-sdk-go-v2/config from 1.18.33 to 1.18.34 ([#2697](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2697))
+* provider: bumps github.com/aws/aws-sdk-go-v2/config from 1.18.34 to 1.18.35 ([#2706](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2706))
+* provider: bumps github.com/aws/aws-sdk-go-v2/config from 1.18.35 to 1.18.36 ([#2708](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2708))
+* provider: bumps github.com/aws/aws-sdk-go-v2/credentials from 1.13.32 to 1.13.33 ([#2696](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2696))
+* provider: bumps github.com/aws/aws-sdk-go-v2/credentials from 1.13.33 to 1.13.34 ([#2703](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2703))
+* provider: bumps github.com/aws/aws-sdk-go-v2/credentials from 1.13.34 to 1.13.35 ([#2709](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2709))
+* provider: bumps github.com/aws/aws-sdk-go-v2/service/s3 from 1.38.2 to 1.38.3 ([#2698](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2698))
+* provider: bumps github.com/aws/aws-sdk-go-v2/service/s3 from 1.38.3 to 1.38.4 ([#2705](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2705))
+* provider: bumps github.com/aws/aws-sdk-go-v2/service/s3 from 1.38.4 to 1.38.5 ([#2707](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2707))
+* provider: bumps github.com/cloudflare/cloudflare-go from 0.74.0 to 0.75.0 ([#2685](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2685))
+* provider: bumps github.com/google/uuid from 1.3.0 to 1.3.1 ([#2711](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2711))
+* provider: bumps github.com/hashicorp/terraform-plugin-framework from 1.3.4 to 1.3.5 ([#2699](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2699))
+* provider: bumps goreleaser/goreleaser-action from 4.3.0 to 4.4.0 ([#2675](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2675))
+
+## 4.12.0 (9th August, 2023)
+
+BREAKING CHANGES:
+
+* resource/cloudflare_ruleset: remove `shareable_entitlement_name` per the Go library changes since it hasn't ever been controllable by users ([#2652](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2652))
+
+FEATURES:
+
+* **New Data Source:** `cloudflare_zone_cache_reserve` ([#2642](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2642))
+* **New Resource:** `cloudflare_access_custom_page` ([#2643](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2643))
+* **New Resource:** `cloudflare_zone_cache_reserve` ([#2642](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2642))
+
+ENHANCEMENTS:
+
+* resource/cloudflare_access_application: adds the ability to associate a custom page with an application. ([#2643](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2643))
+* resource/cloudflare_access_organization: adds the ability to associate a custom page with an organization. ([#2643](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2643))
+* resource/cloudflare_notification_policy: Add support for `pages_event_alert` alert type ([#2602](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2602))
+* resource/cloudflare_pages_project: Allow renaming projects without destroying and recreating ([#2602](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2602))
+* resource/cloudflare_teams_account: Adds support for protocol detection feature ([#2625](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2625))
+* resource/cloudflare_user_agent_blocking_rules: add support for importing resources ([#2640](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2640))
+
+BUG FIXES:
+
+* resource/cloudflare_custom_hostname: prevent infinite loop when `wait_for_ssl_pending_validation` is set if SSL status is already `active` ([#2638](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2638))
+* resource/cloudflare_load_balancer: fix full deletion of pop_pools, region_pools, country_pools on update ([#2673](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2673))
+* resource/cloudflare_load_balancer: handle inconsistent sorting bug in `schema.HashResource` resulting in resources incorrectly being updated when no changes have been made ([#2635](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2635))
+* resource/cloudflare_pages_project: `deployment_configs` are now computed ([#2602](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2602))
+
+DEPENDENCIES:
+
+* provider: bumps github.com/aws/aws-sdk-go-v2/config from 1.18.29 to 1.18.32 ([#2651](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2651))
+* provider: bumps github.com/aws/aws-sdk-go-v2/config from 1.18.32 to 1.18.33 ([#2670](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2670))
+* provider: bumps github.com/aws/aws-sdk-go-v2/credentials from 1.13.28 to 1.13.31 ([#2648](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2648))
+* provider: bumps github.com/aws/aws-sdk-go-v2/service/s3 from 1.37.0 to 1.38.1 ([#2650](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2650))
+* provider: bumps github.com/cloudflare/cloudflare-go from 0.73.0 to 0.74.0 ([#2652](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2652))
+* provider: bumps github.com/hashicorp/terraform-plugin-framework from 1.3.3 to 1.3.4 ([#2657](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2657))
+* provider: bumps github.com/hashicorp/terraform-plugin-framework-validators from 0.10.0 to 0.11.0 ([#2658](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2658))
+* provider: bumps golang.org/x/net from 0.12.0 to 0.13.0 ([#2646](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2646))
+* provider: bumps golang.org/x/net from 0.13.0 to 0.14.0 ([#2661](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2661))
+
+## 4.11.0 (26th July, 2023)
+
+FEATURES:
+
+* **New Resource:** `cloudflare_regional_tiered_cache` ([#2624](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2624))
+
+ENHANCEMENTS:
+
+* resource/cloudflare_device_posture_integration: add support for managing `sentinelone_s2s` third party posture provider. ([#2618](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2618))
+* resource/cloudflare_device_posture_rule: add ability to create client_certificate and sentinelone_s2s posture rule ([#2618](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2618))
+* resource/cloudflare_load_balancer: support header session affinity policy ([#2521](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2521))
+* resource/record: Allow SVCB DNS record ([#2632](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2632))
+
+DEPENDENCIES:
+
+* provider: bumps github.com/cloudflare/cloudflare-go from 0.72.0 to 0.73.0 ([#2626](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2626))
+* provider: bumps github.com/hashicorp/terraform-plugin-framework from 1.3.2 to 1.3.3 ([#2627](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2627))
+* provider: bumps github.com/hashicorp/terraform-plugin-mux from 0.11.1 to 0.11.2 ([#2616](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2616))
+* provider: bumps github.com/hashicorp/terraform-plugin-testing from 1.3.0 to 1.4.0 ([#2631](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2631))
+
+## 4.10.0 (12th July, 2023)
+
+FEATURES:
+
+* **New Data Source:** `clouflare_access_application` ([#2547](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2547))
+
+ENHANCEMENTS:
+
+* resource/cloudflare_access_ca_certificate: remove redundant `certificate_id` from `Import` requirements as it is never used ([#2547](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2547))
+* resource/cloudflare_load_balancer_monitor: Add example import. ([#2572](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2572))
+
+BUG FIXES:
+
+* resource/cloudflare_load_balancer: fix import of load_balancer when rules included overrides or fixed_response ([#2571](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2571))
+* resource/cloudflare_record: fix importing of DNSKEY record types ([#2568](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2568))
+* resource/cloudflare_ruleset: Fix detection of conflicting entrypoint rulesets ([#2566](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2566))
+
+DEPENDENCIES:
+
+* provider: bumps dependabot/fetch-metadata from 1.5.1 to 1.6.0 ([#2557](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2557))
+* provider: bumps github.com/cloudflare/cloudflare-go from 0.70.0 to 0.72.0 ([#2584](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2584))
+* provider: bumps github.com/hashicorp/terraform-plugin-framework from 1.3.1 to 1.3.2 ([#2563](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2563))
+* provider: bumps github.com/hashicorp/terraform-plugin-go from 0.17.0 to 0.18.0 ([#2580](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2580))
+* provider: bumps github.com/hashicorp/terraform-plugin-mux from 0.10.0 to 0.11.0 ([#2564](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2564))
+* provider: bumps github.com/hashicorp/terraform-plugin-mux from 0.11.0 to 0.11.1 ([#2567](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2567))
+* provider: bumps github.com/hashicorp/terraform-plugin-sdk/v2 from 2.26.1 to 2.27.0 ([#2565](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2565))
+* provider: bumps golang.org/x/net from 0.11.0 to 0.12.0 ([#2589](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2589))
+
+## 4.9.0 (28th June, 2023)
+
+NOTES:
+
+* resource/cloudflare_pages_project: Clarify example projects resource ([#2543](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2543))
+
+ENHANCEMENTS:
+
+* resource/cloudflare_notification_policy: Add `alert_trigger_preferences` to the filters block. ([#2535](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2535))
+* resource/cloudflare_waiting_room: Add `additional_routes` and `cookie_suffix` to the Waiting Room resource ([#2528](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2528))
+
+BUG FIXES:
+
+* resource/cloudflare_access_ca_certificate: Fix issue with importing existing certificate as the application id was not being set. ([#2539](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2539))
+* resource/cloudflare_teams_rules: handle state correctly when `rules_setting` is empty ([#2532](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2532))
+* resource/cloudflare_tunnel_config: fix sending incorrect values for various timeouts in the origin configuration block ([#2510](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2510))
+* tunnel_config: fix nil pointers for time.Durations ([#2504](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2504))
+
+DEPENDENCIES:
+
+* provider: bumps github.com/cloudflare/cloudflare-go from 0.69.0 to 0.70.0 ([#2541](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2541))
+* provider: bumps github.com/hashicorp/terraform-plugin-framework from 1.3.0 to 1.3.1 ([#2529](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2529))
+* provider: bumps github.com/hashicorp/terraform-plugin-go from 0.15.0 to 0.16.0 ([#2536](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2536))
+
+## 4.8.0 (14th June, 2023)
+
+BREAKING CHANGES:
+
+* resource/cloudflare_ruleset: Prevent the rule ID, version and last updated attributes from being set ([#2511](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2511))
+
+ENHANCEMENTS:
+
+* cloudflare_pages_project: add `placement` to deployment config ([#2480](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2480))
+* resource/access_application: add support for self_hosted_domains ([#2441](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2441))
+* resource/cloudflare_custom_hostname: add support for `bundle_method` TLS configuration ([#2494](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2494))
+* resource/cloudflare_device_posture_rule: add ability to create intune and kolide s2s posture rule creation ([#2474](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2474))
+* resource/cloudflare_device_settings_policy: add `description` to device settings policy ([#2474](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2474))
+* resource/cloudflare_load_balancer: Add support for least_outstanding_requests steering ([#2472](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2472))
+* resource/cloudflare_load_balancer_pool: Add support for least_outstanding_requests origin steering ([#2472](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2472))
+* resource/cloudflare_page_rule: removes ability to set wildcards for include and exclude, provides guidance on proper values to use instead ([#2491](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2491))
+* resource/cloudflare_teams_account: add ability to set `root_ca` for ZT Accounts ([#2474](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2474))
+
+BUG FIXES:
+
+* cloudflare_pages_project: use user provided configuration for secrets in the state handler since the API does not return them ([#2480](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2480))
+* resource/cloudflare_certificate_pack: handle UI deletion scenarios for HTTP 404s and `status = "deleted"` responses ([#2497](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2497))
+* resource/cloudflare_custom_hostname: use user provided values for state management when the API response isn't provided ([#2494](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2494))
+* resource/cloudflare_origin_ca_certificate: mark `csr` as Required ([#2496](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2496))
+* resource/cloudflare_ruleset: Mark that the ruleset must be re-created if the shareable entitlement name attribute changes ([#2511](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2511))
+* resource/cloudflare_ruleset: Populate the rule ID, ref, version and last updated attributes in API requests and from API responses ([#2511](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2511))
+* resource/cloudflare_ruleset: Populate the shareable entitlement name attribute in API requests and from API responses ([#2511](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2511))
+* resource/cloudflare_ruleset: handle `Import` operations where the required values are missing for providing a nicer error message ([#2503](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2503))
+
+DEPENDENCIES:
+
+* provider: bumps github.com/cloudflare/cloudflare-go from 0.68.0 to 0.69.0 ([#2507](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2507))
+* provider: bumps github.com/hashicorp/terraform-plugin-framework from 1.2.0 to 1.3.0 ([#2509](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2509))
+* provider: bumps github.com/hashicorp/terraform-plugin-log from 0.8.0 to 0.9.0 ([#2489](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2489))
+* provider: bumps github.com/hashicorp/terraform-plugin-testing from 1.2.0 to 1.3.0 ([#2524](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2524))
+* provider: bumps golang.org/x/net from 0.10.0 to 0.11.0 ([#2523](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2523))
+* provider: bumps goreleaser/goreleaser-action from 4.2.0 to 4.3.0 ([#2519](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2519))
+
+## 4.7.1 (31st May, 2023)
+
+BUG FIXES:
+
+* resource/cloudflare_list: remove `IsIPAddress` validation that doesn't take into account CIDR notation ([#2486](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2486))
+
+## 4.7.0 (31st May, 2023)
+
+NOTES:
+
+* resource/cloudflare_filter: This resource is being deprecated in favor of the `cloudflare_rulesets` resource. See https://developers.cloudflare.com/waf/reference/migration-guides/firewall-rules-to-custom-rules/#relevant-changes-for-terraform-users for more details. ([#2442](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2442))
+* resource/cloudflare_firewall_rule: This resource is being deprecated in favor of the `cloudflare_rulesets` resource. See https://developers.cloudflare.com/waf/reference/migration-guides/firewall-rules-to-custom-rules/#relevant-changes-for-terraform-users for more details. ([#2442](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2442))
+
+FEATURES:
+
+* **New Resource:** `cloudflare_r2_bucket` ([#2378](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2378))
+
+ENHANCEMENTS:
+
+* resource/cloudflare_account: provide account ID for error handling in `resourceCloudflareAccountDelete` ([#2436](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2436))
+* resource/cloudflare_device_posture_integration: add `api_url` to `uptycs` posture integration config. ([#2468](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2468))
+* resource/cloudflare_list: add support for Hostname and ASN lists. ([#2483](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2483))
+* resource/cloudflare_tunnel_config: add support for origin config on ingress rule and access ([#2477](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2477))
+
+BUG FIXES:
+
+* resource/cloudflare_logpush_job: Properly set dataset field when importing logpush jobs ([#2444](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2444))
+* resource/cloudflare_pages_project: suggest a better default value for root_dir ([#2440](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2440))
+* resource/cloudflare_ruleset: Validation of ttls for action_parameters with edge_ttl or browser_ttl mode of override_origin ([#2454](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2454))
+* resource/cloudflare_workers_kv: Fix import to properly parse the id ([#2434](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2434))
+
+DEPENDENCIES:
+
+* provider: bumps dependabot/fetch-metadata from 1.4.0 to 1.5.0 ([#2463](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2463))
+* provider: bumps dependabot/fetch-metadata from 1.5.0 to 1.5.1 ([#2469](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2469))
+* provider: bumps github.com/cloudflare/cloudflare-go from 0.67.0 to 0.68.0 ([#2466](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2466))
+* provider: bumps github.com/stretchr/testify from 1.8.2 to 1.8.3 ([#2457](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2457))
+* provider: bumps github.com/stretchr/testify from 1.8.3 to 1.8.4 ([#2484](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2484))
+
+## 4.6.0 (17th May, 2023)
+
+ENHANCEMENTS:
+
+* resource/cloudflare_ruleset: add support for `auto` compression in the `compress_response` action ([#2409](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2409))
+* resource/cloudflare_waiting_room_settings: add support for waiting room zone-level settings. ([#2419](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2419))
+
+BUG FIXES:
+
+* resource/cloudflare_notification_policy: Fix unexpected crashes when setting target_hostname with a filters attribute ([#2425](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2425))
+* resource/cloudflare_ruleset: allow `FromValue.PreserveQueryString` to be nullable and handled correctly ([#2414](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2414))
+* resource/cloudflare_ruleset: allow using `0` as an edge TTL value without conflicting with Go types for zeros ([#2415](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2415))
+* resource/cloudflare_turnstile_widget: align schema to match what is returned by the API and fix updating the widget ([#2413](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2413))
+
+DEPENDENCIES:
+
+* provider: bumps github.com/cloudflare/cloudflare-go from 0.66.0 to 0.67.0 ([#2429](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2429))
+* provider: bumps golang.org/x/net from 0.9.0 to 0.10.0 ([#2421](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2421))
+
+## 4.5.0 (3rd May, 2023)
+
+FEATURES:
+
+* **New Resource:** `cloudflare_regional_hostname` ([#2396](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2396))
+* **New Resource:** `cloudflare_turnstile_widget` ([#2380](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2380))
+
+ENHANCEMENTS:
+
+* resource/cloudflare_device_posture_rule: Add support for `sentinelone` type. ([#2279](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2279))
+* resource/cloudflare_logpush_job: Fix schema for logpush job `dataset` field ([#2397](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2397))
+* resource/cloudflare_logpush_job: add max upload parameters ([#2394](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2394))
+* resource/cloudflare_logpush_job: add support for `device_posture_results` and `zero_trust_network_sessions`. ([#2405](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2405))
+* resource/cloudflare_notification_policy: Added support for setting Megabits per second threshold for dos alert in Cloudflare notification policy resource. ([#2404](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2404))
+* resource/cloudflare_pages_project: added secrets to Pages project. Secrets are encrypted environment variables, ideal for secrets such as API tokens. See documentation here: https://developers.cloudflare.com/pages/platform/functions/bindings/#secrets ([#2399](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2399))
+* resource/cloudflare_ruleset: add support for the `compress_response` action ([#2372](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2372))
+* resource/cloudflare_ruleset: add support for the `http_response_compression` phase ([#2372](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2372))
+
+BUG FIXES:
+
+* resource/cloudflare_load_balancer: fixes random_steering being unset on value updates ([#2403](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2403))
+* resource/cloudflare_pages_project: fixes pages project acceptance test ([#2402](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2402))
+* resource/cloudflare_ruleset: ensure custom cache keys using query parameters are defined as known values for state handling ([#2388](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2388))
+
+DEPENDENCIES:
+
+* provider: bumps github.com/cloudflare/cloudflare-go from 0.65.0 to 0.66.0 ([#2398](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2398))
+* provider: bumps github.com/hashicorp/terraform-plugin-mux from 0.9.0 to 0.10.0 ([#2395](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2395))
+
+## 4.4.0 (19th April, 2023)
+
+NOTES:
+
+* resource/cloudflare_ruleset: introduced future deprecation warning for the `http_request_sbfm` phase. ([#2382](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2382))
+
+ENHANCEMENTS:
+
+* resource/cloudflare_access_organization: Add auto_redirect_to_identity flag ([#2356](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2356))
+* resource/cloudflare_access_policy: Add isolation_required flag ([#2351](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2351))
+* resource/cloudflare_tunnel: Adds config_src parameter ([#2369](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2369))
+* resource/cloudflare_worker_script: Add `logpush` attribute ([#2375](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2375))
+
+INTERNAL:
+
+* scripts/generate-changelog-entry: make error message match the executable we are expecting ([#2357](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2357))
+
+DEPENDENCIES:
+
+* provider: bumps dependabot/fetch-metadata from 1.3.6 to 1.4.0 ([#2383](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2383))
+* provider: bumps github.com/cloudflare/cloudflare-go from 0.64.0 to 0.65.0 ([#2370](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2370))
+* provider: bumps golang.org/x/net from 0.8.0 to 0.9.0 ([#2359](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2359))
+* provider: bumps peter-evans/create-or-update-comment from 2 to 3 ([#2355](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2355))
+
+## 4.3.0 (5th April, 2023)
+
+NOTES:
+
+* adds support for a basic `flox` environment project ([#2345](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2345))
+
+FEATURES:
+
+* **New Resource:** `cloudflare_device_dex_tests` ([#2250](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2250))
+* **New Resource:** `cloudflare_worker_domain` ([#2339](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2339))
+
+ENHANCEMENTS:
+
+* resource/cloudflare_access_group: Add example of usage of Azure ([#2332](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2332))
+* resource/cloudflare_access_identity_provider: add `claims` and `scopes` fields ([#2313](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2313))
+* resource/cloudflare_access_identity_provider: add ability for users to enable SCIM provisioning on their Identity Providers ([#2147](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2147))
+* resource/cloudflare_device_posture_integration: add support for managing `kolide` third party posture provider. ([#2321](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2321))
+* resource/cloudflare_device_settings_policy: use new `cloudflare.ServiceMode` type ([#2331](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2331))
+* resource/cloudflare_ruleset: enforce schema validation of conflicting cache key parameters ([#2326](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2326))
+* resource/cloudflare_teams_rules: updated gateway rule action audit ssh and rule settings ([#2303](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2303))
+* resource/cloudflare_worker_script: Add `compatibility_flags` attribute ([#2324](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2324))
+* resources/device_settings_policy: add validation for possible `service_mode_v2_mode` values ([#2331](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2331))
+
+BUG FIXES:
+
+* datasource/cloudflare_devices: Fix cloudflare_devices data source to return devices correctly and not error ([#2348](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2348))
+* resource/cloudflare_custom_ssl: fix json sent to API when geo_restrictions are not used ([#2319](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2319))
+
+DEPENDENCIES:
+
+* provider: bumps actions/stale from 7 to 8 ([#2322](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2322))
+* provider: bumps github.com/cloudflare/cloudflare-go from 0.63.0 to 0.64.0 ([#2344](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2344))
+* provider: bumps github.com/hashicorp/terraform-plugin-go from 0.14.3 to 0.15.0 ([#2333](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2333))
+* provider: bumps github.com/hashicorp/terraform-plugin-testing from 1.1.0 to 1.2.0 ([#2320](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2320))
+
+## 4.2.0 (22nd March, 2023)
+
+BREAKING CHANGES:
+
+* resource/cloudflare_ruleset: `status` has been removed in favour of `enabled` now that the workaround for zero values is no longer required ([#2271](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2271))
+
+NOTES:
+
+* `cloudflare_ruleset` has been migrated to the `terraform-plugin-framework` in doing so addresses issues with the internal representation of zero values. A downside to this is that to get the full benefits, you will need to remove the resource from your Terraform state (`terraform state rm ...`) and then import the resource back into your state. Along with this, you will need to update any references to `status` which was the previous workaround for the `enabled` values. If you have `status = "enabled"` you will need to replace it with `enabled = true` and similar for `status = "disabled"` to be replaced with `enabled = false`. ([#2271](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2271))
+
+FEATURES:
+
+* **New Data Source:** `cloudflare_list` ([#2296](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2296))
+* **New Data Source:** `cloudflare_lists` ([#2296](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2296))
+* **New Resource:** `cloudflare_address_map` ([#2290](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2290))
+* **New Resource:** `cloudflare_list_item` ([#2304](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2304))
+
+ENHANCEMENTS:
+
+* resource/access_organization: add ui_read_only_toggle_reason field ([#2175](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2175))
+* resource/cloudflare_device_posture_rule: Support `check_disks` in the `input` block schema. ([#2280](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2280))
+* resource/cloudflare_notification_policy_webhooks: ensure `url` triggers recreation, not in-place updates ([#2302](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2302))
+* resource/cloudflare_tunnel: rename references of cloudflare_argo_tunnel to cloudflare_tunnel in documentation ([#2281](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2281))
+* resource/cloudflare_tunnel_config: add support for import of `cloudflare_tunnel_config` ([#2298](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2298))
+* resource/cloudflare_tunnel_config: rename references of cloudflare_argo_tunnel to cloudflare_tunnel in documentation ([#2281](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2281))
+* resource/cloudflare_tunnel_route: rename references of cloudflare_argo_tunnel to cloudflare_tunnel in documentation ([#2281](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2281))
+* resource/cloudflare_worker_script: Add `compatibility_date` attribute ([#2300](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2300))
+
+BUG FIXES:
+
+* resource/cloudflare_ruleset: support cache rules for status range >= and =< operations ([#2307](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2307))
+* resource/cloudflare_teams_account: fixes an issue where accounts that had never configured DLP payload logging would error upon reading this resource ([#2284](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2284))
+
+INTERNAL:
+
+* resource/cloudflare_ruleset: migrate from SDKv2 to `terraform-plugin-framework` ([#2271](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2271))
+* test: swap SDKv2 testing harness to github.com/hashicorp/terraform-plugin-testing ([#2272](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2272))
+
+DEPENDENCIES:
+
+* provider: bumps actions/setup-go from 3 to 4 ([#2291](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2291))
+* provider: bumps github.com/cloudflare/cloudflare-go from 0.62.0 to 0.63.0 ([#2289](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2289))
+* provider: bumps github.com/hashicorp/terraform-plugin-framework from 1.1.1 to 1.2.0 ([#2314](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2314))
+* provider: bumps github.com/hashicorp/terraform-plugin-sdk/v2 from 2.25.1-0.20230317190757-53a4ec42ea7e to 2.26.0 ([#2308](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2308))
+* provider: bumps github.com/hashicorp/terraform-plugin-sdk/v2 from 2.26.0 to 2.26.1 ([#2315](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2315))
+
+## 4.1.0 (March 8th, 2023)
+
+ENHANCEMENTS:
+
+* resource/cloudflare_cloudflare_teams_rules: Add untrusted_cert setting to teams rules settings ([#2256](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2256))
+* resource/cloudflare_teams_account: Add support for DLP payload logging public key ([#2267](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2267))
+* resource/cloudflare_teams_rule: Add support for enabling DLP payload logging per-rule ([#2267](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2267))
+* resource/cloudflare_waiting_room: add 'ru-RU' and 'fa-IR' to default_template_language field ([#2262](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2262))
+
+BUG FIXES:
+
+* resource/cloudflare_access_group: fixes an issue where Azure group rules with different identity provider ids would override each other ([#2270](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2270))
+* resource/cloudflare_notification_policy: ensure all emails are saved if multiple `email_integration` values specified ([#2248](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2248))
+
+DEPENDENCIES:
+
+* provider: bumps github.com/cloudflare/cloudflare-go from 0.61.0 to 0.62.0 ([#2268](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2268))
+* provider: bumps github.com/stretchr/testify from 1.8.1 to 1.8.2 ([#2263](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2263))
+* provider: bumps golang.org/x/net from 0.7.0 to 0.8.0 ([#2274](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2274))
+
+## 4.0.0 (February 21st, 2023)
+
+> **Warning** Prior to upgrading you should ensure you have adequate backups in the event you need to rollback to version 3. This is a major version bump and involves backwards incompatible changes.
+
+[3.x to 4.x upgrade guide](https://registry.terraform.io/providers/cloudflare/cloudflare/latest/docs/guides/version-4-upgrade)
+
+BREAKING CHANGES:
+
+* datasource/cloudflare_waf_groups: removed in favour of `cloudflare_rulesets` ([#2138](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2138))
+* datasource/cloudflare_waf_packages: removed in favour of `cloudflare_rulesets` ([#2138](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2138))
+* datasource/cloudflare_waf_rules: removed in favour of `cloudflare_rulesets` ([#2138](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2138))
+* provider: `account_id` is no longer available as a global configuration option. Instead, use the resource specific attributes. ([#2139](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2139))
+* resource/cloudflare_access_bookmark: resource has been removed in favour of configuration on `cloudflare_access_application` ([#2136](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2136))
+* resource/cloudflare_access_rule: require explicit `zone_id` or `account_id` and remove implicit fallback to user level rules ([#2157](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2157))
+* resource/cloudflare_account_member: `account_id` is now required ([#2153](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2153))
+* resource/cloudflare_account_member: no longer sets `client.AccountID` internally and relies on the resource provided value ([#2154](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2154))
+* resource/cloudflare_argo_tunnel: resource has been renamed to `cloudflare_tunnel` ([#2135](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2135))
+* resource/cloudflare_ip_list: removed in favour of `cloudflare_list` ([#2137](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2137))
+* resource/cloudflare_load_balancer: Migrate session_affinity_attributes from TypeMap to TypeSet ([#1959](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1959))
+* resource/cloudflare_load_balancer: `session_affinity_attributes.drain_duration` is now `TypeInt` instead of `TypeString` ([#1959](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1959))
+* resource/cloudflare_load_balancer_monitor: `account_id` is now required ([#2153](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2153))
+* resource/cloudflare_load_balancer_monitor: no longer sets `client.AccountID` internally and relies on the resource provided value ([#2154](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2154))
+* resource/cloudflare_load_balancer_pool: `account_id` is now required ([#2153](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2153))
+* resource/cloudflare_load_balancer_pool: no longer sets `client.AccountID` internally and relies on the resource provided value ([#2154](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2154))
+* resource/cloudflare_spectrum_application: `edge_ip_connectivity` is now nested under `edge_ips` as `connectivity` ([#2219](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2219))
+* resource/cloudflare_spectrum_application: `edge_ips.type` is now a required field ([#2219](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2219))
+* resource/cloudflare_spectrum_application: `edge_ips` now contains nested attributes other than IP ranges. `type` and `connectivity` have been added. `edge_ips.ips` contains the static IP addresses that used to reside at `edge_ips`. ([#2219](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2219))
+* resource/cloudflare_waf_group: removed in favour of `cloudflare_ruleset` ([#2138](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2138))
+* resource/cloudflare_waf_override: removed in favour of `cloudflare_ruleset` ([#2138](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2138))
+* resource/cloudflare_waf_package: removed in favour of `cloudflare_ruleset` ([#2138](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2138))
+* resource/cloudflare_waf_rule: removed in favour of `cloudflare_ruleset` ([#2138](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2138))
+* resource/cloudflare_workers_kv: `account_id` is now required ([#2153](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2153))
+* resource/cloudflare_workers_kv: no longer sets `client.AccountID` internally and relies on the resource provided value ([#2154](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2154))
+* resource/cloudflare_workers_kv_namespace: `account_id` is now required ([#2153](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2153))
+* resource/cloudflare_workers_kv_namespace: no longer sets `client.AccountID` internally and relies on the resource provided value ([#2154](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2154))
+* resource/cloudflare_workers_script: `account_id` is now required ([#2153](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2153))
+* resource/cloudflare_workers_script: no longer sets `client.AccountID` internally and relies on the resource provided value ([#2154](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2154))
+* resource/cloudflare_zone: `account_id` is now required ([#2153](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2153))
+* resource/cloudflare_zone: no longer sets `client.AccountID` internally and relies on the resource provided value ([#2154](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2154))
+
+## 3.35.0 (February 20th, 2023)
+
+FEATURES:
+
+* **New Data Source:** `cloudflare_rulesets` ([#2220](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2220))
+
+ENHANCEMENTS:
+
+* resource/cloudflare_argo_tunnel: mark `tunnel_token` as sensitive ([#2231](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2231))
+* resource/cloudflare_device_settings_policy: Add new flag MS IP Exclusion for device policies ([#2236](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2236))
+* resource/cloudflare_dlp_profile: Add new `allowed_match_count` field to profiles ([#2210](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2210))
+
+BUG FIXES:
+
+* resource/cloudflare_logpush_job: fixing typo in comment ([#2238](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2238))
+* resource/cloudflare_record: always send tags object which allows removal of unwanted tags ([#2205](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2205))
+* resource/cloudflare_tunnel_config: use correct notation for nested lists ([#2235](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2235))
+
+INTERNAL:
+
+* internal: bump Go version to 1.20 ([#2243](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2243))
+
+DEPENDENCIES:
+
+* provider: bump golang.org/x/net to v0.7.0 ([#2245](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2245))
+* provider: bumps github.com/cloudflare/cloudflare-go from 0.60.0 to 0.61.0 ([#2240](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2240))
+* provider: bumps github.com/hashicorp/terraform-plugin-framework-validators from 0.9.0 to 0.10.0 ([#2227](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2227))
+* provider: bumps github.com/hashicorp/terraform-plugin-mux from 0.8.0 to 0.9.0 ([#2228](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2228))
+* provider: bumps github.com/hashicorp/terraform-plugin-sdk/v2 from 2.24.1 to 2.25.0 ([#2239](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2239))
+* provider: bumps golang.org/x/net from 0.6.0 to 0.7.0 ([#2241](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2241))
+
+## 3.34.0 (February 8th, 2023)
+
+BREAKING CHANGES:
+
+* datasource/cloudflare_waf_groups: removed with no current replacement ([#2138](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2138))
+* datasource/cloudflare_waf_packages: removed with no current replacement ([#2138](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2138))
+* datasource/cloudflare_waf_rules: removed with no current replacement ([#2138](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2138))
+* provider: `account_id` is no longer available as a global configuration option. Instead, use the resource specific attributes. ([#2139](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2139))
+* resource/cloudflare_access_bookmark: resource has been removed in favour of configuration on `cloudflare_access_application` ([#2136](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2136))
+* resource/cloudflare_access_rule: require explicit `zone_id` or `account_id` and remove implicit fallback to user level rules ([#2157](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2157))
+* resource/cloudflare_account_member: `account_id` is now required ([#2153](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2153))
+* resource/cloudflare_account_member: no longer sets `client.AccountID` internally and relies on the resource provided value ([#2154](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2154))
+* resource/cloudflare_argo_tunnel: resource has been renamed to `cloudflare_tunnel` ([#2135](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2135))
+* resource/cloudflare_ip_list: removed in favour of `cloudflare_list` ([#2137](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2137))
+* resource/cloudflare_load_balancer: Migrate session_affinity_attributes from TypeMap to TypeSet ([#1959](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1959))
+* resource/cloudflare_load_balancer: `session_affinity_attributes.drain_duration` is now `TypeInt` instead of `TypeString` ([#1959](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1959))
+* resource/cloudflare_load_balancer_monitor: `account_id` is now required ([#2153](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2153))
+* resource/cloudflare_load_balancer_monitor: no longer sets `client.AccountID` internally and relies on the resource provided value ([#2154](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2154))
+* resource/cloudflare_load_balancer_pool: `account_id` is now required ([#2153](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2153))
+* resource/cloudflare_load_balancer_pool: no longer sets `client.AccountID` internally and relies on the resource provided value ([#2154](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2154))
+* resource/cloudflare_notification_policy: alert types `block_notification_review_accepted` and `workers_uptime` have been removed. ([#2215](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2215))
+* resource/cloudflare_notification_policy: alert types `g6_health_alert` has been renamed to `load_balancing_health_alert` ([#2215](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2215))
+* resource/cloudflare_notification_policy: alert types `g6_pool_toggle_alert` has been renamed to `load_balancing_pool_enablement_alert` ([#2215](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2215))
+* resource/cloudflare_notification_policy: alert types `scriptmonitor_alert_new_max_length_script_url` has been renamed to `scriptmonitor_alert_new_max_length_resource_url` ([#2215](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2215))
+* resource/cloudflare_notification_policy: alert types `scriptmonitor_alert_new_scripts` has been renamed to `scriptmonitor_alert_new_resources` ([#2215](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2215))
+* resource/cloudflare_waf_group: removed in favour of `cloudflare_ruleset` ([#2138](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2138))
+* resource/cloudflare_waf_override: removed in favour of `cloudflare_ruleset` ([#2138](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2138))
+* resource/cloudflare_waf_package: removed in favour of `cloudflare_ruleset` ([#2138](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2138))
+* resource/cloudflare_waf_rule: removed in favour of `cloudflare_ruleset` ([#2138](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2138))
+* resource/cloudflare_workers_kv: `account_id` is now required ([#2153](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2153))
+* resource/cloudflare_workers_kv: no longer sets `client.AccountID` internally and relies on the resource provided value ([#2154](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2154))
+* resource/cloudflare_workers_kv_namespace: `account_id` is now required ([#2153](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2153))
+* resource/cloudflare_workers_kv_namespace: no longer sets `client.AccountID` internally and relies on the resource provided value ([#2154](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2154))
+* resource/cloudflare_workers_script: `account_id` is now required ([#2153](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2153))
+* resource/cloudflare_workers_script: no longer sets `client.AccountID` internally and relies on the resource provided value ([#2154](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2154))
+* resource/cloudflare_zone: `account_id` is now required ([#2153](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2153))
+* resource/cloudflare_zone: no longer sets `client.AccountID` internally and relies on the resource provided value ([#2154](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2154))
+
+FEATURES:
+
+* **New Resource:** `cloudflare_mtls_certificate` ([#2182](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2182))
+* **New Resource:** `cloudflare_queue` ([#2134](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2134))
+
+ENHANCEMENTS:
+
+* resource/cloudflare_notification_policy: alert types `block_notification_block_removed`, `fbm_dosd_attack`, `scriptmonitor_alert_new_max_length_resource_url`, `scriptmonitor_alert_new_resources`, `tunnel_health_event`, `tunnel_update_event` have been added. ([#2215](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2215))
+* resource/cloudflare_ruleset: Preserve IDs of unmodified rules when updating rulesets ([#2172](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2172))
+* resource/cloudflare_ruleset: add support for `score_per_period` and `score_response_header_name` ([#2177](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2177))
+* resource/cloudflare_worker_script: add support for `queue_binding` ([#2134](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2134))
+
+BUG FIXES:
+
+* resource/cloudflare_account_member: allow `status` to be computed when not provided ([#2217](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2217))
+* resource/cloudflare_page_rule: fix failing page rules acceptance tests ([#2213](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2213))
+* resource/cloudflare_page_rule: make cache_key_fields optional to align with API constraints ([#2192](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2192))
+* resource/cloudflare_page_rule: remove empty cookie and header fields when applying this resource ([#2208](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2208))
+* resource/cloudflare_pages_project: changing `name` will now force recreation of the project ([#2216](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2216))
+
+DEPENDENCIES:
+
+* provider: bumps github.com/cloudflare/cloudflare-go from 0.59.0 to 0.60.0 ([#2204](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2204))
+* provider: bumps goreleaser/goreleaser-action from 4.1.0 to 4.2.0 ([#2201](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2201))
+
+## 3.33.1 (January 25th, 2023)
+
+BUG FIXES:
+
+* provider: remove conflicting `ExactlyOneOf` schema validation from framework schema ([#2185](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2185))
+
+## 3.33.0 (January 25th, 2023)
+
+BREAKING CHANGES:
+
+* datasource/cloudflare_waf_groups: removed with no current replacement ([#2138](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2138))
+* datasource/cloudflare_waf_packages: removed with no current replacement ([#2138](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2138))
+* datasource/cloudflare_waf_rules: removed with no current replacement ([#2138](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2138))
+* provider: `account_id` is no longer available as a global configuration option. Instead, use the resource specific attributes. ([#2139](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2139))
+* resource/cloudflare_access_bookmark: resource has been removed in favour of configuration on `cloudflare_access_application` ([#2136](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2136))
+* resource/cloudflare_access_rule: require explicit `zone_id` or `account_id` and remove implicit fallback to user level rules ([#2157](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2157))
+* resource/cloudflare_account_member: `account_id` is now required ([#2153](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2153))
+* resource/cloudflare_account_member: no longer sets `client.AccountID` internally and relies on the resource provided value ([#2154](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2154))
+* resource/cloudflare_argo_tunnel: resource has been renamed to `cloudflare_tunnel` ([#2135](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2135))
+* resource/cloudflare_ip_list: removed in favour of `cloudflare_list` ([#2137](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2137))
+* resource/cloudflare_load_balancer_monitor: `account_id` is now required ([#2153](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2153))
+* resource/cloudflare_load_balancer_monitor: no longer sets `client.AccountID` internally and relies on the resource provided value ([#2154](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2154))
+* resource/cloudflare_load_balancer_pool: `account_id` is now required ([#2153](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2153))
+* resource/cloudflare_load_balancer_pool: no longer sets `client.AccountID` internally and relies on the resource provided value ([#2154](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2154))
+* resource/cloudflare_waf_group: removed in favour of `cloudflare_ruleset` ([#2138](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2138))
+* resource/cloudflare_waf_override: removed in favour of `cloudflare_ruleset` ([#2138](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2138))
+* resource/cloudflare_waf_package: removed in favour of `cloudflare_ruleset` ([#2138](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2138))
+* resource/cloudflare_waf_rule: removed in favour of `cloudflare_ruleset` ([#2138](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2138))
+* resource/cloudflare_workers_kv: `account_id` is now required ([#2153](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2153))
+* resource/cloudflare_workers_kv: no longer sets `client.AccountID` internally and relies on the resource provided value ([#2154](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2154))
+* resource/cloudflare_workers_kv_namespace: `account_id` is now required ([#2153](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2153))
+* resource/cloudflare_workers_kv_namespace: no longer sets `client.AccountID` internally and relies on the resource provided value ([#2154](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2154))
+* resource/cloudflare_workers_script: `account_id` is now required ([#2153](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2153))
+* resource/cloudflare_workers_script: no longer sets `client.AccountID` internally and relies on the resource provided value ([#2154](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2154))
+* resource/cloudflare_zone: `account_id` is now required ([#2153](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2153))
+* resource/cloudflare_zone: no longer sets `client.AccountID` internally and relies on the resource provided value ([#2154](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2154))
+
+ENHANCEMENTS:
+
+* provider: mux `terraform-plugin-sdk/v2` and `terraform-plugin-framework` ([#2170](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2170))
+* resource/cloudflare_access_group: supports ip_list property. ([#2073](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2073))
+* resource/cloudflare_access_organization: add support for `user_seat_expiration_inactive_time` ([#2115](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2115))
+* resource/cloudflare_ruleset: do not let edge_ttl: default be zero ([#2143](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2143))
+* resource/cloudflare_teams_accounts: adds support for `mailto_address` and `mailto_subject` blockpage settings ([#2146](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2146))
+* resource/cloudflare_teams_rules: adds egress rule settings. ([#2159](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2159))
+
+BUG FIXES:
+
+* resource/cloudflare_record: fix issue with DNS comments and tags not being set for new records ([#2148](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2148))
+
+DEPENDENCIES:
+
+* provider: bumps dependabot/fetch-metadata from 1.3.5 to 1.3.6 ([#2183](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2183))
+* provider: bumps github.com/cloudflare/cloudflare-go from 0.58.1 to 0.59.0 ([#2166](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2166))
+
+## 3.32.0 (January 11th, 2023)
+
+FEATURES:
+
+* **New Resource:** `cloudflare_device_managed_networks` ([#2126](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2126))
+
+ENHANCEMENTS:
+
+* provider: `X-Auth-Email`, `X-Auth-Key`, `X-Auth-User-Service-Key` and `Authorization` values are now automatically redacted from debug logs ([#2123](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2123))
+* provider: use inbuilt cloudflare-go logger for HTTP interactions ([#2123](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2123))
+* resource/cloudflare_device_posture_rule: add ability to create crowdstrike s2s posture rule creation ([#2128](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2128))
+* resource/cloudflare_origin_ca: support all authentication schemes ([#2124](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2124))
+* resource/cloudflare_pages_project: adds support for `always_use_latest_compatibility_date`, `fail_open`, `service_binding` and `usage_model` ([#2083](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2083))
+* resource/cloudflare_record: add support for tags and comments. ([#2105](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2105))
+
+DEPENDENCIES:
+
+* provider: bumps github.com/cloudflare/cloudflare-go from 0.57.1 to 0.58.1 ([#2122](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2122))
+
+## 3.31.0 (December 28th, 2022)
+
+NOTES:
+
+* resource/cloudflare_worker_script: supports explicit `account_id` instead of inheriting global values ([#2102](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2102))
+
+FEATURES:
+
+* **New Resource:** `cloudflare_tiered_cache` ([#2101](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2101))
+
+ENHANCEMENTS:
+
+* resource/cloudflare_access_application: makes allowed_idps type to set ([#2094](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2094))
+* resource/cloudflare_custom_hostname: add support for defining custom metadata ([#2107](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2107))
+
+BUG FIXES:
+
+* resource/cloudflare_api_shield: allow for empty auth_id_characteristics ([#2091](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2091))
+* resource/cloudflare_ruleset: allow edge_ttl -> default to be optional ([#2097](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2097))
+
+DEPENDENCIES:
+
+* provider: bumps actions/stale from 6 to 7 ([#2098](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2098))
+* provider: bumps github.com/cloudflare/cloudflare-go from 0.56.0 to 0.57.0 ([#2102](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2102))
+
+## 3.30.0 (December 14th, 2022)
+
+FEATURES:
+
+* **New Data Source:** `cloudflare_load_balancer_pools` ([#1228](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1228))
+* **New Resource:** `cloudflare_url_normalization_settings` ([#1878](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1878))
+
+ENHANCEMENTS:
+
+* resource/cloudflare_workers_script: add support for `analytics_engine_binding` bindings ([#2051](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2051))
+
+BUG FIXES:
+
+* resource/access_application: fix issue where session_duration always showed a diff for bookmark apps ([#2076](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2076))
+* resource/cloudflare_ruleset: fix issue where SSL setting is based of security level ([#2088](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2088))
+* resource/cloudflare_split_tunnel: handle nested attribute changes and ignore ordering ([#2066](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2066))
+
+DEPENDENCIES:
+
+* provider: bumps github.com/cloudflare/cloudflare-go from 0.55.0 to 0.56.0 ([#2075](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2075))
+* provider: bumps goreleaser/goreleaser-action from 3.2.0 to 4.1.0 ([#2087](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2087))
+
+## 3.29.0 (November 30th, 2022)
+
+NOTES:
+
+* datasource/api_token_permission_groups: `permissions` attribute has been deprecated in favour of individual resource level attributes. ([#1960](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1960))
+
+FEATURES:
+
+* **New Resource:** `cloudflare_device_settings_policy` ([#1926](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1926))
+* **New Resource:** `cloudflare_tunnel_config` ([#2041](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2041))
+
+ENHANCEMENTS:
+
+* resource/cloudflare_fallback_domain: Add creating fallback domains for device policies ([#1926](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1926))
+* resource/cloudflare_logpush_job: add support for `workers_trace_events` ([#2025](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2025))
+* resource/cloudflare_origin_ca_certificate: add logic to renew certificate and add a new flag to set if we should renew earlier ([#2048](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2048))
+* resource/cloudflare_origin_ca_certificate: trigger a replacement when `csr` is changed ([#2055](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2055))
+* resource/cloudflare_origin_ca_certificate: trigger a replacement when `validity` is changed ([#2046](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2046))
+* resource/cloudflare_pages_domain: add note about needing to make a separate `cloudflare_record`. ([#2060](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2060))
+* resource/cloudflare_pages_project: add note about linking git accounts to Cloudflare account. ([#2060](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2060))
+* resource/cloudflare_ruleset: add support for importing existing resources ([#2054](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2054))
+* resource/cloudflare_split_tunnel: Add configuring split tunnel for device policies ([#1926](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1926))
+* resource/cloudflare_workers_kv: add support for explicitly setting `account_id` on the resource ([#2049](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2049))
+* resource/cloudflare_workers_kv_namespace: add support for explicitly setting `account_id` on the resource ([#2049](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2049))
+* resource/cloudflare_workers_kv_namespace: swap internals to use new method signatures from cloudflare-go release ([#2049](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2049))
+
+BUG FIXES:
+
+* datasource/api_token_permission_groups: add `user`, `account` and `zone` attributes to contain only those specific resource level permissions. ([#1960](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1960))
+* resource/access_policy: Fix issue where only last SAML rule group was applied in
+Access policy ([#2033](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2033))
+* resource/cloudflare_account: Fix uninitialized cloudflare.Account.Settings ([#2034](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2034))
+* resource/cloudflare_custom_hostname: remove `ForceNew` on `wait_for_ssl_pending_validation` ([#2027](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2027))
+* resource/cloudflare_list: Do not reapply changes if only list order changed. ([#2063](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2063))
+* resource/cloudflare_record: Fix null MX record creation ([#2038](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2038))
+* resource/cloudflare_spectrum_application: ignore ordering of `edge_ips` ([#2032](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2032))
+* resource/cloudflare_workers_kv: `key` changes force creation of a new resource ([#2044](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2044))
+
+DEPENDENCIES:
+
+* provider: bumps github.com/cloudflare/cloudflare-go from 0.54.0 to 0.55.0 ([#2049](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2049))
+
+## 3.28.0 (November 16th, 2022)
+
+ENHANCEMENTS:
+
+* resource/cloudflare_zone: add new plans for zone subscriptions ([#2023](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2023))
+
+BUG FIXES:
+
+* resource/access_application: Fix issue where empty CORS headers state causes panics ([#2010](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2010))
+
+DEPENDENCIES:
+
+* provider: bumps dependabot/fetch-metadata from 1.3.4 to 1.3.5 ([#2008](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2008))
+* provider: bumps github.com/cloudflare/cloudflare-go from 0.53.0 to 0.54.0 ([#2016](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2016))
+* provider: bumps github.com/hashicorp/terraform-plugin-sdk/v2 from 2.24.0 to 2.24.1 ([#2024](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2024))
+
+## 3.27.0 (November 2nd, 2022)
+
+FEATURES:
+
+* **New Resource:** `cloudflare_access_organization` ([#1961](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1961))
+* **New Resource:** `cloudflare_dlp_profile` ([#1984](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1984))
+* **New Resource:** `cloudflare_total_tls` ([#1979](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1979))
+* **New Resource:** `cloudflare_waiting_room_rules` ([#1957](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1957))
+
+ENHANCEMENTS:
+
+* resource/cloudflare_access_application: add support for `app_launcher`, `biso`, `dash_sso` and `warp` to the schema ([#1988](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1988))
+* resource/cloudflare_load_balancer_monitor: support defining explicit `account_id` for resources ([#1986](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1986))
+* resource/cloudflare_load_balancer_pool: support defining explicit `account_id` for resources ([#1986](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1986))
+* resource/cloudflare_logpush_job: add support for "access_requests" dataset parameter ([#2001](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2001))
+* resource/cloudflare_teams_list: handle pagination for larger Team List accounts ([#1706](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1706))
+* test: use `T.Setenv` to set env vars in provider tests ([#1985](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1985))
+
+BUG FIXES:
+
+* resource/cloudflare_access_group: fix issue where policy groups were always showing a diff during plans ([#1983](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1983))
+
+DEPENDENCIES:
+
+* provider: bumps github.com/cloudflare/cloudflare-go from 0.52.0 to 0.53.0 ([#1995](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1995))
+* provider: bumps github.com/stretchr/testify from 1.8.0 to 1.8.1 ([#1993](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1993))
+
+## 3.26.0 (October 19th, 2022)
+
+ENHANCEMENTS:
+
+* resource/cloudflare_custom_hostname: Add `wait_for_ssl_pending_validation` attribute ([#1953](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1953))
+* resource/cloudflare_device_posture_rule: Add chromeos and unique_client_id values ([#1950](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1950))
+* resource/cloudflare_load_balancer: Migrate to autogen docs, improve docs ([#1954](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1954))
+* resource/cloudflare_pages_domain: add Pages project domain importer. ([#1973](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1973))
+* resource/cloudflare_ruleset: add support for overriding sensitivity levels for ruleset rules ([#1965](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1965))
+
+BUG FIXES:
+
+* resource/cloudflare_byo_ip_prefix: set correct prefix ID for the byoip prefix during import. ([#1951](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1951))
+* resource/cloudflare_custom_ssl: check GeoRestrictions is not nil before attempting to compare it ([#1964](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1964))
+* resource/cloudflare_pages_project: add defaults to Pages project deployment config ([#1973](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1973))
+* resource/cloudflare_zone_settings_override: Fetch/modify `origin_max_http_version` as a single setting. ([#1805](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1805))
+
+DEPENDENCIES:
+
+* provider: bumps github.com/cloudflare/cloudflare-go from 0.51.0 to 0.52.0 ([#1962](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1962))
+* provider: bumps github.com/hashicorp/terraform-plugin-sdk/v2 from 2.23.0 to 2.24.0 ([#1969](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1969))
+* provider: bumps goreleaser/goreleaser-action from 3.1.0 to 3.2.0 ([#1977](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1977))
+
+## 3.25.0 (October 5th, 2022)
+
+NOTES:
+
+* resource/device_posture_rule: update device posture rule to reflect new linux posture fields ([#1842](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1842))
+
+ENHANCEMENTS:
+
+* resource/cloudflare_account_member: permit setting status in terraform schema if desired ([#1920](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1920))
+* resource/cloudflare_email_routing_catch_all: switch to a dedicated scheme to allow type = "drop" ([#1947](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1947))
+* resource/cloudflare_load_balancer: Add support for adaptive_routing, location_strategy, random_steering, and zero_downtime_failover ([#1941](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1941))
+* resource/cloudflare_load_balancer: update internal method signatures to match upstream library ([#1932](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1932))
+* resource/cloudflare_load_balancer_monitor: update internal method signatures to match upstream library ([#1932](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1932))
+* resource/cloudflare_load_balancer_pool: update internal method signatures to match upstream library ([#1932](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1932))
+
+BUG FIXES:
+
+* provider: allow individual setting of x-auth-service-key ([#1923](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1923))
+* provider: fix versioning injection during release builds ([#1935](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1935))
+* resource/cloudflare_byo_ip_prefix: fix `Import` to set `account_id` ([#1930](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1930))
+* resource/cloudflare_record: update Read method to pull from remote API instead of local configuration which is empty during `Import` ([#1942](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1942))
+* resource/cloudflare_zone_settings_override: Fix array manipulation bug related to single zone settings ([#1925](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1925))
+
+DEPENDENCIES:
+
+* provider: bumps actions/stale from 5 to 6 ([#1922](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1922))
+* provider: bumps dependabot/fetch-metadata from 1.3.3 to 1.3.4 ([#1945](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1945))
+
+## 3.24.0 (September 21st, 2022)
+
+NOTES:
+
+* resource/cloudflare_access_bookmark: Bookmark resource is deprecated in favor of using the `cloudflare_access_application` resource. ([#1914](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1914))
+* resource/cloudflare_email_routing_rule: Fix example resource to use correct syntax ([#1895](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1895))
+* resource/cloudflare_email_routing_rule_catch_all: Fix example resource to use correct syntax ([#1895](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1895))
+
+FEATURES:
+
+* **New Data Source:** `cloudflare_accounts` ([#1899](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1899))
+* **New Data Source:** `cloudflare_record` ([#1906](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1906))
+* **New Resource:** `cloudflare_account` ([#1902](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1902))
+* **New Resource:** `cloudflare_user_agent_blocking_rule` ([#1894](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1894))
+
+ENHANCEMENTS:
+
+* resource/cloudflare_pages_project: Adds importer for pages_project ([#1886](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1886))
+* tools: add devcontainer for local development ([#1892](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1892))
+
+BUG FIXES:
+
+* provider: allow setting `api_user_service_key` without token and/or key ([#1907](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1907))
+* resource/cloudflare_load_balancer_monitor: fix detection of headers values changing ([#1903](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1903))
+* resource/cloudflare_pages_project: fix null source on project create ([#1898](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1898))
+
+DEPENDENCIES:
+
+* provider: bumps github.com/cloudflare/cloudflare-go from 0.49.0 to 0.50.0 ([#1910](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1910))
+* provider: bumps github.com/hashicorp/terraform-plugin-sdk/v2 from 2.21.0 to 2.22.0 ([#1900](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1900))
+* provider: bumps github.com/hashicorp/terraform-plugin-sdk/v2 from 2.22.0 to 2.23.0 ([#1913](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1913))
+
+## 3.23.0 (September 7th, 2022)
+
+FEATURES:
+
+* **New Resource:** `cloudflare_api_shield` ([#1874](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1874))
+* **New Resource:** `cloudflare_email_routing_address` ([#1856](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1856))
+* **New Resource:** `cloudflare_email_routing_catch_all` ([#1856](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1856))
+* **New Resource:** `cloudflare_email_routing_rules` ([#1856](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1856))
+* **New Resource:** `cloudflare_email_routing_settings` ([#1856](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1856))
+* **New Resource:** `cloudflare_web3_hostname` ([#1882](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1882))
+
+ENHANCEMENTS:
+
+* resource/cloudflare_access_service_token: updates internals to allow in place refreshing instead of full replacement based on the `expires_at` and `min_days_for_renewal` values ([#1872](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1872))
+* resource/cloudflare_pages_domain: Adds support for Pages domains ([#1835](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1835))
+* resource/cloudflare_pages_project: Adds support for Pages Projects ([#1835](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1835))
+* resource/cloudflare_record: Add HTTPS DNS record type ([#1887](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1887))
+* resource/cloudflare_worker: provide js module option to allow service bindings ([#1865](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1865))
+
+BUG FIXES:
+
+* resource/cloudflare_authenticated_origin_pulls: fix improper handling of enabled=false ([#1861](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1861))
+
+DEPENDENCIES:
+
+* provider: bumps github.com/cloudflare/cloudflare-go from 0.48.0 to 0.49.0 ([#1871](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1871))
+* provider: bumps github.com/golangci/golangci-lint from 1.48.0 to 1.49.0 ([#1855](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1855))
+* provider: bumps goreleaser/goreleaser-action from 3.0.0 to 3.1.0 ([#1868](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1868))
+
+## 3.22.0 (August 24th, 2022)
+
+NOTES:
+
+* update local setup documentation to reflect newer required Go version ([#1847](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1847))
+
+ENHANCEMENTS:
+
+* resource/cloudflare_ruleset: add support for `http_config_settings` ([#1837](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1837))
+* resources/worker_script: add support for r2_bucket_binding ([#1825](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1825))
+
+BUG FIXES:
+
+* resource/cloudflare_fallback_domain: fix perpetual changes due to ordering ([#1828](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1828))
+* resource/cloudflare_notification_policy: add missing alert types and filters to validation and docs ([#1830](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1830))
+
+DEPENDENCIES:
+
+* provider: bumps github.com/cloudflare/cloudflare-go from 0.46.0 to 0.47.1 ([#1844](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1844))
+* provider: bumps github.com/hashicorp/terraform-plugin-sdk/v2 from 2.20.0 to 2.21.0 ([#1838](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1838))
+* provider: bumps github.com/hcloudflare-go from 0.47.1 to 0.48.0 ([#1848](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1848))
+
+## 3.21.0 (August 10th, 2022)
+
+BREAKING CHANGES:
+
+* resource/cloudflare_page_rule: Removed `always_online` from page rules since this action has been decommissioned from page rules ([#1817](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1817))
+
+ENHANCEMENTS:
+
+* resource/cloudflare_custom_ssl: handle when remote ID changes during updates ([#1824](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1824))
+* resource/cloudflare_ruleset: add support and configuration for `serve_errors` action ([#1794](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1794))
+* resource/cloudflare_ruleset: add support for sni override in route action ([#1816](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1816))
+
+BUG FIXES:
+
+* resource/cloudflare_account_member: actually use the `account_id` value ([#1823](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1823))
+* resource/cloudflare_zone_settings_override: add missing allowed value of 120 for `browser_cache_ttl` ([#1822](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1822))
+
+DEPENDENCIES:
+
+* provider: bumps github.com/cloudflare/cloudflare-go from 0.45.0 to 0.46.0 ([#1815](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1815))
+* provider: bumps github.com/golangci/golangci-lint from 1.47.2 to 1.47.3 ([#1813](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1813))
+* provider: bumps github.com/golangci/golangci-lint from 1.47.3 to 1.48.0 ([#1820](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1820))
+* provider: bumps github.com/hashicorp/terraform-plugin-sdk/v2 from 2.19.0 to 2.20.0 ([#1804](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1804))
+
+## 3.20.0 (July 27th, 2022)
+
+BREAKING CHANGES:
+
+* resource/cloudflare_healthcheck: deprecates `notification_email_addresses` and `notification_suspended` in favour of `cloudflare_notification_policy` ([#1789](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1789))
+
+NOTES:
+
+* resource/cloudflare_access_rule: this resource now supports an explicit `account_id` instead of the implied one from the client configuration. You should update your configuration to include `account_id` and remove permadiffs. ([#1790](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1790))
+* resource/cloudflare_account_member: this resource now supports an explicit `account_id` instead of the implied one from the client configuration. You should update your configuration to include `account_id` and remove permadiffs. ([#1767](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1767))
+* resource/cloudflare_certificate_pack: remove references to long-deprecated dedicated certs (replaced by `advanced`) ([#1778](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1778))
+* resource/cloudflare_rulesets: Cache Rules use cache flag instead of bypass_cache ([#1785](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1785))
+* resource/cloudflare_zone: this resource now supports an explicit `account_id` instead of the implied one from the client configuration. You should update your configuration to include `account_id` and remove permadiffs. ([#1767](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1767))
+
+ENHANCEMENTS:
+
+* resource/cloudflare_access_application: Add support for Saas applications ([#1762](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1762))
+* resource/cloudflare_access_rule: add support for `account_id` ([#1790](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1790))
+* resource/cloudflare_account_member: add support for `account_id` ([#1767](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1767))
+* resource/cloudflare_api_token: add support for `not_before` and `expires_on` ([#1792](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1792))
+* resource/cloudflare_certificate_pack: fix some of the custom hostname docs copy ([#1778](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1778))
+* resource/cloudflare_certificate_pack: update the list of allowed certificate authorities ([#1778](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1778))
+* resource/cloudflare_load_balancer: Add support for LB country pools ([#1797](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1797))
+* resource/cloudflare_managed_headers: swap filtering to use API instead of custom logic ([#1765](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1765))
+* resource/cloudflare_ruleset: add support for `from_value` action parameter when using redirect action ([#1781](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1781))
+* resource/cloudflare_zone: add support for `account_id` ([#1767](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1767))
+
+BUG FIXES:
+
+* resource/cloudflare_waiting_room: fix default waiting room `session_duration` and `path` values ([#1766](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1766))
+* resource/cloudflare_zone_lockdown: Fix crash when logging upstream error message ([#1777](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1777))
+
+DEPENDENCIES:
+
+* provider: bumps github.com/cloudflare/cloudflare-go from 0.44.0 to 0.45.0 ([#1793](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1793))
+* provider: bumps github.com/golangci/golangci-lint from 1.46.2 to 1.47.0 ([#1786](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1786))
+* provider: bumps github.com/golangci/golangci-lint from 1.47.0 to 1.47.1 ([#1788](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1788))
+* provider: bumps github.com/golangci/golangci-lint from 1.47.1 to 1.47.2 ([#1795](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1795))
+* provider: bumps github.com/hashicorp/terraform-plugin-log from 0.4.1 to 0.5.0 ([#1773](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1773))
+* provider: bumps github.com/hashicorp/terraform-plugin-log from 0.5.0 to 0.6.0 ([#1780](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1780))
+* provider: bumps github.com/hashicorp/terraform-plugin-log from 0.6.0 to 0.7.0 ([#1798](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1798))
+* provider: bumps github.com/hashicorp/terraform-plugin-sdk/v2 from 2.18.0 to 2.19.0 ([#1779](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1779))
+
+## 3.19.0 (July 13th, 2022)
+
+ENHANCEMENTS:
+
+* resource/cloudflare_ipsec_tunnel: add allow_null_cipher to ipsec tunnel ([#1736](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1736))
+* resource/cloudflare_record: Validate that DNS record names are non-empty ([#1740](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1740))
+* resource/cloudflare_ruleset: add support for `from_list` action parameter when using redirect action ([#1744](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1744))
+* resource/cloudflare_waiting_room: Add queueing_method field. ([#1759](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1759))
+* resource/cloudflare_workers_script: add support for `service_binding` bindings ([#1760](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1760))
+* resource/cloudflare_zone_settings_override: Add support for `origin_max_http_version` ([#1755](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1755))
+
+BUG FIXES:
+
+* resource/cloudflare_list: fix default values for redirect list updates ([#1746](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1746))
+* resource/cloudflare_logpush_job: fix logpush job name validation regex ([#1743](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1743))
+* resource/cloudflare_tunnel_route: Fix incorrect indexing of resource data id attributes ([#1753](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1753))
+
+DEPENDENCIES:
+
+* provider: bumps dependabot/fetch-metadata from 1.3.1 to 1.3.2 ([#1747](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1747))
+* provider: bumps dependabot/fetch-metadata from 1.3.2 to 1.3.2 ([#1748](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1748))
+* provider: bumps github.com/cloudflare/cloudflare-go from 0.43.0 to 0.44.0 ([#1757](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1757))
+* provider: bumps github.com/hashicorp/terraform-plugin-docs from 0.12.0 to 0.13.0 ([#1763](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1763))
+* provider: bumps github.com/hashicorp/terraform-plugin-sdk/v2 from 2.17.0 to 2.18.0 ([#1758](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1758))
+* provider: bumps github.com/stretchr/testify from 1.7.5 to 1.8.0 ([#1738](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1738))
+
+## 3.18.0 (June 29th, 2022)
+
+NOTES:
+
+* resource/cloudflare_ip_list: Deprecated cloudflare_ip_list in favor of cloudflare_list. ([#1700](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1700))
+
+FEATURES:
+
+* **New Resource:** `cloudflare_managed_headers` ([#1688](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1688))
+* **New Resource:** `resource/cloudflare_list: Added support for generic list types, including redirect lists.` ([#1700](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1700))
+
+ENHANCEMENTS:
+
+* resource/cloudflare_logpush_job: adds support for `kind` attribute ([#1718](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1718))
+* resource/cloudflare_logpush_job: validate name attribute ([#1717](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1717))
+* resource/cloudflare_ruleset: add support for set cache settings ([#1701](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1701))
+
+BUG FIXES:
+
+* resource/cloudflare_logpush_job: Fix for optional `filter` attribute ([#1712](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1712))
+* resource/cloudflare_logpush_job: fix unmarhalling job with empty/no filter ([#1723](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1723))
+* resource/cloudflare_record: ensure trailing `.` in `value` don't cause surious diffs ([#1713](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1713))
+
+## 3.17.0 (June 15th, 2022)
+
+BREAKING CHANGES:
+
+* resource/cloudflare_ruleset: deprecates `enabled` in overridden configurations immediately in favour of `status` ([#1689](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1689))
+
+FEATURES:
+
+* **New Resource:** `cloudflare_tunnel_virtual_network` ([#1672](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1672))
+
+ENHANCEMENTS:
+
+* resource/cloudflare_access_identity_provider: Add support for PKCE when creating IDPS. ([#1667](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1667))
+* resource/cloudflare_device_posture_integration: add support for managing `uptycs`, `intune` and `crowdstrike` third party posture providers. ([#1628](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1628))
+* resource/cloudflare_ipsec_tunnel: add support for `healthcheck_enabled`, `health_check_target`, `healthcheck_type`, `psk` ([#1685](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1685))
+* resource/cloudflare_logpush_job: Add `filter` field support ([#1660](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1660))
+* resource/cloudflare_tunnel_route: Add `virtual_network_id` attribute ([#1668](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1668))
+
+BUG FIXES:
+
+* resource/cloudflare_teams_rule: Fixes issue with rule precedence updates by using a generated version of precendence in API calls to reduce clashing versions ([#1663](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1663))
+
+## 3.16.0 (June 1st, 2022)
+
+NOTES:
+
+* provider: swap internal logging mechanism to use `tflog` ([#1638](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1638))
+* provider: updated internal package structure of repository ([#1636](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1636))
+
+ENHANCEMENTS:
+
+* resource/cloudflare_access_group: add support for external evaluation as a new access group rule ([#1623](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1623))
+* resource/cloudflare_argo_tunnel: add `tunnel_token` support ([#1590](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1590))
+* resource/cloudflare_logpush_job: add support for specifying `frequency` ([#1634](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1634))
+* resource/cloudflare_ruleset: add support for custom fields logging ([#1630](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1630))
+* resource/cloudflare_waiting_room: Add default_template_language field. ([#1651](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1651))
+
+BUG FIXES:
+
+* resource/cloudflare_access_application: Fix inability to update `http_only_cookie_attribute` to false ([#1602](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1602))
+* resource/cloudflare_waiting_room_event: handle time pointer for nullable struct member ([#1648](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1648))
+* resource/cloudflare_workers_kv: handle invalid id during terraform import ([#1635](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1635))
+
+## 3.15.0 (May 18th, 2022)
+
+NOTES:
+
+* provider: internally swapped to using `diag.Diagnostics` for CRUD return types and using `context.Context` passed in from the provider itself instead of instantiating our own in each operation ([#1592](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1592))
+
+ENHANCEMENTS:
+
+* resource/cloudflare_device_posture_rule: Add `expiration` to device posture rule ([#1585](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1585))
+* resource/cloudflare_logpush_job: add support for managing `network_analytics_logs` ([#1627](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1627))
+* resource/cloudflare_logpush_job: allow r2 logpush destinations without ownership validation ([#1597](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1597))
+* resource/ruleset: add support for `origin` and `host_header` attributes ([#1620](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1620))
+
+BUG FIXES:
+
+* resource/cloudflare_access_rule: Fix lifecycle of access_rule update ([#1601](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1601))
+* resource/cloudflare_spectrum_application: prevent panic when configuration does not include `edge_ips.connectivity` ([#1599](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1599))
+* resource/cloudflare_teams_rule: fixed detection of deleted teams rules ([#1622](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1622))
+
+## 3.14.0 (May 4th, 2022)
+
+FEATURES:
+
+* **New Resource:** `cloudflare_tunnel_route` ([#1572](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1572))
+
+ENHANCEMENTS:
+
+* resource/cloudflare_certificate_pack: add support for new option (`wait_for_active_status`) to block creation until certificate pack is active ([#1567](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1567))
+* resource/cloudflare_notification_policy: Add `slo` to notification policy filters ([#1573](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1573))
+* resource/cloudflare_teams_list: Add support for IP type ([#1550](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1550))
+
+BUG FIXES:
+
+* cloudflare_tunnel_routes: Fix reads matching routers with larger CIDRs ([#1581](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1581))
+* resource/cloudflare_access_group: allow github access groups to be created without a list of teams ([#1589](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1589))
+* resource/cloudflare_logpush_job: make ownership challenge check for https not required ([#1588](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1588))
+* resource/cloudflare_tunnel_route: Fix importing resource ([#1580](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1580))
+* resource/cloudflare_zone: update plan identifier for professional rate plans ([#1583](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1583))
+
+## 3.13.0 (April 20th, 2022)
+
+NOTES:
+
+* resource/cloudflare_byo_ip_prefix: now requires an explicit `account_id` parameter instead of implicitly relying on `client.AccountID` ([#1563](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1563))
+* resource/cloudflare_ip_list: no longer sets `client.AccountID` internally for resources ([#1563](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1563))
+* resource/cloudflare_magic_firewall_ruleset: no longer sets `client.AccountID` internally for resources ([#1563](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1563))
+* resource/cloudflare_static_route: no longer sets `client.AccountID` internally for resources ([#1563](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1563))
+* resource/cloudflare_worker_cron_trigger: now requires an explicit `account_id` parameter instead of implicitly relying on `client.AccountID` ([#1563](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1563))
+
+ENHANCEMENTS:
+
+* resource/cloudflare_custom_pages: add support for managed_challenge action ([#1478](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1478))
+* resource/cloudflare_ruleset: add support for rule `logging` ([#1538](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1538))
+
+## 3.12.2 (April 13th, 2022)
+
+ENHANCEMENTS:
+
+* resource/cloudflare_ruleset: Setting description to `Optional` to better reflect API requirements ([#1556](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1556))
+
+## 3.12.1 (April 9th, 2022)
+
+BUG FIXES:
+
+* resource/cloudflare_zone: don't get stuck in endless loop for partner zone rate plans ([#1547](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1547))
+
+## 3.12.0 (April 6th, 2022)
+
+NOTES:
+
+* resource/cloudflare_healthcheck: `notification_suspended` and `notification_email_addresses` attributes are being deprecated in favour of `cloudflare_notification_policy` resource instead. ([#1529](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1529))
+
+FEATURES:
+
+* **New Resource:** `cloudflare_access_bookmark` ([#1539](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1539))
+
+ENHANCEMENTS:
+
+* resource/cloudflare_access_application: Add service_auth_401_redirect field. ([#1540](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1540))
+
+BUG FIXES:
+
+* resource/cloudflare_api_token: ignore ordering changes in `permission_groups` ([#1545](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1545))
+* resource/cloudflare_notification_policy: Fix unexpected crashes when using cloudflare_notification_policy with a filters attribute ([#1542](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1542))
+* resource/cloudflare_zone_dnssec: don't try to enable DNSSEC when state is "pending" ([#1530](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1530))
+
+## 3.11.0 (March 23rd, 2022)
+
+NOTES:
+
+* resource/cloudflare_origin_ca_certificate: `requested_validity` no longer decrements until the `expires_on` value but is now the amount of days the certificate was requested for. ([#1502](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1502))
+
+FEATURES:
+
+* **New Resource:** `cloudflare_teams_proxy_endpoint` ([#1517](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1517))
+* **New Resource:** `cloudflare_waiting_room_event` ([#1509](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1509))
+
+ENHANCEMENTS:
+
+* resource/cloudflare_page_rule: add support for `actions.disable_zaraz` ([#1523](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1523))
+* resource/cloudflare_ruleset: add support for `action_parameters.response` to control the response when triggering a WAF rule ([#1507](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1507))
+* resource/cloudflare_ruleset: add support for `ratelimit.requests_to_origin` ([#1507](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1507))
+
+BUG FIXES:
+
+* resource/cloudflare_device_posture_integration: remove superfluous `id` from schema ([#1504](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1504))
+* resource/cloudflare_spectrum_application: Fix 'edge_ip_connectivity' state persistence ([#1515](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1515))
+
+## 3.10.1 (March 10th, 2022)
+
+BUG FIXES:
+
+- resource/cloudflare_ruleset: don't attempt to upgrade ratelimit if it isn't set ([#1501](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1501))
+
+## 3.10.0 (March 9th, 2022)
+
+BREAKING CHANGES:
+
+- resource/cloudflare_ruleset: rename `mitigation_expression` to `counting_expression` ([#1477](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1477))
+
+ENHANCEMENTS:
+
+- resource/cloudflare_access_rule: add support for managed_challenge action ([#1457](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1457))
+- resource/cloudflare_custom_hostname: adds support for custom_origin_sni ([#1482](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1482))
+- resource/cloudflare_device_policy_certificates: add support for device policy certificate settings ([#1467](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1467))
+- resource/cloudflare_teams_rules: Add `insecure_disable_dnssec_validation` option to settings ([#1469](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1469))
+- resource/cloudflare_zone: add support for partner rate plans ([#1464](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1464))
+
+BUG FIXES:
+
+- resource/cloudflare_record: no need to pass the resourceCloudflareRecordUpdate to the NonRetryable handler ([#1496](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1496))
+
+## 3.9.1 (February 15th, 2022)
+
+NOTES:
+
+- resource/cloudflare_api_token: revert swap from TypeList to TypeSet due to broken migration ([#1455](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1455))
+
+FEATURES:
+
+- **New Data Source:** `cloudflare_devices` ([#1453](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1453))
+
+## 3.9.0 (February 14th, 2022)
+
+FEATURES:
+
+- **New Resource:** `cloudflare_gre_tunnel` ([#1423](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1423))
+- **New Resource:** `cloudflare_zone_cache_variants` ([#1444](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1444))
+
+ENHANCEMENTS:
+
+- cloudflare_ruleset: add support for "managed_challenge" action ([#1442](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1442))
+- resource/certificate_pack: adds `validation_errors` and `validation_records` with same format as custom hostnames. ([#1424](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1424))
+- resource/custom_hostname: also adds missing `validation_errors`, and `certificate_authority` ([#1424](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1424))
+- resource/custom_hostname: validation tokens are now an array (`validation_records`) instead of a top level, but the only top level record that was previously here was for cname validation, txt/http/email were entirely missing. ([#1424](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1424))
+
+BUG FIXES:
+
+- cloudflare_argo_tunnel: conditionally fetch settings based on the provided configuration ([#1451](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1451))
+- resource/cloudflare_api_token: ignore ordering of `permission_group` IDs ([#1425](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1425))
+
+## 3.8.0 (January 28th, 2022)
+
+FEATURES:
+
+- **New Resource:** `cloudflare_ipsec_tunnel` ([#1404](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1404))
+
+ENHANCEMENTS:
+
+- datasource/cloudflare_zones: allow filtering by account_id ([#1401](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1401))
+- resource/cloudflare_cloudflare_teams_rules: Add `check_session` and `add_headers` attributes to settings ([#1402](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1402))
+- resource/cloudflare_cloudflare_teams_rules: Add `disable_download`, `disable_keyboard`, and `disable_upload` attributes to `BISOAdminControls` ([#1402](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1402))
+- resource/cloudflare_logpush_job: add support for managing `dns_logs` ([#1400](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1400))
+- resource/cloudflare_ruleset: add skip support for `products` and `phases` ([#1391](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1391))
+- resource/cloudflare_ruleset: smoother handling of UI/API collisions during migrations ([#1393](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1393))
+- resource/cloudflare_teams_accounts: Add the `fips` field for configuring FIPS-compliant TLS. ([#1380](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1380))
+
+BUG FIXES:
+
+- resource/cloudflare_fallback_domain: default entries are now restored on delete. ([#1399](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1399))
+- resource/cloudflare_ruleset: conditionally set action parameter "version" ([#1388](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1388))
+- resource/cloudflare_ruleset: fix handling of `false` values for category/rule overrides ([#1405](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1405))
+
+## 3.7.0 (January 13th, 2022)
+
+FEATURES:
+
+- **New Resource:** `cloudflare_device_posture_integration` ([#1340](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1340))
+- **New Resource:** `cloudflare_fallback_domain` ([#1356](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1356))
+
+ENHANCEMENTS:
+
+- resource/cloudflare_firewall_rule: add support for managed_challenge action ([#1378](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1378))
+- resource/cloudflare_load_balancer_monitor: added support for smtp, icmp_ping, and udp_icmp monitors ([#1371](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1371))
+- resource/cloudflare_logpush_job: add support for account-level logpush jobs ([#1311](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1311))
+- resource/cloudflare_logpush_ownership_challenge: add support for account-level logpush ownership challenges ([#1311](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1311))
+
+BUG FIXES:
+
+- resource/cloudflare_api_token: modified_on is now read correctly ([#1368](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1368))
+
+DEPENDENCIES:
+
+- `github.com/cloudflare/cloudflare-go` v0.29.0 => v0.30.0 ([#1379](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1379))
+
+## 3.6.0 (December 23rd, 2021)
+
+ENHANCEMENTS:
+
+- resource/cloudflare_access_application: add bookmark type to apptypes ([#1343](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1343))
+- resource/cloudflare_teams_rules: GATE-2273: Adds support for device posture gateway rules ([#1353](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1353))
+
+BUG FIXES:
+
+- resource/cloudflare_load_balancer: handle empty `rules` for `resourceCloudflareLoadBalancerStateUpgradeV1` ([#1257](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1257))
+- resource/cloudflare_split_tunnel: import will now use correct import function ([#1345](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1345))
+
+## 3.5.0 (December 14th, 2021)
+
+NOTES:
+
+- provider: split schema definition from resource CRUD operations ([#1321](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1321))
+
+FEATURES:
+
+- **New Data Source:** `cloudflare_access_identity_provider` ([#1300](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1300))
+
+ENHANCEMENTS:
+
+- resource/cloudflare_access_application: add support for `app_launcher_visible` to the schema ([#1303](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1303))
+- resource/cloudflare_ruleset: add support for rewriting HTTP response headers ([#1339](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1339))
+- resource/cloudflare_zone: support changing `type` values ([#1301](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1301))
+
+BUG FIXES:
+
+- resource/cloudflare_access_group: fix mapping error for AzureAD ([#1341](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1341))
+- resource/cloudflare_access_rule: allow "ip6" to be a padded or unpadded value and compare correctly ([#1294](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1294))
+- resource/cloudflare_argo: call `Read` for `Import` operations ([#1295](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1295))
+- resource/cloudflare_argo_tunnel: fix import mechanism ([#1329](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1329))
+- resource/cloudflare_argo_tunnel: update CNAME to use `cfargotunnel.com` ([#1293](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1293))
+- resource/cloudflare_origin_ca_certificate: reintroduce `DiffSuppressFunc` for `requested_validity` changes to handle all schema/SDK combinations ([#1289](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1289))
+- resource/cloudflare_split_tunnel: import now works by specifying accountId/mode ([#1313](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1313))
+- resource/cloudflare_teams_list: ignore `items` ordering ([#1338](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1338))
+
+## 3.4.0 (November 1st, 2021)
+
+ENHANCEMENTS:
+
+- provider: add the ability to configure a different hostname and base path for the API client ([#1270](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1270))
+- resource/cloudflare_access_application: add support for 'skip_interstitial' and 'logo_url' properties ([#1262](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1262))
+- resource/cloudflare_custom_hostname: add `settings.early_hints` to ssl schema ([#1286](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1286))
+- resource/cloudflare_ruleset: add support for exposed credential checks ([#1263](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1263))
+- resource/cloudflare_zone_setting_override: add support for overriding `early_hints` ([#1285](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1285))
+
+BUG FIXES:
+
+- resource/cloudflare_ruleset: allow action parameter override `enabled` to be true/false or uninitialised ([#1275](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1275))
+- resource/cloudflare_ruleset: allow setting `uri` and `path` action parmeters together in a single rule ([#1271](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1271))
+
+## 3.3.0 (October 20th, 2021)
+
+FEATURES:
+
+- **New Data Source:** `cloudflare_account_roles` ([#1238](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1238))
+
+ENHANCEMENTS:
+
+- resource/cloudflare_access_application: add support for 'SameSite' and 'HttpOnly' cookie attributes ([#1241](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1241))
+- resource/cloudflare_argo_tunnel: add `cname` as exported attribute ([#1259](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1259))
+- resource/cloudflare_load_balancer_pool: add support for origin steering ([#1240](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1240))
+- resource/cloudflare_ruleset: add support for 'Action' and 'Enabled' action_parameters > overrides attributes ([#1249](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1249))
+- resource/cloudflare_zone_setting_override: add support for overriding `binary_ast` ([#1261](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1261))
+- resource/cloudflare_zone_setting_override: add support for overriding `filter_logs_to_cloudflare` ([#1261](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1261))
+- resource/cloudflare_zone_setting_override: add support for overriding `log_to_cloudflare` ([#1261](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1261))
+- resource/cloudflare_zone_setting_override: add support for overriding `orange_to_orange` ([#1261](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1261))
+- resource/cloudflare_zone_setting_override: add support for overriding `proxy_read_timeout` ([#1261](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1261))
+- resource/cloudflare_zone_setting_override: add support for overriding `visitor_ip` ([#1261](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1261))
+
+BUG FIXES:
+
+- resource/cloudflare_access_policy: handle empty `nil` values for building policies ([#1237](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1237))
+- resource/cloudflare_ruleset: don't attempt to update "custom" rulesets using the phase entrypoint ([#1245](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1245))
+
+## 3.2.0 (October 7th, 2021)
+
+NOTES:
+
+- provider: cloudflare-go has been upgraded to v0.25.0 ([#1236](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1236))
+
+FEATURES:
+
+- **New Data Source:** `cloudflare_zone` ([#1213](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1213))
+- **New Resource:** `cloudflare_split_tunnel` ([#1207](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1207))
+
+ENHANCEMENTS:
+
+- provider: add support for debugging via debuggers (like delve) ([#1217](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1217))
+- resource/cloudflare_access_policy: add support for approval_required flag ([#1230](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1230))
+
+BUG FIXES:
+
+- resource/cloudflare_account_member: handle role changes made in the dashboard ([#1202](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1202))
+- resource/cloudflare_origin_ca_certificate: ignore `requested_validity` changes due to the value decreasing but still store it ([#1214](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1214))
+- resource/cloudflare_record: handle `Update`s for records with `data` blocks ([#1229](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1229))
+
+## 3.1.0 (September 21st, 2021)
+
+ENHANCEMENTS:
+
+- resource/cloudflare_ruleset: add support for ddos_l7 configuration ([#1212](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1212))
+
+## 3.0.1 (September 21st, 2021)
+
+ENHANCEMENTS:
+
+- resource/cloudflare_access_rule: add state migrator for 3.x ([#1211](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1211))
+- resource/cloudflare_custom_ssl: add state migrator for 3.x ([#1211](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1211))
+- resource/cloudflare_load_balancer: add state migrator for 3.x ([#1211](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1211))
+- resource/cloudflare_record: add state migrator for 3.x ([#1211](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1211))
+
+## 3.0.0 (September 20th, 2021)
+
+[2.x to 3.x upgrade guide](https://registry.terraform.io/providers/cloudflare/cloudflare/latest/docs/guides/version-3-upgrade)
+
+BREAKING CHANGES:
+
+- resource/cloudflare_access_rule: `configuration` is now a `TypeList` instead of a `TypeMap` ([#1188](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1188))
+- resource/cloudflare_custom_ssl: `custom_ssl_options` is now a `TypeList` instead of `TypeMap` ([#1188](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1188))
+- resource/cloudflare_load_balancer: `fixed_response` is now a `TypeList` instead of a `TypeMap` ([#1188](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1188))
+- resource/cloudflare_load_balancer: fixed_response.status_code`is now a`TypeInt`instead of a`TypeString` ([#1188](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1188))
+- resource/cloudflare_record: `data` is now a `TypeList` instead of a `TypeMap` ([#1188](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1188))
+
+NOTES:
+
+- provider: Golang version has been upgraded to 1.17 ([#1188](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1188))
+- provider: HTTP user agent is now "terraform/:version terraform-plugin-sdk/:version terraform-provider-cloudflare/:version" ([#1188](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1188))
+- provider: Minimum Terraform core version is now 0.14 ([#1188](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1188))
+- provider: terraform-plugin-sdk has been upgraded to 2.x ([#1188](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1188))
+
+ENHANCEMENTS:
+
+- resource/cloudflare_custom_hostname: `settings.ciphers` is now a `TypeSet` internally to handle suppress ordering changes. Schema representation remains the same ([#1188](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1188))
+- resource/cloudflare_custom_hostname: `settings` is now `Optional`/`Computed` to reflect the stricter schema validation introduced in terraform-plugin-sdk v2 ([#1188](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1188))
+- resource/cloudflare_custom_hostname: `status` is now `Computed` as the value isn't managed by an end user ([#1188](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1188))
+
+## 2.27.0 (September 20th, 2021)
+
+NOTES:
+
+- provider: Update to cloudflare-go v0.22.0 ([#1184](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1184))
+
+FEATURES:
+
+- **New Resource:** `cloudflare_access_keys_configuration` ([#1186](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1186))
+- **New Resource:** `cloudflare_teams_account` ([#1173](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1173))
+- **New Resource:** `cloudflare_teams_rule` ([#1173](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1173))
+
+ENHANCEMENTS:
+
+- resource/cloudflare_access_policy: add support for purpose justification and approvals ([#1199](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1199))
+- resource/cloudflare_ruleset: add support for HTTP rate limiting ([#1179](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1179))
+- resource/cloudflare_ruleset: add support for Transform Rules ([#1169](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1169))
+- resource/cloudflare_ruleset: add support for WAF payload logging ([#1174](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1174))
+- resource/cloudflare_ruleset: add support for more complex skip ruleset configurations ([#1201](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1201))
+
+BUG FIXES:
+
+- resource/cloudflare_ruleset: fix state handling for terraform-plugin-sdk v2 ([#1183](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1183))
+- resource/cloudflare_zone_settings_override: remap `zero_rtt` => `0rtt` for resource delete ([#1175](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1175))
+
+## 2.26.1 (August 30th, 2021)
+
+**Fixes**
+
+- `resource/cloudflare_ruleset`: Send a single payload for rules instead of many individual payloads to prevent overwriting previous rules ([#1171](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1171))
+
+## 2.26.0 (August 27th, 2021)
+
+- **New resource**: `cloudflare_notification_policy` ([#1138](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1138))
+- **New resource**: `cloudflare_notification_policy_webhooks` ([#1151](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1151))
+- **New resource**: `cloudflare_ruleset` ([#1143](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1143))
+- **New resource**: `cloudflare_teams_location` ([#1154](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1154))
+- **New datasource**: `cloudflare_origin_ca_root_certificate` ([#1158](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1158))
+
+**Improvements**
+
+- `resource/cloudflare_waiting_room`: Add support for `json_response_enabled` as an argument ([#1122](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1122))
+
+## 2.25.0 (August 4th, 2021)
+
+**Improvements**
+
+- `resource/cloudflare_access_device_posture_rule`: Add support for `domain_joined`, `firewall`, `os_version`, and `disk_encryption` ([#1137](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1137))
+- provider: bump `cloudflare-go` to v0.20.0 ([#1146](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1146))
+
+## 2.24.0 (July 19th, 2021)
+
+**Improvements**
+
+- `resource/cloudflare_logpush_job`: Add support for `"nel_reports"` as a dataset ([#1122](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1122))
+- `resource/cloudflare_custom_hostname`: Allow SSL options to be optional when not required ([#1131](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1131))
+- `resource/cloudflare_access_identity_provider`: Support optional Okta API token ([#1119](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1119))
+- `resource/cloudflare_load_balancer_pool`: Add support for load shedding ([#1108](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1108))
+- `resource/cloudflare_load_balancer_pool`: Add support for longitude and latitude ([#1093](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1093))
+
+**Fixes**
+
+- `resource/cloudflare_record`: Use correct `Import` method on resource ([#1116](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1116))
+- `resource/cloudflare_worker_cron_trigger`: Account for deletion of scripts and force a refresh of triggers ([#1121](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1121))
+- `resource/cloudflare_rate_limit`: Handle `origin_traffic` missing from API response ([#1125](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1125))
+- `resource/cloudflare_record`: Support `allow_overwrite` for root records ([#1129](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1129))
+
+## 2.23.0 (June 30th, 2021)
+
+- **New resource**: `cloudflare_waiting_room` ([#1053](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1053))
+
+**Improvements**
+
+- `datasource/cloudflare_waf_rules`: Export `default_mode` as an attribute ([#1079](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1079))
+
+**Fixes**
+
+- `resource/cloudflare_access_application`: Revert removal of schema changes causing existing applications unable to re-apply ([#1118](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1118))
+
+## 2.22.0 (June 25th, 2021)
+
+- **New resource**: `cloudflare_static_route` ([#1098](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1098))
+
+**Improvements**
+
+- `resource/cloudflare_origin_ca`: Ignore decreasing `requested_validity` ([#1043](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1078))
+- `resource/waf_override`: Allow `rules` to be optional ([#1090](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1090))
+- `resource/cloudflare_zone`: Don't attempt to set free zone rate plans as that is already the default ([#1102](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1102))
+- `resource/cloudflare_access_application`: Ability to set `type` for Applications ([#1076](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1076))
+- `resource/cloudflare_zone_lockdown`: Update documentation to show examples of multiple configurations ([#1106](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1106))
+
+## 2.21.0 (May 26th, 2021)
+
+- **New resource**: `cloudflare_device_posture_rule` ([#1058](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1058))
+- **New resource**: `cloudflare_teams_list` ([#1058](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1058))
+
+**Improvements**
+
+- provider: Update to terraform-plugin-sdk v1.17.1 ([#1035](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1035), [#1043](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1043))
+- `resource/cloudflare_logpush_job`: Allow `ownership_challenge` to be optional to account for Datadog, Splunk or S3-Compatible endpoints ([#1048](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1048))
+- `resource/cloudflare_access_group`: Add support for `login_method` ([#1066](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1066))
+- `resource/cloudflare_load_balancer`: Add support for `promixity` based steering ([#1072](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1072))
+- `resource/cloudflare_access_application`: Prevent bad CORS configuration when credentials and all origins are permitted ([#1073](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1073))
+- `resource/cloudflare_access_service_tokens`: Allow configuration to manage automatic renewal when the threshold is crossed and Terraform operations are performed within the window ([#1057](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1057))
+- `resource/cloudflare_load_balancer_pool`: Allow support for `Host` header settings ([#1042](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1042))
+
+**Fixes**
+
+- `resource/cloudflare_access_policy`: Allow empty slices in blocks when building policies ([#1034](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1034))
+- `resource/cloudflare_load_balancer`: Fix `override` attributes `pop_pools` and `region_pools` referencing incorrect values causing a panic ([#1039](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1039))
+
+## 2.20.0 (April 15th, 2021)
+
+**New resource**: `cloudflare_access_ca_certificate` ([#995](https://github.com/cloudflare/terraform-provider-cloudflare/issues/995))
+
+**Improvements**
+
+- `resource/cloudflare_access_application`: Improve documentation for `Import` usage ([#1002](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1002))
+- `resource/cloudflare_logpush_job`: Update documentation to reflect requirements for `destination_conf` to match across all uses ([#1024](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1024))
+- `resource/cloudflare_custom_hostname_fallback`: Better handle service lag when updating existing resources by attempting retries ([#1014](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1014))
+- `resource/cloudflare_waf_group`: Simplify error handling using inbuilt helpers ([#1015](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1015))
+- `resource/cloudflare_waf_rule`: Simplify error handling using inbuilt helpers ([#1015](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1015))
+- `resource/cloudflare_waf_package`: Simplify error handling using inbuilt helpers ([#1015](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1015))
+- `resource/cloudflare_access_group`: Add support for `login_method` ([#1018](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1018))
+- provider: Update to cloudflare-go v0.16.0 ([#1018](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1018))
+- provider: Update to terraform-plugin-sdk v1.16.1 ([#1003](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1003))
+- `resource/cloudflare_load_balancer`: Add support for `rules` ([#1016](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1016))
+
+## 2.19.2 (March 15th, 2021)
+
+**Fixes**
+
+- `resource/cloudflare_record`: Address regression from 2.19.1 by checking the API response instead of the schema output for `Priority` ([#992](https://github.com/cloudflare/terraform-provider-cloudflare/issues/992))
+
+## 2.19.1 (March 11th, 2021)
+
+**Fixes**
+
+- `resource/cloudflare_record`: Update `Priority` handling for MX parked records ([#986](https://github.com/cloudflare/terraform-provider-cloudflare/issues/986))
+
+## 2.19.0 (March 10th, 2021)
+
+**Fixes**
+
+- `resource/cloudflare_access_group`: Fix crash when constructing a GSuite group ([#940](https://github.com/cloudflare/terraform-provider-cloudflare/issues/940))
+- `resource/cloudflare_access_policy`: Make `precedence` required ([#941](https://github.com/cloudflare/terraform-provider-cloudflare/issues/941))
+- `resource/cloudflare_access_group`: Fix crash when constructing a SAML group ([#948](https://github.com/cloudflare/terraform-provider-cloudflare/issues/948))
+- `resource/cloudflare_zone`: Update `Retry` logic to look at an available field for passing conditions ([#973](https://github.com/cloudflare/terraform-provider-cloudflare/issues/973))
+- `resource/cloudflare_page_rule`: Allow ignoring/including all query string parameters for `cache_key_fields` ([#975](https://github.com/cloudflare/terraform-provider-cloudflare/issues/975))
+
+**Improvements**
+
+- `resource/cloudflare_access_policy`: Enable zone and account level resources to be imported ([#956](https://github.com/cloudflare/terraform-provider-cloudflare/issues/956))
+- `resource/cloudflare_origin_ca_certificate`: Smoother import process with less recreation ([#955](https://github.com/cloudflare/terraform-provider-cloudflare/issues/955))
+- provider: Update internals to match `cloudflare-go` 0.14 for better error handling and context aware methods ([#976](https://github.com/cloudflare/terraform-provider-cloudflare/issues/976))
+
+## 2.18.0 (February 3rd, 2021)
+
+- **New Resource:** `cloudflare_argo_tunnel` ([#905](https://github.com/cloudflare/terraform-provider-cloudflare/issues/905))
+- **New Resource:** `cloudflare_worker_cron_trigger` ([#926](https://github.com/cloudflare/terraform-provider-cloudflare/issues/926))
+
+**Fixes**
+
+- `datasource/cloudflare_zones`: Pagination is now correctly handled internally and will return more than the single page of results ([cloudflare/cloudflare-go#534](https://github.com/cloudflare/cloudflare-go/pull/534)).
+- `resource/cloudflare_access_policy`: Correctly handle transforming API responses to schema ([#917](https://github.com/cloudflare/terraform-provider-cloudflare/issues/917))
+- `resource/cloudflare_access_group`: Correctly handle transforming API responses to schema ([#918](https://github.com/cloudflare/terraform-provider-cloudflare/issues/918))
+- `resource/cloudflare_ip_list`: Ensure account ID is persisted during `Import` ([#916](https://github.com/cloudflare/terraform-provider-cloudflare/issues/916))
+
+**Improvements**
+
+- `resource/cloudflare_access_application`: Allow any `session_duration` that is `time.ParseDuration` compatible ([#910](https://github.com/cloudflare/terraform-provider-cloudflare/issues/910))
+- `resource/cloudflare_rate_limit`: Add the ability to configure `match.response.headers` in rate limits ([#911](https://github.com/cloudflare/terraform-provider-cloudflare/issues/911))
+- `resource/cloudflare_access_rule`: Validate IP masks within schema ([#921](https://github.com/cloudflare/terraform-provider-cloudflare/issues/921))
+
+## 2.17.0 (January 5th, 2021)
+
+- **New Resource:** `cloudflare_magic_firewall_ruleset` ([#884](https://github.com/cloudflare/terraform-provider-cloudflare/issues/884))
+
+**Fixes**
+
+- `resource/cloudfare_api_token`: Omitting `conditions` will no longer send empty arrays causing IP restriction issues and unusable tokens ([#902](https://github.com/cloudflare/terraform-provider-cloudflare/pull/902))
+
+## 2.16.0 (January 5th, 2021)
+
+**Improvements**
+
+- `resource/cloudflare_access_application`: Add support for `custom_deny_message` and `custom_deny_url` values ([#895](https://github.com/cloudflare/terraform-provider-cloudflare/issues/895))
+- `resource/cloudflare_load_balancer_monitor`: Add support for `probe_zone` for monitors ([#903](https://github.com/cloudflare/terraform-provider-cloudflare/issues/903))
+
+## 2.15.0 (December 29th, 2020)
+
+**Improvements**
+
+- `resource/cloudflare_load_balancer`: Add support for `session_affinity_ttl` ([#882](https://github.com/cloudflare/terraform-provider-cloudflare/issues/882))
+- `resource/cloudflare_load_balancer`: Add support for `session_affinity_attributes` ([#883](https://github.com/cloudflare/terraform-provider-cloudflare/issues/883))
+
+**Fixes**
+
+- `resource/cloudflare_page_rule`: Fixed crash during update when using custom cache key ([#894](https://github.com/cloudflare/terraform-provider-cloudflare/pull/894))
+
+## 2.14.0 (November 26th, 2020)
+
+- **New Resource:** `cloudflare_api_token` ([#862](https://github.com/cloudflare/terraform-provider-cloudflare/issues/862))
+- **New Datasource:** `cloudflare_api_token_permission_groups` ([#862](https://github.com/cloudflare/terraform-provider-cloudflare/issues/862))
+- **New Resource:** `cloudflare_zone_dnssec` ([#852](https://github.com/cloudflare/terraform-provider-cloudflare/issues/852))
+- **New Datasource:** `cloudflare_zone_dnssec` ([#852](https://github.com/cloudflare/terraform-provider-cloudflare/issues/852))
+
+**Improvements**
+
+- `resource/cloudflare_record`: Add explicit fields for CAA records instead of relying on the map value ([#866](https://github.com/cloudflare/terraform-provider-cloudflare/issues/866))
+- `resource/cloudflare_account_member`: Swap schema `role_ids` to `TypeSet` to better handle internal ordering changes ([#876](https://github.com/cloudflare/terraform-provider-cloudflare/issues/876))
+
+**Fixes**
+
+- `datasource/cloudflare_waf_groups`: Make `d.Id()` a consistent string value to prevent Terraform thinking it requires an update ([#869](https://github.com/cloudflare/terraform-provider-cloudflare/issues/869))
+- `datasource/cloudflare_waf_packages`: Make `d.Id()` a consistent string value to prevent Terraform thinking it requires an update ([#869](https://github.com/cloudflare/terraform-provider-cloudflare/issues/869))
+- `datasource/cloudflare_waf_rules`: Make `d.Id()` a consistent string value to prevent Terraform thinking it requires an update ([#869](https://github.com/cloudflare/terraform-provider-cloudflare/issues/869))
+- `datasource/cloudflare_zones`: Make `d.Id()` a consistent string value to prevent Terraform thinking it requires an update ([#869](https://github.com/cloudflare/terraform-provider-cloudflare/issues/869))
+
+## 2.13.2 (November 6th, 2020)
+
+**Fixes**
+
+- `resource/cloudflare_filter`: Remove schema based validation for filters ([#863](https://github.com/cloudflare/terraform-provider-cloudflare/issues/863))
+
+## 2.13.1 (November 5th, 2020)
+
+**Improvements**
+
+- `resource/cloudflare_filter`: Pass missing credential error through to end user ([#860](https://github.com/cloudflare/terraform-provider-cloudflare/issues/860))
+
+## 2.13.0 (November 5th, 2020)
+
+**Improvements**
+
+- `datasource/cloudflare_ip_ranges`: Add the ability to query `china_ipv4_cidr_blocks` and `china_ipv6_cidr_blocks` ([#833](https://github.com/cloudflare/terraform-provider-cloudflare/issues/833))
+- `resource/cloudflare_filter`: Improve validation of expressions using the schema ([#848](https://github.com/cloudflare/terraform-provider-cloudflare/issues/848))
+
+**Fixes**
+
+- `resource/cloudflare_page_rule`: Set default for `cache_key_fields.host.resolved` to prevent panics ([#832](https://github.com/cloudflare/terraform-provider-cloudflare/issues/832))
+- `resource/cloudflare_authenticated_origin_pulls`: Fix off-by-one error check in `Import` ([#832](https://github.com/cloudflare/terraform-provider-cloudflare/issues/859))
+- `resource/cloudflare_authenticated_origin_pulls_certificate`: Fix off-by-one error check in `Import` ([#832](https://github.com/cloudflare/terraform-provider-cloudflare/issues/859))
+
+## 2.12.0 (October 22nd, 2020)
+
+**Improvements**
+
+- `resource/cloudflare_certificate_pack`: Swap internal representation of `hosts` to remove inconsistent ordering issues ([#800](https://github.com/cloudflare/terraform-provider-cloudflare/issues/800))
+- `resource/cloudflare_logpush_job`: Handle deletion outside of Terraform ([#798](https://github.com/cloudflare/terraform-provider-cloudflare/issues/798))
+- `resource/cloudflare_access_group`: Add support for `geo` conditionals ([#803](https://github.com/cloudflare/terraform-provider-cloudflare/issues/803))
+- `resource/cloudflare_access_application`: Add support for `enable_binding_cookie` ([#802](https://github.com/cloudflare/terraform-provider-cloudflare/issues/802))
+- `resource/cloudflare_waf_rule`: Improve documentation for `mode` ([#824](https://github.com/cloudflare/terraform-provider-cloudflare/issues/824))
+- `datasource/cloudflare_waf_rule`: Improve documentation for `mode` ([#824](https://github.com/cloudflare/terraform-provider-cloudflare/issues/824))
+- `resource/cloudflare_access_application`: Add support for zone-level routes to Access resources ([#819](https://github.com/cloudflare/terraform-provider-cloudflare/issues/819))
+- `resource/cloudflare_access_group`: Add support for zone-level routes to Access resources ([#819](https://github.com/cloudflare/terraform-provider-cloudflare/issues/819))
+- `resource/cloudflare_access_identity_provider`: Add support for zone-level routes to Access resources ([#819](https://github.com/cloudflare/terraform-provider-cloudflare/issues/819))
+- `resource/cloudflare_access_policy`: Add support for zone-level routes to Access resources ([#819](https://github.com/cloudflare/terraform-provider-cloudflare/issues/819))
+
+**Fixes**
+
+- `resource/cloudflare_custom_hostname_fallback_origin`: Don't retry the "active" status of custom hostnames fallbacks ([#818](https://github.com/cloudflare/terraform-provider-cloudflare/issues/818))
+- `resource/cloudflare_zone`: Remove `DiffSuppressFunc` causing `jump_start` issues ([#830](https://github.com/cloudflare/terraform-provider-cloudflare/issues/830))
+
+## 2.11.0 (September 11th, 2020)
+
+- **New Resource:** `cloudflare_certificate_pack` ([#778](https://github.com/cloudflare/terraform-provider-cloudflare/issues/778))
+
+**Improvements**
+
+- `resource/cloudflare_access_group`: Add support for `auth_method` ([#762](https://github.com/cloudflare/terraform-provider-cloudflare/issues/762))
+- `resource/cloudflare_access_group`: De-duplicate blocks in groups by accepting lists instead ([#739](https://github.com/cloudflare/terraform-provider-cloudflare/issues/739))
+- `resource/cloudflare_worker_script`: Adds support for `webassembly_binding` ([#780](https://github.com/cloudflare/terraform-provider-cloudflare/issues/780))
+- `resource/cloudflare_healthcheck`: Retry hostname resolution errors when encountering "no such host" responses ([#789](https://github.com/cloudflare/terraform-provider-cloudflare/issues/789))
+- `resource/cloudflare_access_application`: Better validation for allowed methods and origin combinations to prevent getting state into an unrecoverable state ([#793](https://github.com/cloudflare/terraform-provider-cloudflare/issues/793))
+
+**Fixes**
+
+- `resource/cloudflare_healthcheck`: Handle resource deletion outside of Terraform ([#787](https://github.com/cloudflare/terraform-provider-cloudflare/issues/787))
+- `resource/cloudflare_custom_hostname`: Ensure `Import` sets hostname to prevent recreation ([#788](https://github.com/cloudflare/terraform-provider-cloudflare/issues/788))
+- `resource/cloudflare_ip_list`: Handle resource deletion outside of Terraform ([#794](https://github.com/cloudflare/terraform-provider-cloudflare/issues/794))
+- `resource/cloudflare_ip_list`: Remove `item`.`id` from schema ([#796](https://github.com/cloudflare/terraform-provider-cloudflare/issues/796))
+
+## 2.10.1 (August 24th, 2020)
+
+**Fixes**
+
+- `resource/cloudflare_access_application`: Handle the `zone_id` => `account_id` move internally ([#724](https://github.com/cloudflare/terraform-provider-cloudflare/issues/724))
+
+## 2.10.0 (August 24th, 2020)
+
+- **New Resource:** `cloudflare_custom_hostname_origin_fallback` ([#757](https://github.com/cloudflare/terraform-provider-cloudflare/issues/757))
+- **New Resource:** `cloudflare_authenticated_origin_pulls` ([#749](https://github.com/cloudflare/terraform-provider-cloudflare/issues/749))
+- **New Resource:** `cloudflare_authenticated_origin_pulls_certificate` ([#749](https://github.com/cloudflare/terraform-provider-cloudflare/issues/749))
+- **New Resource:** `cloudflare_ip_list` ([#766](https://github.com/cloudflare/terraform-provider-cloudflare/issues/766))
+
+**Improvements**
+
+- `resource/cloudflare_spectrum_application`: Add support for port ranges ([#745](https://github.com/cloudflare/terraform-provider-cloudflare/issues/745))
+- `resource/cloudflare_custom_hostname`: Force creation of a new resource if the `zone_id` value changes ([#761](https://github.com/cloudflare/terraform-provider-cloudflare/issues/761))
+- `resource/cloudflare_record`: Retry record creation/update if the response includes an "already exists" exception for handling race conditions ([#773](https://github.com/cloudflare/terraform-provider-cloudflare/issues/773))
+
+**Fixes**
+
+- `resource/cloudflare_firewall_rule`: Compare descriptions after converting unicode + HTML entities to prevent unnecessary diffs ([#758](https://github.com/cloudflare/terraform-provider-cloudflare/issues/758))
+- `resource/cloudflare_filter`: Compare descriptions after converting unicode + HTML entities to prevent unnecessary diffs ([#758](https://github.com/cloudflare/terraform-provider-cloudflare/issues/758))
+
+## 2.9.0 (July 30th, 2020)
+
+- **New Resource:** `cloudflare_custom_hostname` (SSL for SaaS) ([#746](https://github.com/cloudflare/terraform-provider-cloudflare/issues/746))
+
+**Improvements**
+
+- `resource/access_application`: Add support for `allowed_idps` and restricting which Identity Providers are associated with an Application ([#734](https://github.com/cloudflare/terraform-provider-cloudflare/issues/734))
+- `resource/access_application`: Add support for `auto_redirect_to_identity` ([#730](https://github.com/cloudflare/terraform-provider-cloudflare/issues/730))
+- `resource/access_application`: Add CORS support ([#725](https://github.com/cloudflare/terraform-provider-cloudflare/issues/725))
+- `resource/cloudflare_custom_ssl`: Allow `geo_restrictions` to be `nil` and not included in the request payload ([#714](https://github.com/cloudflare/terraform-provider-cloudflare/issues/714))
+- `datasource/cloudflare_zones`: Filtering is now performed on the server side and the `name` parameter is no longer a regex. Instead, `name` is a string to match on and `match` is a regex. See the website documentation for more examples and updated references ([#708](https://github.com/cloudflare/terraform-provider-cloudflare/issues/708)) in order to make your code compatible with this release.
+
+## 2.8.0 (June 22, 2020)
+
+- **New Resource:** `cloudflare_waf_override` ([#691](https://github.com/cloudflare/terraform-provider-cloudflare/issues/691))
+
+**Improvements**
+
+- `resource/cloudflare_argo`: Allow `tiered_caching` and `smart_routing` to be toggled individually allowing for entitlement differences ([#703](https://github.com/cloudflare/terraform-provider-cloudflare/issues/703))
+- `resource/cloudflare_page_rule`: Add support for `cache_ttl_by_status` ([#706](https://github.com/cloudflare/terraform-provider-cloudflare/issues/706))
+- `resource/cloudflare_worker_script`: Add support for `plain_text` and `secret_text` bindings ([#710](https://github.com/cloudflare/terraform-provider-cloudflare/issues/710))
+
+**Fixes**
+
+- `resource/cloudflare_record`: Update `TestAccCloudflareRecord_LOC` test asserted value to use less precise floats and match the API responses ([#712](https://github.com/cloudflare/terraform-provider-cloudflare/issues/712))
+- `resource/cloudflare_record`: Update `TestAccCloudflareRecord_Basic` test `metadata` attributes to match updated API payload ([#713](https://github.com/cloudflare/terraform-provider-cloudflare/issues/713))
+
+## 2.7.0 (May 20, 2020)
+
+- **New Resource:** `cloudflare_byo_ip_prefix` ([#671](https://github.com/cloudflare/terraform-provider-cloudflare/issues/671))
+- **New Resource:** `cloudflare_logpull_retention` ([#678](https://github.com/cloudflare/terraform-provider-cloudflare/issues/678))
+- **New Resource:** `cloudflare_healthcheck` ([#680](https://github.com/cloudflare/terraform-provider-cloudflare/issues/680))
+
+**Improvements:**
+
+- `resource/cloudflare_worker_route`: Improve documentation to mention using `account_id` for the underlying APIs ([#669](https://github.com/cloudflare/terraform-provider-cloudflare/issues/669))
+- `resource/cloudflare_worker_script`: Improve documentation to mention using `account_id` for the underlying APIs ([#670](https://github.com/cloudflare/terraform-provider-cloudflare/issues/670))
+- `resource/cloudflare_load_balancer_pool`: Improve documentation to mention `notification_email` accepts a comma delimited list of emails ([#687](https://github.com/cloudflare/terraform-provider-cloudflare/issues/687))
+- `resource/cloudflare_page_rule`: Add support for `cache_key_fields` Page Rule action ([#662](https://github.com/cloudflare/terraform-provider-cloudflare/issues/662))
+
+**Fixes:**
+
+- `resource/cloudflare_zone_settings_override`: Fix regression where if you didn't have universal SSL settings defined, it would error when setting them ([#663](https://github.com/cloudflare/terraform-provider-cloudflare/issues/663))
+- `resource/cloudflare_zone`: Handle changing zone rate plan from "free" to "enterprise" ([#668](https://github.com/cloudflare/terraform-provider-cloudflare/issues/668))
+- `resource/cloudflare_record`: Update validation to allow PTR records ([9a8fd43](https://github.com/cloudflare/terraform-provider-cloudflare/commit/9a8fd43))
+
+## 2.6.0 (April 22, 2020)
+
+**Improvements:**
+
+- `resource/cloudflare_zone_settings_override`: Add `universal_ssl` to control enablement of Universal SSL on a zone ([#658](https://github.com/cloudflare/terraform-provider-cloudflare/issues/658))
+- provider: API keys and API tokens are now validated to help differentiate incorrect usage before making API calls ([#661](https://github.com/cloudflare/terraform-provider-cloudflare/issues/661))
+- `resource/cloudflare_logpush_job`: Add support for "firewall_events" dataset parameter ([#660](https://github.com/cloudflare/terraform-provider-cloudflare/issues/660))
+- `resource/cloudflare_logpush_job`: Add support for "dataset" parameter ([#649](https://github.com/cloudflare/terraform-provider-cloudflare/issues/649))
+- `resource/cloudflare_zone_settings_override`: Remove `edge_cache_ttl` ([#654](https://github.com/cloudflare/terraform-provider-cloudflare/issues/654))
+- `resource/cloudflare_access_group`: Allow Access conditions for `include`/`require`/`exclude` to be used consistently between Access Groups and Access Policies ([#646](https://github.com/cloudflare/terraform-provider-cloudflare/issues/646))
+
+**Fixes:**
+
+- `resource/cloudflare_logpush_job`: fix for `strconv.Atoi: parsing ""` error while creating Logpush job
+
+## 2.5.1 (April 03, 2020)
+
+**Improvements:**
+
+- `resource/cloudflare_zone_settings_override`: Update `image_resizing` options to include `"open"` ([#639](https://github.com/cloudflare/terraform-provider-cloudflare/issues/639))
+
+**Fixes:**
+
+- `resource/cloudflare_access_group`: Fixed misspelt Okta in JSON payload ([cloudflare/cloudflare-go#440](https://github.com/cloudflare/cloudflare-go/issues/440))
+
+## 2.5.0 (March 27, 2020)
+
+**Improvements:**
+
+- `resource/cloudflare_access_policy`: Add support for `service_token` and `any_valid_service_token` ([#612](https://github.com/cloudflare/terraform-provider-cloudflare/issues/612))
+- `resource/cloudflare_waf_group`: Handle WAF group deletions in the API responses ([#623](https://github.com/cloudflare/terraform-provider-cloudflare/issues/623))
+- `resource/cloudflare_waf_package`: Handle WAF package deletions in the API responses ([#623](https://github.com/cloudflare/terraform-provider-cloudflare/issues/623))
+- `resource/cloudflare_waf_rule`: Handle WAF rule deletions in the API responses ([#623](https://github.com/cloudflare/terraform-provider-cloudflare/issues/623))
+- `resource/cloudflare_access_policy`: Add support for `group` ([#626](https://github.com/cloudflare/terraform-provider-cloudflare/issues/626))
+- `resource/cloudflare_firewall_rule`: Add support for bypassing specific `products` ([#630](https://github.com/cloudflare/terraform-provider-cloudflare/issues/630))
+- `resource/cloudflare_spectrum_application`: Add support for `edge_ips`, `argo_smart_routing` and `edge_ip_connectivity` ([#631](https://github.com/cloudflare/terraform-provider-cloudflare/issues/631))
+- `resource/cloudflare_access_group`: Add support for using external providers (`gsuite`, `github`, `azure`, `okta`, `saml`, `mTLS certificate`, `common name`
+  ) ([#633](https://github.com/cloudflare/terraform-provider-cloudflare/issues/633))
+
+## 2.4.1 (March 12, 2020)
+
+**Improvements:**
+
+- `resource/cloudflare_logpush_job`: Support `Import` on the resource ([#618](https://github.com/cloudflare/terraform-provider-cloudflare/issues/618))
+
+**Fixes:**
+
+- `resource/cloudflare_record`: Missing CAA in DNS validation ([#619](https://github.com/cloudflare/terraform-provider-cloudflare/issues/619))
+
+## 2.4.0 (March 09, 2020)
+
+- **New Resource:** `cloudflare_workers_kv` ([#595](https://github.com/cloudflare/terraform-provider-cloudflare/issues/595))
+- **New Resource:** `cloudflare_access_identity_provider` ([#597](https://github.com/cloudflare/terraform-provider-cloudflare/issues/597))
+
+**Improvements:**
+
+- `resource/cloudflare_record`: Stricter validation for record types ([#610](https://github.com/cloudflare/terraform-provider-cloudflare/issues/610))
+- `resource/logpush_job`: Add more verbose error handling ([#564](https://github.com/cloudflare/terraform-provider-cloudflare/issues/564))
+- `resource/zone_settings_override`: Update documentation for `cache_level` values ([#606](https://github.com/cloudflare/terraform-provider-cloudflare/issues/606))
+- `resource/access_application`: Add documentation for available attributes ([#587](https://github.com/cloudflare/terraform-provider-cloudflare/issues/587))
+- `resource/cloudflare_firewall_rule`: Add support for bypassing security configuration rules by URL ([#568](https://github.com/cloudflare/terraform-provider-cloudflare/issues/568))
+- `resource/cloudflare_record_migrate`: Use `zone_id` for state migration before attempting to use `domain` ([#566](https://github.com/cloudflare/terraform-provider-cloudflare/issues/566))
+- `resource/cloudflare_load_balancer`: Update `session_affinity` validation to allow `"ip_cookie"` ([#573](https://github.com/cloudflare/terraform-provider-cloudflare/issues/573))
+- `datasource/ip_ranges`: Update documentation to show 0.12 syntax ([#617](https://github.com/cloudflare/terraform-provider-cloudflare/issues/617))
+
+**Fixes**
+
+- `resource/zone_settings_override`: Handle individual zone settings within `Delete` operations ([#599](https://github.com/cloudflare/terraform-provider-cloudflare/issues/599))
+
+## 2.3.0 (December 18, 2019)
+
+- **New Resource:** `cloudflare_origin_ca_certificate` ([#547](https://github.com/cloudflare/terraform-provider-cloudflare/issues/547))
+
+**Fixes:**
+
+- `resource/cloudflare_zone_settings_override`: Renamed `0rtt` to `zero_rtt` to conform to HCL grammar requirements ([#557](https://github.com/cloudflare/terraform-provider-cloudflare/issues/557))
+
+**Improvements:**
+
+- `resource/cloudflare_access_rule`: Add `ip6` as valid option ([#560](https://github.com/cloudflare/terraform-provider-cloudflare/issues/560))
+- `resource/cloudflare_spectrum_application`: Swap `proxy_protocol` to string field with supporting enum values instead ([#561](https://github.com/cloudflare/terraform-provider-cloudflare/issues/561))
+- `resource/cloudflare_waf_rule`: Add `package_id` as valid option and export `group_id` ([#552](https://github.com/cloudflare/terraform-provider-cloudflare/issues/552))
+
+## 2.2.0 (December 05, 2019)
+
+- **New Resource:** `cloudflare_access_group` ([#510](https://github.com/cloudflare/terraform-provider-cloudflare/issues/510))
+- **New Resource:** `cloudflare_workers_kv_namespace` ([#443](https://github.com/cloudflare/terraform-provider-cloudflare/issues/443))
+
+**Improvements:**
+
+- `resource/cloudflare_zone_settings_override`: Add `non_identity` to allowed `decision` schema ([#541](https://github.com/cloudflare/terraform-provider-cloudflare/issues/541))
+- `resource/cloudflare_zone_settings_override`: Add support for `0rtt` and `http3` settings ([#542](https://github.com/cloudflare/terraform-provider-cloudflare/issues/542))
+- `resource/cloudflare_load_balancer_monitor`: Allow empty string for `expected_body` ([#539](https://github.com/cloudflare/terraform-provider-cloudflare/issues/539))
+- `resource/cloudflare_worker_script`: Add support for Worker KV Namespace Bindings ([#544](https://github.com/cloudflare/terraform-provider-cloudflare/issues/544))
+- `data_source/waf_rules`, `resource/cloudflare_waf_rule`, Support allowed modes for WAF Rules ([#550](https://github.com/cloudflare/terraform-provider-cloudflare/issues/550))
+
+**Fixes:**
+
+- `resource/cloudflare_spectrum_application`: Spectrum origin_port is optional ([#549](https://github.com/cloudflare/terraform-provider-cloudflare/issues/549))
+
+## 2.1.0 (November 07, 2019)
+
+- **New datasource:** `cloudflare_waf_rules` ([#525](https://github.com/cloudflare/terraform-provider-cloudflare/issues/525))
+
+**Improvements:**
+
+- `resource/cloudflare_zone`: Expose `verification_key` for partial setups ([#532](https://github.com/cloudflare/terraform-provider-cloudflare/issues/532))
+- `resource/cloudflare_worker_route`: Enable API Tokens support from upstream [cloudflare-go](https://github.com/cloudflare/cloudflare-go) release
+
+## 2.0.1 (October 22, 2019)
+
+- **New Resource:** `cloudflare_access_service_tokens` ([#521](https://github.com/cloudflare/terraform-provider-cloudflare/issues/521))
+- **New Resource:** `cloudflare_waf_package` ([#475](https://github.com/cloudflare/terraform-provider-cloudflare/issues/475))
+- **New Resource:** `cloudflare_waf_group` ([#476](https://github.com/cloudflare/terraform-provider-cloudflare/issues/476))
+- **New datasource:** `cloudflare_waf_groups` ([#508](https://github.com/cloudflare/terraform-provider-cloudflare/issues/508))
+- **New datasource:** `cloudflare_waf_packages` ([#509](https://github.com/cloudflare/terraform-provider-cloudflare/issues/509))
+
+**Fixes:**
+
+- `resource/cloudflare_page_rule`: Set `h2_prioritization` individually not via bulk endpoint ([#493](https://github.com/cloudflare/terraform-provider-cloudflare/issues/493))
+- `resource/cloudflare_zone_settings_override`: Set `zone_id` to prevent unnecessary re-creation of resources ([#502](https://github.com/cloudflare/terraform-provider-cloudflare/issues/502))
+
+**Improvements:**
+
+- `resource/cloudflare_spectrum_application`: Add support for setting `traffic_type` ([#481](https://github.com/cloudflare/terraform-provider-cloudflare/issues/481))
+- `resource/cloudflare_zone_settings_override`: Update documentation with default values ([#498](https://github.com/cloudflare/terraform-provider-cloudflare/issues/498))
+
+**Internals:**
+
+- Migrated to Terraform plugin SDK ([#489](https://github.com/cloudflare/terraform-provider-cloudflare/issues/489))
+
+## 2.0.0 (September 30, 2019)
+
+**Breaking changes:**
+
+- `provider/cloudflare`:
+- renamed `token` to `api_key`
+- renamed `org_id` to `account_id`
+- removed `use_org_from_zone`, you need to explicitly specify `account_id`
+- Environment variables:
+- renamed `CLOUDFLARE_TOKEN` to `CLOUDFLARE_API_TOKEN`
+- renamed `CLOUDFLARE_ORG_ID` to `CLOUDFLARE_ACCOUNT_ID`
+- removed `CLOUDFLARE_ORG_ZONE`, you need to explicitly specify `CLOUDFLARE_ACCOUNT_ID`
+- Changed the following resources to require Zone ID:
+- `cloudflare_access_rule`
+- `cloudflare_filter`
+- `cloudflare_firewall_rule`
+- `cloudflare_load_balancer`
+- `cloudflare_page_rule`
+- `cloudflare_rate_limit`
+- `cloudflare_record`
+- `cloudflare_waf_rule`
+- `cloudflare_worker_route"`
+- `cloudflare_zone_lockdown`
+- `cloudflare_zone_settings_override`
+- Workers single-script support removed
+
+Please see [Version 2 Upgrade Guide](https://www.terraform.io/docs/providers/cloudflare/guides/version-2-upgrade.html) for details.
+
+**Improvements:**
+
+- `cloudflare/resource_cloudflare_argo`: Handle errors when fetching tiered caching + smart routing settings ([#477](https://github.com/cloudflare/terraform-provider-cloudflare/issues/477))
+- Various documentation updates for 0.12 syntax
+
+## 1.18.1 (August 29, 2019)
+
+**Fixes:**
+
+- `resource/cloudflare_load_balancer`: Mark `zone` as Computed to allow deprecations ([#462](https://github.com/cloudflare/terraform-provider-cloudflare/issues/462))
+- `resource/cloudflare_page_rule`: Mark `zone` as Computed to allow deprecations ([#462](https://github.com/cloudflare/terraform-provider-cloudflare/issues/462))
+- `resource/cloudflare_rate_limit`: Mark `zone` as Computed to allow deprecations ([#462](https://github.com/cloudflare/terraform-provider-cloudflare/issues/462))
+- `resource/cloudflare_waf_rule`: Mark `zone` as Computed to allow deprecations ([#462](https://github.com/cloudflare/terraform-provider-cloudflare/issues/462))
+- `resource/cloudflare_worker_route`: Mark `zone` as Computed to allow deprecations ([#462](https://github.com/cloudflare/terraform-provider-cloudflare/issues/462))
+- `resource/cloudflare_worker_script`: Mark `zone` as Computed to allow deprecations ([#462](https://github.com/cloudflare/terraform-provider-cloudflare/issues/462))
+- `resource/cloudflare_zone_lockdown`: Mark `zone` as Computed to allow deprecations ([#462](https://github.com/cloudflare/terraform-provider-cloudflare/issues/462))
+
+## 1.18.0 (August 27, 2019)
+
+**Fixes:**
+
+- `resource/cloudflare_page_rule`: Fix a logic condition where setting `edge_cache_ttl` action but then not updating it in subsequent `apply` runs causes it to be blown away ([#453](https://github.com/cloudflare/terraform-provider-cloudflare/issues/453))
+
+**Improvements:**
+
+- provider: You can now use API tokens to authenticate instead of user email and key ([#450](https://github.com/cloudflare/terraform-provider-cloudflare/issues/450))
+- `resource/cloudflare_zone_lockdown`: `priority` can now be set on the resource ([#445](https://github.com/cloudflare/terraform-provider-cloudflare/issues/445))
+- `resource/cloudflare_custom_ssl`: Updated website documentation navigation to include link for resource ([#442)](https://github.com/cloudflare/terraform-provider-cloudflare/issues/442))
+
+**Deprecations:**
+
+- `resource/cloudflare_access_rule`: `zone` has been superseded by using `zone_id` ([#452](https://github.com/cloudflare/terraform-provider-cloudflare/issues/452))
+- `resource/cloudflare_filter`: `zone` has been superseded by using `zone_id` ([#452](https://github.com/cloudflare/terraform-provider-cloudflare/issues/452))
+- `resource/cloudflare_firewall_rule`: `zone` has been superseded by using `zone_id` ([#452](https://github.com/cloudflare/terraform-provider-cloudflare/issues/452))
+- `resource/cloudflare_load_balancer`: `zone` has been superseded by using `zone_id` ([#452](https://github.com/cloudflare/terraform-provider-cloudflare/issues/452))
+- `resource/cloudflare_page_rule`: `zone` has been superseded by using `zone_id` ([#452](https://github.com/cloudflare/terraform-provider-cloudflare/issues/452))
+- `resource/cloudflare_rate_limit`: `zone` has been superseded by using `zone_id` ([#452](https://github.com/cloudflare/terraform-provider-cloudflare/issues/452))
+- `resource/cloudflare_waf_rule`: `zone` has been superseded by using `zone_id` ([#452](https://github.com/cloudflare/terraform-provider-cloudflare/issues/452))
+- `resource/cloudflare_worker_route`: `zone` has been superseded by using `zone_id` ([#452](https://github.com/cloudflare/terraform-provider-cloudflare/issues/452))
+- `resource/cloudflare_worker_script`: `zone` has been superseded by using `zone_id` ([#452](https://github.com/cloudflare/terraform-provider-cloudflare/issues/452))
+- `resource/cloudflare_zone_lockdown`: `zone` has been superseded by using `zone_id` ([#452](https://github.com/cloudflare/terraform-provider-cloudflare/issues/452))
+
+## 1.17.1 (August 09, 2019)
+
+**Fixes:**
+
+- Partially revert [[#421](https://github.com/cloudflare/terraform-provider-cloudflare/issues/421)] deprecation messages
+
+## 1.17.0 (August 09, 2019)
+
+**Removals:**
+
+- `resource/cloudflare_zone_settings_override`: `sha1_support` has been removed due to Cloudflare no longer supporting SHA1 certificates or the API endpoint ([#415](https://github.com/cloudflare/terraform-provider-cloudflare/issues/415))
+
+**Deprecations:**
+
+- `resource/cloudflare_zone_settings_override`: `tls_1_2_only` has been superseded by using `min_tls_version` instead ([#405](https://github.com/cloudflare/terraform-provider-cloudflare/issues/405))
+- `resource/cloudflare_access_rule`: `zone` has been superseded by using `zone_id` ([#421](https://github.com/cloudflare/terraform-provider-cloudflare/issues/421))
+- `resource/cloudflare_filter`: `zone` has been superseded by using `zone_id` ([#421](https://github.com/cloudflare/terraform-provider-cloudflare/issues/421))
+- `resource/cloudflare_firewall_rule`: `zone` has been superseded by using `zone_id` ([#421](https://github.com/cloudflare/terraform-provider-cloudflare/issues/421))
+- `resource/cloudflare_load_balancer`: `zone` has been superseded by using `zone_id` ([#421](https://github.com/cloudflare/terraform-provider-cloudflare/issues/421))
+- `resource/cloudflare_page_rule`: `zone` has been superseded by using `zone_id` ([#421](https://github.com/cloudflare/terraform-provider-cloudflare/issues/421))
+- `resource/cloudflare_rate_limit`: `zone` has been superseded by using `zone_id` ([#421](https://github.com/cloudflare/terraform-provider-cloudflare/issues/421))
+- `resource/cloudflare_waf_rule`: `zone` has been superseded by using `zone_id` ([#421](https://github.com/cloudflare/terraform-provider-cloudflare/issues/421))
+- `resource/cloudflare_worker_route`: `zone` has been superseded by using `zone_id` ([#421](https://github.com/cloudflare/terraform-provider-cloudflare/issues/421))
+- `resource/cloudflare_worker_script`: `zone` has been superseded by using `zone_id` ([#421](https://github.com/cloudflare/terraform-provider-cloudflare/issues/421))
+- `resource/cloudflare_zone_lockdown`: `zone` has been superseded by using `zone_id` ([#421](https://github.com/cloudflare/terraform-provider-cloudflare/issues/421))
+
+**Improvements:**
+
+- **New Resource:** `cloudflare_custom_ssl` ([#418](https://github.com/cloudflare/terraform-provider-cloudflare/issues/418))
+- `resource/cloudflare_filter`: Strip all surrounding whitespace from filter expressions to match API responses ([#361](https://github.com/cloudflare/terraform-provider-cloudflare/issues/361))
+- `resource/cloudflare_zone`: Support unicode zone name values ([#412](https://github.com/cloudflare/terraform-provider-cloudflare/issues/412))
+- `resource/cloudflare_page_rule`: Allow setting `origin_pull` for SSL ([#430](https://github.com/cloudflare/terraform-provider-cloudflare/issues/430))
+- `resource/cloudflare_load_balancer_monitor`: Add TCP support for load balancer monitor ([#428](https://github.com/cloudflare/terraform-provider-cloudflare/issues/428))
+
+**Fixes:**
+
+- `resource/cloudflare_logpush_job`: Update documentation ([#395](https://github.com/cloudflare/terraform-provider-cloudflare/issues/395))
+- `resource/cloudflare_zone_lockdown`: Fix: examples in documentation ([#407](https://github.com/cloudflare/terraform-provider-cloudflare/issues/407))
+- `resource/cloudflare_page_rule`: Set nil on changed string-based Page Rule actions
+
+## 1.16.1 (June 27, 2019)
+
+**Fixes:**
+
+- `resource/cloudflare_page_rule`: Fix regression in `browser_cache_ttl` where the value was sent as a string instead of an integer to the remote ([#390](https://github.com/cloudflare/terraform-provider-cloudflare/issues/390))
+
+## 1.16.0 (June 20, 2019)
+
+**Improvements:**
+
+- `resource/cloudflare_zone_settings_override`: Add support for `h2_prioritization` and `image_resizing` ([#381](https://github.com/cloudflare/terraform-provider-cloudflare/issues/381))
+- `resource/cloudflare_load_balancer_pool`: Update IP range for tests to not use reserved ranges ([#369](https://github.com/cloudflare/terraform-provider-cloudflare/issues/369))
+
+**Fixes:**
+
+- `resource/cloudflare_page_rule`: Fix issues with `browser_cache_ttl` defaults and when value is `0` (for Enterprise users) ([#379](https://github.com/cloudflare/terraform-provider-cloudflare/issues/379))
+
+## 1.15.0 (May 24, 2019)
+
+- The provider is now compatible with Terraform v0.12, while retaining compatibility with prior versions. ([#309](https://github.com/cloudflare/terraform-provider-cloudflare/issues/309))
+
+## 1.14.0 (May 15, 2019)
+
+**Improvements:**
+
+- **New Resource:** `cloudflare_argo` Manage Argo features ([#304](https://github.com/cloudflare/terraform-provider-cloudflare/issues/304))
+- `cloudflare_zone`: Support management of partial zones ([#303](https://github.com/cloudflare/terraform-provider-cloudflare/issues/303))
+- `cloudflare_rate_limit`: Update `modes` documentation ([#293](https://github.com/cloudflare/terraform-provider-cloudflare/issues/212))
+- `cloudflare_load_balancer`: Allow steering policy of "random" ([#329](https://github.com/cloudflare/terraform-provider-cloudflare/issues/329))
+
+**Fixes:**
+
+- `cloudflare_page_rule` - Allow setting `browser_cache_ttl` to 0 ([#293](https://github.com/cloudflare/terraform-provider-cloudflare/issues/291))
+- `cloudflare_page_rule` - Swap to completely replacing rules ([#338](https://github.com/cloudflare/terraform-provider-cloudflare/issues/338))
+
+## 1.13.0 (April 12, 2019)
+
+**Improvements**
+
+- **New Resource:** `cloudflare_logpush_job` ([#287](https://github.com/cloudflare/terraform-provider-cloudflare/issues/287))
+- `cloudflare_zone_settings` - Remove option to toggle `always_on_ddos` ([#253](https://github.com/cloudflare/terraform-provider-cloudflare/issues/253))
+- `cloudflare_page_rule` - Update documentation to clarify "0" usage
+- `cloudflare_zones` - Return zone ID and zone name ([#275](https://github.com/cloudflare/terraform-provider-cloudflare/issues/275))
+- `cloudflare_load_balancer` - Add `enabled` field ([#208](https://github.com/cloudflare/terraform-provider-cloudflare/issues/208))
+- `cloudflare_record` - validators: Allow PTR DNS records ([#283](https://github.com/cloudflare/terraform-provider-cloudflare/issues/283))
+
+**Fixes:**
+
+- `cloudflare_custom_pages` - Use correct casing for `zone_id` lookups
+- `cloudflare_rate_limit` - Make `correlate` optional and not flap in state management ([#271](https://github.com/cloudflare/terraform-provider-cloudflare/issues/271))
+- `cloudflare_spectrum_application` - Fixed integration tests to work ([#275](https://github.com/cloudflare/terraform-provider-cloudflare/issues/275))
+- `cloudflare_page_rule` - Better track field changes in `actions` resource. ([#107](https://github.com/cloudflare/terraform-provider-cloudflare/issues/107))
+
+## 1.12.0 (March 07, 2019)
+
+**Improvements:**
+
+- provider: Enable request/response logging ([#212](https://github.com/cloudflare/terraform-provider-cloudflare/issues/212))
+- resource/cloudflare_load_balancer_monitor: Add validation for `port` ([#213](https://github.com/cloudflare/terraform-provider-cloudflare/issues/213))
+- resource/cloudflare_load_balancer_monitor: Add `allow_insecure` and `follow_redirects` ([#205](https://github.com/cloudflare/terraform-provider-cloudflare/issues/205))
+- resource/cloudflare_page_rule: Updated available actions documentation to match what is available ([#228](https://github.com/cloudflare/terraform-provider-cloudflare/issues/228))
+- provider: Swap to using go modules for dependency management ([#230](https://github.com/cloudflare/terraform-provider-cloudflare/issues/230))
+- provider: Minimum Go version for development is now 1.11 ([#230](https://github.com/cloudflare/terraform-provider-cloudflare/issues/230))
+
+**Fixes:**
+
+- resource/cloudflare_record: Read `data` back from API correctly ([#217](https://github.com/cloudflare/terraform-provider-cloudflare/issues/217))
+- resource/cloudflare_rate_limit: Read `correlate` back from API correctly ([#204](https://github.com/cloudflare/terraform-provider-cloudflare/issues/204))
+- resource/cloudflare_load_balancer_monitor: Fix incorrect type cast for `port` ([#213](https://github.com/cloudflare/terraform-provider-cloudflare/issues/213))
+- resource/cloudflare_load_balancer: Make `steering_policy` computed to avoid spurious diffs ([#214](https://github.com/cloudflare/terraform-provider-cloudflare/issues/214))
+- resource/cloudflare_load_balancer: Read `session_affinity` back from API to make import work & detects drifts ([#214](https://github.com/cloudflare/terraform-provider-cloudflare/issues/214))
+
+## 1.11.0 (January 11, 2019)
+
+**Improvements:**
+
+- **New Resource:** `cloudflare_spectrum_app` ([#156](https://github.com/cloudflare/terraform-provider-cloudflare/issues/156))
+- **New Data Source:** `cloudflare_zones` ([#168](https://github.com/cloudflare/terraform-provider-cloudflare/issues/168))
+- `cloudflare_load_balancer_monitor` - Add optional `port` parameter ([#179](https://github.com/cloudflare/terraform-provider-cloudflare/issues/179))
+- `cloudflare_page_rule` - Improved documentation for `priority` attribute ([#182](https://github.com/cloudflare/terraform-provider-cloudflare/issues/182)], missing `explicit_cache_control` [[#185](https://github.com/cloudflare/terraform-provider-cloudflare/issues/185))
+- `cloudflare_rate_limit` - Add `challenge` and `js_challenge` rate-limit modes ([#172](https://github.com/cloudflare/terraform-provider-cloudflare/issues/172))
+
+**Fixes:**
+
+- `cloudflare_page_rule` - Page rule `zone` attribute change to trigger new resource ([#183](https://github.com/cloudflare/terraform-provider-cloudflare/issues/183))
+
+## 1.10.0 (December 18, 2018)
+
+**Improvements:**
+
+- `cloudflare_zone_settings_override` - Add `opportunistic_onion` zone setting support ([#170](https://github.com/cloudflare/terraform-provider-cloudflare/issues/170))
+- `cloudflare_zone` - Add ability to set zone plan ([#160](https://github.com/cloudflare/terraform-provider-cloudflare/issues/160))
+
+**Fixes:**
+
+- `cloudflare_zone` - Allow zones to be properly imported ([#157](https://github.com/cloudflare/terraform-provider-cloudflare/issues/157))
+- `cloudflare_access_policy` - Match access_policy argument requisites with reality ([#158](https://github.com/cloudflare/terraform-provider-cloudflare/issues/158))
+- `cloudflare_filter` - Allow `zone_id` to set `zone` and vice versa ([#162](https://github.com/cloudflare/terraform-provider-cloudflare/issues/162))
+- `cloudflare_firewall_rule` - Allow `zone_id` to set `zone` and vice versa ([#174](https://github.com/cloudflare/terraform-provider-cloudflare/issues/174))
+- `cloudflare_access_rule` - Ensure `zone` and `zone_id` are always set ([#175](https://github.com/cloudflare/terraform-provider-cloudflare/issues/175))
+- Minor documentation fixes
+
+## 1.9.0 (November 15, 2018)
+
+**Improvements:**
+
+- **New Resource:** `cloudflare_access_application` ([#145](https://github.com/cloudflare/terraform-provider-cloudflare/issues/145))
+- **New Resource:** `cloudflare_access_policy` ([#145](https://github.com/cloudflare/terraform-provider-cloudflare/issues/145))
+- `cloudflare_load_balancer` - Add steering policy support ([#147](https://github.com/cloudflare/terraform-provider-cloudflare/issues/147))
+- `cloudflare_load_balancer` - Support `session_affinity` ([#153](https://github.com/cloudflare/terraform-provider-cloudflare/issues/153))
+- `cloudflare_load_balancer_pool` - Support `weight` ([#153](https://github.com/cloudflare/terraform-provider-cloudflare/issues/153))
+
+**Fixes:**
+
+- `cloudflare_record` - Compare name without the zone name ([#151](https://github.com/cloudflare/terraform-provider-cloudflare/issues/151))
+- Minor documentation fixes ([#149](https://github.com/cloudflare/terraform-provider-cloudflare/issues/149)] [[#152](https://github.com/cloudflare/terraform-provider-cloudflare/issues/152))
+
+## 1.8.0 (November 05, 2018)
+
+**Improvements:**
+
+- **New Resource:** `cloudflare_zone` ([#58](https://github.com/cloudflare/terraform-provider-cloudflare/issues/58))
+- **New Resource:** `cloudflare_custom_pages` ([#132](https://github.com/cloudflare/terraform-provider-cloudflare/issues/132))
+- `cloudflare_zone_settings_override` - Allow setting SSL level to Strict (SSL-Only Origin Pull) ([#122](https://github.com/cloudflare/terraform-provider-cloudflare/issues/122))
+- Update provider usage/build docs and how to update a dependency ([#138](https://github.com/cloudflare/terraform-provider-cloudflare/issues/138))
+- Improve `Building The Provider` instructions ([#143](https://github.com/cloudflare/terraform-provider-cloudflare/issues/143))
+- `cloudflare_access_rule` - Make importable for all rule types ([#141](https://github.com/cloudflare/terraform-provider-cloudflare/issues/141))
+- `cloudflare_load_balancer_pool` - Implement `Update` ([#140](https://github.com/cloudflare/terraform-provider-cloudflare/issues/140))
+
+**Fixes:**
+
+- `cloudflare_rate_limit` - Documentation fixes for markdown where \_ALL\_ is italicized ([#125](https://github.com/cloudflare/terraform-provider-cloudflare/issues/125))
+- `cloudflare_worker_route` - Correctly set `multi_script` on Enterprise worker imports ([#124](https://github.com/cloudflare/terraform-provider-cloudflare/issues/124))
+- `account_member` - Ignore role ID ordering ([#128](https://github.com/cloudflare/terraform-provider-cloudflare/issues/128))
+- `cloudflare_rate_limit` - Origin traffic isn't default anymore ([#130](https://github.com/cloudflare/terraform-provider-cloudflare/issues/130))
+- `cloudflare_rate_limit` - Update rate limit validation to allow `1` ([#129](https://github.com/cloudflare/terraform-provider-cloudflare/issues/129))
+- `cloudflare_record` - Add validation to ensure TTL is not set while `proxied` is true ([#127](https://github.com/cloudflare/terraform-provider-cloudflare/issues/127))
+- Updated code for provider version in User-Agent
+- `cloudflare_zone_lockdown` - Fix import of zone lockdowns ([#135](https://github.com/cloudflare/terraform-provider-cloudflare/issues/135))
+
+## 1.7.0 (October 09, 2018)
+
+**Improvements:**
+
+- **New Resource:** `cloudflare_account_member` ([#78](https://github.com/cloudflare/terraform-provider-cloudflare/issues/78))
+
+## 1.6.0 (October 05, 2018)
+
+**Improvements:**
+
+- **New Resource:** `cloudflare_filter`
+- **New Resource:** `cloudflare_firewall_rule`
+
+## 1.5.0 (September 21, 2018)
+
+**Improvements:**
+
+- **New Resource:** `cloudflare_zone_lockdown` ([#115](https://github.com/cloudflare/terraform-provider-cloudflare/issues/115))
+
+**Fixes:**
+
+- Send User-Agent header with name and version when contacting API
+- `cloudflare_page_rule` - Fix page rule polish (off, lossless or lossy) ([#116](https://github.com/cloudflare/terraform-provider-cloudflare/issues/116))
+
+## 1.4.0 (September 11, 2018)
+
+**Improvements:**
+
+- **New Resource:** `cloudflare_worker_route` ([#110](https://github.com/cloudflare/terraform-provider-cloudflare/issues/110))
+- **New Resource:** `cloudflare_worker_script` ([#110](https://github.com/cloudflare/terraform-provider-cloudflare/issues/110))
+
+## 1.3.0 (September 04, 2018)
+
+**Improvements:**
+
+- **New Resource:** `cloudflare_access_rule` ([#64](https://github.com/cloudflare/terraform-provider-cloudflare/issues/64))
+
+**Fixes:**
+
+- `cloudflare_zone_settings_override` - Change Zone Settings Override to use GetOkExists ([#107](https://github.com/cloudflare/terraform-provider-cloudflare/issues/107))
+
+## 1.2.0 (August 13, 2018)
+
+**Improvements:**
+
+- **New Resource:** `cloudflare_waf_rule` ([#98](https://github.com/cloudflare/terraform-provider-cloudflare/issues/98))
+- `cloudflare_zone_settings_override` - Add `off` as Security Level setting ([#99](https://github.com/cloudflare/terraform-provider-cloudflare/issues/99))
+- `resource_cloudflare_rate_limit` - Add nat support ([#96](https://github.com/cloudflare/terraform-provider-cloudflare/issues/96))
+- `resource_cloudflare_zone_settings_override` - Add `zrt` as a value for the `tls_1_3` setting ([#106](https://github.com/cloudflare/terraform-provider-cloudflare/issues/106))
+- Minor documentation improvements
+
+**Fixes:**
+
+- `cloudflare_record` - Setting a DNS record's `proxied` flag to false stopped working ([#103](https://github.com/cloudflare/terraform-provider-cloudflare/issues/103))
+
+## 1.1.0 (July 25, 2018)
+
+FIXES:
+
+- `cloudflare_ip_ranges` - IPv6 CIDR blocks should return IPv6 addresses ([#51](https://github.com/cloudflare/terraform-provider-cloudflare/issues/51))
+- `cloudflare_zone_settings_override` - Allow `0` for `browser_cache_ttl` ([#71](https://github.com/cloudflare/terraform-provider-cloudflare/issues/71))
+- `cloudflare_page_rule` - `forwarding_urls` in page rules are lists ([#79](https://github.com/cloudflare/terraform-provider-cloudflare/issues/79))
+- `cloudflare_page_rule` - The API supports `active` and `disabled`, not `paused` ([#84](https://github.com/cloudflare/terraform-provider-cloudflare/issues/84))
+
+IMPROVEMENTS:
+
+- `cloudflare_zone_settings_override` - Add support for `min_tls_version` ([#72](https://github.com/cloudflare/terraform-provider-cloudflare/issues/72))
+- `cloudflare_page_rule` - Add support for more settings: `bypass_cache_on_cookie`, `cache_by_device_type`, `cache_deception_armor`, `cache_on_cookie`, `host_header_override`, `polish`, `explicit_cache_control`, `origin_error_page_pass_thru`, `sort_query_string_for_cache`, `resolve_override`, `respect_strong_etag`, `response_buffering`, `true_client_ip_header`, `mirage`, `disable_railgun`, `cache_key`, `waf`, `rocket_loader`, `cname_flattening` ([#68](https://github.com/cloudflare/terraform-provider-cloudflare/issues/68)], [[#81](https://github.com/cloudflare/terraform-provider-cloudflare/issues/81)], [[#85](https://github.com/cloudflare/terraform-provider-cloudflare/issues/85))
+- `cloudflare_page_rule` - Add `off` setting to `security_level` ([#81](https://github.com/cloudflare/terraform-provider-cloudflare/issues/81))
+- `cloudflare_record` - DNS Record improvements ([#97](https://github.com/cloudflare/terraform-provider-cloudflare/issues/97))
+- Various documentation improvements
+
+## 1.0.0 (April 06, 2018)
+
+BACKWARDS INCOMPATIBILITIES / NOTES:
+
+- resource/cloudflare_record: Changing `name` or `domain` now force a recreation
+  of the record ([#29](https://github.com/cloudflare/terraform-provider-cloudflare/issues/29))
+
+FEATURES:
+
+- **New Resource:** `cloudflare_rate_limit` ([#30](https://github.com/cloudflare/terraform-provider-cloudflare/issues/30))
+- **New Resource:** `cloudflare_page_rule` ([#38](https://github.com/cloudflare/terraform-provider-cloudflare/issues/38))
+- **New Resource:** `cloudflare_load_balancer` ([#40](https://github.com/cloudflare/terraform-provider-cloudflare/issues/40))
+- **New Resource:** `cloudflare_load_balancer_pool` ([#40](https://github.com/cloudflare/terraform-provider-cloudflare/issues/40))
+- **New Resource:** `cloudflare_zone_settings_override` ([#41](https://github.com/cloudflare/terraform-provider-cloudflare/issues/41))
+- **New Resource:** `cloudflare_load_balancer_monitor` ([#42](https://github.com/cloudflare/terraform-provider-cloudflare/issues/42))
+- **New Data Source:** `cloudflare_ip_ranges` ([#28](https://github.com/cloudflare/terraform-provider-cloudflare/issues/28))
+
+IMPROVEMENTS:
+
+- resource/cloudflare_record: Validate `TXT` records ([#14](https://github.com/cloudflare/terraform-provider-cloudflare/issues/14))
+- resource/cloudflare_record: Add `data` input to suppport SRV, LOC records
+  ([#29](https://github.com/cloudflare/terraform-provider-cloudflare/issues/29))
+- resource/cloudflare_record: Add computed attributes `created_on`,
+  `modified_on`, `proxiable`, and `metadata` to records ([#29](https://github.com/cloudflare/terraform-provider-cloudflare/issues/29))
+- resource/cloudflare_record: Support import of existing records ([#36](https://github.com/cloudflare/terraform-provider-cloudflare/issues/36))
+- New Provider configuration options for API rate limiting ([#43](https://github.com/cloudflare/terraform-provider-cloudflare/issues/43))
+- New Provider configuration options for using Organizations ([#40](https://github.com/cloudflare/terraform-provider-cloudflare/issues/40))
+
+## 0.1.0 (June 20, 2017)
+
+NOTES:
+
+- Same functionality as that of Terraform 0.9.8. Repacked as part of [Provider
+  Splitout](https://www.hashicorp.com/blog/upcoming-provider-changes-in-terraform-0-10/)

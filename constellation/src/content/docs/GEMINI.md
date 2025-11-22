@@ -1,8 +1,10 @@
 ---
-title: "Ariane Monorepo – Gemini Agent Context"
-description: "# Ariane Monorepo – Gemini Agent Context"
+title: Ariane Monorepo – Gemini Agent Context
 slug: gemini
+description: "# Ariane Monorepo – Gemini Agent Context"
 ---
+
+
 
 # Ariane Monorepo – Gemini Agent Context
 

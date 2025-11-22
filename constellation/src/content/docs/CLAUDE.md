@@ -1,8 +1,10 @@
 ---
 title: "Claude Code Instructions & Infrastructure Management"
-description: "# Claude Code Instructions & Infrastructure Management"
 slug: claude
+description: "# Claude Code Instructions & Infrastructure Management"
 ---
+
+
 
 # Claude Code Instructions & Infrastructure Management
 
