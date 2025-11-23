@@ -16,10 +16,14 @@
   },
   "dependencies": {
     "@astrojs/starlight": "^0.36.0",
-    "@astrojs/vercel": "^8.2.7",
+    "@astrojs/vercel": "^9.0.1",
     "astro": "^5.16.0",
+    "esbuild": "^0.27.0",
     "glob": "^13.0.0",
     "path-to-regexp": "^8.3.0",
     "sharp": "^0.34.5"
+  },
+  "overrides": {
+    "path-to-regexp": "^8.3.0"
   }
 }

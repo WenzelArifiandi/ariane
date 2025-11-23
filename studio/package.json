@@ -22,17 +22,19 @@
     "formidable": "^3.5.4",
     "glob": "^13.0.0",
     "heic2any": "^0.0.4",
+    "prismjs": "^1.30.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "sanity": "^4.18.0",
     "sharp": "^0.34.5",
-    "styled-components": "^6.1.19"
+    "styled-components": "^6.1.19",
+    "undici": "^7.16.0"
   },
   "devDependencies": {
     "@sanity/eslint-config-studio": "^5.0.2",
     "@types/busboy": "^1.5.4",
     "@types/react": "^19.1.13",
-    "@vercel/node": "^5.3.22",
+    "@vercel/node": "^5.5.9",
     "eslint": "^9.36.0",
     "prettier": "^3.6.2",
     "typescript": "^5.9.3"
@@ -45,6 +47,8 @@
   },
   "overrides": {
     "path-to-regexp": "^8.3.0",
-    "esbuild": "^0.25.9"
+    "esbuild": "^0.25.9",
+    "prismjs": "^1.30.0",
+    "undici": "^7.16.0"
   }
 }
