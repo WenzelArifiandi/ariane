@@ -36,7 +36,7 @@ CODE_SWAP_GB=32
 
 # 🔷 Tailscale config
 TAILSCALE_ENABLE=true
-TAILSCALE_AUTHKEY="tskey-auth-kqSApbuG9t11CNTRL-8YEdgv7Xp8TtJLMbD5cN8TwUupJM7SRE"        # e.g. tskey-auth-XXXXXXXXXX (can be **ephemeral**)
+TAILSCALE_AUTHKEY="${TAILSCALE_AUTHKEY:-}"  # SECURITY: Set via environment variable. Generate at: https://login.tailscale.com/admin/settings/keys
 TAILSCALE_HOSTNAME="${NAME}"
 TAILSCALE_TAGS="tag:dev,tag:code"
 TAILSCALE_SSH=true          # Tailscale SSH for easy access
