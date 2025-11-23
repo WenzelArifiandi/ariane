@@ -12,7 +12,7 @@ export interface CloudflareAccessUser {
  * Docs: https://developers.cloudflare.com/cloudflare-one/identity/authorization-cookie/validating-json/
  */
 export async function verifyCloudflareAccessJWT(
-  request: Request
+  request: Request,
 ): Promise<CloudflareAccessUser | null> {
   try {
     // Get JWT from CF_Authorization cookie or Cf-Access-Jwt-Assertion header
@@ -28,7 +28,7 @@ export async function verifyCloudflareAccessJWT(
         cookieHeader.split("; ").map((c) => {
           const [key, ...v] = c.split("=");
           return [key, v.join("=")];
-        })
+        }),
       );
       token = cookies.CF_Authorization || null;
     }
@@ -47,7 +47,7 @@ export async function verifyCloudflareAccessJWT(
     }
 
     const payload = JSON.parse(
-      Buffer.from(parts[1], "base64url").toString("utf-8")
+      Buffer.from(parts[1], "base64url").toString("utf-8"),
     );
 
     // Extract user claims
@@ -57,7 +57,10 @@ export async function verifyCloudflareAccessJWT(
       name: payload.name,
     };
 
-    console.log("[CF Access] Verified user", { email: user.email, sub: user.sub });
+    console.log("[CF Access] Verified user", {
+      email: user.email,
+      sub: user.sub,
+    });
 
     return user;
   } catch (error) {
@@ -88,7 +91,7 @@ export function readSLOCookie(request: Request): string | null {
     cookieHeader.split("; ").map((c) => {
       const [key, ...v] = c.split("=");
       return [key, v.join("=")];
-    })
+    }),
   );
 
   const sloUser = cookies.slo_user;
@@ -130,7 +133,7 @@ export function readIDTokenCookie(request: Request): string | null {
     cookieHeader.split("; ").map((c) => {
       const [key, ...v] = c.split("=");
       return [key, v.join("=")];
-    })
+    }),
   );
 
   return cookies.cipher_id_token || null;
@@ -153,12 +156,17 @@ export function extractIDTokenFromCFJWT(cfJWT: string): string | null {
     if (parts.length !== 3) return null;
 
     const payload = JSON.parse(
-      Buffer.from(parts[1], "base64url").toString("utf-8")
+      Buffer.from(parts[1], "base64url").toString("utf-8"),
     );
 
     // CF Access may store the original ID token in custom claims
     // Check common claim names
-    return payload.id_token || payload.oidc_id_token || payload.identity?.id_token || null;
+    return (
+      payload.id_token ||
+      payload.oidc_id_token ||
+      payload.identity?.id_token ||
+      null
+    );
   } catch (error) {
     console.error("[CF Access] Failed to extract ID token from JWT", error);
     return null;
@@ -178,7 +186,7 @@ export function extractIDTokenFromCFJWT(cfJWT: string): string | null {
  */
 export function isValidZITADELIDToken(
   jwt: string,
-  expectedClientId: string
+  expectedClientId: string,
 ): boolean {
   try {
     const parts = jwt.split(".");
@@ -188,13 +196,28 @@ export function isValidZITADELIDToken(
     }
 
     const payload = JSON.parse(
-      Buffer.from(parts[1], "base64url").toString("utf-8")
+      Buffer.from(parts[1], "base64url").toString("utf-8"),
     );
 
-    // Check issuer starts with Cipher ZITADEL instance
+    // Check issuer matches Cipher ZITADEL instance
     const iss = payload.iss;
-    if (!iss || !iss.startsWith("https://cipher.wenzelarifiandi.com")) {
-      console.warn("[ZITADEL ID Token] Invalid issuer:", iss);
+    if (!iss) {
+      console.warn("[ZITADEL ID Token] Missing issuer");
+      return false;
+    }
+
+    // Use URL parsing to prevent bypass via malicious domains
+    try {
+      const issuerUrl = new URL(iss);
+      if (
+        issuerUrl.hostname !== "cipher.wenzelarifiandi.com" ||
+        issuerUrl.protocol !== "https:"
+      ) {
+        console.warn("[ZITADEL ID Token] Invalid issuer:", iss);
+        return false;
+      }
+    } catch {
+      console.warn("[ZITADEL ID Token] Malformed issuer URL:", iss);
       return false;
     }
 
@@ -210,7 +233,9 @@ export function isValidZITADELIDToken(
       return false;
     }
 
-    console.log("[ZITADEL ID Token] ✅ Valid - iss=cipher, aud contains client ID");
+    console.log(
+      "[ZITADEL ID Token] ✅ Valid - iss=cipher, aud contains client ID",
+    );
     return true;
   } catch (error) {
     console.error("[ZITADEL ID Token] Validation failed:", error);

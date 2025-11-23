@@ -79,10 +79,16 @@ function deriveTitleFromFilename(file) {
 
 function firstSentence(markdown) {
   // crude: find first non-empty paragraph and take first sentence
-  const text = markdown
+  let text = markdown
     .replace(/```[\s\S]*?```/g, "") // drop code fences
-    .replace(/<!--[\s\S]*?-->/g, "") // drop comments
     .replace(/^---[\s\S]*?---\s*/m, ""); // drop any frontmatter
+
+  // Repeatedly remove HTML comments to handle nested/malformed comments
+  let prev;
+  do {
+    prev = text;
+    text = text.replace(/<!--[\s\S]*?-->/g, "");
+  } while (text !== prev);
   const para = (text.split(/\r?\n\r?\n/).find((p) => p.trim().length > 0) || "")
     .replace(/\r?\n/g, " ")
     .trim();
@@ -161,7 +167,8 @@ function main() {
     globalThis.process.exit(1);
   }
   const files = walk(CONTENT_DIR);
-  let changed = 0, total = 0;
+  let changed = 0,
+    total = 0;
   for (const f of files) {
     total++;
     try {
