@@ -6,6 +6,7 @@
 
 ### 🚀 Deployment & CI/CD
 
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/b8ac2bf7f65841aca2a50c4ac067ec2c)](https://app.codacy.com/gh/WenzelArifiandi/ariane?utm_source=github.com&utm_medium=referral&utm_content=WenzelArifiandi/ariane&utm_campaign=Badge_Grade)
 [![CI](https://github.com/WenzelArifiandi/ariane/actions/workflows/ci.yml/badge.svg)](https://github.com/WenzelArifiandi/ariane/actions/workflows/ci.yml)
 [![🚀 Deploy Zitadel to Oracle Cloud](https://github.com/WenzelArifiandi/ariane/actions/workflows/deploy-zitadel.yml/badge.svg)](https://github.com/WenzelArifiandi/ariane/actions/workflows/deploy-zitadel.yml)
 [![Site Preview Deploy](https://github.com/WenzelArifiandi/ariane/actions/workflows/preview-deploy-site.yml/badge.svg)](https://github.com/WenzelArifiandi/ariane/actions/workflows/preview-deploy-site.yml)
