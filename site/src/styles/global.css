@@ -1,8 +1,7 @@
 /* Declare global CSS layer order */
 @layer reset, base, tokens, app-components, components, utilities, overrides;
 
-@import './m3-tokens.css';
-@import './google-sans.css';
+@import "./m3-tokens.css";
 
 /* Design tokens */
 :root {
@@ -25,13 +24,14 @@
   /* Radii / shadow */
   --radius: 12px;
   --shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
-
 }
 
 /* --- Global system font fallback (instant everywhere) --- */
 @layer base {
   html {
-    font-family: ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+    font-family:
+      ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji",
+      "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
   }
 }
 
@@ -54,7 +54,6 @@
     min-width: 360px;
   }
 }
-
 
 /* Utilities: simple layout primitives */
 @layer utilities {
@@ -97,7 +96,6 @@
 
 /* Ensure Material Web components inherit Inter */
 @layer components {
-
   md-outlined-text-field,
   md-filled-button {
     font-family: inherit !important;
@@ -127,7 +125,6 @@
 
 /* Ensure button links never underline in any state */
 @layer components {
-
   a.btn,
   a.btn:hover,
   a.btn:visited,
@@ -140,8 +137,12 @@
 @layer utilities {
   .material-symbols-rounded {
     /* Prefer local font if present, otherwise fall back to Google stylesheet */
-    font-family: 'Material Symbols Rounded Local', 'Material Symbols Rounded';
-    font-variation-settings: 'FILL' 0, 'wght' 500, 'GRAD' 0, 'opsz' 24;
+    font-family: "Material Symbols Rounded Local", "Material Symbols Rounded";
+    font-variation-settings:
+      "FILL" 0,
+      "wght" 500,
+      "GRAD" 0,
+      "opsz" 24;
   }
 }
 
@@ -154,10 +155,13 @@
     /* match Maker chip curve */
     border: 0 !important;
     box-shadow: var(--md-sys-elevation-1);
-    transition: transform var(--md-sys-motion-duration-short) var(--md-sys-motion-ease-standard),
-      box-shadow var(--md-sys-motion-duration-short) var(--md-sys-motion-ease-standard);
+    transition:
+      transform var(--md-sys-motion-duration-short)
+        var(--md-sys-motion-ease-standard),
+      box-shadow var(--md-sys-motion-duration-short)
+        var(--md-sys-motion-ease-standard);
     font-weight: 600;
-    padding: .7rem 1rem;
+    padding: 0.7rem 1rem;
   }
 
   .btn.m3::after {
@@ -172,7 +176,6 @@
 
 /* Align all top-level sections with the header */
 @layer components {
-
   .wrap,
   .page-wrap {
     max-width: 1100px;
@@ -190,7 +193,8 @@
   }
 
   .btn.m3:focus-visible {
-    outline: 2px solid color-mix(in oklab, var(--md-sys-color-primary), white 20%);
+    outline: 2px solid
+      color-mix(in oklab, var(--md-sys-color-primary), white 20%);
     outline-offset: 3px;
   }
 }
@@ -203,5 +207,4 @@
     box-shadow: var(--md-sys-elevation-1);
     padding: 1.25rem;
   }
-
 }

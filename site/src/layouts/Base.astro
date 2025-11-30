@@ -73,10 +73,7 @@ const pageUrl = pathname ? new URL(pathname, siteUrl).toString() : siteUrl
 
     <link rel="canonical" href={pageUrl} />
     <link rel="icon" href="/favicon.svg" />
-    <!-- Preload Google Sans fonts for better LCP -->
-    <link rel="preload" as="font" type="font/woff2" href="/fonts/google-sans-regular.woff2" crossorigin />
-    <link rel="preload" as="font" type="font/woff2" href="/fonts/google-sans-medium.woff2" crossorigin />
-    <link rel="preload" as="font" type="font/woff2" href="/fonts/google-sans-bold.woff2" crossorigin />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Google+Sans+Flex:wght@100..900&display=swap" />
   <!-- Material Symbols: prefer local font when PUBLIC_USE_LOCAL_ICONS=true; otherwise load from Google Fonts -->
   {useLocalIcons ? (
     <>
@@ -111,11 +108,11 @@ const pageUrl = pathname ? new URL(pathname, siteUrl).toString() : siteUrl
 
       /* Critical FOIT prevention - hide body until Google Sans loads */
       body {
-        font-family: ui-sans-serif, system-ui, sans-serif;
+        font-family: "Google Sans Flex", system-ui, sans-serif;
         visibility: hidden;
       }
       html[data-fonts-loaded="true"] body {
-        font-family: 'Google Sans', ui-sans-serif, system-ui, sans-serif;
+        font-family: "Google Sans Flex", system-ui, sans-serif;
         visibility: visible;
       }
 
@@ -140,7 +137,7 @@ const pageUrl = pathname ? new URL(pathname, siteUrl).toString() : siteUrl
 
         if (document.fonts && typeof document.fonts.ready?.then === 'function') {
           // Use Font Loading API if available
-          document.fonts.load('1rem "Google Sans"').then(() => {
+          document.fonts.load('1rem "Google Sans Flex"').then(() => {
             if (document.fonts.status === 'loaded') {
               setFontsReady();
             } else {

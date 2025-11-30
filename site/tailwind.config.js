@@ -36,11 +36,10 @@ export default {
         accent: 'var(--ariane-link-text)',
         'accent-hover': 'var(--ariane-link-hover)',
       },
-      fontFamily: {
-        sans: ['Google Sans'],
+        sans: ['Google Sans Flex'],
         serif: [...defaultTheme.fontFamily.serif],
-        heading: ['Google Sans'],
-        'google-sans': ['Google Sans'],
+        heading: ['Google Sans Flex'],
+        'google-sans': ['Google Sans Flex'],
       },
       spacing: {
         'pad-x': 'clamp(1rem, 4vw, 2rem)',
