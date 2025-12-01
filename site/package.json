@@ -38,7 +38,7 @@
     "@material/web": "^2.4.0",
     "@portabletext/to-html": "^3.0.0",
     "@sanity/client": "^7.11.2",
-    "@sanity/image-url": "^1.2.0",
+    "@sanity/image-url": "^2.0.1",
     "@specy/liquid-glass-react": "^1.0.2",
     "@storyblok/astro": "^7.3.1",
     "@vercel/analytics": "^1.5.0",
