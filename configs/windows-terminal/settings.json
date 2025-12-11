@@ -1,0 +1,122 @@
+{
+    "$help": "https://aka.ms/terminal-documentation",
+    "$schema": "https://aka.ms/terminal-profiles-schema",
+    "actions": [],
+    "copyFormatting": "none",
+    "copyOnSelect": false,
+    "defaultProfile": "{61c54bbd-c2c6-5271-96e7-009a87ff44bf}",
+    "keybindings": 
+    [
+        {
+            "id": "Terminal.CopyToClipboard",
+            "keys": "ctrl+c"
+        },
+        {
+            "id": "Terminal.PasteFromClipboard",
+            "keys": "ctrl+v"
+        },
+        {
+            "id": "Terminal.FindText",
+            "keys": "ctrl+shift+f"
+        },
+        {
+            "id": "Terminal.DuplicatePaneAuto",
+            "keys": "alt+shift+d"
+        }
+    ],
+    "newTabMenu": 
+    [
+        {
+            "type": "remainingProfiles"
+        }
+    ],
+    "profiles": 
+    {
+        "defaults": {},
+        "list": 
+        [
+            {
+                "background": "#1E1E2F",
+                "colorScheme": "LiquidGlassLavender",
+                "commandline": "%SystemRoot%\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
+                "cursorColor": "#E7D1FF",
+                "font": 
+                {
+                    "face": "FiraCode Nerd Font",
+                    "size": 12
+                },
+                "foreground": "#FFFFFF",
+                "guid": "{61c54bbd-c2c6-5271-96e7-009a87ff44bf}",
+                "hidden": false,
+                "name": "Windows PowerShell",
+                "opacity": 75,
+                "selectionBackground": "#CBA7FF",
+                "useAcrylic": true
+            },
+            {
+                "commandline": "%SystemRoot%\\System32\\cmd.exe",
+                "guid": "{0caa0dad-35be-5f56-a8ff-afceeeaa6101}",
+                "hidden": false,
+                "name": "Command Prompt"
+            },
+            {
+                "guid": "{b453ae62-4e3d-5e58-b989-0a998ec441b8}",
+                "hidden": false,
+                "name": "Azure Cloud Shell",
+                "source": "Windows.Terminal.Azure"
+            },
+            {
+                "guid": "{51855cb2-8cce-5362-8f54-464b92b32386}",
+                "hidden": false,
+                "name": "Ubuntu",
+                "source": "CanonicalGroupLimited.Ubuntu_79rhkp1fndgsc"
+            },
+            {
+                "guid": "{2c4de342-38b7-51cf-b940-2309a097f518}",
+                "hidden": true,
+                "name": "Ubuntu",
+                "source": "Windows.Terminal.Wsl"
+            },
+            {
+                "guid": "{2ece5bfe-50ed-5f3a-ab87-5cd4baafed2b}",
+                "hidden": false,
+                "name": "Git Bash",
+                "source": "Git"
+            },
+            {
+                "guid": "{574e775e-4f2a-5b96-ac1e-a2962a402336}",
+                "hidden": false,
+                "name": "PowerShell",
+                "source": "Windows.Terminal.PowershellCore"
+            }
+        ]
+    },
+    "schemes": 
+    [
+        {
+            "background": "#1E1E2F",
+            "black": "#1B1126",
+            "blue": "#BFA3FF",
+            "brightBlack": "#47355E",
+            "brightBlue": "#D6C2FF",
+            "brightCyan": "#DCF1FF",
+            "brightGreen": "#D9FFE9",
+            "brightPurple": "#EBD0FF",
+            "brightRed": "#FFACE2",
+            "brightWhite": "#FFFFFF",
+            "brightYellow": "#FFF1C7",
+            "cursorColor": "#E7D1FF",
+            "cyan": "#C5E3FF",
+            "foreground": "#FFFFFF",
+            "green": "#C8F0D6",
+            "name": "LiquidGlassLavender",
+            "purple": "#D1A2FF",
+            "red": "#E58AC9",
+            "selectionBackground": "#CBA7FF",
+            "white": "#FFFFFF",
+            "yellow": "#F2E2B8"
+        }
+    ],
+    "theme": "dark",
+    "themes": []
+}
