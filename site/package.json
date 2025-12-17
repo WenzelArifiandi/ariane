@@ -46,7 +46,7 @@
     "astro": "^5.16.0",
     "astro-icon": "^1.1.5",
     "glob": "^13.0.0",
-    "groq": "^4.18.0",
+    "groq": "^5.0.0",
     "jose": "^6.1.0",
     "lucide-astro": "^0.544.0",
     "postprocessing": "^6.27.0",
