@@ -17,6 +17,8 @@ This directory contains backup copies of your Windows Terminal configuration fil
 
 ## Original Location on Windows
 
+**Active Package:** Windows Terminal Stable (not Preview)
+
 These files are located at:
 ```
 %LOCALAPPDATA%\Packages\Microsoft.WindowsTerminal_8wekyb3d8bbwe\LocalState\
@@ -26,6 +28,8 @@ Full path:
 ```
 C:\Users\hello\AppData\Local\Packages\Microsoft.WindowsTerminal_8wekyb3d8bbwe\LocalState\
 ```
+
+**Note:** Only the Stable version is installed. Preview package does not exist on this system.
 
 ## How to Restore
 
@@ -63,6 +67,14 @@ Copy-Item C:\GitHub\ariane\configs\windows-terminal\elevated-state.json `
 - After restore, restart Windows Terminal to see changes
 - The settings.json file can be edited manually or through Windows Terminal's settings UI
 - To update this backup, run the backup commands from WSL or PowerShell
+
+### Translucency Configuration
+
+**Enforced in `profiles.defaults`:**
+- `"useAcrylic": true` - Enables acrylic transparency effect
+- `"opacity": 75` - Sets 75% opacity (0-100, where 100 is fully opaque)
+
+This ensures **all profiles** have translucent backgrounds by default, preventing flip-flopping between opaque and transparent appearances. Individual profiles can override these defaults if needed, but the PowerShell profile explicitly sets these same values for consistency.
 
 ## Updating the Backup
 

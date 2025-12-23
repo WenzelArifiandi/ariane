@@ -30,12 +30,9 @@
             "type": "remainingProfiles"
         }
     ],
-    "profiles":
+    "profiles": 
     {
-        "defaults": {
-            "useAcrylic": true,
-            "opacity": 75
-        },
+        "defaults": {},
         "list": 
         [
             {
