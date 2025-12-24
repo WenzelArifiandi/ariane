@@ -34,7 +34,7 @@
     "@sanity/eslint-config-studio": "^5.0.2",
     "@types/busboy": "^1.5.4",
     "@types/react": "^19.1.13",
-    "@vercel/node": "^5.5.9",
+    "@vercel/node": "^5.5.16",
     "eslint": "^9.36.0",
     "prettier": "^3.6.2",
     "typescript": "^5.9.3"
