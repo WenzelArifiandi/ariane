@@ -8,7 +8,7 @@ This directory contains backup copies of your Windows Terminal configuration fil
   - Custom color scheme: "LiquidGlassLavender"
   - Custom keybindings (Ctrl+C, Ctrl+V, Ctrl+Shift+F, Alt+Shift+D)
   - Profile configurations for PowerShell, CMD, Ubuntu, Git Bash, etc.
-  - Acrylic transparency and custom fonts (FiraCode Nerd Font)
+  - Acrylic transparency with Cascadia Mono font
 
 - **state.json** - Windows Terminal state information (265 bytes)
   - Window position, size, and other UI state
