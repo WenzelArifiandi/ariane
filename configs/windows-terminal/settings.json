@@ -34,7 +34,11 @@
     {
         "defaults": {
             "useAcrylic": true,
-            "opacity": 75
+            "opacity": 75,
+            "font": {
+                "face": "FiraCode Nerd Font Mono",
+                "size": 12
+            }
         },
         "list": 
         [
@@ -43,9 +47,9 @@
                 "colorScheme": "LiquidGlassLavender",
                 "commandline": "%SystemRoot%\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
                 "cursorColor": "#E7D1FF",
-                "font": 
+                "font":
                 {
-                    "face": "FiraCode Nerd Font",
+                    "face": "FiraCode Nerd Font Mono",
                     "size": 12
                 },
                 "foreground": "#FFFFFF",
